@@ -1,0 +1,41 @@
+{
+    "name": "incodiy/codiy",
+    "description": "Content Management System Code from DIY",
+    "type": "project",
+    "require": {
+        "laravel/ui": "^3.2",
+        "laravelcollective/html": "6.x-dev",
+		"doctrine/dbal": "^2.5",
+        "intervention/image": "^2.5",
+        "yajra/laravel-datatables": "^1.5",
+        "jlawrence/eos": "dev-master"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wisnuwidi",
+            "email": "wisnuwidi@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+	"autoload"	: {
+        "psr-4": {
+			"Incodiy\\Codiy\\": "src/"
+		},
+		"files"	: [
+			"src/Library/Helpers/App.php",
+			"src/Library/Helpers/MetaTags.php",
+			"src/Library/Helpers/Scripts.php",
+			"src/Library/Helpers/Template.php",
+			"src/Library/Helpers/FormObject.php",
+			"src/Library/Helpers/Table.php"
+		]
+	},
+	"extra"	: {
+		"laravel"	: {
+			"providers"	: [
+                "Incodiy\\Codiy\\IncodiyServiceProvider"
+            ]
+		}
+	}
+}
