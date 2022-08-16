@@ -148,7 +148,7 @@ if (!function_exists('diy_modal_content_html')) {
 		$html .= '</div>';
 		$html .= '<div class="modal-footer">';
 			$html .= '<div class="diy-action-box">';
-				$html .= '<button type="button" class="btn btn-danger btn-slideright pull-right" data-dismiss="modal">Cancel</button>';
+				$html .= '<button type="button" id="' . $name . '-cancel" class="btn btn-danger btn-slideright pull-right" data-dismiss="modal">Cancel</button>';
 				$html .= '<button id="submitFilterButton" class="btn btn-primary btn-slideright pull-right" type="submit">';
 					$html .= '<i class="fa fa-filter"></i> &nbsp; Filter Data ' . $title;
 				$html .= '</button>';
@@ -354,5 +354,344 @@ if (!function_exists('create_action_buttons')) {
 		$buttonsMobile	= $buttonViewMobile	. $buttonEditMobile	. $buttonDeleteMobile	. $buttonNewMobile;
 		
 		return '<div class="action-buttons-box"><div class="hidden-sm hidden-xs action-buttons">' . $buttons . '</div><div class="hidden-md hidden-lg"><div class="inline pos-rel"><button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto"><i class="fa fa-caret-down icon-only bigger-120"></i></button><ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">' . $buttonsMobile . '</ul></div></div></div>';
+	}
+}
+
+
+
+if (!function_exists('diy_table_row_attr')) {
+	/**
+	 * Set Default Row Attributes for Table
+	 *
+	 * @param string $str_value
+	 * @param string $attribute
+	 * 		=> colspan=2|id=idLists OR ['colspan' => 2, 'id' => 'idLists']
+	 *
+	 * @return string
+	 */
+	function diy_table_row_attr($str_value, $attributes) {
+		$attr = $attributes;
+		if (is_array($attributes)) {
+			$attribute = [];
+			foreach ($attributes as $key => $value) {
+				$attribute[] = "{$key}=\"{$value}\"";
+			}
+			$attr = implode(' ', $attribute);
+		}
+		
+		return "{$str_value}{:}$attr";
+	}
+}
+
+
+
+if (!function_exists('diy_generate_table')) {
+	
+	/**
+	 * Table Builder
+	 *
+	 * @param string $title
+	 * @param string $title_id
+	 * @param array  $header
+	 * @param array  $body
+	 * @param array  $attributes
+	 * @param string $numbering
+	 * @param string $containers
+	 * 		: draw <div> container box, defalult true
+	 * @param string $server_side
+	 * @param boolean|string|array $server_side_custom_url
+	 *
+	 * @return string
+	 */
+	function diy_generate_table($title = false, $title_id = false, $header = array(), $body = array(), $attributes = array(), $numbering = false, $containers = true, $server_side = false, $server_side_custom_url = false) {
+		$relations = '';//_get_default_relational_data_set();
+		
+		// set attributes
+		$datatableClass = 'expresscode-table table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
+		if (false !== $attributes && is_array($attributes)) {
+			if (empty($attributes)) {
+				$_attributes = array (
+					'id'		=> "datatable-{$title_id}",
+					'class'	=> $datatableClass
+				);
+			} else {
+				if (empty($attributes['id'])) {
+					$_attributes['id'] = "datatable-{$title_id}";
+				}
+				if (empty($attributes['class'])) {
+					$_attributes['class'] = $datatableClass;
+				}
+				foreach ($attributes as $attrField => $attrValue) {
+					$_attributes[$attrField] = $attrValue;
+				}
+			}
+		} else {
+			$_attributes = array (
+				'id'	=> "datatable-{$title_id}",
+				'class'	=> $datatableClass
+			);
+		}
+		
+		$attributes = ' ' . rtrim(diy_attributes_to_string($_attributes));
+		
+		// set header table
+		$hNumber	= false;
+		$hCheck		= false;
+		$hEmpty		= false;
+		$_header	= false;
+		$aoColumns	= [];
+		
+		if (true === $numbering) {
+			$number = ['number_lists'];
+			$header = array_merge($number, $header);
+		}
+		
+		$actionVisibility = false;
+		if (in_array('action', $header)) {
+			$actionVisibility = true;
+		}
+		
+		$set_fieldID = false;
+		if (false !== $header) {
+			$_header = '<thead><tr>';
+			if (false !== $server_side) {
+				$set_fieldID = "{data:'id',name:'id'}";
+			}
+			foreach ($header as $hIndex => $hList) {
+				$HKEY = false;
+				$HVAL = false;
+				if (is_array($hList)) {
+					$keyList	= array_keys($hList);
+					$HKEY		= $keyList[0];
+					$HVAL		= $hList[$HKEY];
+				} else {
+					$HKEY		= $hList;
+					$HVAL		= trim(ucwords(str_replace('_', ' ', $HKEY)));
+				}
+				$hList	= $HKEY;
+				$hLabel	= $HVAL;
+				
+				$hListFields = $hList;
+				if (true === str_contains($hList, '|')) {
+					$newHList		= explode('|', $hList);
+					$hList			= $newHList[1];
+					$hListFields	= "{$relations}.{$hList}";
+				}
+				if (true === str_contains($hList, '.')) {
+					$newHList		= explode('.', $hList);
+					$hList			= $newHList[0];
+				}
+				
+				// check if header label : no|id|nik
+				$idHeader		= $header[$hIndex];
+				if (is_array($idHeader)) {
+					$fHead		= array_keys($idHeader);
+					$idHeader	= $fHead[0];
+				}
+				if ('no' === strtolower($idHeader) || 'id' === strtolower($idHeader) || 'nik' === strtolower($idHeader)) $hNumber = $hIndex;
+				
+				if (true === diy_string_contained($hList, '<input type="checkbox"')) $hCheck = $hIndex;
+				if (is_empty($hList)) $hEmpty = $hIndex;
+				
+				$hList = trim(ucwords(str_replace('_', ' ', $hList)));
+				if ($hNumber === $hIndex) {
+					$_header		.= "<th class=\"center\" width=\"50\">{$hList}</th>";
+					$aoColumns[]	 = "null";
+				} else if (true === str_contains($hList, ':changeHeaderName:')) {
+					$newHList		 = explode(':changeHeaderName:', $hList);
+					$hList			 = ucwords($newHList[1]);
+					$hListFields	 = $hList;
+					$hDataFields	 = strtolower($newHList[0]);
+					$_header		.= "<th class=\"center\" width=\"120\">{$hListFields}</th>";
+					$aoColumns[]	 = "{data:'{$hDataFields}',name:'{$hDataFields}','sortable': true,'searchable': true}";
+				} else if ($hCheck === $hIndex) {
+					$_header		.= "<th width=\"50\">{$hList}</th>";
+					$aoColumns[]	 = "{'bSortable': false}";
+				} else if ($hEmpty === $hIndex) {
+					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[]	 = "{'bSortable': false}";
+				} else if ('Action' === $hList) {
+					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[]	 = "{data:'action',name:'action','sortable': false,'searchable': false,'class':'center un-clickable'}";
+				} else if ('Active' === $hList) {
+					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[]	 = "{data:'active',name:'active','sortable': false,'searchable': true,'class':'center un-clickable'}";
+				} else if ('Flag Status' === $hList) {
+					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[]	 = "{data:'flag_status',name:'flag_status','sortable': true,'searchable': true,'class':'center'}";
+				} else {
+					if ('number_lists' === strtolower($idHeader)) {
+						$_header	.= "<th class=\"center\" width=\"30\">No</th><th class=\"center\" width=\"30\">ID</th>";
+						$aoColumns[] = "{data:'DT_RowIndex',name:'DT_RowIndex','sortable': false,'searchable': false,'class':'center un-clickable','onclick':'return false'}";
+						if (false !== $set_fieldID) $aoColumns[] = $set_fieldID;
+					} else {
+						$row_attr = false;
+						if (true === str_contains($hList, '{:}')) {
+							$reList			= explode('{:}', $hList);
+							$hList			= $reList[0];
+							
+							if (isset($reList[1])) {
+								$rowAttr	= explode('|', $reList[1]);
+								$row_attr	= ' ' . implode(' ', $rowAttr);
+							}
+							
+							$row_list = "<th{$row_attr}>{$hList}</th>";
+						} else {
+							$row_list = "<th>{$hLabel}</th>";
+						}
+						
+						$clickableClass = false;
+						if (false !== $actionVisibility) {
+							$clickableClass = 'clickable ';
+						}
+						
+						$_header	.= $row_list;
+						$aoColumns[] = "{data:'{$hListFields}',name:'{$hListFields}',class:'{$clickableClass}auto-cut-text'}";
+					}
+				}
+			}
+			
+			$_header .= '</tr></thead>';
+		}
+		
+		// set body list(s) table
+		$_body		= false;
+		$num		= false;
+		
+		if (false === $server_side) {
+			if (false !== $body) {
+				$_body = '<tbody>';
+				
+				$array_keys	= array_keys($body);
+				$first_key	= reset($array_keys);
+				
+				foreach ($body as $bIndex => $bLists) {
+					$rowClickAction = false;
+					if (!empty($bLists['row_data_url']) && false !== $bLists['row_data_url']) {
+						$rowClickAction = ' onclick="location.href=\'' . $bLists['row_data_url'] . '\'" class="row-list-url"';
+					}
+					
+					unset($bLists['row_data_url']);
+					
+					$_body .= '<tr>';
+					for ($row = 0; $row <= count($body); $row++) {
+						if ($bIndex === $row) {
+							
+							if (true === $numbering) {
+								if ($first_key <= 0)	$numLists = intval($row)+1;
+								else						$numLists = intval($row);
+								
+								$_body .= "<td class=\"center\">{$numLists}</td>";
+							}
+							
+							foreach ($bLists as $index => $list) {
+								$row_attr = false;
+								if ('action' === $index) {
+									$rowClickAction = false;
+								}
+								if (true === str_contains($list, '{:}')) {
+									$reList	= explode('{:}', $list);
+									$list	= $reList[0];
+									
+									if (isset($reList[1])) {
+										$rowAttr	= explode('|', $reList[1]);
+										$row_attr	= ' ' . implode(' ', $rowAttr);
+									}
+									
+									$row_list = "<td{$row_attr}{$rowClickAction}>{$list}</td>";
+								} else {
+									$row_list = "<td{$rowClickAction}>{$list}</td>";
+								}
+								
+								if ($hNumber === $index) {
+									if (is_empty($list)) $num = intval($row)+1;
+									else $num = $list;
+									
+									$_body .= "<td class=\"center\">{$num}</td>";
+								} else if ($hEmpty === $index) {
+									$_body .= "<td class=\"center\">{$list}</td>";
+								} else if ('active' === $index) {
+									$_list = set_active_value($list);
+									$_body .= "<td align=\"center\">{$_list}</td>";
+								} else if ('flag_status' === $index) {
+									$_list = internal_flag_status($list);
+									$_body .= "<td align=\"center\"{$rowClickAction}>{$_list}</td>";
+								} else if ('request_status' === $index) {
+									$_list	= request_status(true, $list);
+									$_body .= "<td align=\"center\">{$_list}</td>";
+								} else if ('update_status' === $index) {
+									$_list	= active_box();
+									$_body .= "<td align=\"center\">{$_list[$list]}</td>";
+								} else if ('action' === $index) {
+									$_body .= "<td align=\"center\"{$rowClickAction}>{$list}</td>";
+								} else {
+									$_body .= $row_list;
+								}
+							}
+						}
+					}
+					
+					$_body .= '</tr>';
+				}
+				
+				$_body .= '</tbody>';
+			} else {
+				$_body = '<tbody><tr><td>Found no data</td></tr></tbody>';
+			}
+		} else {
+			$_body = null;
+		}
+		
+		$_tools = false;
+		$_title = false;
+		$attrId = false;
+		if (!empty($_attributes['id'])) $attrId = $_attributes['id'];
+		
+		if (false !== $title) $_title = '<div class="panel-heading"><div class="pull-left"><h3 class="panel-title">' . $title . '</h3></div><div class="clearfix"></div></div>';
+		
+		$start_tag	= false;
+		$end_tag	= false;
+		$dataTables	= false;
+		if (false !== $containers) {
+			$start_tag	= "<div class=\"row\"><div class=\"col-md-12\"><div class=\"panel\">{$_title}<br /><div class=\"panel-body no-padding\"><div class=\"table-responsive\" style=\"margin-top: -1px;\">";
+			$end_tag	= "</div></div></div></div></div>";
+			$_columns	= implode(',', $aoColumns);
+			
+			$_ajax_url	= 'renderDataTables';
+			if (!empty($server_side_custom_url)) {
+				$_ajax_url = $server_side_custom_url;
+			}
+			
+			//	$filter_strings = filters=true&input_filters[route_path]=developments.testing&input_filters[id]=30
+			$filter_strings = false;
+			if (!empty($_GET['filters'])) {
+				$fstrings	= [];
+				foreach ($_GET as $name => $value) {
+					if ('filters'!== $name && '' !== $value) {
+						if (!is_array($value)) {
+							if (
+									$name !== $_ajax_url	&&
+									$name !== 'draw'		&&
+									$name !== 'columns'		&&
+									$name !== 'order'		&&
+									$name !== 'start'		&&
+									$name !== 'length'		&&
+									$name !== 'search'		&&
+									$name !== '_'
+								) {
+									$fstrings[] = "input_filters[{$name}]={$value}";
+								}
+						}
+					}
+				}
+				$filter_strings = '&filters=true&' . implode('&', $fstrings);
+			}
+			
+			$dataTables	= js_render_datatables($attrId, $_columns, $server_side, $filter_strings, $server_side_custom_url);
+		}
+		
+		$table = "{$start_tag}{$_tools}<table{$attributes}>{$_header}{$_body}</table>{$end_tag}";
+		
+		return $table . $dataTables;
 	}
 }

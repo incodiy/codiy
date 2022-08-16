@@ -27,16 +27,25 @@ class Objects {
 	use Text, DateTime, Select, File, Check, Radio, Tab;
 	
 	public $model;
-	public $elements				= [];
-	public $element_name			= [];
-	public $element_plugins			= [];
-	public $params					= [];
+	public $elements		= [];
+	public $element_name	= [];
+	public $element_plugins	= [];
+	public $params			= [];
 	
 	/**
 	 * --[openTabHTMLForm]--
 	 */
-	private $opentabHTML			= '--[openTabHTMLForm]--';
-		
+	private $opentabHTML	= '--[openTabHTMLForm]--';
+	
+	private $currentRoute;
+	private $currentRouteArray;
+	public  $currentRouteName;
+	protected function getCurrentRoute() {
+		$this->currentRoute      = current_route();
+		$this->currentRouteArray = explode('.', $this->currentRoute);
+		$this->currentRouteName  = $this->currentRouteArray[array_key_last($this->currentRouteArray)];
+	}
+	
 	/**
 	 * Draw Data Elements
 	 *
@@ -279,15 +288,25 @@ class Objects {
 	}
 	
 	private function getModelValue($field_name, $function_name) {
-		$value			= null;
-		$currentRoute	= explode('.', current_route());
-		if ('edit' === $currentRoute[array_key_last($currentRoute)]) {
-			$model	= [];
+		$this->getCurrentRoute();
+		$value = null;
+		
+		if ('edit' === $this->currentRouteName || 'show' === $this->currentRouteName) {
+			
+			$model = [];
 			if (!empty($this->model)) {
-				$model	= new $this->model();
-				$model	= $model->find(diy_get_current_route_id());
 				
-				if (!empty($model->{$field_name})) {
+				if (true === diy_is_softdeletes($this->model)) {
+					$model	= $this->model::withTrashed()->get();
+				} else {
+					$model	= $this->model->get();
+				}
+				
+				$curRoute	= diy_get_current_route_id();
+				if ('show' === $this->currentRouteName) $curRoute = diy_get_current_route_id(false);
+				
+				$model = $model->find($curRoute);
+				if (!is_null($model->{$field_name})) {
 					$value = $model->{$field_name};
 				}
 			}
@@ -310,8 +329,15 @@ class Objects {
 	 */
 	private function setModelValueAndSelectedToParams($function_name, $name, $value, $selected) {
 		if ('select' === $function_name) {
-			$value		= $value;
-			$selected	= $this->getModelValue($name, $function_name);
+			$this->getCurrentRoute();
+			
+			if ('create' === $this->currentRouteName) {
+				$value		= $value;
+				$selected	= $selected;
+			} else {
+				$value		= $value;
+				$selected	= $this->getModelValue($name, $function_name);
+			}
 		} elseif ('checkbox' === $function_name) {
 			$value		= $value;
 			$selected	= $this->getModelValue($name, $function_name);
@@ -331,7 +357,7 @@ class Objects {
 			$selected	= $selected;
 		}
 		
-		$this->paramValue[$function_name][$name]	= $value;
+		$this->paramValue[$function_name][$name]		= $value;
 		$this->paramSelected[$function_name][$name]	= $selected;
 	}
 	

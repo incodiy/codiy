@@ -3,6 +3,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Incodiy\Codiy\Models\Admin\System\Modules;
+use Incodiy\Codiy\Models\Admin\System\Preference;
 
 /**
  * Created on 10 Mar 2021
@@ -29,6 +31,26 @@ if (!function_exists('diy_config')) {
 	 */
 	function diy_config($string, $fileNameSettings = 'settings') {
 		return Illuminate\Support\Facades\Config::get("diy.{$fileNameSettings}.{$string}");
+	}
+}
+
+if (!function_exists('is_multiplatform')) {
+	
+	/**
+	 * Get Config
+	 *
+	 * created @Sep 28, 2018
+	 * author: wisnuwidi
+	 *
+	 * @return string
+	 */
+	function is_multiplatform() {
+		$platform = diy_config('platform_type');
+		if ('single' === $platform) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
 
@@ -104,7 +126,10 @@ if (!function_exists('diy_get_model')) {
 	 * @return object|array
 	 */
 	function diy_get_model($model, $find = false) {
-		$model = new $model;
+		if (is_string($model)) {
+			$model = new $model;
+		}
+		
 		if (false !== $find) {
 			$model = $model->find($find);
 		}
@@ -115,7 +140,7 @@ if (!function_exists('diy_get_model')) {
 
 if (!function_exists('diy_query')) {
 	
-	function diy_query($sql, $type = 'select') {
+	function diy_query($sql, $type = 'table') {
 		return Illuminate\Support\Facades\DB::{$type}($sql);
 	}
 }
@@ -164,12 +189,14 @@ if (!function_exists('diy_clean_strings')) {
 	 * Clean Strings
 	 *
 	 * @param string $strings
+	 * @param string $replace_with
+	 * 
 	 * @return string
 	 */
-	function diy_clean_strings($strings) {
+	function diy_clean_strings($strings, $replace_with = '-') {
 		$strings = trim(preg_replace('/[;\.\/\?\\\:@&=+\$,_\~\*\'"\!\|%<>\{\}\^\[\]`\-]/', ' ', $strings));
 		
-		return strtolower(preg_replace('/\s+/', '-', $strings));
+		return strtolower(preg_replace('/\s+/', $replace_with, $strings));
 	}
 }
 
@@ -475,9 +502,11 @@ if (!function_exists('diy_get_current_route_id')) {
 	 *
 	 * @return string
 	 */
-	function diy_get_current_route_id() {
+	function diy_get_current_route_id($exclude_last = true) {
 		$currentDataURL = explode('/', diy_current_url());
-		unset($currentDataURL[array_key_last($currentDataURL)]);
+		if (true === $exclude_last) {
+			unset($currentDataURL[array_key_last($currentDataURL)]);
+		}
 		
 		return intval($currentDataURL[array_key_last($currentDataURL)]);
 	}
@@ -590,6 +619,10 @@ if (!function_exists('diy_insert')) {
 				$value = null;
 			}
 			
+			if (diy_string_contained($value, 'WIB')) {
+				$value = str_replace(' WIB', ':' . date('s'), $value);
+			}
+			
 			$requests[$key] = $value;
 		}
 		$request->merge($requests);
@@ -642,6 +675,10 @@ if (!function_exists('diy_update')) {
 				$value = null;
 			}
 			
+			if (diy_string_contained($value, 'WIB')) {
+				$value = str_replace(' WIB', ':' . date('s'), $value);
+			}
+			
 			$requests[$key] = $value;
 		}
 		$request->merge($requests);
@@ -661,19 +698,19 @@ if (!function_exists('diy_delete')) {
 	 * Simply Delete(Soft) and or Restore deleted row from database
 	 *
 	 * @param object $request
-	 * @param int $id
 	 * @param object $model_name
+	 * @param int $id
 	 *
 	 * created @Aug 10, 2018
 	 * author: wisnuwidi
 	 */
-	function diy_delete($request, $data, $id) {
-		$model = $data->find($id);
+	function diy_delete($request, $model_name, $id) {
+		$model = $model_name->find($id);
+		
 		if (!empty($model->id)) {
 			$model->delete();
-		//	$model->update(['active' => 0]);
 		} else {
-			$remodel = $model::withTrashed()->find($id);
+			$remodel = $model_name::withTrashed()->find($id);
 			$remodel->restore();
 		//	$remodel->update(['active' => 1]);
 		}
@@ -824,7 +861,7 @@ if (!function_exists('decode_id')) {
 if (!function_exists('hash_code_id')) {
 	
 	function hash_code_id() {
-		return hash('haval128,4', 'IBHRS');
+		return hash('haval128,4', 'IDRIS');
 	}
 }
 
@@ -847,5 +884,362 @@ if (!function_exists('diy_action_button_box')) {
 		$box .= "</h3>";
 		
 		return $box;
+	}
+}
+
+
+
+
+if (!function_exists('get_route_lists')) {
+	
+	/**
+	 * Get Route Lists
+	 *
+	 * @param string $selected
+	 * 		: true	=> fungsinya untuk memunculkan route path yang belum didaftarkan beserta dengan selected routenya.
+	 * 		: false	=> fungsinya hanya untuk memunculkan route path yang belum didaftarkan saja.
+	 *
+	 * @return StdClass
+	 */
+	function get_route_lists($selected = false, $fullRender = false, $path_controllers = 'App\Http\Controllers\Admin\\') {
+		$model	= Modules::withTrashed()->get();
+		$modules	= [];
+		foreach ($model as $modul) {
+			$mod	= $modul->getAttributes();
+			$modules[$mod['route_path']] = $mod['route_path'];
+		}
+		
+		$routeLists = Route::getRoutes();
+		$routelists = [];
+		foreach ($routeLists as $list) {
+			$route_name	= $list->getName();
+			$routeObj	= explode('.', $route_name);
+			
+			if (str_contains($list->getActionName(), $path_controllers)) {
+				// check if controller created in Admin folder
+				if (count($routeObj) > 1) {
+					if (in_array('index', $routeObj)) {
+						$route_cat = count($routeObj);
+						if (5 === $route_cat) {
+							$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]][$routeObj[3]]['index'] = $routeObj[4];
+						}
+						if (4 === $route_cat) {
+							$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]] = $routeObj[3];
+						}
+						if (3 === $route_cat) {
+							$routelists[$routeObj[0]][$routeObj[1]]['index'] = $routeObj[2];
+						}
+						if (2 === $route_cat) {
+							$routelists[$routeObj[0]]['index'] = $routeObj[1];
+						}
+					}
+				}
+			}
+		}
+		
+		$routes		= [];
+		$allroutes	= [];
+		foreach ($routelists as $parent => $category) {
+			foreach ($category as $child => $route_data) {
+				if (is_array($route_data)) {
+					foreach ($route_data as $model => $second_child) {
+						if (is_array($second_child)) {
+							foreach ($second_child as $third_model => $last_index) {
+								if ($last_index !== $third_model) {
+									$route_base	= "{$parent}.{$child}.{$model}.{$third_model}";
+									if (in_array($selected, $modules)) {
+										if ($selected === $route_base) {
+											// MAINTENANCE_WARNING
+											$routes[$parent][$child][$model][$third_model]['route_data'] = (object) [
+												'route_base'	=>	$route_base,
+												'route_name'	=>	"{$route_base}.{$third_model}.index",
+												'route_url'		=>	route("{$route_base}.index")
+												];
+										}
+									} elseif (!in_array($route_base, $modules)) {
+										$routes[$parent][$child][$model][$third_model]['route_data'] = (object) [
+											'route_base'	=>	$route_base,
+											'route_name'	=>	"{$route_base}.{$third_model}.index",
+											'route_url'		=>	route("{$route_base}.index")
+											];
+									}
+									
+									$allroutes[$parent][$child][$model][$third_model]['route_data'] = (object) [
+										'route_base'		=>	$route_base,
+										'route_name'		=>	"{$route_base}.{$third_model}.index",
+										'route_url'			=>	route("{$route_base}.index")
+										];
+								} else {
+									dd($third_model);
+								}
+							}
+						} else {
+							if ($second_child !== $model) {
+								$route_base	= "{$parent}.{$child}.{$model}";
+								if (in_array($selected, $modules)) {
+									if ($selected === $route_base) {
+										$routes[$parent][$child][$model]['route_data'] = (object) [
+											'route_base'	=>	$route_base,
+											'route_name'	=>	"{$route_base}.{$second_child}",
+											'route_url'		=>	route("{$route_base}.{$second_child}")
+											];
+									}
+								} elseif (!in_array($route_base, $modules)) {
+									$routes[$parent][$child][$model]['route_data'] = (object) [
+										'route_base'	=>	$route_base,
+										'route_name'	=>	"{$route_base}.{$second_child}",
+										'route_url'		=>	route("{$route_base}.{$second_child}")
+										];
+								}
+								
+								$allroutes[$parent][$child][$model]['route_data'] = (object) [
+									'route_base'	=>	$route_base,
+									'route_name'	=>	"{$route_base}.{$second_child}",
+									'route_url'		=>	route("{$route_base}.{$second_child}")
+									];
+							} else {
+								$route_base	= "{$parent}.{$child}";
+								if (in_array($selected, $modules)) {
+									if ($selected === $route_base) {
+										$routes[$parent][$child]['route_data'] = (object) [
+											'route_base'	=>	$route_base,
+											'route_name'	=>	"{$route_base}.{$model}",
+											'route_url'		=>	route("{$route_base}.{$model}")
+											];
+									}
+								} elseif (!in_array($route_base, $modules)) {
+									$routes[$parent][$child]['route_data'] = (object) [
+										'route_base'	=>	$route_base,
+										'route_name'	=>	"{$route_base}.{$model}",
+										'route_url'		=>	route("{$route_base}.{$model}")
+										];
+								}
+								$allroutes[$parent][$child]['route_data'] = (object) [
+									'route_base'	=>	$route_base,
+									'route_name'	=>	"{$route_base}.{$model}",
+									'route_url'		=>	route("{$route_base}.{$model}")
+									];
+							}
+						}
+					}
+				} else {
+					$route_base	= $parent;
+					$routes['single'][$parent]['route_data'] = (object) [
+						'route_base'	=>	$route_base,
+						'route_name'	=>	"{$route_base}.{$child}",
+						'route_url'		=>	route("{$route_base}.{$child}")
+						];
+					$allroutes['single'][$parent]['route_data'] = (object) [
+						'route_base'	=>	$route_base,
+						'route_name'	=>	"{$route_base}.{$child}",
+						'route_url'		=>	route("{$route_base}.{$child}")
+						];
+				}
+			}
+		}
+		
+		if (true === $fullRender) {
+			$routeresult = $allroutes;
+		} else {
+			$routeresult = $routes;
+		}
+		
+		return diy_array_to_object_recursive($routeresult);
+	}
+}
+
+if (!function_exists('getPreference')) {
+	
+	/**
+	 * Get All Web Preferences
+	 *
+	 * created @Aug 21, 2018
+	 * author: wisnuwidi
+	 */
+	function getPreference() {
+		foreach (Preference::all() as $preferences) {
+			$preference = $preferences->getAttributes();
+		}
+		
+		return $preference;
+	}
+}
+
+if (!function_exists('diy_combobox_data')) {
+	
+	/**
+	 * Set Default Combobox Data
+	 *
+	 * @param array $object
+	 * @param string $key_value
+	 * @param string $key_label
+	 * @param string $set_null_array
+	 * @return array
+	 */
+	function diy_combobox_data($object, $key_value, $key_label, $set_null_array = true) {
+		$options = [0 => ''];
+		if (true === $set_null_array) $options[] = '';
+		foreach ($object as $row) {
+			$options[$row[$key_value]] = $row[$key_label];
+		}
+		
+		return $options;
+	}
+}
+
+if (!function_exists('active_box')) {
+	
+	/**
+	 * Active Status Combobox Value
+	 *
+	 * created @Sep 21, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param boolean $en
+	 * @return string['No', 'Yes']
+	 */
+	function active_box($en = true) {
+		if (true === $en) {
+			return [null => ''] + ['No', 'Yes'];
+		} else {
+			return [null => ''] + ['Tidak Aktif', 'Aktif'];
+		}
+	}
+}
+
+if (!function_exists('flag_status')) {
+	
+	/**
+	 * Set Flag Status
+	 *
+	 * This function used to manage status module
+	 * 		[ 0 => Internal Root ]	: Just root user can manage and access the module
+	 * 		[ 1 => End User ]		: End user can manage and access the module | root can manage the module too, with special condition
+	 * 		[ 2 => Normal ]			: All users can manage and access the module
+	 *
+	 * @return string[]
+	 */
+	function flag_status() {
+		return [null => ''] + ['Internal ( Root )', 'End User', 'Normal ( All )'];
+	}
+}
+
+if (!function_exists('internal_flag_status')) {
+	
+	/**
+	 * Set Flag Status Value
+	 *
+	 * created @Sep 7, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param integer|string $flag_row
+	 *
+	 * @return string
+	 */
+	function internal_flag_status($flag_row) {
+		$flaging = intval($flag_row);
+		if (0 == intval($flaging)) {
+			$flag_status = 'Internal <sup>( root )</sup>';
+		} elseif (1 == $flaging)  {
+			$flag_status = 'End User';
+		} else {
+			$flag_status = 'Normal <sup>( all )</sup>';
+		}
+		
+		return $flag_status;
+	}
+}
+
+if (!function_exists('diy_merge_request')) {
+	
+	/**
+	 * Controlling Request Before Insert Process
+	 * 
+	 * @param object $request
+	 * @param array $new_data
+	 * @return object
+	 * 
+	 * @author: wisnuwidi
+	 */
+	function diy_merge_request($request, $new_data = []) {
+		foreach ($new_data as $field_name => $value) {
+			if (null == $request->{$field_name}) {
+				$request->merge([$field_name => $value]);
+			}
+		}
+		
+		return $request;
+	}
+}
+
+if (!function_exists('diy_is_softdeletes')) {
+	
+	function diy_is_softdeletes($model) {
+		return in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($model), true);
+	}
+}
+
+
+
+if (!function_exists('diy_attributes_to_string')) {
+	
+	/**
+	 * Attributes To String
+	 * Helper function used by some of the form helpers
+	 *
+	 * @param mixed
+	 * @return string
+	 */
+	function diy_attributes_to_string($attributes) {
+		if (empty($attributes))
+			return '';
+			
+			if (is_object($attributes))
+				$attributes = (array) $attributes;
+				
+				if (is_array($attributes)) {
+					$atts = '';
+					foreach ($attributes as $key => $val) {
+						$atts .= ' ' . $key . '="' . $val . '"';
+					}
+					
+					return $atts;
+				}
+				
+				if (is_string($attributes)) {
+					return ' ' . $attributes;
+				}
+				
+				return false;
+	}
+}
+
+if (!function_exists('not_empty')) {
+	
+	/**
+	 * Checking Not Empty Data
+	 *
+	 * @param mixed $data
+	 * @return mixed|boolean
+	 */
+	function not_empty($data) {
+		if (isset($data) && !empty($data) && '' != $data && NULL != $data) {
+			return $data;
+		} else {
+			return false;
+		}
+	}
+}
+
+if (!function_exists('is_empty')) {
+	
+	/**
+	 * Checking Empty Data
+	 *
+	 * @param mixed $data
+	 * @return boolean
+	 */
+	function is_empty($data) {
+		return !not_empty($data);
 	}
 }

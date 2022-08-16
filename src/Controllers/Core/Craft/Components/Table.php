@@ -20,7 +20,7 @@ trait Table {
 	public $table;
 	
 	private function initTable() {
-		$this->table			= new Objects();
+		$this->table = new Objects();
 		$this->plugins['table']	= $this->table;
 	}
 }

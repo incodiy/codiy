@@ -30,18 +30,18 @@ class FormController extends Controller {
 		
 		$this->model(Form::class);
 		
-	//	$this->preventInsertDbThumbnail('file_field_alt');
+		$this->preventInsertDbThumbnail('file_field_alt');
 	//	$this->setImageElements('file_field', 1, true);
 	//	$this->setFileElements('file_field_alt', 'file', 'txt,xlx,xlxs,pdf', 2);
 	}
 	
-	public function index() {
+	public function indexz() {
 		$this->meta->title('Form Object');
 		
-		$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);
-		$this->table->setCenterColumns(['month_field'], true, true);
-		$this->table->setRightColumns(['number_field', 'formula_f', 'formula_f1'], true, true);
-		$this->table->setBackgroundColor('#5D94F0', 'yellow', ['file_field_alt', 'email_field']);
+	//	$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);
+	//	$this->table->setCenterColumns(['month_field'], true, true);
+	//	$this->table->setRightColumns(['number_field', 'formula_f', 'formula_f1'], true, true);
+	//	$this->table->setBackgroundColor('#5D94F0', 'yellow', ['file_field_alt', 'email_field']);
 		
 		$this->table->searchable();
 		$this->table->clickable();
@@ -74,9 +74,9 @@ class FormController extends Controller {
 		return $this->render();
 	}
 	
-	public function indexz() {
+	public function index() {
 		$this->meta->title('Form Object');
-		
+		/* 
 		$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);
 		$this->table->mergeColumns('File Merged Column', ['file_field', 'file_field_alt', 'updated_at']);
 		$this->table->setCenterColumns(['text_field'], true, false);
@@ -84,21 +84,21 @@ class FormController extends Controller {
 		
 		$this->table->setBackgroundColor('#5D94F0', 'yellow', ['file_field_alt', 'email_field']);
 		$this->table->setBackgroundColor('#7CA7EE', '#fff', ['time_field']);
-		
+		 */
 		$this->table->searchable(['text_field', 'email_field', 'updated_at']);
 		$this->table->clickable(['text_field', 'email_field']);
 		$this->table->sortable(['text_field', 'email_field']);
 		
 		$this->table->lists('test_inputform', $this->setTableFields);
-		$this->table->clear();
+	/* 	$this->table->clear();
 		
 		$this->table->mergeColumns('Text Merged Column', ['parent_name', 'module_name']);
 		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
-		$this->table->lists('base_module', ['parent_name', 'module_name', 'module_info', 'flag_status']);
-		$this->table->clear();
-		
+		$this->table->lists('base_module', ['parent_name', 'module_name', 'module_info', 'flag_status'], false);
+		$this->table->clear(); */
+		/* 
 	//	$this->table->model($this->model);
 		$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);
 		$this->table->mergeColumns('Formula Merged Column', ['formula_f', 'formula_f1']);
@@ -124,12 +124,23 @@ class FormController extends Controller {
 		$this->table->columnCondition('formula_f1', 'cell', '>', 140, 'replace', 0);
 		$this->table->formula('formula_f', 'Formula Label', ['number_field', 'month_field'], "cos(number_field+month_field)*100+tan(month_field)");
 		$this->table->formula('formula_f1', null, ['number_field', 'month_field'], "(number_field+month_field)*number_field");
-		
+		 */
 	//	$this->table->where('time_field', '=', '16:11:00');
 	//	$this->table->where('text_field', 'like', '%Testing%');
 	//	$this->table->where('id', '>', 3);
-		$this->table->lists('test_inputform', $this->setTableFields, true);
+	//	$this->table->lists('test_inputform', $this->setTableFields, true);
+	
+		/* 
+		$this->table->searchable();
+		$this->table->clickable();
+		$this->table->sortable();
+		$this->table->lists('base_group', [], false);
 		
+		$this->table->searchable();
+		$this->table->clickable();
+		$this->table->sortable();
+		$this->table->lists('base_postal_code', [], false);
+		 */
 		/* 
 		$this->table->query('select group_name, group_info from base_group where id != 1');
 		$this->table->lists(null, ['group_name', 'group_info'], false);
@@ -145,7 +156,7 @@ class FormController extends Controller {
 		$this->form->text('text_field');
 		$this->form->textarea('textarea_field', null, ['class' => 'text-area-class ckeditor', 'maxlength' => 200, 'placeholder' => 'Isi Konten']);
 		$this->form->password('password_field', ['class' => 'text-sub2-class']);
-		$this->form->email('email_field', null, ['class' => 'text-class', 'required']);
+		$this->form->email('email_field', null, ['class' => 'text-class']);
 		
 		$this->form->openTab('Multi Select Form');
 		$this->form->selectbox('selectbox_field', ['L' => 'Large', 'S' => 'Small']);
@@ -170,7 +181,7 @@ class FormController extends Controller {
 		$this->form->file('file_field_alt');
 		
 		$this->form->closeTab();
-	
+		
 		$this->form->close('Submit', ['class' => 'btn btn-primary btn-slideright pull-right']);
 		
 		return $this->render();

@@ -16,7 +16,9 @@ use Illuminate\Http\Request;
  
 trait Action {
 	
-	public $model		= [];
+	public $model			= [];
+	public $model_path	= null;
+	public $model_table	= null;
 	public $validation	= [];
 	public $uploadTrack;
 	
@@ -82,8 +84,86 @@ trait Action {
 		return $this;
 	}
 	
-	protected function store(Request $request, $model = []) {
-		$req = $request->all();
+	private function initFilterDatatables() {
+		if ('false' != $_GET['filterDataTables']) {
+			$fdata	= explode('::', $_POST['_fita']);
+			$table	= $fdata[1];
+			$target	= $fdata[2];
+			$pref	= $fdata[3];
+		//	$next	= $fdata[4];
+			
+			unset($_POST['filterDataTables']);
+			unset($_POST['_fita']);
+			unset($_POST['_token']);
+			unset($_POST['_n']);
+			
+			$wheres = [];
+			foreach ($_POST as $key => $value) {
+				$wheres[] = "`{$key}` = '{$value}'";
+			}
+			
+			$wherepPrefious = null;
+			if ('#null' !== $pref) {
+				$previous  = explode("#", $pref);
+				$preFields = explode('|', $previous[0]);
+				$preFieldt = explode('|', $previous[1]);
+				
+				$prefields = [];
+				foreach ($preFields as $idf => $pref_field) {
+					$prefields[$idf] = $pref_field;
+				}
+				
+				$prefieldt = [];
+				foreach ($preFieldt as $idd => $pref_field_data) {
+					$prefieldt[$idd] = $pref_field_data;
+				}
+				
+				$previousData = [];
+				foreach ($prefields as $idp => $pref_data) {
+					$previousData[$pref_data] = $prefieldt[$idp];
+				}
+				
+				$previousdata = [];
+				foreach ($previousData as $_field => $_value) {
+					$previousdata[] = "`{$_field}` = '{$_value}'";
+				}
+				
+				$wherepPrefious = ' AND ' . implode(' AND ', $previousdata);
+			}
+			
+			$wheres = implode(' AND ', $wheres);
+			
+			$rows = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}");
+			
+			return $rows;
+		}
+	}
+	
+	public $filter_datatables_string = null;
+	protected function store(Request $request) {//, $model = []) {
+		$model = null;
+		if (!empty($_GET['filterDataTables'])) {
+			return $this->initFilterDatatables();
+		}
+		
+		if (!empty($_GET['renderDataTables'])) {
+		//	$filter_strings = null;
+			if (!empty($_POST)) {
+			//	$token = $_POST['_token'];
+				unset($_POST['_token']);
+				$input_filters	= [];
+				
+				foreach ($_POST as $field => $value) {
+					if (!empty($value)) {
+						$input_filters[] = "infil[{$field}]={$value}";
+					}
+				}
+				$this->filter_datatables_string = '&filters=true&' . implode('&', $input_filters);
+				dd($this);
+			}
+		}
+		
+		$req = $request->all();dd($req);
 		if (!empty($req['filters'])) {
 			if ('true' === $req['filters']) {
 				$this->filterDataTable($request);
@@ -94,7 +174,7 @@ trait Action {
 			
 			// check if any input file type submited
 			$data	= $this->checkFileInputSubmited($request);
-			$id		= diy_insert($model, $data, true);
+			$id	= diy_insert($model, $data, true);
 			
 			return $this->routeBackAfterAction(__FUNCTION__, $id);
 		}
@@ -124,7 +204,10 @@ trait Action {
 	 * @param object $class
 	 */
 	protected function model($class) {
-		$this->model = $class;
+		$this->model_path    = $class;
+		$this->model         = new $this->model_path();
+		$this->model_table   = $this->model->getTable();
+		
 		if (!empty($this->form)) {
 			$this->form->model = $this->model;
 		}
@@ -187,4 +270,25 @@ trait Action {
 			return $request;
 		}
 	}
+	
+	public function show($id) {
+		$model_data = $this->model->find($id);
+		
+		$this->form->model($this->model, $this->model->find($id));
+		foreach ($model_data->getAttributes() as $field => $value) {
+			if ('id' !== $field) {
+				if ('active' === $field) {
+					$this->form->selectbox($field, active_box(), $model_data->active, ['disabled']);
+				} elseif ('flag_status' === $field) {
+					$this->form->selectbox($field, flag_status(), $model_data->flag_status, ['disabled']);
+				} else {
+					$this->form->text($field, $value, ['disabled']);
+				}
+			}
+		}
+		$this->form->close();
+		
+		return $this->render();
+	}
+	
 }

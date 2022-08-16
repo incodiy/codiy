@@ -18,7 +18,7 @@ trait Form {
 	public $form;
 	
 	private function initForm() {
-		$this->form			 	= new Objects();
-		$this->plugins['form']	= $this->form;
+		$this->form = new Objects();
+		$this->plugins['form'] = $this->form;
 	}
 }

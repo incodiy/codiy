@@ -18,7 +18,7 @@ trait Template {
 	
 	public $template = [];
 	private function initTemplate() {
-		$this->template				= new Theme();
+		$this->template = new Theme();
 		$this->plugins['template']	= $this->template;
 	}
 }

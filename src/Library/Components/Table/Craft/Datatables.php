@@ -72,11 +72,7 @@ class Datatables {
 			
 			// DEVELOPMENT STATUS | @WAITINGLISTS
 			if ('sql' === $model_type) {
-			/* 	$query_data	= diy_query($model_source);
-				$table_name	= diy_get_table_name_from_sql($model_source);
-			 */
 				$model_data = new DynamicTables($model_source);
-				dd($model_data);
 			}
 		}
 		
@@ -146,37 +142,39 @@ class Datatables {
 			}
 			
 			if (!empty($filters)) {
-				$_filters			= [];
+			//	$_filters			= [];
 				$modelDataFilters	= $model_data;
 				foreach ($filters as $fieldname => $rowdata) {
 					if (count($rowdata) <= 1) {
 						foreach ($rowdata as $dataRow) {
-							$_filters[$fieldname] = $dataRow;
+			//				$_filters[$fieldname] = $dataRow;
+							$modelDataFilters = $modelDataFilters->where($fieldname, 'LIKE', "%{$dataRow}%");
 						}
-						$modelDataFilters = $modelDataFilters->where($_filters);
+			//			$modelDataFilters = $modelDataFilters->where($_filters);
 					} else {
 						foreach ($rowdata as $_dataRows) {
-							$modelDataFilters = $modelDataFilters->orWhere([$fieldname => $_dataRows]);
+			//				$modelDataFilters = $modelDataFilters->orWhere([$fieldname => $_dataRows]);
+							$modelDataFilters = $modelDataFilters->where($fieldname, 'LIKE', "%{$_dataRows}%");
 						}
 					}
 				}
-				$model = $modelDataFilters->skip($limit['start'])->take($limit['length']);
+				$limit['total']	= count($modelDataFilters->get());
+				$model			= $modelDataFilters->skip($limit['start'])->take($limit['length']);
 			}
 		}
+		
+		$datatables = DataTable::of($model)
+			->setTotalRecords($limit['total'])
+			->blacklist(['password', 'action', 'no'])
+		//	->orderColumn('id', 'id $1')	// asc
+			->orderColumn('id', 'id desc')	// desc
+			->smart(true);
 		
 		$is_image = [];
 		if (!empty($this->form->imageTagFieldsDatatable)) {
 			$is_image = array_keys($this->form->imageTagFieldsDatatable);
+			$datatables->rawColumns(array_merge_recursive(['action', 'flag_status'], $is_image));
 		}
-		
-		$DataTables = new DataTable();
-		$datatables = $DataTables->eloquent($model)
-//		$datatables = DataTable::of($model)
-			->setTotalRecords($limit['total'])
-			->rawColumns(array_merge_recursive(['action', 'flag_status'], $is_image))
-			->blacklist(['password', 'action', 'no'])
-			->orderColumn('id', '-id $1')
-			->smart(true);
 		
 		if (!empty($order_by)) {
 			$datatables->order(function ($query) use($order_by) {

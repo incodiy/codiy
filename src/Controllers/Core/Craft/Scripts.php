@@ -76,14 +76,14 @@ trait Scripts {
 		
 		if (!empty($this->table->elements)) {
 			if (!empty($this->table->filter_scripts)) {
-				$scripts['js']	= $this->table->filter_scripts['js'];
-				$scripts['css']	= $this->table->filter_scripts['css'];
+				if (!empty($this->table->filter_scripts['js']))		$scripts['js']		= $this->table->filter_scripts['js'];
+				if (!empty($this->table->filter_scripts['css']))	$scripts['css']	= $this->table->filter_scripts['css'];
 			}
 			$this->getScriptFromElements($this->table);
 		}
 		
-		$this->setScriptUnique('js', $scripts);
-		$this->setScriptUnique('css', $scripts);
+		$this->setScriptUnique('js',	$scripts);
+		$this->setScriptUnique('css',	$scripts);
 		
 		return false;
 	}

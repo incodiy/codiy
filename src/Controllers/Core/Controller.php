@@ -10,6 +10,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Incodiy\Codiy\Controllers\Core\Craft\View;
 use Incodiy\Codiy\Controllers\Core\Craft\Action;
 use Incodiy\Codiy\Controllers\Core\Craft\Scripts;
+use Incodiy\Codiy\Controllers\Core\Craft\Session;
 
 use Incodiy\Codiy\Controllers\Core\Craft\Components\MetaTags;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Template;
@@ -35,7 +36,7 @@ class Controller extends BaseController {
 	
 	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 	use MetaTags, Template;
-	use Scripts, Action, View;
+	use Scripts, Action, View, Session;
 	use Form, FileUpload, RouteInfo;
 	use Table;
 	
@@ -48,9 +49,10 @@ class Controller extends BaseController {
 	private $plugins		= [];
 	
 	public function __construct() {
-		ini_set('memory_limit', '128M');
+		ini_set('memory_limit', -1);
 		
 		$this->dataCollections();
+		
 		if (strpos(php_sapi_name(), 'cli') === false) {
 			if (!empty($this->form)) $this->routeInfo();
 		}

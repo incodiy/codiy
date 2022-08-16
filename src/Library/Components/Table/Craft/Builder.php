@@ -33,28 +33,28 @@ class Builder {
 		} else {
 			$model = new DynamicTables();
 			$model->setTable($name);
-			$data[$name]['model']		= get_class($model);
+			$data[$name]['model']       = get_class($model);
 			$attributes[$name]['model'] = get_class($model);
 		}
 		
 		if (!empty($model)) {
-			$this->model[$name]['type']		= 'model';
-			$this->model[$name]['source']	= $model;
+			$this->model[$name]['type']   = 'model';
+			$this->model[$name]['source'] = $model;
 		} else {
-			$this->model[$name]['type']		= 'sql';
+			$this->model[$name]['type']   = 'sql';
 			$this->model[$name]['source']	= $data[$name]['sql'];
 		}
 		
 		if (!empty($attributes[$name])) {
-			$tableID			= $attributes[$name]['attributes']['table_id'];
-			$tableClass			= $attributes[$name]['attributes']['table_class'];
-			$this->serverSide	= $attributes[$name]['server_side']['status'];
-			$this->customURL	= $attributes[$name]['server_side']['custom_url'];
+			$tableID          = $attributes[$name]['attributes']['table_id'];
+			$tableClass       = $attributes[$name]['attributes']['table_class'];
+			$this->serverSide = $attributes[$name]['server_side']['status'];
+			$this->customURL  = $attributes[$name]['server_side']['custom_url'];
 		}
 		
-		$data[$name]['name']		= $name;
-		$data[$name]['columns']		= $columns[$name];
-		$data[$name]['attributes']	= $attributes[$name];
+		$data[$name]['name']       = $name;
+		$data[$name]['columns']    = $columns[$name];
+		$data[$name]['attributes'] = $attributes[$name];
 		
 		// FORMULATION
 		if (!empty($data[$name]['attributes']['conditions']['formula'])) {
@@ -433,12 +433,12 @@ class Builder {
 		}
 		
 		foreach ($columns as $column) {
-			$jsonData['data']		= $column;
-			$jsonData['name']		= $column;
+			$jsonData['data']			= $column;
+			$jsonData['name']			= $column;
 			$jsonData['sortable']	= false;
 			$jsonData['searchable']	= false;
 			$jsonData['class']		= 'auto-cut-text';
-			$jsonData['onclick']	= 'return false';
+			$jsonData['onclick']		= 'return false';
 			
 			$formula_column = null;
 			if (!empty($formula_fields[$column])) {
@@ -499,9 +499,9 @@ class Builder {
 			}
 		}
 		
-		$dt_info				= [];
+		$dt_info = [];
 		$dt_info['searchable']	= [];
-		$dt_info['name']		= $name;
+		$dt_info['name']			= $name;
 		if (!empty($data['columns']['sortable'])) $dt_info['sortable'] = $data['columns']['sortable'];
 		if (!empty($data['attributes']['conditions'])) {
 			$dt_info['conditions']	= $data['attributes']['conditions'];
@@ -514,7 +514,7 @@ class Builder {
 			$dt_info['searchable'] = $data['columns']['searchable'];
 			if (!empty($data['columns']['filters'])) {
 				
-				$search_data				= [];
+				$search_data					= [];
 				$search_data['table_name']	= $name;
 				$search_data['searchable']	= $data['columns']['searchable'];
 				$search_data['columns']		= $data['columns']['filters'];

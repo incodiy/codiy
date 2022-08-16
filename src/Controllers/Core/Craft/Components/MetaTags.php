@@ -18,7 +18,7 @@ trait MetaTags {
 	
 	public $meta = [];
 	private function initMetaTags() {
-		$this->meta					= new Meta();
-		$this->plugins['meta']		= $this->meta;
+		$this->meta = new Meta();
+		$this->plugins['meta'] = $this->meta;
 	}
 }

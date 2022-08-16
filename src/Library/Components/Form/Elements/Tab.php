@@ -17,19 +17,19 @@ trait Tab {
 	/**
 	 * --[openTabHTMLForm]--
 	 */
-	private $opentabHTML			= '--[openTabHTMLForm]--';
+	private $opentabHTML		= '--[openTabHTMLForm]--';
 	/**
 	 * --[openNewTab]--
 	 */
-	private $openNewTab				= '--[openNewTab]--';
+	private $openNewTab			= '--[openNewTab]--';
 	/**
 	 * --[openNewTabClass]--
 	 */
-	private $openNewTabClass		= '--[openNewTabClass]--';
+	private $openNewTabClass	= '--[openNewTabClass]--';
 	/**
 	 * --[closeTabHTMLForm]--
 	 */
-	private $closedtabHTML			= '--[closeTabHTMLForm]--';
+	private $closedtabHTML		= '--[closeTabHTMLForm]--';
 		
 	/**
 	 * Create Open Tab

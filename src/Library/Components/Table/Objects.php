@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Library\Components\Table;
 
 use Incodiy\Codiy\Library\Components\Table\Craft\Builder;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
 
 /**
  * Created on 12 Apr 2021
@@ -18,6 +19,7 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
  
 class Objects extends Builder {
+	use Tab;
 	
 	public $elements		= [];
 	public $element_name	= [];
@@ -29,9 +31,14 @@ class Objects extends Builder {
 	private $setDatatable 	= true;
 	private $tableType		= 'datatable';
 	
+	/**
+	 * --[openTabHTMLForm]--
+	 */
+	private $opentabHTML	= '--[openTabHTMLForm]--';
+	
 	public function __construct() {
-		$this->element_name['table']	= $this->tableType;
-		$this->variables['table_class'] = 'table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
+		$this->element_name['table']		= $this->tableType;
+		$this->variables['table_class']	= 'table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
 	}
 	
 	public $filter_scripts = [];
@@ -45,7 +52,15 @@ class Objects extends Builder {
 	}
 	
 	public function render($object) {
-		return $object;
+		$tabObj = "";
+		if (true === is_array($object)) $tabObj = implode('', $object);
+		
+		if (true === diy_string_contained($tabObj, $this->opentabHTML)) {
+			return $this->renderTab($object);
+		} else {
+			return $object;
+		}
+		
 	}
 	
 	public function setDatatableType($set = true) {
@@ -132,15 +147,30 @@ class Objects extends Builder {
 		$this->variables['orderby_column']		= ['column' => $column, 'order' => $order];
 	}
 	
+	/**
+	 * Set Sortable Column(s)
+	 * 
+	 * @param string|array $columns
+	 */
 	public function sortable($columns = null) {
 		$this->variables['sortable_columns']	= $this->checkColumnSet($columns);
 	}
 	
+	/**
+	 * Set Clickable Column(s)
+	 * 
+	 * @param string|array $columns
+	 */
 	public function clickable($columns = null) {
 		$this->variables['clickable_columns']	= $this->checkColumnSet($columns);
 	}
 	
 	public $search_columns = false;
+	/**
+	 * Set Seachable Column(s)
+	 * 
+	 * @param string|array $columns
+	 */
 	public function searchable($columns = null) {
 		$this->variables['searchable_columns']	= $this->checkColumnSet($columns);
 		if (empty($columns)) {
@@ -227,23 +257,25 @@ class Objects extends Builder {
 	 * Set Data Condition By Column
 	 * 
 	 * @param string $field_name
+	 * @param string $rule
+	 * 		: [ css style, prefix, suffix, prefix&suffix, replace, integer, float [ code: float or float|2 ] ]
+	 * @param string|array $action
+	 * 		: array used for "prefix&suffix" rule type.
+	 * 		  First array should be prefix value and second/last array should be suffix value.
 	 * @param string $target
 	 * 		: [ row, cell, field_name ]
 	 * @param string $logic_operator
 	 * 		: [ =, != ] { dev:contains, !contain }
 	 * @param string $value
-	 * @param string $rule
-	 * 		: [ css style, prefix, suffix, replace ]
-	 * @param string $action
 	 */
-	public function columnCondition(string $field_name, string $target, string $logic_operator, string $value, string $rule, string $action) {
+	public function columnCondition(string $field_name, string $rule, $action, string $target, string $logic_operator = null, string $value = null) {
 		$this->conditions['columns'][] = [
 			'field_name'		=> $field_name,
+			'rule'				=> $rule,
+			'action'				=> $action,
 			'field_target'		=> $target,
 			'logic_operator'	=> $logic_operator,
-			'value'				=> $value,
-			'rule'				=> $rule,
-			'action'			=> $action
+			'value'				=> $value
 		];
 	}
 	
@@ -265,9 +297,13 @@ class Objects extends Builder {
 			'label'				=> $label,
 			'field_lists'		=> $field_lists,
 			'logic'				=> $logic,
-			'node_location'		=> $node_location,
+			'node_location'	=> $node_location,
 			'node_after'		=> $node_after_node_location
 		];
+	}
+	
+	public function set_regular_table() {
+		$this->tableType = 'regular';
 	}
 	
 	public $tableName	= [];
@@ -297,7 +333,7 @@ class Objects extends Builder {
 			
 			$this->variables['table_name'] = $table_name;
 		}
-		$this->tableName				= $table_name;
+		$this->tableName					= $table_name;
 		$this->records['index_lists']	= $numbering;
 		
 		if (is_array($fields)) {
@@ -319,7 +355,7 @@ class Objects extends Builder {
 			} elseif (!empty($this->variables['table_fields'])) {
 				$fields = $this->check_column_exist($table_name, $this->variables['table_fields']);
 			} else {
-				$fields	= diy_get_table_columns($table_name);
+				$fields = diy_get_table_columns($table_name);
 			}
 		}
 		
@@ -336,22 +372,22 @@ class Objects extends Builder {
 		$this->columns[$table_name]['lists']	= $fields;
 		$this->columns[$table_name]['actions']	= $actions;
 		
-		if (!empty($this->variables['text_align']))			$this->columns[$table_name]['align']			= $this->variables['text_align'];
-		if (!empty($this->variables['merged_columns']))		$this->columns[$table_name]['merge'] 			= $this->variables['merged_columns'];
-		if (!empty($this->variables['orderby_column']))		$this->columns[$table_name]['orderby']			= $this->variables['orderby_column'];
-		if (!empty($this->variables['clickable_columns']))	$this->columns[$table_name]['clickable']		= $this->variables['clickable_columns'];
-		if (!empty($this->variables['sortable_columns']))	$this->columns[$table_name]['sortable']			= $this->variables['sortable_columns'];
-		if (!empty($this->variables['searchable_columns'])) $this->columns[$table_name]['searchable']		= $this->variables['searchable_columns'];
-		if (!empty($this->variables['filter_groups']))		$this->columns[$table_name]['filter_groups']	= $this->variables['filter_groups'];
+		if (!empty($this->variables['text_align']))				$this->columns[$table_name]['align']			= $this->variables['text_align'];
+		if (!empty($this->variables['merged_columns']))			$this->columns[$table_name]['merge'] 			= $this->variables['merged_columns'];
+		if (!empty($this->variables['orderby_column']))			$this->columns[$table_name]['orderby']			= $this->variables['orderby_column'];
+		if (!empty($this->variables['clickable_columns']))		$this->columns[$table_name]['clickable']		= $this->variables['clickable_columns'];
+		if (!empty($this->variables['sortable_columns']))		$this->columns[$table_name]['sortable']		= $this->variables['sortable_columns'];
+		if (!empty($this->variables['searchable_columns']))	$this->columns[$table_name]['searchable']		= $this->variables['searchable_columns'];
+		if (!empty($this->variables['filter_groups']))			$this->columns[$table_name]['filter_groups']	= $this->variables['filter_groups'];
 		
 		$this->tableID[$table_name]	= diy_clean_strings("CoDIY_{$this->tableType}_" . $table_name . '_' . diy_random_strings(50, false));
-		$attributes['table_id']		= $this->tableID[$table_name];
-		$attributes['table_class']	= diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
+		$attributes['table_id']			= $this->tableID[$table_name];
+		$attributes['table_class']		= diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
 		if (!empty($this->variables['background_color'])) $attributes['bg_color'] = $this->variables['background_color'];
 		
-		$this->params[$table_name]['actions']					= $actions;
-		$this->params[$table_name]['numbering']					= $numbering;
-		$this->params[$table_name]['attributes']				= $attributes;
+		$this->params[$table_name]['actions']							= $actions;
+		$this->params[$table_name]['numbering']						= $numbering;
+		$this->params[$table_name]['attributes']						= $attributes;
 		$this->params[$table_name]['server_side']['status']		= $server_side;
 		$this->params[$table_name]['server_side']['custom_url']	= $server_side_custom_url;
 		
@@ -367,12 +403,14 @@ class Objects extends Builder {
 		
 		if ('datatable' === $this->tableType) {
 			$this->renderDatatable($table_name, $this->columns, $this->params);
+		} else {
+			$this->renderGeneralTable($table_name, $this->columns, $this->params);
 		}
 	}
 	
 	private function renderDatatable($name, $columns = [], $attributes = []) {
 		if (!empty($this->variables['table_data_model'])) {
-			$attributes[$name]['model']	= $this->variables['table_data_model'];
+			$attributes[$name]['model'] = $this->variables['table_data_model'];
 			asort($attributes[$name]);
 		}
 		
@@ -382,5 +420,9 @@ class Objects extends Builder {
 		}
 		
 		return $this->draw($this->tableID[$name], $this->table($name, $columns, $attributes));
+	}
+	
+	private function renderGeneralTable($name, $columns = [], $attributes = []) {
+		dd($columns);
 	}
 }

@@ -42,7 +42,7 @@ trait Scripts {
 			'csv|'		. $buttonConfig,
 			'pdf|'		. $buttonConfig,
 			'copy|'		. $buttonConfig,
-			'print|'	. $buttonConfig
+			'print|'		. $buttonConfig
 		]);
 				
 		$initComplete	= null;
@@ -51,7 +51,7 @@ trait Scripts {
 			"processing":true,
 			"retrieve":true,
 			"paginate":true,
-			"searchDelay":700,
+			"searchDelay":1000,
 			"bDeferRender":true,
 			"responsive":false,
 			"autoWidth":false,
@@ -61,7 +61,7 @@ trait Scripts {
 				["10", "25", "50", "100", "250", "500", "1000", "Show All"]
 			],
 			"buttons":' . $buttonset . ',
-			"initComplete": function() {' . $initComplete . '},
+		//	"initComplete": function() {' . $initComplete . '},
 		';
 		$responsive		= "rowReorder: {selector:'td:nth-child(2)'},responsive: false,";
 		$js_conditional	= null;
@@ -86,11 +86,11 @@ trait Scripts {
 			
 			$scriptURI		= "{$current_url}?{$link_url}";
 			
-			$colDefs		= ",columnDefs:[{targets:[1],visible:true,searchable:false,className:'control hidden-column'}";
+			$colDefs			= ",columnDefs:[{targets:[1],visible:true,searchable:false,className:'control hidden-column'}";
 			$orderColumn	= ",order:[[1, 'asc']]{$colDefs}]";
-			$columns		= ",columns:{$columns}{$orderColumn}";
+			$columns			= ",columns:{$columns}{$orderColumn}";
 			$url_path		= url(diy_current_route()->uri);
-			$hash			= hash_code_id();
+			$hash				= hash_code_id();
 			$clickAction	= ".on('click','td.clickable',function(){var getRLP=$(this).parent('tr').attr('rlp');if(getRLP != false) {var _rlp=parseInt(getRLP.replace('{$hash}','')-8*800/80);window.location='{$url_path}/'+_rlp+'/edit'}});";
 			$initComplete	= ',' . $this->initComplete($attr_id, false);
 			if (false !== $filters) {
@@ -107,8 +107,9 @@ trait Scripts {
 					{$filter_js}
 				});
 			";
+			$ajax = "ajax:'{$scriptURI}{$filters}'";
 			
-			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true, ajax:'{$scriptURI}{$filters}'{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
+			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true, {$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
 		} else {
 			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({{$default_set}columns:{$columns}});";
 		}
@@ -118,13 +119,8 @@ trait Scripts {
 	}
 	
 	private function getJsContainMatch($data, $match_contained = null) {
-		if ('!=' === $match_contained || '!==' === $match_contained) {
-			$match = false;
-		}
-		
-		if ('==' === $match_contained || '===' === $match_contained) {
-			$match = true;
-		}
+		if ('!=' === $match_contained || '!==' === $match_contained) $match = false;
+		if ('==' === $match_contained || '===' === $match_contained) $match = true;
 		
 		if (true  == $match) return ":contains(\"{$data}\")";
 		if (false == $match) return ":not(:contains(\"{$data}\"))";		
@@ -142,35 +138,72 @@ trait Scripts {
 		
 		$js = null;
 		if (!empty($data)) {
+			
 			$js .= ", 'createdRow': function(row, data, dataIndex, cells) {";
+			
 			foreach ($data as $condition) {
-				$logic = $condition['logic_operator'];
-				$js .= "\n";
-				$js .= "if (data.{$condition['field_name']} {$logic} '{$condition['value']}') {";
-				
-				if ('row' === $condition['field_target']) {
-					$js .= "$(row).children('td').css({'{$condition['rule']}': '{$condition['action']}'});";
-				}
-				
-				if ('cell' === $condition['field_target']) {
-				//	$td_rule = $this->getJsContainMatch($condition['value'], $logic);$js .= "$(row).children('td{$td_rule}').css({'{$condition['rule']}': '{$condition['action']}'});";
-					if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule']) {
-						$js .= "$(cells[\"{$condition['node']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
+				if (!empty($condition['logic_operator'])) {
+					$js .= "\n";
+					$js .= "if (data.{$condition['field_name']} {$condition['logic_operator']} '{$condition['value']}') {";
+					
+					if ('row' === $condition['field_target']) $js .= "$(row).children('td').css({'{$condition['rule']}': '{$condition['action']}'});";
+					
+					if ('cell' === $condition['field_target']) {
+					//	$td_rule = $this->getJsContainMatch($condition['value'], $logic);$js .= "$(row).children('td{$td_rule}').css({'{$condition['rule']}': '{$condition['action']}'});";
+						if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule'] && 'prefix&suffix' !== $condition['rule']) {
+							$js .= "$(cells[\"{$condition['node']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
+						}
+						if ('prefix&suffix' === $condition['rule']) {
+							$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
+						}
+						if ('prefix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
+						if ('suffix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
+						if ('replace' === $condition['rule']) {
+							if ('integer' === $condition['action']) {
+								$js .= "$(cells[\"{$condition['node']}\"]).text(parseInt($(cells[\"{$condition['node']}\"]).text()));";
+							} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
+								if (diy_string_contained($condition['action'], '|')) {
+									$condAcFloat = explode('|', $condition['action']);
+									$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed({$condAcFloat[1]}));";
+								} else {
+									$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed(2));";
+								}
+							} else {
+								$js .= "$(cells[\"{$condition['node']}\"]).text('{$condition['action']}');";
+							}
+						}
 					}
-					if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
-					if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
-					if ('replace' === $condition['rule']) {
-						$js .= "$(cells[\"{$condition['node']}\"]).text('{$condition['action']}');";
-					}
+					
+					$js .= "}";
 				}
 				
 				if ('column' === $condition['field_target']) {
-					
+					if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule'] && 'prefix&suffix' !== $condition['rule']) {
+						$js .= "$(cells[\"{$condition['node']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
+					}
+					if ('prefix&suffix' === $condition['rule']) {
+						$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
+					}
+					if ('prefix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
+					if ('suffix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
+					if ('replace' === $condition['rule']) {
+						if ('integer' === $condition['action']) {
+							$js .= "$(cells[\"{$condition['node']}\"]).text(parseInt($(cells[\"{$condition['node']}\"]).text()));";
+						} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
+							if (diy_string_contained($condition['action'], '|')) {
+								$condAcFloat = explode('|', $condition['action']);
+								$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed({$condAcFloat[1]}));";
+							} else {
+								$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed(2));";
+							}
+						} else {
+							$js .= "$(cells[\"{$condition['node']}\"]).text('{$condition['action']}');";
+						}
+					}
 				}
-				
-				$js .= "}";
 			}
-			$js .= "}";
+			
+			$js .= "}";//dd($js);
 		}
 		
 		return $js;
@@ -255,13 +288,13 @@ trait Scripts {
 				event.preventDefault();
 				var form = $(this);
 				$.ajax ({
-					type: 'GET',
-					data: form.serialize(),
-					url: '{$url}&filters=true',
-					beforeSend: function() {
+					type		: 'GET',
+					data		: form.serialize(),
+					url			: '{$url}&filters=true',
+					beforeSend	: function() {
 						$('#{$id}_cdyProcessing').show();
 					},
-					success: function(data) {
+					success		: function(data) {
 						var {$varTableID}_inputData = data.input;
 						var {$varTableID}_filterURI = [];
 						$.each({$varTableID}_inputData, function(index, value) {
@@ -285,7 +318,7 @@ trait Scripts {
 						var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';
 						cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).load();
 					},
-					complete: function() {
+					complete	: function() {
 						$('#{$id}_cdyProcessing').hide();
 						$('#{$id}_cdyFILTER').modal('hide');
 					}
@@ -305,22 +338,20 @@ trait Scripts {
 			}
 			
 			$js = "
-				initComplete: function() {
-					this.api().columns().every(function(n) {
-						if (n > 1) {
-			                var column = this;
-			                var input  = document.createElement(\"input\");
-			                $(input)
-								.attr({
-									'class':'form-control',
-									'placeholder': 'search'
-								})
-								.appendTo($(column.{$location}()).empty()).on('change', function () {
-				                    column.search($(this).val(), false, false, true).draw();
-				                });
-						}
-		            });
-		        }
+initComplete: function() {
+	this.api().columns().every(function(n) {
+		if (n > 1) {
+			var column = this;
+			var input  = document.createElement(\"input\");
+			$(input).attr({
+				'class':'form-control',
+				'placeholder': 'search'
+			}).appendTo($(column.{$location}()).empty()).on('change', function () {
+				column.search($(this).val(), false, false, true).draw();
+			});
+		}
+	});
+}
 			";
 		}
 		

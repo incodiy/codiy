@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Group extends Model {
 	use SoftDeletes;
-	protected $dates	= ['deleted_at'];
+	protected $dates		= ['deleted_at'];
 	
-	protected $table	= 'base_group';
+	protected $table		= 'base_group';
 	protected $guarded	= [];
 	
 	public $timestamps	= false;

@@ -259,7 +259,9 @@ if (!function_exists('diy_form_checkList')) {
 		if (false !== $label)	$labelName	= "&nbsp; {$label}";
 		if (false !== $checked)	$checkBox	= ' checked="checked"';
 		
-		return "<div class=\"ckbox ckbox-{$class}\"><input type=\"checkbox\"{$valueAttr}{$nameAttr}{$idAttr}{$checkBox}><label{$idForAttr}>{$labelName}</label></div>";
+		$o = "<div class=\"ckbox ckbox-{$class}\"><input type=\"checkbox\"{$valueAttr}{$nameAttr}{$idAttr}{$checkBox}><label{$idForAttr}>{$labelName}</label></div>";
+		
+		return $o;
 	}
 }
 
@@ -438,5 +440,28 @@ if (!function_exists('diy_form_get_client_ip')) {
 		}
 		
 		return $ipaddress;
+	}
+}
+
+if (!function_exists('diy_selectbox')) {
+	
+	/**
+	 * Set Default Combobox Data
+	 *
+	 * @param array $object
+	 * @param string $key_value
+	 * @param string $key_label
+	 * @param string $set_null_array
+	 * @return array
+	 */
+	function diy_selectbox($object, $key_value, $key_label, $set_null_array = true) {
+		$options = [0 => ''];
+		if (true === $set_null_array) $options[] = '';
+		
+		foreach ($object as $row) {
+			$options[$row[$key_value]] = $row[$key_label];
+		}
+		
+		return $options;
 	}
 }
