@@ -1,6 +1,6 @@
 Bismillah.
 
-This package used for simplifying some code with Laravel framework. This code inspired by muntilan-CMS code developed by .::bit.
+This package used for simplifying some code with Laravel framework. This code inspired by Muntilan-CMS code developed by .::bit.
 
 
 1). INSTALL LARAVEL
