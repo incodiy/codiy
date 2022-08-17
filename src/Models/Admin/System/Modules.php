@@ -20,7 +20,7 @@ class Modules extends Model {
 	use SoftDeletes;
 	
 	protected $dates		= ['deleted_at'];
-	protected $table		= 'base_module_copy';
+	protected $table		= 'base_module';
 	protected $guarded	= [];
 	
 	public $timestamps	= false;

@@ -23,7 +23,7 @@ class GroupController extends Controller {
 	use Privileges;
 	
 	private $route_group			 = 'system.config';
-	private $table_privilege	 = 'base_group_privilege_copy';
+	private $table_privilege	 = 'base_group_privilege';
 	
 	private $id						 = false;
 	private $_set_tab				 = [];
