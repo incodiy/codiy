@@ -89,9 +89,10 @@ class CreateBaseTable extends Migration {
 			
 			$table->bigInteger('id', true)->unsigned();
 			
-			$table->string('name', 20);
+			$table->string('username', 20);
 			$table->string('fullname', 50)->nullable();
 			$table->string('email')->unique();
+			$table->timestamp('email_verified_at')->nullable();
 			$table->string('password');
 			
 			$table->string('gender', 5)->nullable();
@@ -220,29 +221,68 @@ class CreateBaseTable extends Migration {
 			
 			$table->timestamps();
 		});
-			
-		// Messages Table
-		Schema::create('mod_messages', function (Blueprint $table) {
+		
+		// POSTAL CODE TABLE
+		Schema::create('base_postal_code', function (Blueprint $table) {
 			$this->set_engine($table->engine, $this->engine);
 			
 			$table->increments('id')->unsigned();
-			$table->bigInteger($this->platform_key)->unsigned()->nullable();
-			$table->bigInteger('user_id')->unsigned()->nullable();
 			
-			$table->string('from', 250)->nullable();
-			$table->string('subject', 250);
-			$table->text('message')->nullable();
-			$table->smallInteger('read_status')->default(0);
+			// WEB IDENTITY
+			$table->string('province', 80);
+			$table->string('regency', 100)->nullable();
+			$table->string('sub_district', 100)->nullable();
+			$table->string('urban_village', 100)->nullable();
+			$table->string('postal_code', 5)->nullable();
 			
-			$table->softDeletes();
+			$table->index('postal_code');
 			$table->timestamps();
-			
-			$table->index($this->platform_key);
-			$table->index('user_id');
-			
-			$table->foreign($this->platform_key)->references('id')->on($this->platform_table)->onUpdate('cascade')->onDelete('cascade');
-			$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 		});
+		
+		// MAINTENANCE
+		Schema::create('base_maintenance', function (Blueprint $table) {
+			$this->set_engine($table->engine, $this->engine);
+			
+			$table->increments('id')->unsigned();
+			$table->string('title', 100);
+			$table->text('description');
+			$table->text('logo')->nullable();
+			$table->text('logo_thumb')->nullable();
+			$table->text('image')->nullable();
+			$table->text('image_thumb')->nullable();
+			$table->string('time_duration', 100);
+			$table->smallInteger('subscribe_button')->default(0);
+			$table->text('subscribe_text')->nullable();
+			$table->smallInteger('status')->default(0);
+			
+			$table->timestamps();
+			$table->softDeletes();
+		});
+		
+		if (true === $this->is_multiplatform) {
+			// Messages Table
+			Schema::create('mod_messages', function (Blueprint $table) {
+				$this->set_engine($table->engine, $this->engine);
+				
+				$table->increments('id')->unsigned();
+				$table->bigInteger($this->platform_key)->unsigned()->nullable();
+				$table->bigInteger('user_id')->unsigned()->nullable();
+				
+				$table->string('from', 250)->nullable();
+				$table->string('subject', 250);
+				$table->text('message')->nullable();
+				$table->smallInteger('read_status')->default(0);
+				
+				$table->softDeletes();
+				$table->timestamps();
+				
+				$table->index($this->platform_key);
+				$table->index('user_id');
+				
+				$table->foreign($this->platform_key)->references('id')->on($this->platform_table)->onUpdate('cascade')->onDelete('cascade');
+				$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			});
+		}		
 	}
 	
 	private function multiple_relation_tables() {
@@ -348,23 +388,6 @@ class CreateBaseTable extends Migration {
 			
 			$table->foreign('type_id')->references('id')->on("{$this->platform_table}_type")->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('land_status_id')->references('id')->on("{$this->platform_table}_land_status")->onUpdate('cascade')->onDelete('cascade');
-		});
-		
-		// POSTAL CODE TABLE
-		Schema::create('base_postal_code', function (Blueprint $table) {
-			$this->set_engine($table->engine, $this->engine);
-			
-			$table->increments('id')->unsigned();
-			
-			// WEB IDENTITY
-			$table->string('province', 80);
-			$table->string('regency', 100)->nullable();
-			$table->string('sub_district', 100)->nullable();
-			$table->string('urban_village', 100)->nullable();
-			$table->string('postal_code', 5)->nullable();
-			
-			$table->index('postal_code');
-			$table->timestamps();
 		});
 		
 		// IMAM SHOLAT TABLE
@@ -548,26 +571,7 @@ class CreateBaseTable extends Migration {
 			
 			$table->timestamps();
 		});
-		
-		Schema::create('base_maintenance', function (Blueprint $table) {
-			$this->set_engine($table->engine, $this->engine);
-			
-			$table->increments('id')->unsigned();
-			$table->string('title', 100);
-			$table->text('description');
-			$table->text('logo')->nullable();
-			$table->text('logo_thumb')->nullable();
-			$table->text('image')->nullable();
-			$table->text('image_thumb')->nullable();
-			$table->string('time_duration', 100);
-			$table->smallInteger('subscribe_button')->default(0);
-			$table->text('subscribe_text')->nullable();
-			$table->smallInteger('status')->default(0);
-			
-			$table->timestamps();
-			$table->softDeletes();
-		});
-		
+				
 		Schema::create('prayer_time_adjustment', function (Blueprint $table) {
 			$this->set_engine($table->engine, $this->engine);
 			
@@ -905,6 +909,9 @@ class CreateBaseTable extends Migration {
 			$this->multiple_modular_tables();		
 			$this->multiple_main_tables();
 			$this->multiple_relation_tables();
+		} else {
+			$this->multiple_main_tables();
+			$this->multiple_relation_tables();
 		}
 	}
 	
@@ -921,47 +928,53 @@ class CreateBaseTable extends Migration {
 		Schema::dropIfExists('base_postal_code');
 		Schema::dropIfExists('base_preference');
 		Schema::dropIfExists('base_icon');
-		Schema::dropIfExists('base_about');
-		Schema::dropIfExists('base_teams');
-		Schema::dropIfExists('base_contact');
-		Schema::dropIfExists('base_faq');
 		Schema::dropIfExists('base_maintenance');
-		Schema::dropIfExists('tapi_client');
+		if (true === $this->is_multiplatform) {
+			Schema::dropIfExists('base_about');
+			Schema::dropIfExists('base_teams');
+			Schema::dropIfExists('base_contact');
+			Schema::dropIfExists('base_faq');
+			Schema::dropIfExists('tapi_client');
+		}
 		
-		// APPROVALS
-		Schema::dropIfExists('base_banners');
-		Schema::dropIfExists('base_approval_banners');
-		Schema::dropIfExists('mod_banners');
-		Schema::dropIfExists('base_banners_type');
-		Schema::dropIfExists('base_articles');
-		Schema::dropIfExists('base_approval_articles');
-		Schema::dropIfExists('mod_articles');
-		Schema::dropIfExists('base_articles_type');
+		if (true === $this->is_multiplatform) {
+			// APPROVALS
+			Schema::dropIfExists('base_banners');
+			Schema::dropIfExists('base_approval_banners');
+			Schema::dropIfExists('mod_banners');
+			Schema::dropIfExists('base_banners_type');
+			Schema::dropIfExists('base_articles');
+			Schema::dropIfExists('base_approval_articles');
+			Schema::dropIfExists('mod_articles');
+			Schema::dropIfExists('base_articles_type');
 		
-		// MODULARS
-		Schema::dropIfExists('mod_articles');
-		Schema::dropIfExists('mod_sholat_jadwal');
-		Schema::dropIfExists('mod_sholat_imam');
-		Schema::dropIfExists('mod_kajian_jadwal');
-		Schema::dropIfExists('mod_kajian_pengisi');
-		Schema::dropIfExists('mod_messages');
+			// MODULARS
+			Schema::dropIfExists('mod_articles');
+			Schema::dropIfExists('mod_sholat_jadwal');
+			Schema::dropIfExists('mod_sholat_imam');
+			Schema::dropIfExists('mod_kajian_jadwal');
+			Schema::dropIfExists('mod_kajian_pengisi');
+			Schema::dropIfExists('mod_messages');
+		}
 		
 		Schema::dropIfExists('users');
 		Schema::dropIfExists('log_activities');
 		
-		Schema::dropIfExists('mod_ziswaf');
-		Schema::dropIfExists('mod_ziswaf_status');
-		Schema::dropIfExists('mod_ziswaf_category');
-		Schema::dropIfExists('mod_ziswaf_donation_type');
-		
-		Schema::dropIfExists('subscribers');
-		Schema::dropIfExists('subscriber_token');
-		Schema::dropIfExists('prayer_time_adjustment');
-		
-		// PLATFORM TABLES
-		Schema::dropIfExists($this->platform_table);
-		Schema::dropIfExists("{$this->platform_table}_type");
-		Schema::dropIfExists("{$this->platform_table}_land_status");
+		if (true === $this->is_multiplatform) {
+			Schema::dropIfExists('mod_ziswaf');
+			Schema::dropIfExists('mod_ziswaf_status');
+			Schema::dropIfExists('mod_ziswaf_category');
+			Schema::dropIfExists('mod_ziswaf_donation_type');
+			
+			Schema::dropIfExists('subscribers');
+			Schema::dropIfExists('subscriber_token');
+			Schema::dropIfExists('prayer_time_adjustment');
+			
+			// PLATFORM TABLES
+			Schema::dropIfExists($this->platform_table);
+			Schema::dropIfExists("{$this->platform_table}_type");
+			Schema::dropIfExists("{$this->platform_table}_land_status");
+		}
 	}
 	
 	/**
@@ -970,8 +983,11 @@ class CreateBaseTable extends Migration {
 	 * @return void
 	 */
 	public function down() {
+		/* 
 		if (true === $this->is_multiplatform) {
 			$this->multiple_drop_schema();
 		}
+		 */
+		$this->multiple_drop_schema();
 	}
 }

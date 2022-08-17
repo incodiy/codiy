@@ -1,6 +1,16 @@
 (function($) {
 	"use strict";
-	var soundsPath	= '/cms/public/assets/templates/default/vendor/node_modules/ion-sound/sounds/';
+	
+	function handleBaseURL() {
+		var getUrl  = window.location,
+			baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+			
+		return baseUrl;
+	}
+	
+	var splitPath	= window.location.pathname.split('public')[0] + 'public/';
+	var soundsPath	= splitPath.split(window.location.pathname.split('/')[1])[1] + 'assets/templates/default/vendor/node_modules/ion-sound/sounds/';
+
 	var preloader	= $('#preloader');
 	$(window).on('load', function() {
 		preloader.fadeOut('slow', function() {
@@ -225,12 +235,6 @@
 	if ($('#copyright').length) {
 		var today = new Date();
 		$('#copyright').text(today.getFullYear());
-	}
-
-	function handleBaseURL() {
-		var getUrl = window.location, baseUrl = getUrl.protocol + "//"
-				+ getUrl.host + "/" + getUrl.pathname.split('/')[1];
-		return baseUrl;
 	}
 
 	if ($('.page-sound').length) {ion.sound({

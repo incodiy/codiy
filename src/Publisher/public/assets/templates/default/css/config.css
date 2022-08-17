@@ -5278,9 +5278,9 @@ div.dataTables_wrapper div.dataTables_length select {
 	padding: 2px 3px !important;
 }
 .dataTables_filter {
-	top: 6px;
-	position: relative;
-	right: .4%;
+	top: 10px;
+	position: absolute;/* relative; */
+	right: .5%;
 }
 button.dt-button,
 div.dt-button,

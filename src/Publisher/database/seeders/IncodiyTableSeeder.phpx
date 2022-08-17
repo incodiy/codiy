@@ -19,8 +19,25 @@ use Incodiy\Codiy\Models\Admin\System\User;
  */
 class IncodiyTableSeeder extends Seeder {
 	
+	private $is_multiplatform	= false;
+	private $platform_table		= false;
+	private $platform_key		= false;
+	private $platform_route		= false;
+	private $platform_label		= false;
+	private $platform_name		= false;
+	
+	public function __construct() {
+		$this->is_multiplatform = is_multiplatform();
+		if (true === $this->is_multiplatform) {
+			$this->platform_table	= diy_config('platform_table');
+			$this->platform_key		= diy_config('platform_key');
+			$this->platform_route	= diy_config('platform_route');
+			$this->platform_label	= diy_config('platform_label');
+			$this->platform_name		= diy_config('platform_name');
+		}
+	}
+	
 	public function run() {
-		
 		// WEB PREFERENCE
 		DB::table('base_preference')->delete();
 		DB::table('base_preference')->insert([
@@ -34,20 +51,66 @@ class IncodiyTableSeeder extends Seeder {
 			'debug'					=> false,
 			'maintenance'			=> false
 		]);
-		
+		/* 
+		if (true === $this->is_multiplatform) {
+			// MASJID TABLE
+			DB::table($this->platform_table)->delete();
+			DB::table($this->platform_table)->insert(['name' => "All {$this->platform_label}", 'active' => 1]);
+			
+			if ('masjid' === $this->platform_name) {
+				DB::table($this->platform_table)->insert([
+					'name'				=> 'Masjid Istiqlal',
+					'since'				=> '1978-02-22',
+					'phone'				=> '0213811708',
+					'latitude'			=> '-6.169804',
+					'longitude'			=> '106.830921',
+					'postal_code'		=> '10710',
+					'urban_village'	=> 'Pasar Baru',
+					'sub_district'		=> 'Sawah Besar',
+					'regency'			=> 'Jakarta Pusat',
+					'province'			=> 'DKI Jakarta',
+					'address'			=> 'Jl. Taman Wijaya Kusuma Rt.08/02, Kel. Pasar Baru, Kec. Sawah Besar, Jakarta Pusat',
+					'surface_area'		=> '93200',
+					'building_area'	=> '24200',
+					'people_volume'	=> '> 500',
+					'land_status_id'	=> 1,
+					'description'		=> 'Istiqlal diambil dari bahasa Arab yang berarti merdeka. Masjid ini dibangun untuk menghormati para pejuang muslim yang gugur dalam memperjuangkan kemerdekaan sekaligus menggambarkan rasa syukur kepada Allah Subhanahu wa Ta\'ala atas limpahan rahmat berupa kemerdekaan bangsa.',
+					'active'				=> 1
+				]);
+			}
+		}
+		 */
 		// USER TABLE
 		DB::table('users')->delete();
 		User::create(['name' => 'wisnuwidi', 'fullname' => 'Wisnu Widiantoko', 'email' => 'wisnuwidi@gmail.com', 'password' => bcrypt('@wisnuwidi'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
-		User::create(['name' => 'admin', 'fullname' => 'Administrator', 'email' => 'admin@gmail.com', 'password' => bcrypt('@admin'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+		if (true === $this->is_multiplatform) {
+			if ('masjid' === $this->platform_name) {
+				User::create(['name' => 'admin', 'fullname' => 'Administrator', 'email' => 'admin@gmail.com', 'password' => bcrypt('@admin'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+			}
+		}
 		
 		// GROUP TABLE
 		DB::table('base_group')->delete();
-		DB::table('base_group')->insert(['group_name' => 'root', 'group_info' => 'Internal Admin', 'active' => 1]);
+		if (true === $this->is_multiplatform) {
+			DB::table('base_group')->insert(['group_name' => 'root', 'group_info' => 'Internal Admin', 'active' => 1, $this->platform_key => 1]);
+			DB::table('base_group')->insert(['group_name' => 'admin', 'group_info' => 'Administrator', 'active' => 1, $this->platform_key => 2]);
+		} else {
+			DB::table('base_group')->insert(['group_name' => 'root', 'group_info' => 'Internal Admin', 'active' => 1]);
+		}
 		
 		// USER RELATION GROUP TABLE
 		DB::table('base_user_group')->delete();
 		DB::table('base_user_group')->insert(['user_id'	=> 1, 'group_id' => 1]);
-		
+		/* 
+		if (true === $this->is_multiplatform) {
+			if ('masjid' === $this->platform_name) {
+				DB::table('base_user_group')->insert(['user_id'	=> 2, 'group_id' => 1]);
+				DB::table('base_user_group')->insert(['user_id'	=> 3, 'group_id' => 1]);
+				DB::table('base_user_group')->insert(['user_id'	=> 4, 'group_id' => 1]);
+				DB::table('base_user_group')->insert(['user_id'	=> 5, 'group_id' => 2]);
+			}
+		}
+		 */
 		// MODULE TABLE
 		DB::table('base_module')->delete();
 		DB::table('base_module')->insert(['route_path' => 'dashboard', 'parent_name' => 'Dashboard', 'module_name' => 'Dashboard', 'flag_status' => 2, 'active' => 1]);
@@ -55,248 +118,37 @@ class IncodiyTableSeeder extends Seeder {
 		DB::table('base_module')->insert(['route_path' => 'system.config.group', 'parent_name' => 'System Config', 'module_name' => 'Group', 'flag_status' => 2, 'active' => 1]);
 		DB::table('base_module')->insert(['route_path' => 'system.accounts.user', 'parent_name' => 'System Config', 'module_name' => 'User', 'flag_status' => 2, 'active' => 1]);
 		
-		$this->timezone();
-		$this->languages();
-		$this->icons();
-	}
-	
-	private function timezone() {
-		// TIMEZONE TABLE
-		DB::table('base_timezone')->delete();
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Accra']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Addis_Ababa']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Algiers']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Asmera']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bamako']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bangui']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Banjul']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bissau']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Blantyre']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Brazzaville']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bujumbura']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Cairo']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Casablanca']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Ceuta']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Conakry']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Dakar']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Dar_es_Salaam']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Djibouti']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Douala']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/El_Aaiun']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Freetown']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Gaborone']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Harare']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Johannesburg']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Kampala']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Khartoum']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Kigali']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Kinshasa']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lagos']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Libreville']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lome']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Luanda']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lubumbashi']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lusaka']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Malabo']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Maputo']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Maseru']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Mbabane']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Mogadishu']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Monrovia']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Nairobi']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Ndjamena']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Niamey']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Nouakchott']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Ouagadougou']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Porto-Novo']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Sao_Tome']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Tripoli']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Tunis']);
-		DB::table('base_timezone')->insert(['timezone' => 'Africa/Windhoek']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Adak']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Anchorage']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Anguilla']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Antigua']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Araguaina']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/La_Rioja']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/Rio_Gallegos']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/San_Juan']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/Tucuman']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/Ushuaia']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Aruba']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Asuncion']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Bahia']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Barbados']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Belem']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Belize']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Blanc-Sablon']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Boa_Vista']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Bogota']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Boise']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Buenos_Aires']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Cambridge_Bay']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Campo_Grande']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Cancun']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Caracas']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Catamarca']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Cayenne']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Cayman']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Chicago']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Chihuahua']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Coral_Harbour']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Cordoba']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Costa_Rica']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Cuiaba']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Curacao']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Danmarkshavn']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Dawson']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Dawson_Creek']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Denver']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Detroit']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Dominica']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Edmonton']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Eirunepe']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/El_Salvador']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Fortaleza']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Glace_Bay']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Godthab']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Goose_Bay']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Grand_Turk']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Grenada']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Guadeloupe']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Guatemala']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Guayaquil']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Guyana']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Halifax']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Havana']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Hermosillo']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Knox']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Marengo']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Petersburg']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Vevay']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Vincennes']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Indianapolis']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Inuvik']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Iqaluit']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Jamaica']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Jujuy']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Juneau']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Kentucky/Monticello']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/La_Paz']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Lima']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Los_Angeles']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Louisville']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Maceio']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Managua']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Manaus']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Martinique']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Mazatlan']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Mendoza']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Menominee']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Merida']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Mexico_City']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Miquelon']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Moncton']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Monterrey']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Montevideo']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Montreal']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Montserrat']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Nassau']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/New_York']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Nipigon']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Nome']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Noronha']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/North_Dakota/Center']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/North_Dakota/New_Salem']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Panama']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Pangnirtung']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Paramaribo']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Phoenix']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Port-au-Prince']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Port_of_Spain']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Porto_Velho']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Puerto_Rico']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Rainy_River']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Rankin_Inlet']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Recife']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Regina']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Rio_Branco']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Santiago']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Santo_Domingo']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Sao_Paulo']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Scoresbysund']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Shiprock']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/St_Johns']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/St_Kitts']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/St_Lucia']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/St_Thomas']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/St_Vincent']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Swift_Current']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Tegucigalpa']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Thule']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Thunder_Bay']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Tijuana']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Toronto']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Tortola']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Vancouver']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Whitehorse']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Winnipeg']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Yakutat']);
-		DB::table('base_timezone')->insert(['timezone' => 'America/Yellowknife']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Casey']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Davis']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/DumontDUrville']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Mawson']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/McMurdo']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Palmer']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Rothera']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Syowa']);
-		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Vostok']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Aden']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Almaty']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Amman']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Anadyr']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Aqtau']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Aqtobe']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Ashgabat']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Baghdad']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Bahrain']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Baku']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Bangkok']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Beirut']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Bishkek']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Brunei']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Calcutta']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Choibalsan']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Chongqing']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Colombo']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Damascus']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dhaka']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dili']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dubai']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dushanbe']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Gaza']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Harbin']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Hong_Kong']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Hovd']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Irkutsk']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Jakarta']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Jayapura']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Jerusalem']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kabul']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kamchatka']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Karachi']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kashgar']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Katmandu']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Krasnoyarsk']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kuala_Lumpur']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kuching']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kuwait']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Macau']);
-		DB::table('base_timezone')->insert(['timezone' => 'Asia/Magadan']);
-	}
-	
-	private function languages() {
+	//	DB::table('base_module')->insert(['route_path' => 'system.config.preference', 'parent_name' => 'System Config', 'module_name' => 'Preference', 'flag_status' => 2, 'active' => 1]);
+	//	DB::table('base_module')->insert(['route_path' => 'system.config.icon', 'parent_name' => 'System Config', 'module_name' => 'Icon', 'flag_status' => 0, 'active' => 1]);
+	//	DB::table('base_module')->insert(['route_path' => 'system.config.log', 'parent_name' => 'System Config', 'module_name' => 'Log', 'flag_status' => 0, 'active' => 1]);
+		/* 
+		if (true === $this->is_multiplatform) {
+			if ('masjid' === $this->platform_name) {
+				DB::table('base_module')->insert(['route_path' => 'system.config.masjid.type', 'parent_name' => 'System Config Masjid', 'module_name' => 'Masjid Type', 'flag_status' => 0, 'active' => 1]);
+				DB::table('base_module')->insert(['route_path' => 'system.config.masjid.land_status', 'parent_name' => 'System Config Masjid', 'module_name' => 'Land Status', 'flag_status' => 0, 'active' => 1]);
+			}
+		}
+		 */
+		/* 
+		if (true === $this->is_multiplatform) {
+			DB::table('base_module')->insert(['route_path' => $this->platform_route, 'parent_name' => 'Modules', 'module_name' => $this->platform_label, 'flag_status' => 2, 'active' => 1]);
+			DB::table('base_module')->insert(['route_path' => 'system.banners.approvals', 'parent_name' => 'System Banners', 'module_name' => 'Approvals', 'flag_status' => 0, 'active' => 1]);
+			DB::table('base_module')->insert(['route_path' => 'system.articles.approvals', 'parent_name' => 'System Articles', 'module_name' => 'Approvals', 'flag_status' => 0, 'active' => 1]);
+			
+			if ('masjid' === $this->platform_name) {
+				DB::table('base_module')->insert(['route_path' => 'modules.financial', 'parent_name' => 'Modules', 'module_name' => 'Financial', 'flag_status' => 1, 'active' => 1]);
+				DB::table('base_module')->insert(['route_path' => 'modules.sholat.imam_sholat', 'parent_name' => 'Modules Sholat', 'module_name' => 'Imam Sholat', 'flag_status' => 1, 'active' => 1]);
+				DB::table('base_module')->insert(['route_path' => 'modules.sholat.jadwal_sholat', 'parent_name' => 'Modules Sholat', 'module_name' => 'Jadwal Sholat', 'flag_status' => 1, 'active' => 1]);
+				DB::table('base_module')->insert(['route_path' => 'modules.kajian.pengisi_kajian', 'parent_name' => 'Modules Kajian', 'module_name' => 'Pengisi Kajian', 'flag_status' => 1, 'active' => 1]);
+				DB::table('base_module')->insert(['route_path' => 'modules.kajian.jadwal_kajian', 'parent_name' => 'Modules Kajian', 'module_name' => 'Jadwal Kajian', 'flag_status' => 1, 'active' => 1]);
+			}
+			
+			DB::table('base_module')->insert(['route_path' => 'modules.events.national_events', 'parent_name' => 'Modules Events', 'module_name' => 'National Events', 'flag_status' => 1, 'active' => 1]);
+			DB::table('base_module')->insert(['route_path' => 'modules.events.popup_events', 'parent_name' => 'Modules Events', 'module_name' => 'Popup Events', 'flag_status' => 1, 'active' => 1]);
+			DB::table('base_module')->insert(['route_path' => 'modules.banner', 'parent_name' => 'Modules', 'module_name' => 'Banner', 'flag_status' => 1, 'active' => 1]);
+		}
+		 */
+		
 		// LANGUAGE TABLE
 		DB::table('base_language')->delete();
 		DB::table('base_language')->insert(['abbr' => 'aa_DJ', 'lang' => 'aa', 'language' => 'Afar/Djibouti', 'charset' => 'utf-8']);
@@ -770,26 +622,258 @@ class IncodiyTableSeeder extends Seeder {
 		DB::table('base_language')->insert(['abbr' => 'zh_SG', 'lang' => 'zh', 'language' => 'Chinese/Singapore', 'charset' => 'utf-8']);
 		DB::table('base_language')->insert(['abbr' => 'zh_TW', 'lang' => 'zh', 'language' => 'Chinese/Taiwan', 'charset' => 'utf-8']);
 		DB::table('base_language')->insert(['abbr' => 'zu_ZA', 'lang' => 'zu', 'language' => 'Zulu/South Africa', 'charset' => 'utf-8']);
-	}
-	
-	private function icons() {
+		
+		// TIMEZONE TABLE
+		DB::table('base_timezone')->delete();
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Accra']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Addis_Ababa']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Algiers']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Asmera']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bamako']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bangui']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Banjul']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bissau']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Blantyre']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Brazzaville']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Bujumbura']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Cairo']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Casablanca']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Ceuta']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Conakry']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Dakar']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Dar_es_Salaam']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Djibouti']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Douala']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/El_Aaiun']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Freetown']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Gaborone']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Harare']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Johannesburg']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Kampala']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Khartoum']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Kigali']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Kinshasa']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lagos']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Libreville']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lome']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Luanda']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lubumbashi']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Lusaka']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Malabo']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Maputo']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Maseru']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Mbabane']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Mogadishu']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Monrovia']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Nairobi']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Ndjamena']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Niamey']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Nouakchott']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Ouagadougou']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Porto-Novo']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Sao_Tome']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Tripoli']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Tunis']);
+		DB::table('base_timezone')->insert(['timezone' => 'Africa/Windhoek']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Adak']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Anchorage']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Anguilla']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Antigua']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Araguaina']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/La_Rioja']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/Rio_Gallegos']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/San_Juan']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/Tucuman']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Argentina/Ushuaia']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Aruba']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Asuncion']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Bahia']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Barbados']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Belem']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Belize']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Blanc-Sablon']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Boa_Vista']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Bogota']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Boise']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Buenos_Aires']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Cambridge_Bay']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Campo_Grande']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Cancun']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Caracas']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Catamarca']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Cayenne']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Cayman']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Chicago']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Chihuahua']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Coral_Harbour']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Cordoba']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Costa_Rica']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Cuiaba']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Curacao']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Danmarkshavn']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Dawson']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Dawson_Creek']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Denver']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Detroit']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Dominica']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Edmonton']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Eirunepe']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/El_Salvador']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Fortaleza']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Glace_Bay']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Godthab']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Goose_Bay']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Grand_Turk']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Grenada']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Guadeloupe']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Guatemala']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Guayaquil']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Guyana']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Halifax']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Havana']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Hermosillo']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Knox']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Marengo']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Petersburg']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Vevay']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Indiana/Vincennes']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Indianapolis']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Inuvik']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Iqaluit']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Jamaica']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Jujuy']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Juneau']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Kentucky/Monticello']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/La_Paz']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Lima']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Los_Angeles']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Louisville']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Maceio']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Managua']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Manaus']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Martinique']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Mazatlan']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Mendoza']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Menominee']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Merida']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Mexico_City']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Miquelon']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Moncton']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Monterrey']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Montevideo']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Montreal']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Montserrat']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Nassau']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/New_York']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Nipigon']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Nome']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Noronha']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/North_Dakota/Center']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/North_Dakota/New_Salem']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Panama']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Pangnirtung']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Paramaribo']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Phoenix']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Port-au-Prince']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Port_of_Spain']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Porto_Velho']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Puerto_Rico']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Rainy_River']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Rankin_Inlet']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Recife']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Regina']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Rio_Branco']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Santiago']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Santo_Domingo']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Sao_Paulo']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Scoresbysund']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Shiprock']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/St_Johns']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/St_Kitts']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/St_Lucia']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/St_Thomas']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/St_Vincent']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Swift_Current']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Tegucigalpa']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Thule']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Thunder_Bay']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Tijuana']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Toronto']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Tortola']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Vancouver']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Whitehorse']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Winnipeg']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Yakutat']);
+		DB::table('base_timezone')->insert(['timezone' => 'America/Yellowknife']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Casey']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Davis']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/DumontDUrville']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Mawson']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/McMurdo']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Palmer']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Rothera']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Syowa']);
+		DB::table('base_timezone')->insert(['timezone' => 'Antarctica/Vostok']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Aden']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Almaty']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Amman']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Anadyr']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Aqtau']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Aqtobe']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Ashgabat']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Baghdad']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Bahrain']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Baku']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Bangkok']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Beirut']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Bishkek']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Brunei']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Calcutta']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Choibalsan']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Chongqing']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Colombo']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Damascus']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dhaka']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dili']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dubai']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Dushanbe']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Gaza']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Harbin']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Hong_Kong']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Hovd']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Irkutsk']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Jakarta']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Jayapura']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Jerusalem']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kabul']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kamchatka']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Karachi']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kashgar']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Katmandu']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Krasnoyarsk']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kuala_Lumpur']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kuching']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Kuwait']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Macau']);
+		DB::table('base_timezone')->insert(['timezone' => 'Asia/Magadan']);
+				
 		// ICON TABLE
 		/**
 		 * GET FONTS
 		 *	<script>
-		 var _fa = $('#font-awesome-track');
-		 var obj = [];
-		 _fa.find('i').each(function(e, i){
-		 var classname	= i.className;
-		 var splitClass	= classname.split(' ');
-		 var type		= splitClass[0];
-		 var splitLabel	= splitClass[1].replace('fa-', '');
-		 var label		= splitLabel;
-		 var obj			= "DB::table('base_icon')->insert(['type' => '" + type + "', 'tag' => 'i', 'class' => '" + classname + "', 'label' => '" + label + "']);<br />";
-		 
-		 $('.render-fonts').append(obj);
-		 });
-		 </script>
+				var _fa = $('#font-awesome-track');
+				var obj = [];
+				_fa.find('i').each(function(e, i){
+					var classname	= i.className;
+					var splitClass	= classname.split(' ');
+					var type		= splitClass[0];
+					var splitLabel	= splitClass[1].replace('fa-', '');
+					var label		= splitLabel;
+					var obj			= "DB::table('base_icon')->insert(['type' => '" + type + "', 'tag' => 'i', 'class' => '" + classname + "', 'label' => '" + label + "']);<br />";
+					
+					$('.render-fonts').append(obj);
+				});
+        	</script>
 		 */
 		DB::table('base_icon')->delete();
 		DB::table('base_icon')->insert(['type' => 'fa', 'tag' => 'i', 'class' => 'fa fa-500px', 'label' => '500px']);
