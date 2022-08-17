@@ -125,7 +125,7 @@ class CreateBaseTable extends Migration {
 			$table->smallInteger('active')->default(0);
 			
 			$table->index('email');
-			$table->index('name');
+			$table->index('username');
 			$table->index('fullname');
 		});
 		
@@ -137,15 +137,15 @@ class CreateBaseTable extends Migration {
 			
 			$table->string('group_name', 30);
 			$table->text('group_info')->nullable();
-			$table->bigInteger($this->platform_key)->unsigned();
+			if (true === $this->is_multiplatform) $table->bigInteger($this->platform_key)->unsigned();
 			
 			$table->smallInteger('active')->default(0);
 			$table->softDeletes();
 			
 			$table->index('group_name');
-			$table->index($this->platform_key);
+			if (true === $this->is_multiplatform) $table->index($this->platform_key);
 			
-			$table->foreign($this->platform_key)->references('id')->on($this->platform_table)->onUpdate('cascade')->onDelete('cascade');
+			if (true === $this->is_multiplatform) $table->foreign($this->platform_key)->references('id')->on($this->platform_table)->onUpdate('cascade')->onDelete('cascade');
 		});
 		
 		// Module Table

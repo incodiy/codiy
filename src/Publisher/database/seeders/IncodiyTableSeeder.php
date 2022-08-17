@@ -37,8 +37,8 @@ class IncodiyTableSeeder extends Seeder {
 		
 		// USER TABLE
 		DB::table('users')->delete();
-		User::create(['name' => 'wisnuwidi', 'fullname' => 'Wisnu Widiantoko', 'email' => 'wisnuwidi@gmail.com', 'password' => bcrypt('@wisnuwidi'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
-		User::create(['name' => 'admin', 'fullname' => 'Administrator', 'email' => 'admin@gmail.com', 'password' => bcrypt('@admin'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+		User::create(['username' => 'wisnuwidi', 'fullname' => 'Wisnu Widiantoko', 'email' => 'wisnuwidi@gmail.com', 'password' => bcrypt('@wisnuwidi'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
+		User::create(['username' => 'admin', 'fullname' => 'Administrator', 'email' => 'admin@gmail.com', 'password' => bcrypt('@admin'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
 		
 		// GROUP TABLE
 		DB::table('base_group')->delete();
