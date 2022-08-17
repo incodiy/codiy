@@ -36,15 +36,16 @@ This package used for simplifying some code with Laravel framework. This code in
 4). ARTISAN PUBLISH
 --------------------------------------------------------------------------------
 	php artisan vendor:publish --force
+	
 
 5). AUTH FILE SETTING
 --------------------------------------------------------------------------------
-  'providers' => [
-    'users' => [
-      'driver'    => 'eloquent',
-      'model'	    => App\Models\Admin\System\User::class,
-    ],
-  ],
+	'providers' => [
+		'users' => [
+			'driver' => 'eloquent',
+			'model'  => App\Models\Admin\System\User::class,
+		],
+	],
 
 
 6). DUMP AUTOLOAD
