@@ -1,4 +1,5 @@
-Bismillah.
+بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+
 
 This package used for simplifying some code with Laravel framework. This code inspired by Muntilan-CMS code developed by .::bit.
 
