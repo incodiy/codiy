@@ -717,6 +717,12 @@ if (!function_exists('diy_delete')) {
 	}
 }
 
+if (!function_exists('diy_query_get_id')) {
+	function diy_query_get_id($model_class, $where = []) {
+		return $model_class::where($where)->first();
+	}
+}
+
 if (!function_exists('diy_set_filesize')) {
 	
 	/**
