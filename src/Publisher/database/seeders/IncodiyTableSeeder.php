@@ -43,17 +43,19 @@ class IncodiyTableSeeder extends Seeder {
 		// GROUP TABLE
 		DB::table('base_group')->delete();
 		DB::table('base_group')->insert(['group_name' => 'root', 'group_info' => 'Internal Admin', 'active' => 1]);
+		DB::table('base_group')->insert(['group_name' => 'admin', 'group_info' => 'Administrator', 'active' => 1]);
 		
 		// USER RELATION GROUP TABLE
 		DB::table('base_user_group')->delete();
 		DB::table('base_user_group')->insert(['user_id'	=> 1, 'group_id' => 1]);
+		DB::table('base_user_group')->insert(['user_id'	=> 2, 'group_id' => 2]);
 		
 		// MODULE TABLE
 		DB::table('base_module')->delete();
 		DB::table('base_module')->insert(['route_path' => 'dashboard', 'parent_name' => 'Dashboard', 'module_name' => 'Dashboard', 'flag_status' => 2, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.config.module', 'parent_name' => 'System Config', 'module_name' => 'Module', 'flag_status' => 0, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.config.group', 'parent_name' => 'System Config', 'module_name' => 'Group', 'flag_status' => 2, 'active' => 1]);
 		DB::table('base_module')->insert(['route_path' => 'system.accounts.user', 'parent_name' => 'System Config', 'module_name' => 'User', 'flag_status' => 2, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.config.group', 'parent_name' => 'System Config', 'module_name' => 'Group', 'flag_status' => 2, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.config.module', 'parent_name' => 'System Config', 'module_name' => 'Module', 'flag_status' => 0, 'active' => 1]);
 		
 		$this->timezone();
 		$this->languages();

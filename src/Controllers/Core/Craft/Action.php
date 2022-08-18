@@ -144,8 +144,9 @@ trait Action {
 	public $store_routeback          = true;
 	public $filter_datatables_string = null;
 	
-	protected function INSERT_DATA_PROCESSOR(Request $request) {
+	protected function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
 		$model = null;
+		$this->store_routeback = $routeback;
 		
 		if (!empty($_GET['filterDataTables'])) return $this->initFilterDatatables();
 		if (!empty($_GET['renderDataTables'])) {
@@ -175,7 +176,6 @@ trait Action {
 			$data            = $this->checkFileInputSubmited($request);
 			$this->stored_id = diy_insert($model, $data, true);
 		}
-		
 	}
 	
 	protected function store(Request $request) {
