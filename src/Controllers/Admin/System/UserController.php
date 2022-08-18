@@ -23,7 +23,6 @@ use Incodiy\Codiy\Models\Admin\System\Timezone;
  */
 class UserController extends Controller {
 	
-	private $route_group	= 'system.accounts.user';
 	private $validations	= [
 		'username' => 'required',
 		'fullname' => 'required',
@@ -39,6 +38,7 @@ class UserController extends Controller {
 	public function __construct() {
 		parent::__construct();
 		
+		$this->set_route_page('system.accounts.user');
 		$this->model(User::class);
 	}
 	
@@ -115,10 +115,12 @@ class UserController extends Controller {
 		$request   = new Request();
 		$request->merge($new_array);
 		
+		$user_group = new Usergroup();
 		if (false !== $id) {
-			diy_update(Usergroup::where(['user_id' => $id]), $request, true);
+			$userGroup = diy_query_get_id($user_group, ['user_id' => $id]);
+			diy_update($user_group->find($userGroup->id), $request, true);
 		} else {
-			diy_insert(new Usergroup(), $request, true);
+			diy_insert($user_group, $request, true);
 		}
 	}
 	
@@ -234,13 +236,11 @@ class UserController extends Controller {
 			$request->offsetUnset($this->platform_key);
 		}
 		$this->set_data_before_post($request);
-		$this->store_routeback = false;
-		$this->store($request);
-		$model = $this->stored_id;//diy_insert($this->model, $request, true);
+		$this->insert_data($request, false);
 		$this->set_data_after_post($this->group_id);
 		
-		$route_back = str_replace('.', '/', $this->route_group);
-		return redirect("{$route_back}/{$model}/edit");
+		$route_back = str_replace('.', '/', $this->route_page);
+		return redirect("{$route_back}/{$this->stored_id}/edit");
 	}
 	
 	public function edit($id) {
@@ -259,8 +259,7 @@ class UserController extends Controller {
 			if (true === is_multiplatform()) $this->form->setHiddenFields([$this->platform_key, 'group_id']);
 		}
 		
-		$this->form->model();
-		
+		$this->form->modelWithFile();
 		$this->form->text('username', $model_data->name, ['required']);
 		$this->form->text('fullname', $model_data->fullname, ['required']);
 		$this->form->text('email', $model_data->email, ['required']);
@@ -304,8 +303,8 @@ class UserController extends Controller {
 	public function update(Request $request, $id) {
 		$this->get_session();
 		
-		$model_data	= User::find($id);
-		$data		= $request->all();
+		$model_data = $this->model->find($id);
+		$data       = $request->all();
 		
 		if ('root' === $this->session['user_group']) {
 			if (true === is_multiplatform()) {
@@ -326,22 +325,11 @@ class UserController extends Controller {
 			$request->offsetUnset($this->platform_key);
 		}
 		
-		$req		= $request->all();
-		$filename	= 'photo';
-		if (isset($req[$filename])) {
-			$data	= $this->data_file_processor($this->name, $request, $filename, $this->set_image_validation(50));
-		} else {
-			// throw file request
-			$data	= $request->merge(array_merge_recursive($request->except($filename)));
-		}
-		
-		$this->set_data_before_post($data, __FUNCTION__);
-		if (isset($data['group_id'])) unset($data['group_id']);
-		
-		update(User::find($id), $data, false);
+		$this->set_data_before_post($request, __FUNCTION__);
+		$this->update_data($request, $id, false);
 		$this->set_data_after_post($this->group_id, $id);
 		
-		$route_back = str_replace('.', '/', $this->route_group);
+		$route_back = str_replace('.', '/', $this->route_page);
 		return redirect("{$route_back}/{$id}/edit");
 	}
 	
@@ -357,6 +345,6 @@ class UserController extends Controller {
 	 * author: wisnuwidi
 	 */
 	public function destroyx(Request $request, $id, User $model) {
-		return delete($request, $id, $model, $this->route_group);
+		return delete($request, $id, $model, $this->route_page);
 	}
 }

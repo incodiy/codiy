@@ -334,7 +334,10 @@ class Objects {
 			if ('create' === $this->currentRouteName) {
 				$value		= $value;
 				$selected	= $selected;
-			} else {
+			} elseif ('edit' === $this->currentRouteName) {
+				$value		= $value;
+				if (!empty($selected)) $selected	= $selected;
+			} else{
 				$value		= $value;
 				$selected	= $this->getModelValue($name, $function_name);
 			}

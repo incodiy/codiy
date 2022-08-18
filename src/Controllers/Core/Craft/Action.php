@@ -144,7 +144,11 @@ trait Action {
 	public $store_routeback          = true;
 	public $filter_datatables_string = null;
 	
-	protected function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
+	public function insert_data(Request $request, $routeback = true) {
+		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
+	}
+	
+	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
 		$model = null;
 		$this->store_routeback = $routeback;
 		
@@ -188,15 +192,29 @@ trait Action {
 		}
 	}
 	
-	protected function update(Request $request, $id) {
+	public function update_data(Request $request, $id, $routeback = true) {
+		return $this->UPDATE_DATA_PROCESSOR($request, $id, $routeback);
+	}
+	
+	private function UPDATE_DATA_PROCESSOR(Request $request, $id, $routeback = true) {
 		$request->validate($this->validation);
-		$model	= $this->getModel($id);
+		$model = $this->getModel($id);
 		
 		// check if any input file type submited
-		$data	= $this->checkFileInputSubmited($request);
-		diy_update($model, $data);
+		$data = $this->checkFileInputSubmited($request);
 		
-		return $this->routeBackAfterAction(__FUNCTION__, $id);
+		diy_update($model, $data);
+		$this->stored_id = intval($id);
+	}
+	
+	protected function update(Request $request, $id) {
+		$this->UPDATE_DATA_PROCESSOR($request, $id);
+		
+		if (true === $this->store_routeback) {
+			return $this->routeBackAfterAction(__FUNCTION__, $id);
+		} else {
+			return $this->stored_id;
+		}
 	}
 	
 	protected function destroy(Request $request, $id) {
