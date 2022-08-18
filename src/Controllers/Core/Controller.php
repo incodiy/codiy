@@ -21,16 +21,24 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\FileUpload;
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
 
 /**
- * BismillahiRahmaniRahim
+ * Bismillahirrahmanirrahiim
  * 
- * Created on 10 Mar 2021
+ * In the name of ALLAH SWT,
+ * Alhamdulillah because of Allah SWT, this code succesfuly created piece by piece.
+ * 
+ * Base Controller,
+ * 
+ * First Created on Mar 29, 2017
+ * Time Created : 4:58:17 PM
+ * 
+ * Re-Created on 10 Mar 2021
  * Time Created : 13:23:43
  *
  * @filesource Controller.php
  *            
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author     wisnuwidi@gmail.com - 2021
+ * @copyright  wisnuwidi
+ * @email      wisnuwidi@gmail.com
  */
 class Controller extends BaseController {
 	
