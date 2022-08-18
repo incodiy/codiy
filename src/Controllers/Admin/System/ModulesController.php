@@ -194,8 +194,8 @@ class ModulesController extends Controller {
 		$request->validate($this->validations);		
 		$this->set_data_before_insert($request);
 		
-		$model			= diy_insert($this->model, $request, true);
-		$route_group	= str_replace('.', '/', $this->route_group);
+		$model       = diy_insert($this->model, $request, true);
+		$route_group = str_replace('.', '/', $this->route_group);
 		
 		return redirect("/{$route_group}/module/{$model}/edit");
 	}

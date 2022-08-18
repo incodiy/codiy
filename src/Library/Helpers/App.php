@@ -234,8 +234,8 @@ if (!function_exists('diy_underscore_to_camelcase')) {
     function diy_underscore_to_camelcase($str) {
         $string = false;
         if (true === str_contains($str, '_')) {
-            $slices		= explode('_', $str);
-            $strings	= [];
+            $slices  = explode('_', $str);
+            $strings = [];
             
             foreach ($slices as $str) {
                 $_str = ucwords($str);
@@ -244,9 +244,9 @@ if (!function_exists('diy_underscore_to_camelcase')) {
                 $strings[] = $_str;
             }
             $new_str = implode(' ', $strings);
-            $string = ucwords($new_str);
+            $string  = ucwords($new_str);
         } else {
-            $string = ucwords($str);
+            $string  = ucwords($str);
         }
         
         return $string;
@@ -379,7 +379,7 @@ if (!function_exists('camel_case')) {
 	 * author: wisnuwidi
 	 *
 	 * @param string $string
-	 * @return Illuminate\Support\Str
+	 * @return string
 	 */
 	function camel_case($string) {
 		return ucfirst($string);
@@ -395,13 +395,13 @@ if (!function_exists('diy_random_strings')) {
 	 * @return string
 	 */
 	function diy_random_strings($length = 8, $symbol = true) {
-		$random_strings	= '';
-		$strSymbol		= false;
+		$random_strings = '';
+		$strSymbol      = false;
 		if (true === $symbol) {
-			$strSymbol = '!@#$%';
+			$strSymbol   = '!@#$%';
 		}
-		$strings		= "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{$strSymbol}";
-		$stringsLength	= strlen($strings);
+		$strings        = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{$strSymbol}";
+		$stringsLength  = strlen($strings);
 		
 		for ($i = 0; $i < $length; $i ++) {
 			$random_strings .= $strings[rand(0, $stringsLength - 1)];
@@ -603,8 +603,8 @@ if (!function_exists('diy_insert')) {
 		if (true === is_object($data)) {
 			$request = $data;
 		} else {
-			$req		= new Request();
-			$request	= $req->merge($data);
+			$req     = new Request();
+			$request = $req->merge($data);
 		}
 		
 		$requests = [];
@@ -659,7 +659,7 @@ if (!function_exists('diy_update')) {
 		if (true === is_object($data)) {
 			$request = $data;
 		} else {
-			$req = new Request();
+			$req     = new Request();
 			$request = $req->merge($data);
 		}
 		
@@ -815,15 +815,15 @@ if (!function_exists('diy_action_buttons')) {
 			$box = '';
 			$box .= "<div class=\"header {$background_color}\">";
 			foreach ($route_info->action_page as $key => $value) {
-				$keys	= explode('|', $key);
-				$color	= $keys[0];
-				$text	= $keys[1];
+				$keys  = explode('|', $key);
+				$color = $keys[0];
+				$text  = $keys[1];
 				
 				if (!diy_string_contained($text, 'delete')) {
 					$box .= diy_action_button_box($value, $text, $color);
 				} else {
-					$routeInfo	= explode('::', $value);
-					$routeUri	= [$routeInfo[0], (int)$routeInfo[1]];
+					$routeInfo = explode('::', $value);
+					$routeUri  = [$routeInfo[0], (int)$routeInfo[1]];
 					
 					$box .= Collective\Html\FormFacade::open(['route'=> $routeUri, 'method'=>'Delete', 'onsubmit' => 'confirm("Are you sure?")']);
 					$box .= diy_action_button_box('submitButtonTag', $text, $color);
@@ -902,18 +902,18 @@ if (!function_exists('get_route_lists')) {
 	 * @return StdClass
 	 */
 	function get_route_lists($selected = false, $fullRender = false, $path_controllers = 'App\Http\Controllers\Admin\\') {
-		$model	= Modules::withTrashed()->get();
-		$modules	= [];
+		$model   = Modules::withTrashed()->get();
+		$modules = [];
 		foreach ($model as $modul) {
-			$mod	= $modul->getAttributes();
+			$mod  = $modul->getAttributes();
 			$modules[$mod['route_path']] = $mod['route_path'];
 		}
 		
 		$routeLists = Route::getRoutes();
 		$routelists = [];
 		foreach ($routeLists as $list) {
-			$route_name	= $list->getName();
-			$routeObj	= explode('.', $route_name);
+			$route_name = $list->getName();
+			$routeObj   = explode('.', $route_name);
 			
 			if (str_contains($list->getActionName(), $path_controllers)) {
 				// check if controller created in Admin folder
@@ -937,8 +937,8 @@ if (!function_exists('get_route_lists')) {
 			}
 		}
 		
-		$routes		= [];
-		$allroutes	= [];
+		$routes    = [];
+		$allroutes = [];
 		foreach ($routelists as $parent => $category) {
 			foreach ($category as $child => $route_data) {
 				if (is_array($route_data)) {
@@ -951,23 +951,23 @@ if (!function_exists('get_route_lists')) {
 										if ($selected === $route_base) {
 											// MAINTENANCE_WARNING
 											$routes[$parent][$child][$model][$third_model]['route_data'] = (object) [
-												'route_base'	=>	$route_base,
-												'route_name'	=>	"{$route_base}.{$third_model}.index",
-												'route_url'		=>	route("{$route_base}.index")
+												'route_base' => $route_base,
+												'route_name' => "{$route_base}.{$third_model}.index",
+												'route_url'  => route("{$route_base}.index")
 												];
 										}
 									} elseif (!in_array($route_base, $modules)) {
 										$routes[$parent][$child][$model][$third_model]['route_data'] = (object) [
-											'route_base'	=>	$route_base,
-											'route_name'	=>	"{$route_base}.{$third_model}.index",
-											'route_url'		=>	route("{$route_base}.index")
+											'route_base' => $route_base,
+											'route_name' => "{$route_base}.{$third_model}.index",
+											'route_url'  => route("{$route_base}.index")
 											];
 									}
 									
 									$allroutes[$parent][$child][$model][$third_model]['route_data'] = (object) [
-										'route_base'		=>	$route_base,
-										'route_name'		=>	"{$route_base}.{$third_model}.index",
-										'route_url'			=>	route("{$route_base}.index")
+										'route_base' => $route_base,
+										'route_name' => "{$route_base}.{$third_model}.index",
+										'route_url'  => route("{$route_base}.index")
 										];
 								} else {
 									dd($third_model);
@@ -979,45 +979,45 @@ if (!function_exists('get_route_lists')) {
 								if (in_array($selected, $modules)) {
 									if ($selected === $route_base) {
 										$routes[$parent][$child][$model]['route_data'] = (object) [
-											'route_base'	=>	$route_base,
-											'route_name'	=>	"{$route_base}.{$second_child}",
-											'route_url'		=>	route("{$route_base}.{$second_child}")
+											'route_base' => $route_base,
+											'route_name' => "{$route_base}.{$second_child}",
+											'route_url'  => route("{$route_base}.{$second_child}")
 											];
 									}
 								} elseif (!in_array($route_base, $modules)) {
 									$routes[$parent][$child][$model]['route_data'] = (object) [
-										'route_base'	=>	$route_base,
-										'route_name'	=>	"{$route_base}.{$second_child}",
-										'route_url'		=>	route("{$route_base}.{$second_child}")
+										'route_base' => $route_base,
+										'route_name' => "{$route_base}.{$second_child}",
+										'route_url'  => route("{$route_base}.{$second_child}")
 										];
 								}
 								
 								$allroutes[$parent][$child][$model]['route_data'] = (object) [
-									'route_base'	=>	$route_base,
-									'route_name'	=>	"{$route_base}.{$second_child}",
-									'route_url'		=>	route("{$route_base}.{$second_child}")
+									'route_base' => $route_base,
+									'route_name' => "{$route_base}.{$second_child}",
+									'route_url'  => route("{$route_base}.{$second_child}")
 									];
 							} else {
 								$route_base	= "{$parent}.{$child}";
 								if (in_array($selected, $modules)) {
 									if ($selected === $route_base) {
 										$routes[$parent][$child]['route_data'] = (object) [
-											'route_base'	=>	$route_base,
-											'route_name'	=>	"{$route_base}.{$model}",
-											'route_url'		=>	route("{$route_base}.{$model}")
+											'route_base' => $route_base,
+											'route_name' => "{$route_base}.{$model}",
+											'route_url'  => route("{$route_base}.{$model}")
 											];
 									}
 								} elseif (!in_array($route_base, $modules)) {
 									$routes[$parent][$child]['route_data'] = (object) [
-										'route_base'	=>	$route_base,
-										'route_name'	=>	"{$route_base}.{$model}",
-										'route_url'		=>	route("{$route_base}.{$model}")
+										'route_base' => $route_base,
+										'route_name' => "{$route_base}.{$model}",
+										'route_url'  => route("{$route_base}.{$model}")
 										];
 								}
 								$allroutes[$parent][$child]['route_data'] = (object) [
-									'route_base'	=>	$route_base,
-									'route_name'	=>	"{$route_base}.{$model}",
-									'route_url'		=>	route("{$route_base}.{$model}")
+									'route_base' => $route_base,
+									'route_name' => "{$route_base}.{$model}",
+									'route_url'  => route("{$route_base}.{$model}")
 									];
 							}
 						}
@@ -1025,14 +1025,14 @@ if (!function_exists('get_route_lists')) {
 				} else {
 					$route_base	= $parent;
 					$routes['single'][$parent]['route_data'] = (object) [
-						'route_base'	=>	$route_base,
-						'route_name'	=>	"{$route_base}.{$child}",
-						'route_url'		=>	route("{$route_base}.{$child}")
+						'route_base' => $route_base,
+						'route_name' => "{$route_base}.{$child}",
+						'route_url'  => route("{$route_base}.{$child}")
 						];
 					$allroutes['single'][$parent]['route_data'] = (object) [
-						'route_base'	=>	$route_base,
-						'route_name'	=>	"{$route_base}.{$child}",
-						'route_url'		=>	route("{$route_base}.{$child}")
+						'route_base' => $route_base,
+						'route_name' => "{$route_base}.{$child}",
+						'route_url'  => route("{$route_base}.{$child}")
 						];
 				}
 			}

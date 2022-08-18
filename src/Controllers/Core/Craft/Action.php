@@ -85,12 +85,14 @@ trait Action {
 	}
 	
 	private function initFilterDatatables() {
+		
 		if ('false' != $_GET['filterDataTables']) {
-			$fdata	= explode('::', $_POST['_fita']);
-			$table	= $fdata[1];
-			$target	= $fdata[2];
-			$pref	= $fdata[3];
-		//	$next	= $fdata[4];
+			
+			$fdata  = explode('::', $_POST['_fita']);
+			$table  = $fdata[1];
+			$target = $fdata[2];
+			$pref   = $fdata[3];
+		//	$next   = $fdata[4];
 			
 			unset($_POST['filterDataTables']);
 			unset($_POST['_fita']);
@@ -132,24 +134,22 @@ trait Action {
 			}
 			
 			$wheres = implode(' AND ', $wheres);
-			
-			$rows = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}");
+			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}");
 			
 			return $rows;
 		}
 	}
 	
+	public $stored_id;
+	public $store_routeback          = true;
 	public $filter_datatables_string = null;
-	protected function store(Request $request) {//, $model = []) {
+	
+	protected function INSERT_DATA_PROCESSOR(Request $request) {
 		$model = null;
-		if (!empty($_GET['filterDataTables'])) {
-			return $this->initFilterDatatables();
-		}
 		
+		if (!empty($_GET['filterDataTables'])) return $this->initFilterDatatables();
 		if (!empty($_GET['renderDataTables'])) {
-		//	$filter_strings = null;
 			if (!empty($_POST)) {
-			//	$token = $_POST['_token'];
 				unset($_POST['_token']);
 				$input_filters	= [];
 				
@@ -159,11 +159,10 @@ trait Action {
 					}
 				}
 				$this->filter_datatables_string = '&filters=true&' . implode('&', $input_filters);
-				dd($this);
 			}
 		}
 		
-		$req = $request->all();dd($req);
+		$req = $request->all();
 		if (!empty($req['filters'])) {
 			if ('true' === $req['filters']) {
 				$this->filterDataTable($request);
@@ -173,10 +172,19 @@ trait Action {
 			if (empty($model)) $model = $this->getModel();
 			
 			// check if any input file type submited
-			$data	= $this->checkFileInputSubmited($request);
-			$id	= diy_insert($model, $data, true);
-			
-			return $this->routeBackAfterAction(__FUNCTION__, $id);
+			$data            = $this->checkFileInputSubmited($request);
+			$this->stored_id = diy_insert($model, $data, true);
+		}
+		
+	}
+	
+	protected function store(Request $request) {
+		$this->INSERT_DATA_PROCESSOR($request);
+		
+		if (true === $this->store_routeback) {
+			return $this->routeBackAfterAction(__FUNCTION__, $this->stored_id);
+		} else {
+			return $this->stored_id;
 		}
 	}
 	

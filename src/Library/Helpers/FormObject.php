@@ -74,16 +74,16 @@ if (!function_exists('diy_form_button')) {
 	 */
 	function diy_form_button (
 		$name,
-		$label		= false,
-		$action		= [],
-		$tag		= 'button',
-		$link		= false,
-		$color		= 'white',
-		$border		= false,
-		$size		= false,
-		$disabled	= false,
-		$icon_name	= false,
-		$icon_color	= false
+		$label      = false,
+		$action     = [],
+		$tag        = 'button',
+		$link       = false,
+		$color      = 'white',
+		$border     = false,
+		$size       = false,
+		$disabled   = false,
+		$icon_name  = false,
+		$icon_color = false
 	) {
 				
 		$url = false;
@@ -110,13 +110,13 @@ if (!function_exists('diy_form_button')) {
 		$buttonDisabled = false;
 		if (false !== $disabled) $buttonDisabled = ' disabled';
 		
-		$icon		= false;
-		$iconName	= false;
+		$icon     = false;
+		$iconName = false;
 		if (false !== $icon_name) {
 			$iconColor	= false;
 			if (false !== $icon_color) $iconColor = " {$icon_color}";
-			$iconName	= $icon_name;
-			$icon		= '<i class="fa fa-' . $iconName . ' bigger-120' . $iconColor . '"></i>&nbsp; ';
+			$iconName = $icon_name;
+			$icon     = '<i class="fa fa-' . $iconName . ' bigger-120' . $iconColor . '"></i>&nbsp; ';
 		}
 		
 		$actions = [];

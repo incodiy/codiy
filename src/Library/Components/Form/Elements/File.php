@@ -17,13 +17,13 @@ use Intervention\Image\Facades\Image;
  
 trait File {
 	
-	public $inputFiles		= [];
-	public $getFileUploads	= [];
-	public $isFileType		= false;
+	public $inputFiles     = [];
+	public $getFileUploads = [];
+	public $isFileType     = false;
 	
-	private $filePath		= null;
-	private $fileNameInfo	= null;
-	private $thumbFolder	= 'thumb';
+	private $filePath      = null;
+	private $fileNameInfo  = null;
+	private $thumbFolder   = 'thumb';
 	
 	/**
 	 * Create Input File
@@ -46,9 +46,9 @@ trait File {
 	 * @return string
 	 */
 	private function inputFile($name, $attributes) {
-		$hideAttribute	= false;
-		$input_file		= Form::file($name, false);
-		$fileValue		= null;
+		$hideAttribute = false;
+		$input_file    = Form::file($name, false);
+		$fileValue     = null;
 		
 		if (true === in_array('imagepreview', $attributes)) {
 			if (!empty($attributes['value'])) {
@@ -91,8 +91,8 @@ trait File {
 	 * @return string
 	 */
 	private function getFileType($request, $input_name) {
-		$mimeType	= $request->file($input_name)->getMimeType();
-		$getType	= explode('/', $mimeType);
+		$mimeType = $request->file($input_name)->getMimeType();
+		$getType  = explode('/', $mimeType);
 		
 		return strtolower($getType[0]);
 	}
@@ -119,7 +119,7 @@ trait File {
 	 * @return string
 	 */
 	private function setUploadPath($folder_name) {
-		$baseFileUpload	= diy_config('base_resources');
+		$baseFileUpload = diy_config('base_resources');
 		
 		return public_path("{$baseFileUpload}/{$folder_name}");
 	}
@@ -133,13 +133,14 @@ trait File {
 	 * @return string
 	 */
 	private function setAssetPath($path, $folder) {
-		$baseIndexFolder	= diy_config('index_folder');
-		$basePathURL		= explode($baseIndexFolder, str_replace('\\', '/', $path));
+		$baseIndexFolder = diy_config('index_folder');
+		$basePathURL     = explode($baseIndexFolder, str_replace('\\', '/', $path));
+		
 		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
-			$baseIndexFolder	= null;
-			$basePathURLi		= explode('/', $basePathURL[1]);
+			$baseIndexFolder = null;
+			$basePathURLi    = explode('/', $basePathURL[1]);
 			unset($basePathURLi[0]);
-			$basePathURL[1]		= implode('/', $basePathURLi);
+			$basePathURL[1]  = implode('/', $basePathURLi);
 		}
 		
 		return "{$baseIndexFolder}{$basePathURL[1]}/{$folder}";
@@ -165,13 +166,13 @@ trait File {
 	 * @param boolean $use_time
 	 */
 	private function fileUploadProcessor($request, $upload_path, $fileInfo, $use_time = true) {
-		$file					= null;
-		$filePath				= $this->setUploadPath($upload_path);
+		$file     = null;
+		$filePath = $this->setUploadPath($upload_path);
 		
 		if (true === $use_time) {
-			$str_time	= time() . '_';
-			$datePath	= date('Y') . '/' . date('m') . '/' . date('d');
-			$filePath	= $this->setUploadPath($upload_path . '/' . $datePath);
+			$str_time = time() . '_';
+			$datePath = date('Y') . '/' . date('m') . '/' . date('d');
+			$filePath = $this->setUploadPath($upload_path . '/' . $datePath);
 		}
 		$this->filePath = $filePath;
 		
@@ -196,20 +197,20 @@ trait File {
 					if (is_array($request->file($inputname))) {
 						//foreach ($request->file($inputname) as $file) {dump($file);}
 					} else {
-						$file		= $request->file($inputname);
-						$filename	= $str_time . $file->getClientOriginalName();
+						$file     = $request->file($inputname);
+						$filename = $str_time . $file->getClientOriginalName();
 					}
 					
 					$this->fileNameInfo = $filename;
-					$fileType			= $this->getFileType($request, $inputname);
+					$fileType           = $this->getFileType($request, $inputname);
 					
 					if (empty($elements)) {
 						$file_name = explode('.', $file->getClientOriginalName());
 						
-						$elements['file_type']			= $fileType;
-						$elements['file_validation']	= null;
-						$elements['thumb_name']			= $file_name[0] . '_thumb';
-						$elements['thumb_size']			= [100, null];
+						$elements['file_type']       = $fileType;
+						$elements['file_validation'] = null;
+						$elements['thumb_name']      = $file_name[0] . '_thumb';
+						$elements['thumb_size']      = [100, null];
 					}
 					
 					if ('image' === $fileType) $this->createThumbImage($request, $inputname, $elements, $upload_path);
@@ -233,26 +234,26 @@ trait File {
 	 * @return boolean
 	 */
 	private function createThumbImage($request, $inputname, $dataInfo, $upload_path) {
-		$filePath		= $this->filePath;
-		$fileNameInfo	= $this->fileNameInfo;
+		$filePath       = $this->filePath;
+		$fileNameInfo   = $this->fileNameInfo;
 		$thumbnail_size = $dataInfo['thumb_size'];
 		
 		// CREATE THUMBNAIL
 		if (!empty($dataInfo['thumb_name'])) {
-			$thumb_time	= 'tnail_';// . time() . '_';
-			$datePath	= date('Y') . '/' . date('m') . '/' . date('d');
-			$thumbPath	= $this->setUploadPath($upload_path . '/' . $datePath . '/' . $this->thumbFolder);
+			$thumb_time = 'tnail_';// . time() . '_';
+			$datePath   = date('Y') . '/' . date('m') . '/' . date('d');
+			$thumbPath  = $this->setUploadPath($upload_path . '/' . $datePath . '/' . $this->thumbFolder);
 			diy_make_dir($thumbPath, 0777, true, true);
 			
-			$thumbname	= $thumb_time . $fileNameInfo;
-			$thumbfile	= Image::make($request->file($inputname)->getRealPath());
+			$thumbname  = $thumb_time . $fileNameInfo;
+			$thumbfile  = Image::make($request->file($inputname)->getRealPath());
 			
 			// SET SIZE THUMB-FILE WITH CHECKING ASPECT RATIO ( $thumbnail_size[0] = width | $thumbnail_size[1] = height )
 			if (null !== $thumbnail_size[0]) {
 				if (null !== $thumbnail_size[1]) {
 					$thumbfile->resize($thumbnail_size[0], $thumbnail_size[1]);
 				} else {
-					$thumbfile->resize($thumbnail_size[0], null, function ($constraint) {
+					$thumbfile->resize($thumbnail_size[0], null, function($constraint) {
 						$constraint->aspectRatio();
 					});
 				}
@@ -260,7 +261,7 @@ trait File {
 				if (null !== $thumbnail_size[0]) {
 					$thumbfile->resize($thumbnail_size[0], $thumbnail_size[1]);
 				} else {
-					$thumbfile->resize(null, $thumbnail_size[1], function ($constraint) {
+					$thumbfile->resize(null, $thumbnail_size[1], function($constraint) {
 						$constraint->aspectRatio();
 					});
 				}

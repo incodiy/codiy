@@ -408,9 +408,13 @@ class Objects {
 		
 		$paramData	= $this->params[$function_name][$name];
 		if (!empty($paramData)) {
-			$label		= $paramData['label'];
-			$value		= $paramData['value'];
-			$attributes	= $paramData['attributes'];
+			$label      = $paramData['label'];
+			if ('password' === $function_name) {
+				$value   = bcrypt($paramData['value']);
+			} else {
+				$value   = $paramData['value'];
+			}
+			$attributes = $paramData['attributes'];
 		}
 		$attributes		= diy_form_change_input_attribute($attributes, 'class', 'form-control');
 		

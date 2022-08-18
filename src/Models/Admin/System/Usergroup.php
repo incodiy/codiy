@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  */
  
 class Usergroup extends Model {
-	protected $table	= 'base_user_group';
-	protected $guarded	= [];
+	protected $table   = 'base_user_group';
+	protected $guarded = [];
 	
-	public $timestamps	= false;
+	public $timestamps = false;
 }

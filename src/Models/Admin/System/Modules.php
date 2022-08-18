@@ -71,11 +71,11 @@ class Modules extends Model {
 				->get();
 		}
 		
-		$module_privileges	= [];
-		$rolePrivileges		= [];
-		$role_data			= [];
-		$privileges			= [];
-		$privilege_info		= [];
+		$module_privileges = [];
+		$rolePrivileges    = [];
+		$role_data         = [];
+		$privileges        = [];
+		$privilege_info    = [];
 		
 		foreach ($menu as $menu_privilege) {
 			$module_privileges[]	= $menu_privilege->route_path;
@@ -86,7 +86,7 @@ class Modules extends Model {
 				$rolePrivileges[$menu_privilege->route_path] = $menu_privilege->{$privilege_type};
 			}
 			
-			$privileges[]			= [
+			$privileges[] = [
 				// GROUP INFO
 				'group_id'			=> $menu_privilege->group_id,
 				'group_name'		=> $menu_privilege->group_name,

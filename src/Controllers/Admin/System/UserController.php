@@ -25,11 +25,11 @@ class UserController extends Controller {
 	
 	private $route_group	= 'system.accounts.user';
 	private $validations	= [
-		'name'		=> 'required',
-		'fullname'	=> 'required',
-		'email'		=> 'required',
-		'password'	=> 'required',
-		'group_id'	=> 'required_if:base_group,0|not_in:0'
+		'username' => 'required',
+		'fullname' => 'required',
+		'email'    => 'required',
+		'password' => 'required',
+		'group_id' => 'required_if:base_group,0|not_in:0'
 	];
 	
 	public $data;
@@ -80,18 +80,57 @@ class UserController extends Controller {
 		//	return set_combobox_data(Multiplatforms::all(), 'id', 'name');
 		}
 	}
+	/*
+	public function get_group_by_platforms($platform_key) {
+		if (true === is_multiplatform()) {
+			return json_query('base_group', ['id', 'group_name'], ['id', 'group_name'], [$this->platform_key => $platform_key]);
+		}
+	}
+	 */
+	private $group_id;
+	private function set_data_before_post($request, $action_type = 'create') {
+		if (true === is_object($request)) {
+			$requests = $request;
+		} else {
+			$req      = new Request();
+			$requests = $req->merge($request);
+		}
+		
+		$group_id = [
+			'group_id' => $requests->group_id,
+			'email'    => $requests->email
+		];
+		$this->group_id = $group_id;
+		
+		$requests->offsetUnset('group_id');
+		$requests->merge(["{$action_type}d_by" => $this->session['id']]);
+	}
+	
+	private function set_data_after_post($data, $id = false) {
+		$email = $data['email'];
+		$user  = User::select('id')->where('email', $email)->first();
+		unset($data['email']);
+		
+		$new_array = array_merge($data, ['user_id' => $user->id]);
+		$request   = new Request();
+		$request->merge($new_array);
+		
+		if (false !== $id) {
+			diy_update(Usergroup::where(['user_id' => $id]), $request, true);
+		} else {
+			diy_insert(new Usergroup(), $request, true);
+		}
+	}
 	
 	public function index() {
 		$this->meta->title('User Lists');
-		$this->set_session();
-		
+		$this->set_session();		
 		/* 
 		if ('root' === $this->session['user_group']) {
 			$this->form->change_list_header($this->relational_data_set, 'User Group', 'group_name');
 			$fieldSet = ['name', 'email', 'address', 'phone', $this->relational_data_set, 'active'];
 		}
-		 */
-		
+		 */		
 		$this->table->searchable(['username', 'email']);
 		$this->table->clickable();
 		$this->table->sortable();
@@ -120,13 +159,13 @@ class UserController extends Controller {
 		$this->form->password('password', ['placeholder' => '********']);
 		$this->form->selectbox('active', active_box(), $model_data->active);
 		
-		$this->form->open_tab('User Group');
+		$this->form->openTab('User Group');
 		$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
 		if (true === is_multiplatform()) {
 			$this->form->selectbox($this->platform_key, $this->input_platform(), $model_data->{$this->platform_key}, ['required'], $this->platform_label);
 		}
 		
-		$this->form->open_tab('User Info');
+		$this->form->openTab('User Info');
 		$this->form->file('photo', ['imagepreview']);
 		$this->render_input_js_imagepreview($model_data->photo);
 		$this->form->textarea('address', $model_data->address);
@@ -134,10 +173,10 @@ class UserController extends Controller {
 		$this->form->selectbox('language', $this->input_language(), 'id_ID');
 		$this->form->selectbox('timezone', $this->input_timezone(), 218);
 		
-		$this->form->open_tab('User Status');
+		$this->form->openTab('User Status');
 		$this->form->date('expire_date');
 		$this->form->selectbox('change_password', active_box());
-		$this->form->close_tab();
+		$this->form->closeTab();
 		
 		$this->form->close();
 		
@@ -146,25 +185,15 @@ class UserController extends Controller {
 	
 	public function create() {
 		$this->set_session();
-		
 		$this->meta->title('Add User');
 		
-		$this->form->model();
+		$this->form->modelWithFile();
+		
 		$this->form->text('username', null, ['required']);
 		$this->form->text('fullname', null, ['required']);
 		$this->form->text('email', null, ['required']);
 		$this->form->password('password', ['required']);
 		$this->form->selectbox('active', active_box(), false, ['required']);
-		
-		$this->form->openTab('User Group');
-		if ('root' === $this->session['user_group']) {
-			if (true === is_multiplatform()) {
-				$this->form->selectbox($this->platform_key, $this->input_platform(), false, ['required'], $this->platform_label);
-			}
-			$this->form->selectbox('group_id', $this->input_group(), false, ['required'], 'User Group');
-		} else {
-			$this->form->selectbox('group_id', $this->input_group(), false, ['required'], 'User Group');
-		}
 		
 		$this->form->openTab('User Info');
 		$this->form->file('photo', ['imagepreview']);
@@ -172,6 +201,14 @@ class UserController extends Controller {
 		$this->form->text('phone');
 		$this->form->selectbox('language', $this->input_language(), 'id_ID', ['required']);
 		$this->form->selectbox('timezone', $this->input_timezone(), 218, ['required']);
+		
+		if ('root' === $this->session['user_group']) {
+			$this->form->openTab('User Group');
+			if (true === is_multiplatform()) {
+				$this->form->selectbox($this->platform_key, $this->input_platform(), false, ['required'], $this->platform_label);
+			}
+			$this->form->selectbox('group_id', $this->input_group(), false, ['required'], 'User Group');
+		}
 		
 		$this->form->openTab('User Status');
 		$this->form->date('expire_date');
@@ -181,47 +218,6 @@ class UserController extends Controller {
 		$this->form->close('Submit');
 		
 		return $this->render();
-	}
-	/* 
-	public function get_group_by_platforms($platform_key) {
-		if (true === is_multiplatform()) {
-			return json_query('base_group', ['id', 'group_name'], ['id', 'group_name'], [$this->platform_key => $platform_key]);
-		}
-	}
-	 */
-	private $group_id;
-	private function set_data_before_post($request, $action_type = 'create') {
-		if (true === is_object($request)) {
-			$requests = $request;
-		} else {
-			$req		 = new Request();
-			$requests = $req->merge($request);
-		}
-		
-		$group_id = [
-			'group_id'	=> $requests->group_id,
-			'email'		=> $requests->email
-		];
-		$this->group_id = $group_id;
-		
-		$requests->offsetUnset('group_id');
-		$requests->merge(["{$action_type}d_by" => $this->session['id']]);
-	}
-	
-	private function set_data_after_post($array, $id = false) {
-		$email	= $array['email'];
-		$user	= User::select('id')->where('email', $email)->first();
-		unset($array['email']);
-		$new_array	= array_merge($array, ['user_id' => $user->id]);
-		
-		$request	= new Request;
-		$request->merge($new_array);
-		
-		if (false !== $id) {
-			update(Usergroup::where(['user_id' => $id]), $request, true);
-		} else {
-			insert(new Usergroup, $request, true);
-		}
 	}
 	
 	public function store(Request $request) {
@@ -238,9 +234,9 @@ class UserController extends Controller {
 			$request->offsetUnset($this->platform_key);
 		}
 		$this->set_data_before_post($request);
-		$data = $this->data_file_processor($this->name, $request, 'photo', 'image|mimes:jpeg,png,jpg,gif,svg|max:2048');
-		
-		$model = insert(new User, $data, true);
+		$this->store_routeback = false;
+		$this->store($request);
+		$model = $this->stored_id;//diy_insert($this->model, $request, true);
 		$this->set_data_after_post($this->group_id);
 		
 		$route_back = str_replace('.', '/', $this->route_group);
@@ -248,55 +244,54 @@ class UserController extends Controller {
 	}
 	
 	public function edit($id) {
-		$model_data		= User::find($id);
-		$group_data		= $model_data->group;
+		$this->set_session();
+		$this->meta->title('Edit User');
+		
+		$model_data     = $this->model::withTrashed()->find($id);
+		$group_data     = $model_data->group;
 		$selected_group = false;
 		foreach ($group_data as $group) {
-			$selected_group		= $group->id;
-			$platform_platforms	= $group->{$this->platform_key};
+			$selected_group = $group->id;
+			if (true === is_multiplatform()) $platform_platforms = $group->{$this->platform_key};
 		}
-		
-		$this->set_page('Edit User', 'user');
 		
 		if (intval($model_data->id) === intval($this->session['id'])) {
-			$this->form->setHiddenFields([$this->platform_key, 'group_id']);
+			if (true === is_multiplatform()) $this->form->setHiddenFields([$this->platform_key, 'group_id']);
 		}
 		
-		$this->form->model($model_data, "{$this->route_group}.update", $model_data->id, true);
+		$this->form->model();
 		
-		$this->form->text('name', $model_data->name, ['required']);
+		$this->form->text('username', $model_data->name, ['required']);
 		$this->form->text('fullname', $model_data->fullname, ['required']);
 		$this->form->text('email', $model_data->email, ['required']);
 		$this->form->password('password', ['placeholder' => '********']);
 		$this->form->selectbox('active', active_box(), $model_data->active);
 		
-		if (intval($model_data->id) !== intval($this->session['id'])) {
-			$this->form->open_tab('User Group');
-		}
-		
-		if ('root' === $this->session['user_group']) {
-			if (true === is_multiplatform()) {
-				$this->form->selectbox($this->platform_key, $this->input_platform(), $platform_platforms, ['required'], $this->platform_label);
-			}
-			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
-		} else {
-			$this->form->selectbox('group_id', $this->input_group(), false, ['required'], 'User Group');
-		}
-		
-		$this->form->open_tab('User Info');
+		$this->form->openTab('User Info');
 		$this->form->file('photo', ['imagepreview']);
-		$this->render_input_js_imagepreview($model_data->photo);
 		$this->form->textarea('address', $model_data->address, ['class' => 'form-control ckeditor']);
 		$this->form->text('phone', $model_data->phone);
 		$this->form->selectbox('language', $this->input_language(), 'id_ID');
 		$this->form->selectbox('timezone', $this->input_timezone(), 218);
+				
+		if ('root' === $this->session['user_group']) {
+			if (intval($model_data->id) !== intval($this->session['id'])) {
+				$this->form->openTab('User Group');
+			}
+			
+			if (true === is_multiplatform()) {
+				$this->form->selectbox($this->platform_key, $this->input_platform(), $platform_platforms, ['required'], $this->platform_label);
+			}
+			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
+		}
 		
-		$this->form->open_tab('User Status');
+		$this->form->openTab('User Status');
 		$this->form->date('expire_date', $model_data->expire_date);
 		$this->form->selectbox('change_password', active_box());
-		$this->form->close_tab();
+		$this->form->closeTab();
 		
 		$this->form->close('Submit');
+		
 		if ('root' === $this->session['user_group']) {
 			if (true === is_multiplatform()) {
 				$this->form->setComboboxActionJS($this->platform_key, 'group_id', 'system.accounts.user.get_group_by_platforms', 'base_group_value', 'base_group_label');
