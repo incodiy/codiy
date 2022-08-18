@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
  
 class Privilege extends Model {
-	protected $table		= 'base_group_privilege_copy';
+	protected $table		= 'base_group_privilege';
 	protected $guarded	= [];
 	
 	public $timestamps	= false;
