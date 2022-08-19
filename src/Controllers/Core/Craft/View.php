@@ -56,7 +56,6 @@ trait View {
 		if (!empty($this->data['components']->table->elements)) {
 			$tableElements = $this->table->render($this->data['components']->table->elements);
 		}
-		
 		$this->addScriptsFromElements();
 		
 		if (!empty($_GET['renderDataTables'])) {
@@ -86,17 +85,22 @@ trait View {
 		}
 		
 		$this->template->render_sidebar_menu($this->menu);
-		$this->data['menu_sidebar']			= [];
+		$this->data['menu_sidebar']    = [];
 		if (!is_null($this->template->menu_sidebar)) {
-			$this->data['menu_sidebar']		= $this->template->menu_sidebar;
+			$this->data['menu_sidebar'] = $this->template->menu_sidebar;
 		}
 		
 		$this->template->render_sidebar_content();
-		$this->data['sidebar_content']		= [];
+		$this->data['sidebar_content']    = [];
 		if (!is_null($this->template->sidebar_content)) {
-			$this->data['sidebar_content']	= $this->template->sidebar_content;
+			$this->data['sidebar_content'] = $this->template->sidebar_content;
 		}
 		
+		$this->data['breadcrumbs']    = [];
+		if (!is_null($this->template->breadcrumbs)) {
+			$this->data['breadcrumbs'] = $this->template->breadcrumbs;
+		}
+	//	dd($this->data['breadcrumbs']);
 		return view($this->pageView, $this->data, $this->dataOptions);
 	}
 	
@@ -136,9 +140,14 @@ trait View {
 	 */
 	protected function setPage($page, $path = false) {
 		$this->set_session();
-		$page_name = diy_underscore_to_camelcase($page);
+		$page_name  = diy_underscore_to_camelcase($page);
+		$page_title = strtolower($page);
 		
 		$this->meta->title($page_name);
+		$this->template->set_breadcrumb(
+			$page_name,		[$page_title => url($this->template->currentURL), 'index'],
+			$page_title,	[$page_title, 'home']
+		);
 		$this->configView($path);
 		
 		$this->routeInfo();

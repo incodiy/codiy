@@ -15,9 +15,9 @@
 			<footer>
 				<div class="footer-area">
 					<span class="pull-right">
-					<span id="copyright"></span>&nbsp;
-					<font title="wisnuwidi@gmail.com">&copy;</font>
-					<a href="mailto:wisnuwidi@gmail.com" target="_blank">codiy</a>, Yogyakarta - ID
+						<span id="copyright"></span>&nbsp;
+						<font title="{{ diy_config('email') }}">&copy;</font>&nbsp;
+						<a href="mailto:{{ diy_config('email') }}" target="_blank">{{ diy_config('copyrights') }}</a>, {{ diy_config('location') }} {{ diy_config('location_abbr') }}
 					</span>
 				</div>
 			</footer>

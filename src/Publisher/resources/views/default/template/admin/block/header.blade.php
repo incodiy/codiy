@@ -81,19 +81,5 @@ $assetURL = "{$baseUrl}/{$baseTemplate}/{$template}";
 						</div>
 					</div>
 				</div>
-				
-				<div class="page-title-area shadow">
-					<div class="row align-items-center">
-						<div class="col-sm-12">
-							<div class="breadcrumbs-area clearfix">
-								<h4 class="page-title pull-left">Articles Lists</h4>
-								<!-- ul class="breadcrumbs pull-right"><li><a href="index.html">Home</a></li><li><span>Articles Lists</span></li></ul -->
-								<ul class="breadcrumbs pull-right">
-									<li><a href="#">Articles Lists</a></li>
-									<li><span>Index</span></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
+				{!! $breadcrumbs !!}
 				<!-- HEADER BLOCK CLOSE  -->

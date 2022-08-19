@@ -14,41 +14,41 @@ $meta    = $components->meta->content['html'];
 $styles  = [];
 $scripts = $components->template->scripts['js']['top'];
 
-$styles['top']					= [];
+$styles['top'] = [];
 if (!empty($components->template->scripts['css']['top'])) {
-	$styles['top'] 	= $components->template->scripts['css']['top'];
+	$styles['top'] = $components->template->scripts['css']['top'];
 }
-$styles['bottom_first']			= [];
+$styles['bottom_first']    = [];
 if (!empty($components->template->scripts['css']['bottom_first'])) {
-	$styles['bottom_first'] 	= $components->template->scripts['css']['bottom_first'];
+	$styles['bottom_first'] = $components->template->scripts['css']['bottom_first'];
 }
-$styles['bottom_last']			= [];
+$styles['bottom_last']     = [];
 if (!empty($components->template->scripts['css']['bottom_last'])) {
-	$styles['bottom_last']		= $components->template->scripts['css']['bottom_last'];
+	$styles['bottom_last']  = $components->template->scripts['css']['bottom_last'];
 }
 ?>
 	<link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
 	
 	<!-- MetaTags  -->
-    @foreach ($meta as $metaTags)
-    {!! $metaTags !!}
-    @endforeach
+	@foreach ($meta as $metaTags)
+		{!! $metaTags !!}
+	@endforeach
 
 	<!-- CSS  -->
 	@foreach ($styles['top'] as $style)
-    {!! $style->html !!}
-    @endforeach
+		{!! $style->html !!}
+	@endforeach
     
 	@foreach ($styles['bottom_first'] as $style)
-    {!! $style->html !!}
-    @endforeach
+		{!! $style->html !!}
+	@endforeach
     
 	@foreach ($styles['bottom_last'] as $style)
-    {!! $style->html !!}
-    @endforeach
+		{!! $style->html !!}
+	@endforeach
     
-    <!-- JS  -->
+	<!-- JS  -->
 	@foreach ($scripts as $script)
-    {!! $script->html !!}
-    @endforeach
+		{!! $script->html !!}
+	@endforeach
 

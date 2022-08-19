@@ -204,8 +204,8 @@ if (!function_exists('diy_breadcrumb')) {
                 foreach ($links as $link_title => $link_url) {
                     $n++;
                     
-                    $index		= $n - 1;
-                    $linkTitle	= diy_diy_underscore_to_camelcase($link_title);
+                    $index     = $n - 1;
+                    $linkTitle = diy_underscore_to_camelcase($link_title);
                     
                     $o .= "<li>";
                     if (0 !== $link_title) {
