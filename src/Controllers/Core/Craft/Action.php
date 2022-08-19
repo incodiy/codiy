@@ -61,7 +61,12 @@ trait Action {
 		
 		if (true === $this->softDeletedModel) {
 			if (false !== $find) {
-				return $model->find($find);
+				if (!empty($model->find($find))) {
+					return $model->find($find);
+				} else {
+					return $model::withTrashed()->find($find);
+				}
+				
 			} else {
 				return diy_get_model($model, $find);
 			}
@@ -232,7 +237,7 @@ trait Action {
 	}
 	
 	protected function destroy(Request $request, $id) {
-		$model = $this->getModel($id);
+		$model = $this->getModel($id);//dd($this->model_original::withTrashed()->find(17));
 		diy_delete($request, $model, $id);
 		
 		return $this->routeBackAfterAction(__FUNCTION__);
