@@ -203,7 +203,7 @@ class ModulesController extends Controller {
 	public function edit($id) {
 		$this->meta->title('Edit ' . camel_case($this->name));
 		
-		$model_data = $this->model::withTrashed()->find($id);
+		$model_data = $this->model->find($id);
 		
 		$this->form->model();
 		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['required', 'disabled' => 'disabled']);

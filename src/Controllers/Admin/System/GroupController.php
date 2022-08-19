@@ -248,7 +248,7 @@ class GroupController extends Controller {
 			}]
 		]);
 		
-		$requests = $request->all(); // collect all requests
+		$requests = $request->all();                                    // collect all requests
 		if (isset($requests['modules'])) {
 			$modules            = [];
 			$modules['modules'] = $requests['modules'];                  // get modules requests, if any
@@ -286,7 +286,7 @@ class GroupController extends Controller {
 	 * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function edit($id) {
-		$model_data = $this->model::withTrashed()->find($id);		
+		$model_data = $this->model->find($id);		
 		$this->meta->title('Edit Group');
 		$this->get_menu();
 		
@@ -348,7 +348,7 @@ class GroupController extends Controller {
 		}
 		
 		$this->set_data_before_insert($request);
-		diy_update(Group::find($id), $request, true);
+		diy_update($this->model->find($id), $request, true);
 		$this->set_data_after_insert($this->roles);
 		$route_back = url()->current();
 		

@@ -66,7 +66,7 @@ trait RouteInfo {
 	 * Create = Back
 	 * Index = Add
 	 */
-	private function routeInfo() {
+	private function routeInfo() {;
 		if (strpos(php_sapi_name(), 'cli') === false) {
 			$this->get_pageinfo();
 			
@@ -79,12 +79,21 @@ trait RouteInfo {
 				} elseif ('create' === $this->pageInfo) {
 					$action_page['action_page'] = ["info|back to {$this->controllerName} lists" => $this->routeReplaceURL('create', 'index')];
 				} elseif ('edit' === $this->pageInfo) {
-					$action_page['action_page'] = [
-						"danger|delete {$this->controllerName}"      => $this->routeReplaceURL('edit', 'destroy'),
-						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
-						"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
-						"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
-					];
+					if (true === $this->is_softdeleted) {
+						$action_page['action_page'] = [
+							"secondary|delete {$this->controllerName}"   => $this->routeReplaceURL('edit', 'destroy'),
+							"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
+							"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
+							"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
+						];
+					} else {
+						$action_page['action_page'] = [
+							"danger|delete {$this->controllerName}"      => $this->routeReplaceURL('edit', 'destroy'),
+							"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
+							"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
+							"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
+						];
+					}
 				} elseif ('show' === $this->pageInfo) {
 					$action_page['action_page'] = [
 						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('show', 'create'),

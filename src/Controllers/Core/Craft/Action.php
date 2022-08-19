@@ -21,6 +21,9 @@ trait Action {
 	public $model_table	= null;
 	public $validation	= [];
 	public $uploadTrack;
+	public $stored_id;
+	public $store_routeback = true;
+	public $filter_datatables_string = null;
 	
 	/**
 	 * Redirect page after login
@@ -49,7 +52,11 @@ trait Action {
 	 * @return object
 	 */
 	protected function getModel($find = false) {
-		return diy_get_model($this->model, $find);
+		if (true === diy_is_softdeletes($this->model)) {
+			return $this->model::withTrashed()->find($find);
+		} else {
+			return diy_get_model($this->model, $find);
+		}
 	}
 	
 	/**
@@ -139,11 +146,7 @@ trait Action {
 			return $rows;
 		}
 	}
-	
-	public $stored_id;
-	public $store_routeback          = true;
-	public $filter_datatables_string = null;
-	
+		
 	public function insert_data(Request $request, $routeback = true) {
 		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
 	}
@@ -218,9 +221,9 @@ trait Action {
 	}
 	
 	protected function destroy(Request $request, $id) {
-		$model	= $this->getModel();
-		
+		$model = $this->getModel($id);
 		diy_delete($request, $model, $id);
+		
 		return $this->routeBackAfterAction(__FUNCTION__);
 	}
 	
@@ -230,12 +233,32 @@ trait Action {
 	 * @param object $class
 	 */
 	protected function model($class) {
-		$this->model_path    = $class;
-		$this->model         = new $this->model_path();
-		$this->model_table   = $this->model->getTable();
+		$this->model_path  = $class;
+		$this->model       = new $this->model_path();
+		$this->model_table = $this->model->getTable();
+		
+		if (true === diy_is_softdeletes($class)) {
+			$this->model = $this->model::withTrashed();
+		}
+		
+		if (!empty(diy_get_current_route_id())) {
+			$this->model_id = diy_get_current_route_id();
+			$this->model_find($this->model_id);
+		}
 		
 		if (!empty($this->form)) {
 			$this->form->model = $this->model;
+		}
+	}
+	
+	public $model_id;
+	public $model_data;
+	public $is_softdeleted = false;
+	
+	public function model_find($id) {
+		$this->model_data = $this->model->find($id);
+		if (!is_null($this->model_data->deleted_at)) {
+			$this->is_softdeleted = true;
 		}
 	}
 	

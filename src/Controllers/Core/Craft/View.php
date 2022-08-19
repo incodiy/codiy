@@ -16,15 +16,15 @@ use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
  
 trait View {
 	
-	public $pageType			= false;
+	public $pageType         = false;
 	
 	private $pageView;
 	private $viewAdmin;
 	private $viewFront;
-	private $dataOptions		= [];
+	private $dataOptions     = [];
 	
-	protected $hideFields		= [];
-	protected $excludeFields	= [];
+	protected $hideFields    = [];
+	protected $excludeFields = [];
 	
 	/**
 	 * Get Some Hidden Set Field(s)
@@ -41,9 +41,7 @@ trait View {
 	}
 	
 	public function render($data = false) {
-		if (empty($this->pageView)) {
-			$this->configView();
-		}
+		if (empty($this->pageView)) $this->configView();
 		
 		$formElements = [];
 		if (!empty($this->data['components']->form->elements)) {
@@ -65,15 +63,15 @@ trait View {
 			if (!is_array($data)) {
 				// if $data variable not array
 				$data_contents = [$data];
-				$merge_data = array_merge($this->data['content_page'], $data_contents);
+				$merge_data    = array_merge($this->data['content_page'], $data_contents);
 			} else {
 				// if $data variable is an array
 				if (diy_is_empty($data)) {
 					// if array = []
-					$merge_data = $this->data['content_page'];
+					$merge_data    = $this->data['content_page'];
 				} else {
-					$data_contents	= $data;
-					$merge_data		= array_merge($this->data['content_page'], $data_contents);
+					$data_contents = $data;
+					$merge_data    = array_merge($this->data['content_page'], $data_contents);
 				}
 			}
 			$dataContent = array_merge($merge_data, $formElements, $tableElements);
@@ -88,11 +86,11 @@ trait View {
 	
 	private function initRenderDatatables() {
 		if ('false' != $_GET['renderDataTables']) {
-			$Datatables					= [];
-			$Datatables['datatables']	= $this->data['components']->table;
-			$datatables					= diy_array_to_object_recursive($Datatables);
+			$Datatables = [];
+			$Datatables['datatables'] = $this->data['components']->table;
+			$datatables = diy_array_to_object_recursive($Datatables);
 			
-			$filters					= [];
+			$filters = [];
 			if (!empty($_GET['filters'])) {
 				if ('true' === $_GET['filters']) $filters = $_GET;
 			}

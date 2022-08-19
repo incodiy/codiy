@@ -56,13 +56,21 @@ class Controller extends BaseController {
 	
 	private $plugins		= [];
 	
-	public function __construct() {
+	/**
+	 * Constructor
+	 * 
+	 * @param boolean $model
+	 * @param boolean $route_page
+	 */
+	public function __construct($model = false, $route_page = false) {
 		ini_set('memory_limit', -1);
 		
 		$this->dataCollections();
+		if (false !== $model) $this->model($model);
+		if (false !== $route_page) $this->set_route_page($route_page);
 		
 		if (strpos(php_sapi_name(), 'cli') === false) {
-			if (!empty($this->form)) $this->routeInfo();
+			if (!empty($this->form)) $this->routeInfo();		
 		}
 	}
 	
