@@ -52,10 +52,21 @@ trait Action {
 	 * @return object
 	 */
 	protected function getModel($find = false) {
-		if (true === diy_is_softdeletes($this->model)) {
-			return $this->model::withTrashed()->find($find);
+		$model = [];
+		if ('Builder' === class_basename($this->model)) {
+			$model = $this->model_original;
 		} else {
-			return diy_get_model($this->model, $find);
+			$model = $this->model;
+		}
+		
+		if (true === $this->softDeletedModel) {
+			if (false !== $find) {
+				return $model->find($find);
+			} else {
+				return diy_get_model($model, $find);
+			}
+		} else {
+			return diy_get_model($model, $find);
 		}
 	}
 	
@@ -227,17 +238,21 @@ trait Action {
 		return $this->routeBackAfterAction(__FUNCTION__);
 	}
 	
+	public $model_original;
+	public $softDeletedModel = false;
 	/**
 	 * Get Data Model
 	 *
 	 * @param object $class
 	 */
 	protected function model($class) {
-		$this->model_path  = $class;
-		$this->model       = new $this->model_path();
-		$this->model_table = $this->model->getTable();
+		$this->model_path       = $class;
+		$this->model            = new $this->model_path();
+		$this->model_original   = $this->model;
+		$this->model_table      = $this->model->getTable();
+		$this->softDeletedModel = diy_is_softdeletes($class);
 		
-		if (true === diy_is_softdeletes($class)) {
+		if (true === $this->softDeletedModel) {
 			$this->model = $this->model::withTrashed();
 		}
 		
