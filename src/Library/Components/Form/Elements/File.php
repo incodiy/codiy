@@ -240,7 +240,7 @@ trait File {
 		
 		// CREATE THUMBNAIL
 		if (!empty($dataInfo['thumb_name'])) {
-			$thumb_time = 'tnail_';// . time() . '_';
+			$thumb_time = 'tnail_';
 			$datePath   = date('Y') . '/' . date('m') . '/' . date('d');
 			$thumbPath  = $this->setUploadPath($upload_path . '/' . $datePath . '/' . $this->thumbFolder);
 			diy_make_dir($thumbPath, 0777, true, true);

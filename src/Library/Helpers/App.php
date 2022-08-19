@@ -545,6 +545,25 @@ if (!function_exists('diy_current_url')) {
 	}
 }
 
+if (!function_exists('set_break_line_html')) {
+	
+	/**
+	 * Adding Break Line
+	 *
+	 * @param string $tag
+	 * @param integer $loops
+	 *
+	 * @return string
+	 */
+	function set_break_line_html($tag, $loops = 1) {
+		$tags	= "";
+		for ($x=2; $x<=$loops; $x++) {
+			$tags .= $tag;
+		}
+		return "{$tags}";
+	}
+}
+
 if (!function_exists('minify_code')) {
 	
 	/**
@@ -645,14 +664,12 @@ if (!function_exists('diy_insert')) {
 }
 
 if (!function_exists('diy_update')) {
-	
+		
 	/**
-	 * Get Current Route Name
+	 * Simply Update POST Data to Database
 	 *
-	 * created @Sep 7, 2018
-	 * author: wisnuwidi
-	 *
-	 * @return string
+	 * @param object $model
+	 * @param array $data
 	 */
 	function diy_update($model, $data) {
 		$request = [];
@@ -710,8 +727,10 @@ if (!function_exists('diy_delete')) {
 		if (!empty($model->id)) {
 			$model->delete();
 		} else {
-			$remodel = $model_name::withTrashed()->find($id);
-			$remodel->restore();
+			if (true === diy_is_softdeletes($model_name)) {
+				$remodel = $model_name::withTrashed()->find($id);
+				$remodel->restore();
+			}
 		//	$remodel->update(['active' => 1]);
 		}
 	}

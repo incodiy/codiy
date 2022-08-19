@@ -16,13 +16,21 @@ use Illuminate\Http\Request;
  
 trait Action {
 	
-	public $model			= [];
-	public $model_path	= null;
-	public $model_table	= null;
-	public $validation	= [];
+	public $model			            = [];
+	public $model_path	            = null;
+	public $model_table	            = null;
+	public $model_id;
+	public $model_data;
+	public $model_original;
+	
+	public $softDeletedModel         = false;
+	public $is_softdeleted           = false;
+	
+	public $validation	            = [];
 	public $uploadTrack;
+	
 	public $stored_id;
-	public $store_routeback = true;
+	public $store_routeback          = true;
 	public $filter_datatables_string = null;
 	
 	/**
@@ -86,21 +94,6 @@ trait Action {
 		return $this->getModel($find)->getTable();
 	}
 	
-	public function create() {
-		return $this->render();
-	}
-	
-	public function edit($id) {
-		if (!empty($this->getModel($id))) {
-			$model = $this->getModel($id);
-			$model->find($id);
-			
-			if (!empty($model->getAttributes())) {
-				return $this->create();
-			}
-		}
-	}
-	
 	public $filter_datatables = [];
 	protected function filterDataTable(Request $request) {
 		$this->filter_datatables = $request->all();
@@ -110,12 +103,10 @@ trait Action {
 	private function initFilterDatatables() {
 		
 		if ('false' != $_GET['filterDataTables']) {
-			
 			$fdata  = explode('::', $_POST['_fita']);
 			$table  = $fdata[1];
 			$target = $fdata[2];
-			$pref   = $fdata[3];
-		//	$next   = $fdata[4];
+			$prev   = $fdata[3];
 			
 			unset($_POST['filterDataTables']);
 			unset($_POST['_fita']);
@@ -128,24 +119,24 @@ trait Action {
 			}
 			
 			$wherepPrefious = null;
-			if ('#null' !== $pref) {
-				$previous  = explode("#", $pref);
-				$preFields = explode('|', $previous[0]);
-				$preFieldt = explode('|', $previous[1]);
+			if ('#null' !== $prev) {
+				$previous  = explode("#", $prev);
+				$prevields = explode('|', $previous[0]);
+				$previeldt = explode('|', $previous[1]);
 				
-				$prefields = [];
-				foreach ($preFields as $idf => $pref_field) {
-					$prefields[$idf] = $pref_field;
+				$prevields = [];
+				foreach ($prevields as $idf => $prev_field) {
+					$prevields[$idf] = $prev_field;
 				}
 				
-				$prefieldt = [];
-				foreach ($preFieldt as $idd => $pref_field_data) {
-					$prefieldt[$idd] = $pref_field_data;
+				$previeldt = [];
+				foreach ($previeldt as $idd => $prev_field_data) {
+					$previeldt[$idd] = $prev_field_data;
 				}
 				
 				$previousData = [];
-				foreach ($prefields as $idp => $pref_data) {
-					$previousData[$pref_data] = $prefieldt[$idp];
+				foreach ($prevields as $idp => $prev_data) {
+					$previousData[$prev_data] = $previeldt[$idp];
 				}
 				
 				$previousdata = [];
@@ -160,6 +151,47 @@ trait Action {
 			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}");
 			
 			return $rows;
+		}
+	}
+	
+	public function create() {
+		return $this->render();
+	}
+	
+	private function RENDER_DEFAULT_SHOW($id) {
+		$model_data = $this->model->find($id);
+		
+		$this->form->model($this->model, $this->model->find($id));
+		foreach ($model_data->getAttributes() as $field => $value) {
+			if ('id' !== $field) {
+				if ('active' === $field) {
+					$this->form->selectbox($field, active_box(), $model_data->active, ['disabled']);
+				} elseif ('flag_status' === $field) {
+					$this->form->selectbox($field, flag_status(), $model_data->flag_status, ['disabled']);
+				} else {
+					$this->form->text($field, $value, ['disabled']);
+				}
+			}
+		}
+		$this->form->close();
+		
+		return $this->render();
+	}
+	
+	public function show($id) {
+		$this->form->addAttributes(['readonly', 'disabled', 'class' => 'form-show-only']);
+		
+		return $this->create();
+	}
+	
+	public function edit($id) {
+		if (!empty($this->getModel($id))) {
+			$model = $this->getModel($id);
+			$model->find($id);
+			
+			if (!empty($model->getAttributes())) {
+				return $this->create();
+			}
 		}
 	}
 		
@@ -237,14 +269,12 @@ trait Action {
 	}
 	
 	protected function destroy(Request $request, $id) {
-		$model = $this->getModel($id);//dd($this->model_original::withTrashed()->find(17));
+		$model = $this->getModel($id);
 		diy_delete($request, $model, $id);
 		
 		return $this->routeBackAfterAction(__FUNCTION__);
 	}
 	
-	public $model_original;
-	public $softDeletedModel = false;
 	/**
 	 * Get Data Model
 	 *
@@ -270,11 +300,7 @@ trait Action {
 			$this->form->model = $this->model;
 		}
 	}
-	
-	public $model_id;
-	public $model_data;
-	public $is_softdeleted = false;
-	
+		
 	public function model_find($id) {
 		$this->model_data = $this->model->find($id);
 		if (!is_null($this->model_data->deleted_at)) {
@@ -324,7 +350,8 @@ trait Action {
 			foreach ($request->files as $inputname => $file) {
 				if ($request->hasfile($inputname)) {
 					// if any file type submited
-					return $this->uploadFiles($this->setUploadURL(), $request, $this->fileAttributes);
+					$file = $this->fileAttributes;
+					return $this->uploadFiles($this->setUploadURL(), $request, $file);
 				} else {
 					// if no one file type submited
 					return $request;
@@ -338,26 +365,6 @@ trait Action {
 			// if no one file type submited
 			return $request;
 		}
-	}
-	
-	public function show($id) {
-		$model_data = $this->model->find($id);
-		
-		$this->form->model($this->model, $this->model->find($id));
-		foreach ($model_data->getAttributes() as $field => $value) {
-			if ('id' !== $field) {
-				if ('active' === $field) {
-					$this->form->selectbox($field, active_box(), $model_data->active, ['disabled']);
-				} elseif ('flag_status' === $field) {
-					$this->form->selectbox($field, flag_status(), $model_data->flag_status, ['disabled']);
-				} else {
-					$this->form->text($field, $value, ['disabled']);
-				}
-			}
-		}
-		$this->form->close();
-		
-		return $this->render();
 	}
 	
 }

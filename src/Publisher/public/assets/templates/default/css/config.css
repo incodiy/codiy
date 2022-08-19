@@ -5685,3 +5685,15 @@ table .dropdown-menu a[data-rel="tooltip"] span.red {
 		border-top-right-radius: 0
 	}
 }
+
+.form-show-only,
+input.form-control.form-show-only:focus, 
+input.form-control.form-show-only:hover, 
+textarea.form-control.form-show-only:focus, 
+textarea.form-control.form-show-only:hover {
+	border-top: transparent solid 1px !important;
+	border-right: transparent solid 1px !important;
+/* 	border-bottom: #57A3F0 solid 1px !important; */
+	border-left: transparent solid 1px !important;
+	background-color: transparent !important;
+}

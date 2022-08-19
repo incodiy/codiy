@@ -112,49 +112,6 @@ class UserController extends Controller {
 		return $this->render();
 	}
 	
-	public function show($id) {
-		$this->model_data     = User::find($id);
-		$group_data     = $this->model_data->group;
-		$selected_group = false;
-		
-		foreach ($group_data as $group) {
-			$selected_group = $group->id;
-		}
-		
-		$this->set_page('Detail User', 'user');
-		
-		$this->form->model($this->model_data, false);
-		
-		$this->form->text('name', $this->model_data->name, ['required']);
-		$this->form->text('fullname', $this->model_data->fullname, ['required']);
-		$this->form->text('email', $this->model_data->email, ['required']);
-		$this->form->password('password', ['placeholder' => '********']);
-		$this->form->selectbox('active', active_box(), $this->model_data->active);
-		
-		$this->form->openTab('User Group');
-		$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
-		if (true === is_multiplatform()) {
-			$this->form->selectbox($this->platform_key, $this->input_platform(), $this->model_data->{$this->platform_key}, ['required'], $this->platform_label);
-		}
-		
-		$this->form->openTab('User Info');
-		$this->form->file('photo', ['imagepreview']);
-		$this->render_input_js_imagepreview($this->model_data->photo);
-		$this->form->textarea('address', $this->model_data->address);
-		$this->form->text('phone');
-		$this->form->selectbox('language', $this->input_language(), 'id_ID');
-		$this->form->selectbox('timezone', $this->input_timezone(), 218);
-		
-		$this->form->openTab('User Status');
-		$this->form->date('expire_date');
-		$this->form->selectbox('change_password', active_box());
-		$this->form->closeTab();
-		
-		$this->form->close();
-		
-		return $this->render();
-	}
-	
 	public function create() {
 		$this->set_session();
 		$this->meta->title('Add User');

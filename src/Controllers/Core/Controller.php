@@ -51,7 +51,7 @@ class Controller extends BaseController {
 	public $data			= [];
 	public $session_auth	= [];
 	public $getLogin		= true;
-	public $rootPage		= 'home';//'system/config/module';
+	public $rootPage		= 'home';
 	public $adminPage		= 'dashboard';
 	
 	private $plugins		= [];
@@ -64,6 +64,7 @@ class Controller extends BaseController {
 	 */
 	public function __construct($model = false, $route_page = false) {
 		ini_set('memory_limit', -1);
+	//	minify_code();
 		
 		$this->dataCollections();
 		if (false !== $model) $this->model($model);

@@ -27,10 +27,10 @@ class Objects {
 	use Text, DateTime, Select, File, Check, Radio, Tab;
 	
 	public $model;
-	public $elements		= [];
-	public $element_name	= [];
-	public $element_plugins	= [];
-	public $params			= [];
+	public $elements        = [];
+	public $element_name    = [];
+	public $element_plugins = [];
+	public $params          = [];
 	
 	/**
 	 * --[openTabHTMLForm]--
@@ -40,10 +40,15 @@ class Objects {
 	private $currentRoute;
 	private $currentRouteArray;
 	public  $currentRouteName;
+	
+	public function __construct() {
+		$this->getCurrentRoute();
+	}
+	
 	protected function getCurrentRoute() {
 		$this->currentRoute      = current_route();
 		$this->currentRouteArray = explode('.', $this->currentRoute);
-		$this->currentRouteName  = $this->currentRouteArray[array_key_last($this->currentRouteArray)];
+		$this->currentRouteName  = last($this->currentRouteArray);//$this->currentRouteArray[array_key_last($this->currentRouteArray)];
 	}
 	
 	/**
@@ -103,8 +108,8 @@ class Objects {
 	 * @author: wisnuwidi
 	 */
 	public function open($path = false, $method = false, $type = false, $file = false) {
-		$array			= [];
-		$array['files']	= $file;
+		$array = [];
+		$array['files'] = $file;
 		
 		if (false === $path) {
 			$path = $this->setActionRoutePath();
@@ -153,68 +158,71 @@ class Objects {
 	 *
 	 * @author: wisnuwidi
 	 */
-	public function model($model = null, $row_selected = false, $path = false, $file = false, $type = false) {
-		
-		if (str_contains(current_route(), 'edit')) {
-			$sliceURL		= explode('/', diy_current_url());
-			unset($sliceURL[array_key_last ($sliceURL)]);
-			$row_selected	= intval($sliceURL[array_key_last ($sliceURL)]);
-		}
-		
-		// Check if $model = null
-		if (empty($model)) {
-			// check $this->model set by protected function model($class) in CoreControler [ from Action trait ]
-			$modelData = null;
-			if (!empty($this->model)) {
-				if (is_string($this->model)) {
-					$modelData = new $this->model();
+	public function model($model = null, $row_selected = false, $path = false, $file = false, $type = false) {		
+		if ('show' !== $this->currentRouteName) {
+			if (str_contains(current_route(), 'edit')) {
+				$sliceURL		= explode('/', diy_current_url());
+				unset($sliceURL[array_key_last ($sliceURL)]);
+				$row_selected	= intval($sliceURL[array_key_last ($sliceURL)]);
+			}
+			
+			// Check if $model = null
+			if (empty($model)) {
+				// check $this->model set by protected function model($class) in CoreControler [ from Action trait ]
+				$modelData = null;
+				if (!empty($this->model)) {
+					if (is_string($this->model)) {
+						$modelData = new $this->model();
+					} else {
+						$modelData = $this->model;
+					}
+				}
+				
+				if (!empty($row_selected)) {
+					$model = $modelData->find($row_selected);
 				} else {
-					$modelData = $this->model;
+					$model = $modelData;
 				}
 			}
 			
-			if (!empty($row_selected)) {
-				$model = $modelData->find($row_selected);
+			if (false === $path) {
+				$path = $this->setActionRoutePath();
+			}
+			
+			$model_path = diy_random_strings();
+			if ('Collection' === class_basename($model)) {
+				foreach ($model as $items) {
+					$model_path = get_class($items);
+				}
+			}
+			
+			if ('Builder' === class_basename($model)) {
+				$model_path = get_class($model->getModel());
+			}
+			
+			$model_uri  = diy_random_strings() . '___' . str_replace('\\', '.', $model_path) . '___' . diy_random_strings();
+			$model_enc  = encrypt($model_uri);
+			$model_name = $model_enc;
+			
+			if (false === $type) $type = 'route';
+			if (false !== $file) {
+				if (false !== $row_selected) {
+					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => 'PUT', 'files' => true];
+				} else {
+					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'files' => true];
+				}
 			} else {
-				$model = $modelData;
+				if (false !== $row_selected) {
+					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => 'PUT'];
+				} else {
+					$attr = [$type => [$path, $row_selected], 'name' => $model_name];
+				}
 			}
-		}
 		
-		if (false === $path) {
-			$path = $this->setActionRoutePath();
-		}
-		
-		$model_path = diy_random_strings();
-		if ('Collection' === class_basename($model)) {
-			foreach ($model as $items) {
-				$model_path = get_class($items);
-			}
-		}
-		
-		if ('Builder' === class_basename($model)) {
-			$model_path = get_class($model->getModel());
-		}
-		
-		$model_uri  = diy_random_strings() . '___' . str_replace('\\', '.', $model_path) . '___' . diy_random_strings();
-		$model_enc  = encrypt($model_uri);
-		$model_name = $model_enc;
-		
-		if (false === $type) $type = 'route';
-		if (false !== $file) {
-			if (false !== $row_selected) {
-				$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => 'PUT', 'files' => true];
-			} else {
-				$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'files' => true];
-			}
+			$this->draw(Form::model($model, $attr));
 		} else {
-			if (false !== $row_selected) {
-				$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => 'PUT'];
-			} else {
-				$attr = [$type => [$path, $row_selected], 'name' => $model_name];
-			}
+			$this->draw(Form::model([]));			
 		}
-		
-		$this->draw(Form::model($model, $attr));
 	}
 	
 	/**
@@ -248,18 +256,20 @@ class Objects {
 	 * Draw Form Close Tag
 	 */
 	public function close($action_buttons = false, $option_buttons = false, $prefix = false, $suffix = false) {
-		$options = $option_buttons;
-		if (false === $option_buttons) {
-			$options = ['class' => 'btn btn-success btn-slideright pull-right btn_create'];
+		if ('show' !== $this->currentRouteName) {
+			$options = $option_buttons;
+			if (false === $option_buttons) {
+				$options = ['class' => 'btn btn-success btn-slideright pull-right btn_create'];
+			}
+			
+			$object = '';
+			if (false !== $action_buttons) {
+				$object .= Form::submit($action_buttons, $options);
+			}
+			$object .= Form::close();
+			
+			$this->draw('<div class="diy-action-box">' . $prefix . $object . $suffix . '</div>');
 		}
-		
-		$object = '';
-		if (false !== $action_buttons) {
-			$object .= Form::submit($action_buttons, $options);
-		}
-		$object .= Form::close();
-		
-		$this->draw('<div class="diy-action-box">' . $prefix . $object . $suffix . '</div>');
 	}
 	
 	/**
@@ -288,7 +298,7 @@ class Objects {
 	}
 	
 	private function getModelValue($field_name, $function_name) {
-		$this->getCurrentRoute();
+	//	$this->getCurrentRoute();
 		$value = null;
 		
 		if ('edit' === $this->currentRouteName || 'show' === $this->currentRouteName) {
@@ -329,7 +339,7 @@ class Objects {
 	 */
 	private function setModelValueAndSelectedToParams($function_name, $name, $value, $selected) {
 		if ('select' === $function_name) {
-			$this->getCurrentRoute();
+		//	$this->getCurrentRoute();
 			
 			if ('create' === $this->currentRouteName) {
 				$value		= $value;
@@ -364,6 +374,11 @@ class Objects {
 		$this->paramSelected[$function_name][$name]	= $selected;
 	}
 	
+	private $added_attributes = [];
+	public function addAttributes($attributes = []) {
+		$this->added_attributes = $attributes;
+	}
+	
 	/**
 	 * Set Input Form Parameters
 	 * 
@@ -377,6 +392,10 @@ class Objects {
 	private function setParams($function_name, $name, $value, $attributes, $label, $selected = false) {
 		if (true === $label) {
 			$label = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
+		}
+		
+		if (!empty($this->added_attributes)) {
+			$attributes = array_merge_recursive($attributes, $this->added_attributes);
 		}
 		
 		$this->setModelValueAndSelectedToParams($function_name, $name, $value, $selected);
