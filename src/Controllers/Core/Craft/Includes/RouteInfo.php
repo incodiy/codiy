@@ -79,21 +79,20 @@ trait RouteInfo {
 				} elseif ('create' === $this->pageInfo) {
 					$action_page['action_page'] = ["info|back to {$this->controllerName} lists" => $this->routeReplaceURL('create', 'index')];
 				} elseif ('edit' === $this->pageInfo) {
+					$actionPage = [];
 					if (true === $this->is_softdeleted) {
-						$action_page['action_page'] = [
-							"secondary|delete {$this->controllerName}"   => $this->routeReplaceURL('edit', 'destroy'),
-							"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
-							"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
-							"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
-						];
+						$actionPage[] = ["secondary|restore {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
 					} else {
-						$action_page['action_page'] = [
-							"danger|delete {$this->controllerName}"      => $this->routeReplaceURL('edit', 'destroy'),
-							"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
-							"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
-							"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
-						];
+						$actionPage[] = ["danger|delete {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
 					}
+					$actionPage[] = [
+						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
+						"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
+						"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
+					];
+					
+					$action_page['action_page'] = array_merge_recursive($actionPage[0], $actionPage[1]);
+					
 				} elseif ('show' === $this->pageInfo) {
 					$action_page['action_page'] = [
 						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('show', 'create'),

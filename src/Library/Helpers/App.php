@@ -825,7 +825,7 @@ if (!function_exists('diy_action_buttons')) {
 				$color = $keys[0];
 				$text  = $keys[1];
 				
-				if (!diy_string_contained($text, 'delete')) {
+				if (!diy_string_contained($text, 'delete') && !diy_string_contained($text, 'restore')) {
 					$box .= diy_action_button_box($value, $text, $color);
 				} else {
 					$routeInfo = explode('::', $value);
