@@ -100,8 +100,7 @@ class UserController extends Controller {
 	}
 	
 	public function index() {
-		$this->set_session();
-		$this->meta->title('User Lists');
+		$this->setPage('User Lists');
 		
 		$this->table->searchable(['username', 'email']);
 		$this->table->clickable();
@@ -113,8 +112,7 @@ class UserController extends Controller {
 	}
 	
 	public function create() {
-		$this->set_session();
-		$this->meta->title('Add User');
+		$this->setPage('Add User');
 		
 		$this->form->modelWithFile();
 		
@@ -171,8 +169,7 @@ class UserController extends Controller {
 	}
 	
 	public function edit($id) {
-		$this->set_session();
-		$this->meta->title('Edit User');
+		$this->setPage('Edit User');
 		
 		$selected_group = false;
 		foreach ($this->model_data->group as $group) {

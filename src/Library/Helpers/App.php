@@ -1,8 +1,10 @@
 <?php
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
+
 use Incodiy\Codiy\Models\Admin\System\Modules;
 use Incodiy\Codiy\Models\Admin\System\Preference;
 
@@ -11,7 +13,6 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  * Time Created	: 13:28:50
  *
  * @filesource	App.php
- *Schema::getColumnListing($table_name);
  * @author		wisnuwidi@gmail.com - 2021
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
@@ -54,35 +55,18 @@ if (!function_exists('is_multiplatform')) {
 	}
 }
 
-if (!function_exists('diy_template_config')) {
-	
+if (!function_exists('diy_sessions')) {
 	/**
-	 * Get Template Config Data
+	 * Get all Sessions
 	 *
-	 * created @Sep 28, 2018
 	 * author: wisnuwidi
 	 *
-	 * @param string $string
+	 * @return Illuminate\Support\Facades\Session
 	 *
-	 * @return string
+	 * created @Dec 14, 2018
 	 */
-	function diy_template_config($string) {
-		return diy_config("{$string}", 'templates');
-	}
-}
-
-if (!function_exists('diy_current_template')) {
-	
-	/**
-	 * Get Current Used Template
-	 *
-	 * created @Sep 28, 2018
-	 * author: wisnuwidi
-	 *
-	 * @return string
-	 */
-	function diy_current_template() {
-		return diy_config('template');
+	function diy_sessions() {
+		return Session::all();
 	}
 }
 
@@ -1266,5 +1250,23 @@ if (!function_exists('is_empty')) {
 	 */
 	function is_empty($data) {
 		return !not_empty($data);
+	}
+}
+
+if (!function_exists('diy_get_model_data')) {
+	
+	/**
+	 * Get All Web Preferences
+	 *
+	 * created @Aug 21, 2018
+	 * author: wisnuwidi
+	 */
+	function diy_get_model_data($model) {
+		$data = [];
+		foreach ($model::all() as $row) {
+			$data = $row->getAttributes();
+		}
+		
+		return $data;
 	}
 }

@@ -2,6 +2,7 @@
 namespace Incodiy\Codiy\Controllers\Core\Craft\Includes;
 
 use Illuminate\Support\Facades\Route;
+use Incodiy\Codiy\Models\Admin\System\Modules;
 
 /**
  * Created on 9 Apr 2021
@@ -21,7 +22,10 @@ trait RouteInfo {
 	public $route_page;
 	public $controllerName;
 	public $currentRoute;
-	public $actionButton = ['index', 'index', 'edit', 'show'];
+	public $actionButton     = ['index', 'index', 'edit', 'show'];
+	public $menu             = [];
+	public $module_class;
+	public $module_privilege = [];
 	
 	/**
 	 * Hide action button(s) in module page.
@@ -44,19 +48,16 @@ trait RouteInfo {
 	 * author: wisnuwidi
 	 */
 	private function get_pageinfo() {
-		if (strpos(php_sapi_name(), 'cli') === false) {
-			
-			$this->currentRoute   = Route::getCurrentRoute();
-			$action_route         = (object) $this->currentRoute->getAction();
-			
-			$controller_path      = $action_route->controller;
-			$slice_controller     = explode('Controllers', $controller_path);
-			$slice_controller     = explode('Controller', $slice_controller[1]);
-			$this->pageInfo       = str_replace('@', '', $slice_controller[1]);
-			
-			$slice_controller     = explode('\\', $slice_controller[0]);
-			$this->controllerName = last($slice_controller);
-		}
+		$this->currentRoute   = Route::getCurrentRoute();
+		$action_route         = (object) $this->currentRoute->getAction();
+		
+		$controller_path      = $action_route->controller;
+		$slice_controller     = explode('Controllers', $controller_path);
+		$slice_controller     = explode('Controller', $slice_controller[1]);
+		$this->pageInfo       = str_replace('@', '', $slice_controller[1]);
+		
+		$slice_controller     = explode('\\', $slice_controller[0]);
+		$this->controllerName = last($slice_controller);
 	}
 	
 	/**
@@ -66,7 +67,7 @@ trait RouteInfo {
 	 * Create = Back
 	 * Index = Add
 	 */
-	private function routeInfo() {;
+	public function routeInfo() {
 		if (strpos(php_sapi_name(), 'cli') === false) {
 			$this->get_pageinfo();
 			
@@ -108,6 +109,7 @@ trait RouteInfo {
 				'page_info'    => $this->pageInfo
 			];
 			
+			$this->get_module_privileges();
 			$this->setDataValues('route_info', (object) array_merge($routeInfo, $action_page));
 		}
 	}
@@ -124,5 +126,28 @@ trait RouteInfo {
 			
 			return $routeURI . '::' . (int) last($routeUri);
 		}
+	}
+	
+	/**
+	 * Get Privileges Module
+	 *
+	 * created @Dec 11, 2018
+	 * author: wisnuwidi
+	 */
+	private function get_module_privileges() {
+	//	if (!is_null(Session('group_id'))) {
+			$root_flag = false;
+			if (1 === intval(Session('group_id'))) if (true === isset($this->session['flag'])) $root_flag = true;
+			
+			$this->module_class = new Modules();
+			
+			$pageType = false;
+			if (isset($this->data['page_type'])) {
+				$pageType = $this->data['page_type'];
+			}
+			$this->menu = $this->module_class->privileges(Session('group_id'), $pageType, $root_flag);
+			$this->module_privilege['roles'] = $this->module_class->roles;
+			$this->module_privilege['info']  = $this->module_class->privileges;
+	//	}
 	}
 }

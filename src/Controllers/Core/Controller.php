@@ -69,10 +69,6 @@ class Controller extends BaseController {
 		$this->dataCollections();
 		if (false !== $model) $this->model($model);
 		if (false !== $route_page) $this->set_route_page($route_page);
-		
-		if (strpos(php_sapi_name(), 'cli') === false) {
-			if (!empty($this->form)) $this->routeInfo();		
-		}
 	}
 	
 	private function dataCollections() {

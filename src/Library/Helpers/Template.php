@@ -10,6 +10,38 @@
  * @email		wisnuwidi@gmail.com
  */
 
+if (!function_exists('diy_template_config')) {
+	
+	/**
+	 * Get Template Config Data
+	 *
+	 * created @Sep 28, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	function diy_template_config($string) {
+		return diy_config("{$string}", 'templates');
+	}
+}
+
+if (!function_exists('diy_current_template')) {
+	
+	/**
+	 * Get Current Used Template
+	 *
+	 * created @Sep 28, 2018
+	 * author: wisnuwidi
+	 *
+	 * @return string
+	 */
+	function diy_current_template() {
+		return diy_config('template');
+	}
+}
+
 if (!function_exists('diy_js')) {
 	
 	function diy_js($scripts, $position = 'bottom', $as_script_code = false) {
@@ -134,7 +166,7 @@ if (!function_exists('diy_breadcrumb')) {
                     $n++;
                     
                     $index		= $n - 1;
-                    $linkTitle	= underscore_to_camelcase($link_title);
+                    $linkTitle	= diy_underscore_to_camelcase($link_title);
                     
                     $o .= "<li>";
                     if ($linkIcons[$index]) $o .= $linkIcons[$index];
@@ -173,7 +205,7 @@ if (!function_exists('diy_breadcrumb')) {
                     $n++;
                     
                     $index		= $n - 1;
-                    $linkTitle	= diy_underscore_to_camelcase($link_title);
+                    $linkTitle	= diy_diy_underscore_to_camelcase($link_title);
                     
                     $o .= "<li>";
                     if (0 !== $link_title) {
@@ -192,4 +224,236 @@ if (!function_exists('diy_breadcrumb')) {
         
         return $o;
     }
+}
+
+if (!function_exists('diy_sidebar_content')) {
+	
+	/**
+	 * Create Sidebar Content
+	 *
+	 * @param string $media_title
+	 * @param string $media_heading
+	 * @param string $media_sub_heading
+	 */
+	function diy_sidebar_content($media_title, $media_heading = false, $media_sub_heading = false, $type = true) {
+		$base_url = diy_config('baseURL');
+		if (false === $type) {
+			$mediaHeading		= false;
+			$mediaSubHeading	= false;
+			
+			if (false !== $media_heading)		$mediaHeading		= "<h4 class=\"media-heading\">{$media_heading}</h4>";
+			if (false !== $media_sub_heading)	$mediaSubHeading	= "<small>{$media_sub_heading}</small>";
+			
+			$o  = "<div class=\"sidebar-content\">";
+			$o .= "<div class=\"media\">";
+			$o .= "{$media_title}";
+			$o .= "<div class=\"media-body\">";
+			$o .= "{$mediaHeading}";
+			$o .= "{$mediaSubHeading}";
+			$o .= "</div>";
+			$o .= "</div>";
+			$o .= "</div>";
+		} else {
+			$sessions = diy_sessions();
+			$o  = "<div class=\"relative\">";
+			$o .= "<a data-toggle=\"collapse\" href=\"#userInfoBox\" role=\"button\" aria-expanded=\"false\" aria-controls=\"userInfoBox\" class=\"btn-sets btn-sets-sm absolute sets-right-bottom sets-top btn-primary shadow1 collapsed\"><i class=\"ti-settings\"></i></a>";
+			$o .= "<div class=\"user-panel light\">";
+			$o .= "{$media_title}";
+			$o .= "<div class=\"multi-collapse collapse\" id=\"userInfoBox\">";
+			$o .= "<div class=\"list-group mt-3 shadow\">";
+			$o .= "<a href=\"{$base_url}/system/accounts/user/{$sessions['id']}\" class=\"list-group-item list-group-item-action \">";
+			$o .= "<i class=\"mr-2 ti-user text-blue\"></i>Profile";
+			$o .= "</a>";
+			$o .= "<a href=\"{$base_url}/system/accounts/user/{$sessions['id']}/edit\" class=\"list-group-item list-group-item-action\"><i class=\"mr-2 ti-settings text-yellow\"></i>Edit</a>";
+			$o .= "<a href=\"{$base_url}/logout\" class=\"list-group-item list-group-item-action\"><i class=\"mr-2 ti-panel text-purple\"></i>Log Out</a>";
+			$o .= "</div>";
+			$o .= "</div>";
+			$o .= "</div>";
+			$o .= "</div>";
+		}
+		
+		return $o;
+	}
+}
+
+if (!function_exists('diy_sidebar_menu_open')) {
+	
+	/**
+	 * Sidebar Open
+	 *
+	 * created @May 8, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param boolean $class_name
+	 * @return string
+	 */
+	function diy_sidebar_menu_open($class_name = false) {
+		$class = 'main-menu';//'sidebar-menu'
+		if (false !== $class_name) $class = $class_name;
+		
+		return '<ul id="menu" class="' . $class . '">';
+	}
+}
+
+if (!function_exists('diy_sidebar_menu')) {
+	
+	/**
+	 * Create Sidebar Menu
+	 *
+	 * @param string $label
+	 * @param string $links
+	 * @param string $icon
+	 *
+	 * @example:
+	 *	$this->theme->set_menu_sidebar('Dashboard', [
+	 'Basic'			=> 'dashboard.html',
+	 'E-Commerce'	=> 'dashboard-ecommerce.html'
+	 ], 'home');
+	 */
+	function diy_sidebar_menu($label, $links, $icon = [], $selected = false) {
+		$o = '<li id="' . diy_clean_strings($label) . '" class="submenu">';
+		
+		$icons					= [];
+		$icons['before']		= $icon;
+		$icons['after']			= '';//'class="arrow fa-angle-double-right"';
+		$icons['after_label']	= false;
+		
+		if (true === is_array($links)) {
+			$o .= '<a class="arrow-node" href="javascript:void(0);">';
+			
+			if (false !== $icon) {
+				$o .= '<span class="icon">' . $icon['icon'] . '</span>';
+			}
+			
+			$o .= '<span class="text">' . diy_underscore_to_camelcase($label) . '</span>';
+			$o .= '<span' . $icons['after'] . '">' . $icons['after_label'] . '</span>';
+			if (true === $selected) {
+				$o .= '<span class="selected"></span>';
+			}
+			$o .= '</a>';
+			
+			$o .= '<ul>';
+			foreach ($links as $child_title => $child_url) {
+				if (is_array($child_url)) {
+					$o .= '<li class="submenu"><a href="javascript:void(0);">';
+					$o .= '<span class="text">' . diy_underscore_to_camelcase($child_title) . '</span>';
+					$o .= '<span class="arrow open fa-angle-double-down"></span></a>';
+					$o .= '<ul>';
+					foreach ($child_url as $thirdChild => $thirdURL) {
+						$o .= '<li id="' . clean_strings($label) . '-' . $child_title . '-' . diy_underscore_to_camelcase($thirdChild) . '"><a class="menu-url" href="' . $thirdURL . '">' . diy_underscore_to_camelcase($thirdChild) . '</a></li>';
+					}
+					$o .= '</ul>';
+					$o .= '</li>';
+				} else {
+					$o .= '<li class="menu-active-pointer"><a class="menu-url" href="' . $child_url . '">' . diy_underscore_to_camelcase($child_title) . '</a></li>';
+				}
+			}
+			$o .= '</ul>';
+		} else {
+			$o .= '<a href="' . $links . '">';
+			if (false !== $icon) {
+				if (isset($icon['icon']) && null !== $icon['icon']) {
+					$o .= '<span class="icon">' . $icon['icon'] . '</span>';
+				} else {
+					$o .= '<span class="icon"><i class="fa fa-tags"></i></span>';
+				}
+			}
+			$o .= '<span class="text">' . diy_underscore_to_camelcase($label) . '</span>';
+			if (true === $selected) {
+				$o .= '<span class="selected"></span>';
+			}
+			$o .= '</a>';
+		}
+		
+		$o .= '</li>';
+		
+		return $o;
+	}
+}
+
+if (!function_exists('diy_sidebar_category')) {
+	
+	/**
+	 * Create Sidebar Title
+	 *
+	 * @param string $title
+	 * @param string $icon
+	 * @param string $icon_position
+	 *
+	 * @return string
+	 */
+	function diy_sidebar_category($title, $icon = false, $icon_position = false) {
+		$o  = '<li class="sidebar-category">';
+		$o .= '<span>' . $title . '</span>';
+		if (false !== $icon) {
+			$position = 'right';
+			if (false !== $icon_position) {
+				$position = $icon_position;
+			}
+			$o .= '<span class="pull-' . $position . '"><i class="fa fa-' . $icon . '"></i></span>';
+		}
+		$o .= '</li>';
+		
+		return $o;
+	}
+}
+
+if (!function_exists('diy_sidebar_menu_close')) {
+	
+	/**
+	 * Sidebar Close Menu
+	 *
+	 * created @May 8, 2018
+	 * author: wisnuwidi
+	 *
+	 * @return string
+	 */
+	function diy_sidebar_menu_close() {
+		return '</ul>';
+	}
+}
+
+if (!function_exists('diy_set_avatar')) {
+	
+	/**
+	 * Create User Image Link
+	 *
+	 * @param string $username
+	 * @param string $link_url
+	 * @param string $image_src
+	 * @param string $user_status : online[default]/offline
+	 */
+	function diy_set_avatar($username, $link_url = false, $image_src = false, $user_status = 'online', $type_old = false) {
+		if (false === $image_src || null === $image_src) {
+			$src = asset('assets/templates/default/images/user-m.png');
+		} else {
+			$src = $image_src;
+		}
+		
+		if (true === $type_old) {
+			$style		= 'style="width:50px;height:50px;display:block;text-align:center;vertical-align:middle;"';
+			$linkURL	= false;
+			if (false !== $link_url) {
+				$linkURL = " href=\"{$link_url}\"";
+			}
+			$o  = "<a class=\"pull-left has-notif avatar\"{$linkURL}>";
+			$o .= "<img src=\"{$src}\" alt=\"{$username}\" title=\"{$username}\" {$style}/>";
+			if (false !== $user_status) {
+				$o .= "<i class=\"{$user_status}\"></i>";
+			}
+			$o .= "</a>";
+		} else {
+			$o  = "<div>";
+			$o .= "<div class=\"float-left image\">";
+			$o .= "<img class=\"user-avatar\" src=\"{$src}\" alt=\"{$username}\" title=\"{$username}\" />";
+			$o .= "</div>";
+			$o .= "<div class=\"float-left info\">";
+			$o .= "<h6 class=\"font-weight-light mt-2 mb-1\">{$username}</h6>";
+			$o .= "<a href=\"#\"><i class=\"fa fa-circle text-primary blink\"></i> {$user_status}</a>";
+			$o .= "</div>";
+			$o .= "</div>";
+			$o .= "<div class=\"clearfix\"></div>";
+		}
+		return $o;
+	}
 }

@@ -9,13 +9,19 @@
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
-
-$baseUrl		= diy_config('baseURL');
-$baseTemplate	= diy_config('base_template');
-$template		= diy_config('template');
-$assetURL		= "{$baseUrl}/{$baseTemplate}/{$template}";
 ?>
-			<!--  SIDEBAR OPEN -->
+<div class="sidebar-menu">
+	<div class="sidebar-header">
+		<div class="logo">
+			<a href="{{ URL::to('admin')}}"><img class="logo" src="{{ $logo }}" alt="{{ $appName }}" /></a>
+		</div>
+	</div>
+	@if($sidebar_content)
+	{!! $sidebar_content !!}
+	@endif
+	<nav class="menu-inner">@foreach($menu_sidebar as $menu) {!! $menu !!} @endforeach</nav>
+</div>
+			<!--  SIDEBAR OPEN ->
 			<div class="sidebar-menu">
 				<div class="sidebar-header">
 					<div class="logo">

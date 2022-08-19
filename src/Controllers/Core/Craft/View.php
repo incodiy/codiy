@@ -2,6 +2,7 @@
 namespace Incodiy\Codiy\Controllers\Core\Craft;
 
 use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
+use Incodiy\Codiy\Models\Admin\System\Preference;
 
 /**
  * Created on 25 Mar 2021
@@ -43,6 +44,9 @@ trait View {
 	public function render($data = false) {
 		if (empty($this->pageView)) $this->configView();
 		
+		$this->data['appName'] = diy_config('app_name');
+		$this->data['logo']    = $this->logo_path();
+		
 		$formElements = [];
 		if (!empty($this->data['components']->form->elements)) {
 			$formElements = $this->form->render($this->data['components']->form->elements);
@@ -79,6 +83,18 @@ trait View {
 			$this->data['content_page'] = $dataContent;
 		} else {
 			$this->data['content_page'] = array_merge($formElements, $tableElements);
+		}
+		
+		$this->template->render_sidebar_menu($this->menu);
+		$this->data['menu_sidebar']			= [];
+		if (!is_null($this->template->menu_sidebar)) {
+			$this->data['menu_sidebar']		= $this->template->menu_sidebar;
+		}
+		
+		$this->template->render_sidebar_content();
+		$this->data['sidebar_content']		= [];
+		if (!is_null($this->template->sidebar_content)) {
+			$this->data['sidebar_content']	= $this->template->sidebar_content;
 		}
 		
 		return view($this->pageView, $this->data, $this->dataOptions);
@@ -119,10 +135,13 @@ trait View {
 	 * @param string $url
 	 */
 	protected function setPage($page, $path = false) {
+		$this->set_session();
 		$page_name = diy_underscore_to_camelcase($page);
 		
 		$this->meta->title($page_name);
 		$this->configView($path);
+		
+		$this->routeInfo();
 	}
 	
 	private function uriAdmin($uri = 'index') {
@@ -168,5 +187,26 @@ trait View {
 		
 		$this->data['page_type'] = $this->pageType;
 		$this->data['page_view'] = $this->pageView;
+	}
+	
+	private $preference;
+	/**
+	 * Get All Web Preferences
+	 *
+	 * created @Aug 21, 2018
+	 * author: wisnuwidi
+	 */
+	private function getPreferences() {
+		$this->preference = diy_get_model_data(Preference::class);
+	}
+	
+	public function logo_path($thumb = false) {
+		$this->getPreferences();
+		
+		if (true === $thumb) {
+			return $this->preference['logo_thumb'];
+		} else {
+			return $this->preference['logo'];
+		}
 	}
 }

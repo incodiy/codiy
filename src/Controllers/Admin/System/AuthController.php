@@ -45,25 +45,25 @@ class AuthController extends Controller {
 	
 	private $data_maintenance = [];
 	private function get_maintenance_content() {
-		$maintenance	= '';//new Maintenance;
-		$objects		= $maintenance::where('status', 1)->get();
-		$basePath		= str_replace(get_config('settings.index_folder'), '', get_config('settings.baseURL'));
-		$data			= [];
+		$maintenance = '';//new Maintenance;
+		$objects     = $maintenance::where('status', 1)->get();
+		$basePath    = str_replace(get_config('settings.index_folder'), '', get_config('settings.baseURL'));
+		$data        = [];
 		foreach ($objects as $object) {
 			$time_durations = explode(' | ', $object->time_duration);
-			$date_first		= date('Y-m-d H:i:s');
+			$date_first     = date('Y-m-d H:i:s');
 			if (strtotime($time_durations[0]) >= strtotime($date_first)) {
-				$date_first	= "{$time_durations[0]} 00:00:00";				
+				$date_first  = "{$time_durations[0]} 00:00:00";				
 			}
-			$durations		= daterange_to_seconds($date_first, "{$time_durations[1]} 00:00:00");
+			$durations      = daterange_to_seconds($date_first, "{$time_durations[1]} 00:00:00");
 			
-			$data['title']				= $object->title;
-			$data['description']		= $object->description;
-			$data['logo']				= "{$basePath}{$object->logo}";
-			$data['image']				= "{$basePath}{$object->image}";
-			$data['time_durations']		= intval($durations);
-			$data['subscribe_button']	= $object->subscribe_button;
-			$data['subscribe_text']		= $object->subscribe_text;
+			$data['title']            = $object->title;
+			$data['description']      = $object->description;
+			$data['logo']             = "{$basePath}{$object->logo}";
+			$data['image']            = "{$basePath}{$object->image}";
+			$data['time_durations']   = intval($durations);
+			$data['subscribe_button'] = $object->subscribe_button;
+			$data['subscribe_text']   = $object->subscribe_text;
 		}
 		$this->data_maintenance = $data;
 		
@@ -120,6 +120,7 @@ class AuthController extends Controller {
 	public function set_session_auth($email, $return_data = false) {
 		$userData	= [];
 		$user_data	= User::where('email', $email)->get();
+		
 		foreach ($user_data as $user) {
 			$user_info	= User::find($user->id);
 			$group_info	= (object) $user_info->groupInfo();
@@ -128,23 +129,23 @@ class AuthController extends Controller {
 			/* if (true === is_multiplatform()) {
 				$userData[$this->platform_key]	= $group_info->{$this->platform_key};
 			} */
-			$userData['group_id']				= $group_info->id;
-			$userData['user_group']				= $group_info->group_name;
-			$userData['group_info']				= $group_info->group_info;
+			$userData['group_id']				 = $group_info->id;
+			$userData['user_group']				 = $group_info->group_name;
+			$userData['group_info']				 = $group_info->group_info;
 			
-			$userData['name']					= $user->name;
-			$userData['fullname']				= $user->fullname;
-			$userData['email']					= $user->email;
-			$userData['phone']					= $user->phone;
-			$userData['ip_address']				= $user->ip_address;
-			$userData['reg_date']				= $user->reg_date;
-			$userData['last_visit']				= $user->last_visit_date;
-			$userData['past_visit']				= $user->past_visit_date;
-			$userData['change_password']		= $user->change_password;
-			$userData['last_change_password']	= $user->last_change_password_date;
-			$userData['expire_date']			= $user->expire_date;
-			$userData['updated_at']				= $user->updated_at;
-			$userData['active']					= $user->active;
+			$userData['name']                 = $user->name;
+			$userData['fullname']             = $user->fullname;
+			$userData['email']                = $user->email;
+			$userData['phone']                = $user->phone;
+			$userData['ip_address']           = $user->ip_address;
+			$userData['reg_date']             = $user->reg_date;
+			$userData['last_visit']           = $user->last_visit_date;
+			$userData['past_visit']           = $user->past_visit_date;
+			$userData['change_password']      = $user->change_password;
+			$userData['last_change_password'] = $user->last_change_password_date;
+			$userData['expire_date']          = $user->expire_date;
+			$userData['updated_at']           = $user->updated_at;
+			$userData['active']               = $user->active;
 		}
 		
 		if (false === $return_data) {
@@ -161,9 +162,11 @@ class AuthController extends Controller {
 		
 		Session::forget('id');
 		Session::forget('group_id');
-	/* 	if (true === is_multiplatform()) {
+		/* 
+		if (true === is_multiplatform()) {
 			Session::forget($this->platform_key);
-		} */
+		}
+		 */
 		Session::forget('user_group');
 		Session::forget('group_info');
 		Session::forget('name');
