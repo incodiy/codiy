@@ -62,6 +62,8 @@ trait View {
 		if (!empty($_GET['renderDataTables'])) {
 			if (!empty($this->model_filters)) {
 				$filter_datatables = $this->model_filters;
+			} else {
+				$filter_datatables = [];
 			}
 			
 			return $this->initRenderDatatables($filter_datatables);
