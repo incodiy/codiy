@@ -135,7 +135,7 @@ trait RouteInfo {
 	 * author: wisnuwidi
 	 */
 	private function get_module_privileges() {
-	//	if (!is_null(Session('group_id'))) {
+		if (!is_null(Session('group_id'))) {
 			$root_flag = false;
 			if (1 === intval(Session('group_id'))) if (true === isset($this->session['flag'])) $root_flag = true;
 			
@@ -148,6 +148,6 @@ trait RouteInfo {
 			$this->menu = $this->module_class->privileges(Session('group_id'), $pageType, $root_flag);
 			$this->module_privilege['roles'] = $this->module_class->roles;
 			$this->module_privilege['info']  = $this->module_class->privileges;
-	//	}
+		}
 	}
 }
