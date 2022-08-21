@@ -58,8 +58,13 @@ trait View {
 		}
 		$this->addScriptsFromElements();
 		
+		// RENDER DATATABLES!!!
 		if (!empty($_GET['renderDataTables'])) {
-			return $this->initRenderDatatables();
+			if (!empty($this->model_filters)) {
+				$filter_datatables = $this->model_filters;
+			}
+			
+			return $this->initRenderDatatables($filter_datatables);
 		}
 		
 		if (false !== $data) {
@@ -70,7 +75,7 @@ trait View {
 			} else {
 				// if $data variable is an array
 				if (diy_is_empty($data)) {
-					// if array = []
+					// if array    = []
 					$merge_data    = $this->data['content_page'];
 				} else {
 					$data_contents = $data;
@@ -100,17 +105,16 @@ trait View {
 		if (!is_null($this->template->breadcrumbs)) {
 			$this->data['breadcrumbs'] = $this->template->breadcrumbs;
 		}
-	//	dd($this->data['breadcrumbs']);
+		
 		return view($this->pageView, $this->data, $this->dataOptions);
 	}
 	
-	private function initRenderDatatables() {
+	private function initRenderDatatables($filters = []) {
 		if ('false' != $_GET['renderDataTables']) {
 			$Datatables = [];
 			$Datatables['datatables'] = $this->data['components']->table;
 			$datatables = diy_array_to_object_recursive($Datatables);
 			
-			$filters = [];
 			if (!empty($_GET['filters'])) {
 				if ('true' === $_GET['filters']) $filters = $_GET;
 			}
@@ -144,9 +148,9 @@ trait View {
 		$page_title = strtolower($page);
 		
 		$this->meta->title($page_name);
-		$this->template->set_breadcrumb(
-			$page_name,		[$page_title => url($this->template->currentURL), 'index'],
-			$page_title,	[$page_title, 'home']
+		$this->template->set_breadcrumb (
+			$page_name,  [$page_title => url($this->template->currentURL), 'index'],
+			$page_title, [$page_title, 'home']
 		);
 		$this->configView($path);
 		

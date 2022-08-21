@@ -23,14 +23,15 @@ class GroupController extends Controller {
 	
 	public $data;
 	
-	private $id						 = false;
-	private $_set_tab				 = [];
-	private $_tab_config			 = [];
-	private $_hide_fields		 = ['id'];
-	private $validations			 = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
+	private $id           = false;
+	private $_set_tab     = [];
+	private $_tab_config  = [];
+	private $_hide_fields = ['id'];
+	private $validations  = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
+	private $filterPage   = ['group_name' => 'admin'];
 	
 	public function __construct() {
-		parent::__construct(Group::class, 'system.config', ['group_name' => 'test']);
+		parent::__construct(Group::class, 'system.config', $this->filterPage);
 	}
 	
 	private function set_data_before_insert($request, $model_id = false) {
@@ -60,8 +61,7 @@ class GroupController extends Controller {
 	 */
 	public function index() {
 		$this->setPage('Group Lists');
-		$this->model(Group::class, ['group_info' => 'Internal Admin']);
-		
+	//	dd($this->model_filters);
 		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
 		
 		$this->table->searchable(['group_name', 'group_info']);

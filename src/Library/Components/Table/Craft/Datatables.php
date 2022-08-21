@@ -158,16 +158,16 @@ class Datatables {
 						}
 					}
 				}
-				$limit['total']	= count($modelDataFilters->get());
-				$model			= $modelDataFilters->skip($limit['start'])->take($limit['length']);
+				$limit['total'] = count($modelDataFilters->get());
+				$model = $modelDataFilters->skip($limit['start'])->take($limit['length']);
 			}
 		}
 		
 		$datatables = DataTable::of($model)
 			->setTotalRecords($limit['total'])
 			->blacklist(['password', 'action', 'no'])
-		//	->orderColumn('id', 'id $1')	// asc
-			->orderColumn('id', 'id desc')	// desc
+		//	->orderColumn('id', 'id $1')   // asc
+			->orderColumn('id', 'id desc') // desc
 			->smart(true);
 		
 		$is_image = [];
@@ -194,11 +194,11 @@ class Datatables {
 			
 			$this->imageViewColumn($rowModel, $datatables);
 			
-			if (!empty($rowModel->flag_status))		$datatables->editColumn('flag_status',		function($model) {return diy_form_internal_flag_status($model->flag_status);});
-			if (!empty($rowModel->active))			$datatables->editColumn('active',			function($model) {return diy_form_set_active_value($model->active);});
-			if (!empty($rowModel->update_status))	$datatables->editColumn('update_status',	function($model) {return diy_form_set_active_value($model->update_status);});
-			if (!empty($rowModel->request_status))	$datatables->editColumn('request_status',	function($model) {return diy_form_request_status(true, $model->request_status);});
-			if (!empty($rowModel->ip_address))		$datatables->editColumn('ip_address',		function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
+			if (!empty($rowModel->flag_status))    $datatables->editColumn('flag_status',    function($model) {return diy_form_internal_flag_status($model->flag_status);});
+			if (!empty($rowModel->active))         $datatables->editColumn('active',         function($model) {return diy_form_set_active_value($model->active);});
+			if (!empty($rowModel->update_status))  $datatables->editColumn('update_status',  function($model) {return diy_form_set_active_value($model->update_status);});
+			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});
+			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
 		}
 		
 		if (!empty($data->datatables->formula[$table_name])) {
@@ -214,23 +214,23 @@ class Datatables {
 			}
 		}
 		
-		$rlp						= false;
-		$row_attributes				= [];
-		$row_attributes['class']	= null;
-		$row_attributes['rlp']		= null;
+		$rlp = false;
+		$row_attributes = [];
+		$row_attributes['class'] = null;
+		$row_attributes['rlp']   = null;
 		if (!empty($column_data[$table_name]['clickable'])) {
 			if (count($column_data[$table_name]['clickable']) >= 1) {
 				$rlp = function($model) {
 					return diy_unescape_html(encode_id(intval($model->id)));
 				};
 			}
-			$row_attributes['class']	= 'row-list-url';
-			$row_attributes['rlp']		= $rlp;
+			$row_attributes['class'] = 'row-list-url';
+			$row_attributes['rlp']   = $rlp;
 		}
 		$datatables->setRowAttr($row_attributes);
 		
-		$action_data				= [];
-		$action_data['model']		= $model;
+		$action_data = [];
+		$action_data['model']       = $model;
 		$action_data['current_url'] = diy_current_url();
 		$action_data['action_data'] = $action_list;
 		
@@ -269,19 +269,19 @@ class Datatables {
 			$imgSrc = 'imgsrc::';
 			if (isset($model->{$field})) {
 				$datatables->editColumn($field, function($model) use ($field, $imgSrc) {
-					$label   	= ucwords(str_replace('-', ' ', diy_clean_strings($field)));
-					$thumb		= false;
-					$imgCheck	= $this->checkValidImage($model->{$field});
+					$label    = ucwords(str_replace('-', ' ', diy_clean_strings($field)));
+					$thumb    = false;
+					$imgCheck = $this->checkValidImage($model->{$field});
 					
 					if (false !== $imgCheck) {
 						
 						// Check Thumbnail
-						$filePath	= explode('/', $model->{$field});
-						$lastSrc	= array_key_last($filePath);
-						$lastFile	= $filePath[$lastSrc];
+						$filePath = explode('/', $model->{$field});
+						$lastSrc  = array_key_last($filePath);
+						$lastFile = $filePath[$lastSrc];
 						unset($filePath[$lastSrc]);
-						$thumb   	= implode('/', $filePath) . '/thumb/tnail_' . $lastFile;
-						$filePath	= $model->{$field};
+						$thumb    = implode('/', $filePath) . '/thumb/tnail_' . $lastFile;
+						$filePath = $model->{$field};
 						if (!empty($this->setAssetPath($thumb))){
 							$filePath = $thumb;
 						}
@@ -294,8 +294,8 @@ class Datatables {
 							return diy_unescape_html($imgCheck);
 						}
 					} else {
-						$filePath	= explode('/', $filePath);
-						$lastSrc	= array_key_last($filePath);
+						$filePath = explode('/', $filePath);
+						$lastSrc  = array_key_last($filePath);
 						
 						return $filePath[$lastSrc];
 					}

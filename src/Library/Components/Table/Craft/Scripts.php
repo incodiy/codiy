@@ -32,49 +32,46 @@ trait Scripts {
 	 * @return string
 	 */
 	protected function datatables($attr_id, $columns, $data_info = [], $server_side = false, $filters = false, $custom_link = false) {
-		$varTableID		= explode('-', $attr_id);
-		$varTableID		= implode('', $varTableID);
-		$current_url	= url(diy_current_route()->uri);
 		
-		$buttonConfig	= 'exportOptions:{columns:":visible:not(:last-child)"}';
-		$buttonset		= $this->setButtons($attr_id, [
+		$varTableID   = explode('-', $attr_id);
+		$varTableID   = implode('', $varTableID);
+		$current_url  = url(diy_current_route()->uri);
+		
+		$buttonConfig = 'exportOptions:{columns:":visible:not(:last-child)"}';
+		$buttonset    = $this->setButtons($attr_id, [
 			'excel|text:"<i class=\"fa fa-external-link\" aria-hidden=\"true\"></i> <u>E</u>xcel"|key:{key:"e",altKey:true}',
 			'csv|'		. $buttonConfig,
 			'pdf|'		. $buttonConfig,
 			'copy|'		. $buttonConfig,
 			'print|'		. $buttonConfig
 		]);
-				
-		$initComplete	= null;
-		$default_set	= '
-			"searching":true,
-			"processing":true,
-			"retrieve":true,
-			"paginate":true,
-			"searchDelay":1000,
-			"bDeferRender":true,
-			"responsive":false,
-			"autoWidth":false,
-			"dom":"lBfrtip",
-			lengthMenu: [
-				[10, 25, 50, 100, 250, 500, 1000, 9999999999],
-				["10", "25", "50", "100", "250", "500", "1000", "Show All"]
-			],
-			"buttons":' . $buttonset . ',
-		//	"initComplete": function() {' . $initComplete . '},
-		';
-		$responsive		= "rowReorder: {selector:'td:nth-child(2)'},responsive: false,";
-		$js_conditional	= null;
+		
+		$initComplete	 = null;
+		$_searching     = '"searching":true,';
+		$_processing    = '"processing":true,';
+		$_retrieve      = '"retrieve":true,';
+		$_paginate      = '"paginate":true,';
+		$_searchDelay   = '"searchDelay":1000,';
+		$_bDeferRender  = '"bDeferRender":true,';
+		$_responsive    = '"responsive":false,';
+		$_autoWidth     = '"autoWidth":false,';
+		$_dom           = '"dom":"lBfrtip",';
+		$_lengthMenu    = 'lengthMenu: [[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
+		$_buttons       = '"buttons":' . $buttonset . ',';
+		$default_set	 = $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
+		$responsive     = "rowReorder: {selector:'td:nth-child(2)'},responsive: false,";
+		
+		$js_conditional = null;
 		if (!empty($data_info['conditions']['columns'])) {
 			$js_conditional = $this->conditionalColumns($data_info['conditions']['columns'], $data_info['columns']);
 		}
 		
-		$filter_button	= false;
-		$filter_js		= false;
-		$js				= '<script type="text/javascript">jQuery(function($) {';
+		$filter_button = false;
+		$filter_js     = false;
+		$js            = '<script type="text/javascript">jQuery(function($) {';
 		if (false !== $server_side) {
-			$diftaURI	= "&difta[name]={$data_info['name']}&difta[source]=dynamics";
-			$link_url	= "renderDataTables=true{$diftaURI}";
+			$diftaURI   = "&difta[name]={$data_info['name']}&difta[source]=dynamics";
+			$link_url   = "renderDataTables=true{$diftaURI}";
 			
 			if (false !== $custom_link) {
 				if (is_array($custom_link)) {
@@ -84,34 +81,27 @@ trait Scripts {
 				}
 			}
 			
-			$scriptURI		= "{$current_url}?{$link_url}";
+			$scriptURI    = "{$current_url}?{$link_url}";
+			$colDefs      = ",columnDefs:[{targets:[1],visible:true,searchable:false,className:'control hidden-column'}";
+			$orderColumn  = ",order:[[1, 'asc']]{$colDefs}]";
+			$columns      = ",columns:{$columns}{$orderColumn}";
+			$url_path     = url(diy_current_route()->uri);
+			$hash         = hash_code_id();
+			$clickAction  = ".on('click','td.clickable',function(){var getRLP=$(this).parent('tr').attr('rlp');if(getRLP != false) {var _rlp=parseInt(getRLP.replace('{$hash}','')-8*800/80);window.location='{$url_path}/'+_rlp+'/edit'}});";
+			$initComplete = ',' . $this->initComplete($attr_id, false);
 			
-			$colDefs			= ",columnDefs:[{targets:[1],visible:true,searchable:false,className:'control hidden-column'}";
-			$orderColumn	= ",order:[[1, 'asc']]{$colDefs}]";
-			$columns			= ",columns:{$columns}{$orderColumn}";
-			$url_path		= url(diy_current_route()->uri);
-			$hash				= hash_code_id();
-			$clickAction	= ".on('click','td.clickable',function(){var getRLP=$(this).parent('tr').attr('rlp');if(getRLP != false) {var _rlp=parseInt(getRLP.replace('{$hash}','')-8*800/80);window.location='{$url_path}/'+_rlp+'/edit'}});";
-			$initComplete	= ',' . $this->initComplete($attr_id, false);
 			if (false !== $filters) {
-				if (is_array($filters) && empty($filters)) {
-					$filters = null;
-				}
-				$filter_button	= "$('div#{$attr_id}_wrapper>.dt-buttons').append('<span class=\"cody_{$attr_id}_diy-dt-filter-box\"></span>')";
-				$filter_js		= $this->filter($attr_id, $scriptURI);
+				if (is_array($filters) && empty($filters)) $filters = null;
+				$filter_button = "$('div#{$attr_id}_wrapper>.dt-buttons').append('<span class=\"cody_{$attr_id}_diy-dt-filter-box\"></span>')";
+				$filter_js     = $this->filter($attr_id, $scriptURI);
 			}
 			
-			$documentLoad = "
-				$(document).ready(function() {
-					$('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');
-					{$filter_js}
-				});
-			";
+			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js} });";
 			$ajax = "ajax:'{$scriptURI}{$filters}'";
 			
 			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true, {$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
 		} else {
-			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({{$default_set}columns:{$columns}});";
+			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$default_set}columns:{$columns} });";
 		}
 		$js .= '});' . $documentLoad . '</script>';
 		
@@ -203,7 +193,7 @@ trait Scripts {
 				}
 			}
 			
-			$js .= "}";//dd($js);
+			$js .= "}";
 		}
 		
 		return $js;
@@ -280,50 +270,58 @@ trait Scripts {
 		$varTableID	= explode('-', $id);
 		$varTableID	= implode('', $varTableID);
 		
-		$js = "
-			$('#diy-{$id}-search-box').appendTo('.cody_{$id}_diy-dt-filter-box');
-			$('.diy-dt-search-box').removeClass('hide');
-			$('#{$id}_cdyFILTERForm').on('submit', function(event) {
-				$('#{$id}_cdyProcessing').hide();
-				event.preventDefault();
-				var form = $(this);
-				$.ajax ({
-					type		: 'GET',
-					data		: form.serialize(),
-					url			: '{$url}&filters=true',
-					beforeSend	: function() {
-						$('#{$id}_cdyProcessing').show();
-					},
-					success		: function(data) {
-						var {$varTableID}_inputData = data.input;
-						var {$varTableID}_filterURI = [];
-						$.each({$varTableID}_inputData, function(index, value) {
-							if (
-								index != 'renderDataTables' &&
-								index != 'difta' &&
-								index != 'filters' &&
-								index != '_token' &&
-								null  != value &&
-								'____-__-__ __:__:__' != value
-							) {
-								if ('string' === typeof(value)) {
-									{$varTableID}_filterURI.push(index + '=' + value);
-								} else if ('object' === typeof(value)) {
-									$.each(value, function(idx, _val) {
-										{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + _val);
-									});
-								}
-							}
-						});
-						var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';
-						cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).load();
-					},
-					complete	: function() {
-						$('#{$id}_cdyProcessing').hide();
-						$('#{$id}_cdyFILTER').modal('hide');
-					}
-				});
-			});
+		$js  = "$('#diy-{$id}-search-box').appendTo('.cody_{$id}_diy-dt-filter-box');";
+		$js .= "$('.diy-dt-search-box').removeClass('hide');";
+		
+		$js .= "$('#{$id}_cdyFILTERForm').on('submit', function(event) {";
+			$js .= "$('#{$id}_cdyProcessing').hide();";
+			$js .= "event.preventDefault();";
+			$js .= "var form = $(this);";
+			
+			$js .= "$.ajax ({";
+				$js .= "type : 'GET',";
+				$js .= "data : form.serialize(),";
+				$js .= "url  : '{$url}&filters=true',";
+				
+				$js .= "beforeSend : function() {";
+					$js .= "$('#{$id}_cdyProcessing').show();";
+				$js .= "},";
+				
+				$js .= "success : function(data) {";
+					$js .= "var {$varTableID}_inputData = data.input;";
+					$js .= "var {$varTableID}_filterURI = [];";
+					$js .= "$.each({$varTableID}_inputData, function(index, value) {";
+						$js .= "if (";
+							$js .= "index != 'renderDataTables' &&";
+							$js .= "index != 'difta' &&";
+							$js .= "index != 'filters' &&";
+							$js .= "index != '_token' &&";
+							$js .= "null  != value &&";
+							$js .= "'____-__-__ __:__:__' != value";
+						$js .= ") {";
+							$js .= "if ('string' === typeof(value)) {";
+								$js .= "{$varTableID}_filterURI.push(index + '=' + value);";
+							$js .= "} else if ('object' === typeof(value)) {";
+								$js .= "$.each(value, function(idx, _val) {";
+								$js .= "{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + _val);";
+							$js .= "});";
+						$js .= "}";
+					$js .= "}";
+				$js .= "});";
+				
+				$js .= "var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';";
+				$js .= "cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).load();";
+				$js .= "},";
+				
+				$js .= "complete	: function() {";
+					$js .= "$('#{$id}_cdyProcessing').hide();";
+					$js .= "$('#{$id}_cdyFILTER').modal('hide');";
+				$js .= "}";
+				
+			$js .= "});";
+			
+		$js .= "});
+
 		";
 								
 		return $js;
@@ -337,22 +335,20 @@ trait Scripts {
 				$location = 'footer';
 			}
 			
-			$js = "
-initComplete: function() {
-	this.api().columns().every(function(n) {
-		if (n > 1) {
-			var column = this;
-			var input  = document.createElement(\"input\");
-			$(input).attr({
-				'class':'form-control',
-				'placeholder': 'search'
-			}).appendTo($(column.{$location}()).empty()).on('change', function () {
-				column.search($(this).val(), false, false, true).draw();
-			});
-		}
-	});
-}
-			";
+			$js  = "initComplete: function() {";
+				$js .= "this.api().columns().every(function(n) {";
+					$js .= "if (n > 1) {";
+						$js .= "var column = this;";
+						$js .= "var input  = document.createElement(\"input\");";
+						$js .= "$(input).attr({";
+							$js .= "'class':'form-control',";
+							$js .= "'placeholder': 'search'";
+						$js .= "}).appendTo($(column.{$location}()).empty()).on('change', function () {";
+							$js .= "column.search($(this).val(), false, false, true).draw();";
+						$js .= "});";
+					$js .= "}";
+				$js .= "});";
+			$js .= "}";
 		}
 		
 		return $js;

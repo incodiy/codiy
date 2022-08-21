@@ -24,11 +24,11 @@ class Builder {
 		
 		if (!empty($attributes[$name]['model'])) {
 			if ('sql' === $attributes[$name]['model']) {
-				$data[$name]['model']	= 'sql';
-				$data[$name]['sql']		= $attributes[$name]['query'];
+				$data[$name]['model'] = 'sql';
+				$data[$name]['sql']   = $attributes[$name]['query'];
 			} else {
 				$model = new $attributes[$name]['model']();
-				$data[$name]['model']	= $attributes[$name]['model'];
+				$data[$name]['model'] = $attributes[$name]['model'];
 			}
 		} else {
 			$model = new DynamicTables();
@@ -42,7 +42,7 @@ class Builder {
 			$this->model[$name]['source'] = $model;
 		} else {
 			$this->model[$name]['type']   = 'sql';
-			$this->model[$name]['source']	= $data[$name]['sql'];
+			$this->model[$name]['source'] = $data[$name]['sql'];
 		}
 		
 		if (!empty($attributes[$name])) {
@@ -123,18 +123,18 @@ class Builder {
 		$attributes = $data['attributes'];
 		
 		$sortable	= false;
-		if (!empty($data['columns']['sortable'])) $sortable	= $data['columns']['sortable'];
+		if (!empty($data['columns']['sortable'])) $sortable = $data['columns']['sortable'];
 		
-		$actions	= false;
-		$numbering	= false;
+		$actions   = false;
+		$numbering = false;
 		
 		// COLUMN DATA MANIPULATION
 		$attributes['sortable_columns']					= $sortable;
 		$attributes['attributes']['column']['id']		= [];
 		$attributes['attributes']['column']['class']	= [];
 		if (!empty($attributes)) {
-			if (!empty($attributes['actions']))		$actions	= $attributes['actions'];
-			if (!empty($attributes['numbering']))	$numbering	= $attributes['numbering'];
+			if (!empty($attributes['actions']))   $actions   = $attributes['actions'];
+			if (!empty($attributes['numbering'])) $numbering = $attributes['numbering'];
 		}
 		
 		$alignColumn = [];
@@ -154,16 +154,16 @@ class Builder {
 			if (!empty($this->labels)) {
 				$merged_labels = [];
 				foreach ($columns['merge'] as $colmergename => $colmerged) {
-					$merged_labels[$colmergename]['position']	= $colmerged['position'];
-					$merged_labels[$colmergename]['counts']		= $colmerged['counts'];
-					$merged_labels[$colmergename]['columns']	= $this->checkColumnLabel($this->labels, $colmerged['columns']);
+					$merged_labels[$colmergename]['position']  = $colmerged['position'];
+					$merged_labels[$colmergename]['counts']    = $colmerged['counts'];
+					$merged_labels[$colmergename]['columns']   = $this->checkColumnLabel($this->labels, $colmerged['columns']);
 				}
 				if (!empty($merged_labels)) $columns['merge'] = $merged_labels;
 			}
 			
 			$mergeColumn = $columns['merge'];
 		}
-		if (!empty($columns['lists'])) $columns	 	= $columns['lists'];
+		if (!empty($columns['lists'])) $columns = $columns['lists'];
 		if (true === $numbering) {
 			$number  = ['number_lists'];
 			$columns = array_merge($number, $columns);
@@ -255,8 +255,8 @@ class Builder {
 		$mergedTable  = null;
 		$setMergeText = '::merge::';
 		
-		$columnColor = [];
-		$headerColor = null;
+		$columnColor  = [];
+		$headerColor  = null;
 		if (!empty($attributes['attributes']['bg_color'])) {
 			$tableColor = $this->backgroundColor($attributes['attributes']['bg_color']);
 		}
@@ -372,22 +372,22 @@ class Builder {
 		return diy_set_formula_columns($columns, $data['attributes']['conditions']['formula']);
 	}
 	
-	public $filter_contents		= [];
-	protected $filter_object	= [];
+	public $filter_contents  = [];
+	protected $filter_object = [];
 	private function body($data = []) {
 		$datatables  = [];
-		$name		 = $data['name'];
+		$name        = $data['name'];
 		$attributes  = $data['attributes'];
-		$columnData	 = $data['columns'];
+		$columnData  = $data['columns'];
 		$server_side = $data['attributes']['server_side']['status'];
 		
-		$actions	 = false;
-		$numbering	 = false;
+		$actions     = false;
+		$numbering   = false;
 		if (!empty($attributes['attributes']['table_id'])) {
 			$tableID = $attributes['attributes']['table_id'];
 		}
-		if (!empty($attributes['actions']))		$actions	= $attributes['actions'];
-		if (!empty($attributes['numbering']))	$numbering	= $attributes['numbering'];
+		if (!empty($attributes['actions']))   $actions   = $attributes['actions'];
+		if (!empty($attributes['numbering'])) $numbering = $attributes['numbering'];
 		
 		// COLUMN DATA MANIPULATION
 		$columns	 = $columnData['lists'];
@@ -446,20 +446,20 @@ class Builder {
 			}
 			
 			if ('number_lists' === $column) {
-				$columnName			= 'DT_RowIndex';
+				$columnName        = 'DT_RowIndex';
 				
-				$jsonData['data']	= $columnName;
-				$jsonData['name']	= $columnName;
-				$jsonData['class']	= 'center un-clickable';
+				$jsonData['data']  = $columnName;
+				$jsonData['name']  = $columnName;
+				$jsonData['class'] = 'center un-clickable';
 				
-				$dt_columns[]		= $jsonData;
+				$dt_columns[]      = $jsonData;
 				if (!empty($column_id))	{
-					$dt_columns[]	= $column_id;
+					$dt_columns[]   = $column_id;
 				}
-				$jsonData			= [];
+				$jsonData          = [];
 			} else if ($formula_column === $column) {
-				$jsonData['data']	= $column;
-				$jsonData['name']	= $column;
+				$jsonData['data']  = $column;
+				$jsonData['name']  = $column;
 				
 				if (!empty($alignment['body'][$column])) {
 					$jsonData['class'] = $jsonData['class'] . " {$alignment['body'][$column]}";
@@ -481,7 +481,7 @@ class Builder {
 				
 				if (!empty($sortable[$column]))   $jsonData['sortable']   = $sortable[$column];
 				if (!empty($searchable[$column])) $jsonData['searchable'] = $searchable[$column];
-				if (!empty($clickable[$column]))  {
+				if (!empty($clickable[$column])) {
 					unset($jsonData['onclick']);
 					$jsonData['class'] = $jsonData['class'] . " clickable";
 				}
@@ -525,36 +525,36 @@ class Builder {
 				
 				if (!empty($data['sql'])) {
 					$data_model = null;
-					$data_sql	= $data['sql'];
+					$data_sql   = $data['sql'];
 				} else {
-					$data_model	= $data['model'];
-					$data_sql	= null;
+					$data_model = $data['model'];
+					$data_sql   = null;
 				}
 				
-				$search_object			= new Search($data_model, $search_data, $data_sql);
-				$this->filter_object	= $search_object;
+				$search_object         = new Search($data_model, $search_data, $data_sql);
+				$this->filter_object   = $search_object;
 				
-				$dt_info['id']			= $tableID;
-				$dt_info['class']		= 'dt-button buttons-filter';
-				$dt_info['attributes']	= [
-					'id'				=> "{$tableID}_cdyFILTER",
-					'class'				=> "modal fade {$tableID}",
-					'role'				=> 'dialog',
-					'tabindex'			=> '-1',
-					'aria-hidden'		=> 'true',
-					'aria-controls'		=> $tableID,
-					'aria-labelledby'	=> $tableID,
-					'data-backdrop'		=> 'static',
-					'data-keyboard'		=> 'false'
+				$dt_info['id']         = $tableID;
+				$dt_info['class']      = 'dt-button buttons-filter';
+				$dt_info['attributes'] = [
+					'id'              => "{$tableID}_cdyFILTER",
+					'class'           => "modal fade {$tableID}",
+					'role'            => 'dialog',
+					'tabindex'        => '-1',
+					'aria-hidden'     => 'true',
+					'aria-controls'   => $tableID,
+					'aria-labelledby' => $tableID,
+					'data-backdrop'   => 'static',
+					'data-keyboard'   => 'false'
 				];
-				$dt_info['button_label']	= '<i class="fa fa-filter"></i> Filter';
-				$dt_info['modal_title']		= '<i class="fa fa-filter"></i> &nbsp; Filter';
-				$dt_info['modal_content']	= $search_object->render($dt_info['name'], $data['columns']['filters']);
+				$dt_info['button_label']  = '<i class="fa fa-filter"></i> Filter';
+				$dt_info['modal_title']   = '<i class="fa fa-filter"></i> &nbsp; Filter';
+				$dt_info['modal_content'] = $search_object->render($dt_info['name'], $data['columns']['filters']);
 			}
 		}
-		$datatables[$name]['columns']		= $dt_columns;
+		$datatables[$name]['columns']    = $dt_columns;
 		
-		$this->filter_contents[$tableID]	= $dt_info;
+		$this->filter_contents[$tableID] = $dt_info;
 		
 		$filter_data = [];
 		if (true === $filter) {
@@ -576,14 +576,14 @@ class Builder {
 				if ('filters'!== $name && '' !== $value) {
 					if (!is_array($value)) {
 						if (
-							$name !== $_ajax_url	&&
-							$name !== 'draw'		&&
-							$name !== 'columns'		&&
-							$name !== 'order'		&&
-							$name !== 'start'		&&
-							$name !== 'length'		&&
-							$name !== 'search'		&&
-							$name !== '_token'		&&
+							$name !== $_ajax_url &&
+							$name !== 'draw'     &&
+							$name !== 'columns'  &&
+							$name !== 'order'    &&
+							$name !== 'start'    &&
+							$name !== 'length'   &&
+							$name !== 'search'   &&
+							$name !== '_token'   &&
 							$name !== '_'
 						) {
 							$input_filters[] = "infil[{$name}]={$value}";

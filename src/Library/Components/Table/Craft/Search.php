@@ -26,10 +26,10 @@ class Search {
 	public function __construct($model = null, $filters = [], $sql = null) {
 		if (!empty($model)) $this->model = new $model();
 		
-		$this->form		= new Form();
-		$this->filters	= $filters;
-		$this->table	= $filters['table_name'];
-		$this->sql		= $sql;
+		$this->form    = new Form();
+		$this->filters = $filters;
+		$this->table   = $filters['table_name'];
+		$this->sql     = $sql;
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
 	}
@@ -37,7 +37,7 @@ class Search {
 	public function render(string $table, array $fields) {
 		$this->search_box($table, $this->getColumnInfo($table, $fields), $this->model);
 		
-		$data		  = [];
+		$data = [];
 		$data['name'] = ucwords(str_replace('-', ' ', diy_clean_strings($table)));
 		$data['html'] = $this->html;
 		
@@ -50,9 +50,9 @@ class Search {
 	
 	private $data = [];
 	private function getFilterData($data) {
-		$all_columns	= [];
-		$relists		= [];
-		$relations		= [];
+		$all_columns = [];
+		$relists     = [];
+		$relations   = [];
 		
 		foreach ($this->filters['columns'] as $col) {
 			$all_columns[$col] = $col;
@@ -71,9 +71,9 @@ class Search {
 				$relists[$key] = $row['relate'];
 			}
 			
-			$data[$row['column']]['name']	= $row['column'];
-			$data[$row['column']]['type']	= $row['type'];
-			$data[$row['column']]['relate']	= $relists[$key];
+			$data[$row['column']]['name']   = $row['column'];
+			$data[$row['column']]['type']   = $row['type'];
+			$data[$row['column']]['relate'] = $relists[$key];
 		}
 		$this->data = $data;
 		
@@ -90,23 +90,22 @@ class Search {
 			}
 		}
 		if (!empty($relations['lists'])) {
-		    $this->relations['lists']	= array_unique($relations['lists']);
+		    $this->relations['lists'] = array_unique($relations['lists']);
 		}
 		if (!empty($relations['type'])) {
-		    $this->relations['type']	= $relations['type'];
+		    $this->relations['type']  = $relations['type'];
 		}
 	}
 	
 	private $selections = [];
 	private function selections($table, $fields = [], $condition = null) {
-		$strfields	= implode(',', $fields);
-		$where		= null;
-		if (!empty($condition)) {dd($where);
-		    $where	= "WHERE ID IS NOT NULL ";
+		$strfields = implode(',', $fields);
+		$where     = null;
+		if (!empty($condition)) {
+		    $where = "WHERE ID IS NOT NULL ";
 		}
 		
-		$query		= $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};");
-		
+		$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};");
 		if (!empty($query)) {
 			$selections = [];
 			foreach ($query as $rows) {
@@ -126,13 +125,13 @@ class Search {
 	private $html = false;
 	private function search_box($name, $data, $model) {
 	    
-	    $this->form->excludeFields	= ['password_field'];
-	    $this->form->hideFields		= ['id'];
+	    $this->form->excludeFields = ['password_field'];
+	    $this->form->hideFields    = ['id'];
 	    
 	    $script_elements = [];
 	    if (!empty($this->relations['type'])) {
 	        $field_value = [];
-	        $values		 = null;
+	        $values      = null;
 	        $open_field  = null;
 	        
 	        if (!empty($this->relations['lists'][0])) {
@@ -198,6 +197,7 @@ class Search {
 	        	}
 	        }
 	    } else {
+	    	
 	    	foreach ($data as $field => $type) {
 	    		switch ($type) {
 	    			case 'string':
@@ -231,8 +231,8 @@ class Search {
 	    
 		$this->addScriptsTemplate($script_elements, $name);
 	    
-	    $title		= ucwords(str_replace('-', ' ', diy_clean_strings($name)));
-	    $name		= diy_clean_strings($name);
+	    $title      = ucwords(str_replace('-', ' ', diy_clean_strings($name)));
+	    $name       = diy_clean_strings($name);
 	    $this->html = diy_modal_content_html($name, $title, $this->form->elements);
 	}
 	
@@ -241,15 +241,15 @@ class Search {
 		$current_template = diy_template_config('admin.' . diy_current_template());
 		unset($current_template['position']);
 		
-		$fields				= [];
-		$scriptElements		= array_keys($element_scripts);
-		$fields['others']	= $scriptElements;
+		$fields           = [];
+		$scriptElements   = array_keys($element_scripts);
+		$fields['others'] = $scriptElements;
 		
 		$this->script_config($scriptElements);
 		foreach ($scriptElements as $index => $field) {
 			unset($scriptElements[$index]);
 			
-			$fields['current']	= [$index => $field];
+			$fields['current'] = [$index => $field];
 			
 			$this->script_next_data($field, $fields, $table);
 		}
@@ -277,17 +277,17 @@ class Search {
 	
 	private $scriptToHTML = 'diyScriptNode::';
 	private function script_next_data($identity, $fields, $table) {
-		$currKey	 = key($fields['current']);
+		$currKey     = key($fields['current']);
 		$next_target = null;
 		if (!empty($fields['others'][$currKey+1])) {
 			$next_target = $fields['others'][key($fields['current'])+1];
 		}
 		
-		$nests			= [];
-		$pref			= null;
-		$prefdata		= "null";
-		$prefscript		= "null";
-		$prefscripts	= [];
+		$nests       = [];
+		$prev        = null;
+		$prevdata    = "null";
+		$prevscript  = "null";
+		$prevscripts = [];
 		
 		foreach ($fields['others'] as $idx => $value) {
 			if ($idx < $currKey) {
@@ -298,21 +298,21 @@ class Search {
 		}
 		
 		if (!empty($nests['pref'])) {
-			$pref = implode('|', $nests['pref']);
+			$prev = implode('|', $nests['pref']);
 			foreach ($nests['pref'] as $preval) {
-				$prefscripts[] = "$('#{$preval}').val()";
+				$prevscripts[] = "$('#{$preval}').val()";
 			}
-			$prefscript = implode("+'|'+", $prefscripts);
-			$prefdata	= $pref;
+			$prevscript = implode("+'|'+", $prevscripts);
+			$prevdata   = $prev;
 		}
 		
-		$nest		= null;
-		$nesCript	= null;
+		$nest     = null;
+		$nesCript = null;
 		if (!empty($nests['next'])) {
-			$nest		= implode('|', $nests['next']);
-			$nesCript	= "
-				var _nx{$next_target}		= '{$next_target}';
-				var _reident{$next_target}	= _nx{$next_target}.replace('_', ' ');
+			$nest     = implode('|', $nests['next']);
+			$nesCript = "
+				var _nx{$next_target}      = '{$next_target}';
+				var _reident{$next_target} = _nx{$next_target}.replace('_', ' ');
 				
 				$('#{$next_target}')
 					.empty()
@@ -321,8 +321,8 @@ class Search {
 					.trigger('chosen:updated');
 				
 				if (null != '{$nest}' && '' != '{$nest}') {
-					var _spldt{$identity}	= '{$nest}';
-					var _spl{$identity}		= _spldt{$identity}.split('|');
+					var _spldt{$identity} = '{$nest}';
+					var _spl{$identity} = _spldt{$identity}.split('|');
 					
 					$.each(_spl{$identity}, function(i,obj) {
 						if (null != obj && '{$identity}' != obj) {
@@ -346,12 +346,12 @@ class Search {
 		if (!empty($next_target)) {
 			$ajaxSuccess = "
 				var _next{$next_target}	= '{$target}';
-				var _prefS{$identity}	= {$prefscript};
+				var _prefS{$identity}	= {$prevscript};
 				
 				$.ajax ({
 					type		: 'POST',
 					url			: '{$uri}',
-					data		: {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$pref}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}'},
+					data		: {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}'},
 					dataType	: 'json',
 					beforeSend	: function() {
 						$('#cdyInpLdr{$next_target}').show();

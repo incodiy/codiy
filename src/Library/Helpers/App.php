@@ -1270,3 +1270,24 @@ if (!function_exists('diy_get_model_data')) {
 		return $data;
 	}
 }
+
+if (!function_exists('diy_memory')) {
+	
+	/**
+	 * Memory?
+	 *
+	 * created @Sep 28, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param bool $min
+	 * @param integer $limit
+	 */
+	function diy_memory($min = false, $limit = -1) {
+		ini_set('memory_limit', $limit);
+		if (false === $min) {
+			minify_code(diy_config('minify'));
+		} else {
+			minify_code();
+		}
+	}
+}

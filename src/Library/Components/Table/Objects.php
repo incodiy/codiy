@@ -2,7 +2,6 @@
 namespace Incodiy\Codiy\Library\Components\Table;
 
 use Incodiy\Codiy\Library\Components\Table\Craft\Builder;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
 
 /**
@@ -245,12 +244,22 @@ class Objects extends Builder {
 	}
 	
 	public $conditions = [];
-	public function where($field_name, $logic_operator, $value) {
-		$this->conditions['where'][] = [
-			'field_name' => $field_name,
-			'operator'   => $logic_operator,
-			'value'      => $value
-		];
+	public function where($field_name, $logic_operator = false, $value = false) {
+		if (is_array($field_name)) {
+			foreach ($field_name as $fieldname => $fieldvalue) {
+				$this->conditions['where'][] = [
+					'field_name' => $fieldname,
+					'operator'   => '=',
+					'value'      => $fieldvalue
+				];
+			}
+		} else {
+			$this->conditions['where'][] = [
+				'field_name' => $field_name,
+				'operator'   => $logic_operator,
+				'value'      => $value
+			];
+		}
 	}
 	
 	/**

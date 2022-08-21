@@ -280,78 +280,78 @@ if (!function_exists('create_action_buttons')) {
 	 */
 	function create_action_buttons($view = false, $edit = false, $delete = false, $add_action = [], $as_root = false) {
 		
-		$deleteURL			= false;
-		$delete_id			= false;
-		$buttonDelete		= false;
-		$buttonDeleteMobile	= false;
-		$restoreDeleted		= false;
+		$deleteURL          = false;
+		$delete_id          = false;
+		$buttonDelete       = false;
+		$buttonDeleteMobile = false;
+		$restoreDeleted     = false;
 		
 		if (false !== $delete || true === $as_root) {
-			$deletePath				= explode('/', $delete);
-			$deleteFlag				= end($deletePath);
-			$delete_id				= intval($deletePath[count($deletePath)-2]);
-			$deleteURL				= str_replace('@index', '@destroy', diy_current_route()->getActionName());
-			$buttonDeleteAttribute	= 'class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="Delete"';
-			$iconDeleteAttribute	= 'fa fa-times';
+			$deletePath            = explode('/', $delete);
+			$deleteFlag            = end($deletePath);
+			$delete_id             = intval($deletePath[count($deletePath)-2]);
+			$deleteURL             = str_replace('@index', '@destroy', diy_current_route()->getActionName());
+			$buttonDeleteAttribute = 'class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="Delete"';
+			$iconDeleteAttribute   = 'fa fa-times';
 			
 			if ('restore_deleted' === $deleteFlag) {
-				$restoreDeleted			= true;
-				$buttonDeleteAttribute	= 'class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="Restore"';
-				$iconDeleteAttribute	= 'fa fa-recycle';
+				$restoreDeleted        = true;
+				$buttonDeleteAttribute = 'class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="Restore"';
+				$iconDeleteAttribute   = 'fa fa-recycle';
 			}
 			
-			$delete_action		= '<form action="' . action($deleteURL, $delete_id) . '" method="post" class="btn btn_delete" style="padding:0 !important">' . csrf_field() . '<input name="_method" type="hidden" value="DELETE">';
-			$buttonDelete		= $delete_action . '<button ' . $buttonDeleteAttribute . ' type="submit"><i class="' . $iconDeleteAttribute . '"></i></button></form>';
-			$buttonDeleteMobile	= '<li><a href="' . $delete . '" class="tooltip-error btn_delete" data-rel="tooltip" title="Delete"><span class="red"><i class="fa fa-trash-o bigger-120"></i></span></a></li>';
+			$delete_action      = '<form action="' . action($deleteURL, $delete_id) . '" method="post" class="btn btn_delete" style="padding:0 !important">' . csrf_field() . '<input name="_method" type="hidden" value="DELETE">';
+			$buttonDelete       = $delete_action . '<button ' . $buttonDeleteAttribute . ' type="submit"><i class="' . $iconDeleteAttribute . '"></i></button></form>';
+			$buttonDeleteMobile = '<li><a href="' . $delete . '" class="tooltip-error btn_delete" data-rel="tooltip" title="Delete"><span class="red"><i class="fa fa-trash-o bigger-120"></i></span></a></li>';
 		}
 		
-		$buttonView 		= false;
-		$buttonViewMobile 	= false;
+		$buttonView       = false;
+		$buttonViewMobile = false;
 		if (false != $view || true === $as_root) {
 			if (true === $restoreDeleted) {
 				$viewVisibilityAttr = 'readonly disabled class="btn btn-default btn-xs btn_view" data-toggle="tooltip" data-placement="top" data-original-title="View detail"';
 			} else {
 				$viewVisibilityAttr = 'href="' . $view . '" class="btn btn-success btn-xs btn_view" data-toggle="tooltip" data-placement="top" data-original-title="View detail"';
 			}
-			$buttonView			= '<a ' . $viewVisibilityAttr . '><i class="fa fa-eye"></i></a>';
-			$buttonViewMobile	= '<li class="btn_view"><a href="' . $view . '" class="tooltip-info" data-rel="tooltip" title="View"><span class="blue"><i class="fa fa-search-plus bigger-120"></i></span></a></li>';
+			$buttonView       = '<a ' . $viewVisibilityAttr . '><i class="fa fa-eye"></i></a>';
+			$buttonViewMobile = '<li class="btn_view"><a href="' . $view . '" class="tooltip-info" data-rel="tooltip" title="View"><span class="blue"><i class="fa fa-search-plus bigger-120"></i></span></a></li>';
 		}
 		
-		$buttonEdit			= false;
-		$buttonEditMobile	= false;
+		$buttonEdit       = false;
+		$buttonEditMobile = false;
 		if (false != $edit || true === $as_root) {
 			if (true === $restoreDeleted) {
 				$editVisibilityAttr = ' readonly disabled class="btn btn-default btn-xs btn_edit" data-toggle="tooltip" data-placement="top" data-original-title="Edit"';
 			} else {
 				$editVisibilityAttr = ' href="' . $edit . '" class="btn btn-primary btn-xs btn_edit" data-toggle="tooltip" data-placement="top" data-original-title="Edit"';
 			}
-			$buttonEdit			= '<a ' . $editVisibilityAttr . '><i class="fa fa-pencil"></i></a>';
-			$buttonEditMobile	= '<li class="btn_edit"><a href="' . $edit . '" class="tooltip-success" data-rel="tooltip" title="Edit"><span class="green"><i class="fa fa-pencil-square-o bigger-120"></i></span></a></li>';
+			$buttonEdit       = '<a ' . $editVisibilityAttr . '><i class="fa fa-pencil"></i></a>';
+			$buttonEditMobile = '<li class="btn_edit"><a href="' . $edit . '" class="tooltip-success" data-rel="tooltip" title="Edit"><span class="green"><i class="fa fa-pencil-square-o bigger-120"></i></span></a></li>';
 		}
 		
-		$buttonNew			= '';
-		$buttonNewMobile	= '';
+		$buttonNew       = '';
+		$buttonNewMobile = '';
 		if (true === is_array($add_action)) {
 			if (count($add_action) >= 1) {
 				foreach ($add_action as $new_action_name => $new_action_values) {
-					$row_name	= camel_case($new_action_name);
-					$row_url		= $new_action_values['url'];
-					$row_color	= $new_action_values['color'];
-					$row_icon	= $new_action_values['icon'];
+					$row_name  = camel_case($new_action_name);
+					$row_url   = $new_action_values['url'];
+					$row_color = $new_action_values['color'];
+					$row_icon  = $new_action_values['icon'];
 					
 					if (true === $restoreDeleted) {
 						$actionVisibilityAttr = ' readonly disabled class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="' . $row_name . '"';
 					} else {
 						$actionVisibilityAttr = ' href="' . $row_url . '" class="btn btn-' . $row_color. ' btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="' . $row_name . '"';
 					}
-					$buttonNew			.= '<a' . $actionVisibilityAttr . '><i class="fa fa-' . $row_icon . '"></i></a>';
-					$buttonNewMobile	.= '<li><a href="' . $row_url . '" class="tooltip-error" data-rel="tooltip" title="' . $row_name . '"><span class="red"><i class="fa fa-' . $row_icon . ' bigger-120"></i></span></a></li>';
+					$buttonNew       .= '<a' . $actionVisibilityAttr . '><i class="fa fa-' . $row_icon . '"></i></a>';
+					$buttonNewMobile .= '<li><a href="' . $row_url . '" class="tooltip-error" data-rel="tooltip" title="' . $row_name . '"><span class="red"><i class="fa fa-' . $row_icon . ' bigger-120"></i></span></a></li>';
 				}
 			}
 		}
 		
-		$buttons		= $buttonView		. $buttonEdit		. $buttonDelete			. $buttonNew;
-		$buttonsMobile	= $buttonViewMobile	. $buttonEditMobile	. $buttonDeleteMobile	. $buttonNewMobile;
+		$buttons       = $buttonView       . $buttonEdit       . $buttonDelete       . $buttonNew;
+		$buttonsMobile = $buttonViewMobile . $buttonEditMobile . $buttonDeleteMobile . $buttonNewMobile;
 		
 		return '<div class="action-buttons-box"><div class="hidden-sm hidden-xs action-buttons">' . $buttons . '</div><div class="hidden-md hidden-lg"><div class="inline pos-rel"><button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto"><i class="fa fa-caret-down icon-only bigger-120"></i></button><ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">' . $buttonsMobile . '</ul></div></div></div>';
 	}
@@ -411,8 +411,8 @@ if (!function_exists('diy_generate_table')) {
 		if (false !== $attributes && is_array($attributes)) {
 			if (empty($attributes)) {
 				$_attributes = array (
-					'id'		=> "datatable-{$title_id}",
-					'class'	=> $datatableClass
+					'id'    => "datatable-{$title_id}",
+					'class' => $datatableClass
 				);
 			} else {
 				if (empty($attributes['id'])) {
@@ -427,19 +427,19 @@ if (!function_exists('diy_generate_table')) {
 			}
 		} else {
 			$_attributes = array (
-				'id'	=> "datatable-{$title_id}",
-				'class'	=> $datatableClass
+				'id'    => "datatable-{$title_id}",
+				'class' => $datatableClass
 			);
 		}
 		
 		$attributes = ' ' . rtrim(diy_attributes_to_string($_attributes));
 		
 		// set header table
-		$hNumber	= false;
-		$hCheck		= false;
-		$hEmpty		= false;
-		$_header	= false;
-		$aoColumns	= [];
+		$hNumber   = false;
+		$hCheck    = false;
+		$hEmpty    = false;
+		$_header   = false;
+		$aoColumns = [];
 		
 		if (true === $numbering) {
 			$number = ['number_lists'];
@@ -458,35 +458,35 @@ if (!function_exists('diy_generate_table')) {
 				$set_fieldID = "{data:'id',name:'id'}";
 			}
 			foreach ($header as $hIndex => $hList) {
-				$HKEY = false;
-				$HVAL = false;
+				$HKEY       = false;
+				$HVAL       = false;
 				if (is_array($hList)) {
-					$keyList	= array_keys($hList);
-					$HKEY		= $keyList[0];
-					$HVAL		= $hList[$HKEY];
+					$keyList = array_keys($hList);
+					$HKEY    = $keyList[0];
+					$HVAL    = $hList[$HKEY];
 				} else {
-					$HKEY		= $hList;
-					$HVAL		= trim(ucwords(str_replace('_', ' ', $HKEY)));
+					$HKEY    = $hList;
+					$HVAL    = trim(ucwords(str_replace('_', ' ', $HKEY)));
 				}
-				$hList	= $HKEY;
-				$hLabel	= $HVAL;
+				$hList      = $HKEY;
+				$hLabel     = $HVAL;
 				
 				$hListFields = $hList;
 				if (true === str_contains($hList, '|')) {
-					$newHList		= explode('|', $hList);
-					$hList			= $newHList[1];
-					$hListFields	= "{$relations}.{$hList}";
+					$newHList    = explode('|', $hList);
+					$hList       = $newHList[1];
+					$hListFields = "{$relations}.{$hList}";
 				}
 				if (true === str_contains($hList, '.')) {
-					$newHList		= explode('.', $hList);
-					$hList			= $newHList[0];
+					$newHList = explode('.', $hList);
+					$hList    = $newHList[0];
 				}
 				
 				// check if header label : no|id|nik
-				$idHeader		= $header[$hIndex];
+				$idHeader = $header[$hIndex];
 				if (is_array($idHeader)) {
-					$fHead		= array_keys($idHeader);
-					$idHeader	= $fHead[0];
+					$fHead    = array_keys($idHeader);
+					$idHeader = $fHead[0];
 				}
 				if ('no' === strtolower($idHeader) || 'id' === strtolower($idHeader) || 'nik' === strtolower($idHeader)) $hNumber = $hIndex;
 				
@@ -495,44 +495,44 @@ if (!function_exists('diy_generate_table')) {
 				
 				$hList = trim(ucwords(str_replace('_', ' ', $hList)));
 				if ($hNumber === $hIndex) {
-					$_header		.= "<th class=\"center\" width=\"50\">{$hList}</th>";
-					$aoColumns[]	 = "null";
+					$_header     .= "<th class=\"center\" width=\"50\">{$hList}</th>";
+					$aoColumns[]  = "null";
 				} else if (true === str_contains($hList, ':changeHeaderName:')) {
-					$newHList		 = explode(':changeHeaderName:', $hList);
-					$hList			 = ucwords($newHList[1]);
-					$hListFields	 = $hList;
-					$hDataFields	 = strtolower($newHList[0]);
-					$_header		.= "<th class=\"center\" width=\"120\">{$hListFields}</th>";
-					$aoColumns[]	 = "{data:'{$hDataFields}',name:'{$hDataFields}','sortable': true,'searchable': true}";
+					$newHList     = explode(':changeHeaderName:', $hList);
+					$hList        = ucwords($newHList[1]);
+					$hListFields  = $hList;
+					$hDataFields  = strtolower($newHList[0]);
+					$_header     .= "<th class=\"center\" width=\"120\">{$hListFields}</th>";
+					$aoColumns[]  = "{data:'{$hDataFields}',name:'{$hDataFields}','sortable': true,'searchable': true}";
 				} else if ($hCheck === $hIndex) {
-					$_header		.= "<th width=\"50\">{$hList}</th>";
+					$_header     .= "<th width=\"50\">{$hList}</th>";
 					$aoColumns[]	 = "{'bSortable': false}";
 				} else if ($hEmpty === $hIndex) {
 					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[]	 = "{'bSortable': false}";
+					$aoColumns[] = "{'bSortable': false}";
 				} else if ('Action' === $hList) {
-					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[]	 = "{data:'action',name:'action','sortable': false,'searchable': false,'class':'center un-clickable'}";
+					$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[] = "{data:'action',name:'action','sortable': false,'searchable': false,'class':'center un-clickable'}";
 				} else if ('Active' === $hList) {
-					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[]	 = "{data:'active',name:'active','sortable': false,'searchable': true,'class':'center un-clickable'}";
+					$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[] = "{data:'active',name:'active','sortable': false,'searchable': true,'class':'center un-clickable'}";
 				} else if ('Flag Status' === $hList) {
-					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[]	 = "{data:'flag_status',name:'flag_status','sortable': true,'searchable': true,'class':'center'}";
+					$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
+					$aoColumns[] = "{data:'flag_status',name:'flag_status','sortable': true,'searchable': true,'class':'center'}";
 				} else {
 					if ('number_lists' === strtolower($idHeader)) {
-						$_header	.= "<th class=\"center\" width=\"30\">No</th><th class=\"center\" width=\"30\">ID</th>";
+						$_header    .= "<th class=\"center\" width=\"30\">No</th><th class=\"center\" width=\"30\">ID</th>";
 						$aoColumns[] = "{data:'DT_RowIndex',name:'DT_RowIndex','sortable': false,'searchable': false,'class':'center un-clickable','onclick':'return false'}";
 						if (false !== $set_fieldID) $aoColumns[] = $set_fieldID;
 					} else {
 						$row_attr = false;
 						if (true === str_contains($hList, '{:}')) {
-							$reList			= explode('{:}', $hList);
-							$hList			= $reList[0];
+							$reList = explode('{:}', $hList);
+							$hList  = $reList[0];
 							
 							if (isset($reList[1])) {
-								$rowAttr	= explode('|', $reList[1]);
-								$row_attr	= ' ' . implode(' ', $rowAttr);
+								$rowAttr  = explode('|', $reList[1]);
+								$row_attr = ' ' . implode(' ', $rowAttr);
 							}
 							
 							$row_list = "<th{$row_attr}>{$hList}</th>";
@@ -545,7 +545,7 @@ if (!function_exists('diy_generate_table')) {
 							$clickableClass = 'clickable ';
 						}
 						
-						$_header	.= $row_list;
+						$_header    .= $row_list;
 						$aoColumns[] = "{data:'{$hListFields}',name:'{$hListFields}',class:'{$clickableClass}auto-cut-text'}";
 					}
 				}
@@ -555,15 +555,15 @@ if (!function_exists('diy_generate_table')) {
 		}
 		
 		// set body list(s) table
-		$_body		= false;
-		$num		= false;
+		$_body = false;
+		$num   = false;
 		
 		if (false === $server_side) {
 			if (false !== $body) {
 				$_body = '<tbody>';
 				
-				$array_keys	= array_keys($body);
-				$first_key	= reset($array_keys);
+				$array_keys = array_keys($body);
+				$first_key  = reset($array_keys);
 				
 				foreach ($body as $bIndex => $bLists) {
 					$rowClickAction = false;
@@ -579,7 +579,7 @@ if (!function_exists('diy_generate_table')) {
 							
 							if (true === $numbering) {
 								if ($first_key <= 0)	$numLists = intval($row)+1;
-								else						$numLists = intval($row);
+								else                 $numLists = intval($row);
 								
 								$_body .= "<td class=\"center\">{$numLists}</td>";
 							}
@@ -590,12 +590,12 @@ if (!function_exists('diy_generate_table')) {
 									$rowClickAction = false;
 								}
 								if (true === str_contains($list, '{:}')) {
-									$reList	= explode('{:}', $list);
-									$list	= $reList[0];
+									$reList = explode('{:}', $list);
+									$list   = $reList[0];
 									
 									if (isset($reList[1])) {
-										$rowAttr	= explode('|', $reList[1]);
-										$row_attr	= ' ' . implode(' ', $rowAttr);
+										$rowAttr  = explode('|', $reList[1]);
+										$row_attr = ' ' . implode(' ', $rowAttr);
 									}
 									
 									$row_list = "<td{$row_attr}{$rowClickAction}>{$list}</td>";
@@ -611,16 +611,16 @@ if (!function_exists('diy_generate_table')) {
 								} else if ($hEmpty === $index) {
 									$_body .= "<td class=\"center\">{$list}</td>";
 								} else if ('active' === $index) {
-									$_list = set_active_value($list);
+									$_list  = set_active_value($list);
 									$_body .= "<td align=\"center\">{$_list}</td>";
 								} else if ('flag_status' === $index) {
-									$_list = internal_flag_status($list);
+									$_list  = internal_flag_status($list);
 									$_body .= "<td align=\"center\"{$rowClickAction}>{$_list}</td>";
 								} else if ('request_status' === $index) {
-									$_list	= request_status(true, $list);
+									$_list  = request_status(true, $list);
 									$_body .= "<td align=\"center\">{$_list}</td>";
 								} else if ('update_status' === $index) {
-									$_list	= active_box();
+									$_list  = active_box();
 									$_body .= "<td align=\"center\">{$_list[$list]}</td>";
 								} else if ('action' === $index) {
 									$_body .= "<td align=\"center\"{$rowClickAction}>{$list}</td>";
