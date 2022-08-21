@@ -15,21 +15,21 @@ use jlawrence\eos\Parser;
  
 class Formula extends Parser {
 	
-	private $data		= [];
-	private $headers	= [];
-	private $formula	= null;
+	private $data    = [];
+	private $headers = [];
+	private $formula = null;
 	
 	public function __construct($data_formula, $data_query) {
-		$data					= [];
-		$data['formula']		= $data_formula;
-		$data['query_data']		= $data_query->getAttributes();
-		$this->data				= diy_object($data);
+		$data = [];
+		$data['formula']    = $data_formula;
+		$data['query_data'] = $data_query->getAttributes();
+		$this->data	        = diy_object($data);
 	}
 	
 	public function calculate() {
-		$formula	= $this->data->formula['logic'];
+		$formula    = $this->data->formula['logic'];
 		$column_key = $this->data->formula['name'];
-		$row		= $this->data->query_data;
+		$row        = $this->data->query_data;
 		$this->header_sanitizer($this->data->formula['field_lists']);
 		
 		try {

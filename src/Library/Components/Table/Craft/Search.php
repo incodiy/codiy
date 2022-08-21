@@ -284,8 +284,9 @@ class Search {
 		}
 		
 		$nests       = [];
+		
 		$prev        = null;
-		$prevdata    = "null";
+	//	$prevdata    = "null";
 		$prevscript  = "null";
 		$prevscripts = [];
 		
@@ -303,7 +304,7 @@ class Search {
 				$prevscripts[] = "$('#{$preval}').val()";
 			}
 			$prevscript = implode("+'|'+", $prevscripts);
-			$prevdata   = $prev;
+		//	$prevdata   = $prev;
 		}
 		
 		$nest     = null;
