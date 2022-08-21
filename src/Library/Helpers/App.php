@@ -110,13 +110,8 @@ if (!function_exists('diy_get_model')) {
 	 * @return object|array
 	 */
 	function diy_get_model($model, $find = false) {
-		if (is_string($model)) {
-			$model = new $model;
-		}
-		
-		if (false !== $find) {
-			$model = $model->find($find);
-		}
+		if (is_string($model)) $model = new $model;
+		if (false !== $find)   $model = $model->find($find);
 		
 		return $model;
 	}
@@ -541,9 +536,8 @@ if (!function_exists('set_break_line_html')) {
 	 */
 	function set_break_line_html($tag, $loops = 1) {
 		$tags	= "";
-		for ($x=2; $x<=$loops; $x++) {
-			$tags .= $tag;
-		}
+		for ($x=2; $x<=$loops; $x++) $tags .= $tag;
+		
 		return "{$tags}";
 	}
 }
@@ -569,9 +563,17 @@ if (!function_exists('minify_code')) {
 		 * (6) Remove unwanted HTML comments /**
 		 */
 		
-		$search  = array('/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/\>[\r\n\t ]+\</s', '/<!--(.|\s)*?-->/', '~^\s*//.*$\s*~m');
-		$replace = array('>', '<', '\\1', '><', '', '');
-		
+		$search  = [
+			'/\>[^\S ]+/s', 
+			'/[^\S ]+\</s', 
+			'/(\s)+/s', 
+			'/\>[\r\n\t ]+\</s', 
+			'/<!--(.|\s)*?-->/',
+			'~^\s*//.*$\s*~m'
+		];
+		$replace = ['>', '<', '\\1', '><', '', ''];
+		$search = ['/ {2,}/', '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'];
+		$replace = [' ', ''];
 		return set_break_line_html("\n", 1986) . preg_replace($search, $replace, $buffer);
 	}
 	
@@ -587,8 +589,6 @@ if (!function_exists('minify_code')) {
 		}
 	}
 }
-
-
 
 if (!function_exists('diy_insert')) {
 	
@@ -715,7 +715,6 @@ if (!function_exists('diy_delete')) {
 				$remodel = $model_name::withTrashed()->find($id);
 				$remodel->restore();
 			}
-		//	$remodel->update(['active' => 1]);
 		}
 	}
 }
@@ -823,6 +822,7 @@ if (!function_exists('diy_action_buttons')) {
 		if (!empty($route_info)) {
 			$box = '';
 			$box .= "<div class=\"header {$background_color}\">";
+			
 			foreach ($route_info->action_page as $key => $value) {
 				$keys  = explode('|', $key);
 				$color = $keys[0];
@@ -963,21 +963,21 @@ if (!function_exists('get_route_lists')) {
 												'route_base' => $route_base,
 												'route_name' => "{$route_base}.{$third_model}.index",
 												'route_url'  => route("{$route_base}.index")
-												];
+											];
 										}
 									} elseif (!in_array($route_base, $modules)) {
 										$routes[$parent][$child][$model][$third_model]['route_data'] = (object) [
 											'route_base' => $route_base,
 											'route_name' => "{$route_base}.{$third_model}.index",
 											'route_url'  => route("{$route_base}.index")
-											];
+										];
 									}
 									
 									$allroutes[$parent][$child][$model][$third_model]['route_data'] = (object) [
 										'route_base' => $route_base,
 										'route_name' => "{$route_base}.{$third_model}.index",
 										'route_url'  => route("{$route_base}.index")
-										];
+									];
 								} else {
 									dd($third_model);
 								}
@@ -991,21 +991,21 @@ if (!function_exists('get_route_lists')) {
 											'route_base' => $route_base,
 											'route_name' => "{$route_base}.{$second_child}",
 											'route_url'  => route("{$route_base}.{$second_child}")
-											];
+										];
 									}
 								} elseif (!in_array($route_base, $modules)) {
 									$routes[$parent][$child][$model]['route_data'] = (object) [
 										'route_base' => $route_base,
 										'route_name' => "{$route_base}.{$second_child}",
 										'route_url'  => route("{$route_base}.{$second_child}")
-										];
+									];
 								}
 								
 								$allroutes[$parent][$child][$model]['route_data'] = (object) [
 									'route_base' => $route_base,
 									'route_name' => "{$route_base}.{$second_child}",
 									'route_url'  => route("{$route_base}.{$second_child}")
-									];
+								];
 							} else {
 								$route_base	= "{$parent}.{$child}";
 								if (in_array($selected, $modules)) {
@@ -1014,20 +1014,20 @@ if (!function_exists('get_route_lists')) {
 											'route_base' => $route_base,
 											'route_name' => "{$route_base}.{$model}",
 											'route_url'  => route("{$route_base}.{$model}")
-											];
+										];
 									}
 								} elseif (!in_array($route_base, $modules)) {
 									$routes[$parent][$child]['route_data'] = (object) [
 										'route_base' => $route_base,
 										'route_name' => "{$route_base}.{$model}",
 										'route_url'  => route("{$route_base}.{$model}")
-										];
+									];
 								}
 								$allroutes[$parent][$child]['route_data'] = (object) [
 									'route_base' => $route_base,
 									'route_name' => "{$route_base}.{$model}",
 									'route_url'  => route("{$route_base}.{$model}")
-									];
+								];
 							}
 						}
 					}
@@ -1037,12 +1037,12 @@ if (!function_exists('get_route_lists')) {
 						'route_base' => $route_base,
 						'route_name' => "{$route_base}.{$child}",
 						'route_url'  => route("{$route_base}.{$child}")
-						];
+					];
 					$allroutes['single'][$parent]['route_data'] = (object) [
 						'route_base' => $route_base,
 						'route_name' => "{$route_base}.{$child}",
 						'route_url'  => route("{$route_base}.{$child}")
-						];
+					];
 				}
 			}
 		}

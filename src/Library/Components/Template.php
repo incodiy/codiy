@@ -257,7 +257,7 @@ class Template extends Scripts {
 	    		->value("{$table_group}.group_info");
     		$group_name = $user_group;
     		
-    		$this->set_sidebar_content(diy_set_avatar($user->name, false, $user->photo_thumb), "Hi, <span>{$user->name}</span>", $group_name);
+    		$this->set_sidebar_content(diy_set_avatar($user->username, false, $user->photo_thumb), "Hi, <span>{$user->name}</span>", $group_name);
     	}
     }
 }

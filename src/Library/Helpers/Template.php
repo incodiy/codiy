@@ -431,8 +431,8 @@ if (!function_exists('diy_set_avatar')) {
 		}
 		
 		if (true === $type_old) {
-			$style		= 'style="width:50px;height:50px;display:block;text-align:center;vertical-align:middle;"';
-			$linkURL	= false;
+			$style   = 'style="width:50px;height:50px;display:block;text-align:center;vertical-align:middle;"';
+			$linkURL = false;
 			if (false !== $link_url) {
 				$linkURL = " href=\"{$link_url}\"";
 			}

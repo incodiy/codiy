@@ -181,23 +181,23 @@ if (!function_exists('diy_form_set_icon_attributes')) {
 	 * @return array ['name', 'data']
 	 */
 	function diy_form_set_icon_attributes($string, $attributes = [], $pos = 'left') {
-		$data				= [];
-		$data['attr']		= [];
-		$data['name']		= $string;
-		$str_icon			= false;
-		$str_pos			= $pos;
+		$data         = [];
+		$data['attr'] = [];
+		$data['name'] = $string;
+		$str_icon     = false;
+		$str_pos      = $pos;
 		
 		if (true === str_contains($string, '|')) {
-			$_string		= explode('|', $string);
-			$data['name']	= $_string[0];
-			$str_icon		= $_string[1];
+			$_string      = explode('|', $string);
+			$data['name'] = $_string[0];
+			$str_icon     = $_string[1];
 			
 			if (count($_string) >= 3) {
 				$str_pos = $_string[2];
 			}
 			
-			$_attr			= array_merge_recursive($attributes,	['input_icon'		=> $str_icon]);
-			$data['attr']	= array_merge_recursive($_attr,			['icon_position'	=> $str_pos]);
+			$_attr        = array_merge_recursive($attributes, ['input_icon' => $str_icon]);
+			$data['attr'] = array_merge_recursive($_attr, ['icon_position' => $str_pos]);
 		}
 		
 		return diy_object($data);
@@ -224,7 +224,6 @@ if (!function_exists('diy_form_active_box')) {
 	}
 }
 
-
 if (!function_exists('diy_form_checkList')) {
 	
 	/**
@@ -247,24 +246,23 @@ if (!function_exists('diy_form_checkList')) {
 		$labelName	= '&nbsp;';
 		$checkBox	= false;
 		
-		if (false !== $name)	$nameAttr	= ' name="' . $name . '"';
-		if (false !== $value)	$valueAttr	= ' value="' . $value . '"';
+		if (false !== $name)  $nameAttr  = ' name="' . $name . '"';
+		if (false !== $value) $valueAttr = ' value="' . $value . '"';
 		if (false !== $id)		{
-			$idAttr		= ' id="' . $id . '"';
-			$idForAttr	= ' for="' . $id . '"';
+			$idAttr    = ' id="' . $id . '"';
+			$idForAttr = ' for="' . $id . '"';
 		} else {
-			$idAttr		= ' id="' . $name . '"';
-			$idForAttr	= ' for="' . $name . '"';
+			$idAttr    = ' id="' . $name . '"';
+			$idForAttr = ' for="' . $name . '"';
 		}
-		if (false !== $label)	$labelName	= "&nbsp; {$label}";
-		if (false !== $checked)	$checkBox	= ' checked="checked"';
+		if (false !== $label)   $labelName = "&nbsp; {$label}";
+		if (false !== $checked) $checkBox  = ' checked="checked"';
 		
 		$o = "<div class=\"ckbox ckbox-{$class}\"><input type=\"checkbox\"{$valueAttr}{$nameAttr}{$idAttr}{$checkBox}><label{$idForAttr}>{$labelName}</label></div>";
 		
 		return $o;
 	}
 }
-
 
 if (!function_exists('diy_form_alert_message')) {
 	
@@ -297,9 +295,9 @@ if (!function_exists('diy_form_create_header_tab')) {
 	 * @return string
 	 */
 	function diy_form_create_header_tab($data, $pointer, $active = false, $class = false) {
-		$activeClass	= false;
-		$classTag		= false;
-		$tabName		= ucwords(str_replace('_', ' ', $data));
+		$activeClass = false;
+		$classTag    = false;
+		$tabName     = ucwords(str_replace('_', ' ', $data));
 		
 		if ($active) $activeClass	= '' . $active . '';
 		if ($class)  $classTag		= '<i class="' . $class . '"></i>';

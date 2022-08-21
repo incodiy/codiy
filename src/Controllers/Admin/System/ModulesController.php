@@ -21,8 +21,8 @@ use Incodiy\Codiy\Models\Admin\System\Icon;
 class ModulesController extends Controller {
 	public $data;
 	
-	private $name			= 'module';
-	private $route_group	= 'system.config';
+	private $name			   = 'module';
+	private $route_group	   = 'system.config';
 	
 	private $_hide_fields	= ['id'];
 	private $_set_tab			= [];
@@ -35,18 +35,7 @@ class ModulesController extends Controller {
 	
 	private $filters = [];
 	public function __construct() {
-		parent::__construct();
-		
-		$this->model(Modules::class);
-		$this->base_route = "{$this->route_group}.";
-	}
-	
-	private function base_route() {
-		return "{$this->route_group}.{$this->name}";
-	}
-	
-	private function set_route($path) {
-		return "{$this->route_group}.{$this->name}.{$path}";
+		parent::__construct(Modules::class, 'system.config');
 	}
 
 	/**
@@ -58,9 +47,9 @@ class ModulesController extends Controller {
 	 * author: wisnuwidi
 	 */
 	private function render_value_module_name($selected = false, $fullroutes = false) {
-		$routes			= get_route_lists($selected, $fullroutes);
-		$option_data	= [];
-		$pointer			= ' - ';
+		$routes      = get_route_lists($selected, $fullroutes);
+		$option_data = [];
+		$pointer     = ' - ';
 		
 		foreach ($routes as $base_group => $base_model) {
 			if ('single' !== $base_group) {
@@ -138,7 +127,7 @@ class ModulesController extends Controller {
 	}
 	
 	public function index() {
-		$this->meta->title(ucwords($this->name) . ' Lists');
+		$this->setPage(ucwords($this->name) . ' Lists');
 		
 		$this->table->mergeColumns('Module', ['module_name', 'parent_name']);
 		
@@ -151,23 +140,9 @@ class ModulesController extends Controller {
 		
 		return $this->render();
 	}
-	/* 
-	public function show($id) {
-	//	$this->check_session('admin.index');
-		
-		$model_data = $this->model->get()->find($id);
-		
-		$this->set_page('Detail ' . camel_case($this->name), $this->name);
-		$this->form->config_show_data_static($model_data, $this->model_table, $this->_hide_fields);
-		
-		$this->form->model($model_data, "{$this->set_route('index')}");
-		$this->form->table($this->model_table, $this->_set_tab, $this->_tab_config);
-		
-		return $this->render();
-	}
-	 */
+	
 	public function create() {
-		$this->meta->title('Add ' . camel_case($this->name));
+		$this->setPage('Add ' . camel_case($this->name));
 		if (count($this->render_value_module_name()) >= 1) {
 			$disabled = [];
 		} else {
@@ -201,7 +176,7 @@ class ModulesController extends Controller {
 	}
 	
 	public function edit($id) {
-		$this->meta->title('Edit ' . camel_case($this->name));
+		$this->setPage('Edit ' . camel_case($this->name));
 		
 		$model_data = $this->model->find($id);
 		
@@ -227,20 +202,5 @@ class ModulesController extends Controller {
 		$route_group	= str_replace('.', '/', $this->route_group);
 		
 		return redirect("/{$route_group}/module/{$id}/edit");
-	}
-	
-	/**
-	 * Delete(soft) Module
-	 * 
-	 * @param Request $request
-	 * @param int $id
-	 * @param Modules $model
-	 * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
-	 * 
-	 * created @Aug 13, 2018
-	 * author: wisnuwidi
-	 */
-	public function destroyx(Request $request, $id, Modules $model) {
-		return diy_delete($request, $id, $model, $this->base_route());
 	}
 }

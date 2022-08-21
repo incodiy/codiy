@@ -17,13 +17,31 @@ use Incodiy\Codiy\Models\Admin\System\Privilege;
 
 trait Privileges {
 	
-	private $roles					 = [];
-	private $group_privileges	 = [];
-	private $menu_privileges	 = [];
+	private $roles              = [];
+	private $group_privileges   = [];
+	private $menu_privileges    = [];
 	private $viewIndexPrivilege = false;
-	private $index_privilege	 = 'index_privilege';
-	private $admin_privilege	 = 'admin_privilege';
+	private $admin_privilege    = 'admin_privilege';
+	private $index_privilege    = 'index_privilege';
+	private $table_privilege	 = 'base_group_privilege';
 		
+	private function check_data($group_id, $module_id) {
+		$data = diy_query($this->table_privilege)
+			->where('group_id', $group_id)
+			->where('module_id', $module_id)
+			->first();
+		
+		return $data;
+	}
+	
+	private function check_group($group_id) {
+		$data = diy_query($this->table_privilege)
+			->where('group_id', $group_id)
+			->first();
+		
+		return $data;
+	}
+	
 	private function get_group_privileges($group_id) {
 		$this->group_privileges = diy_query($this->table_privilege)->where('group_id', $group_id)->get();
 	}
@@ -72,9 +90,9 @@ trait Privileges {
 	
 	private function privileges_after_insert($data) {
 		$nullset = null;
-		$groups	= false;
-		$IDP		= $this->index_privilege;
-		$ADP		= $this->admin_privilege;
+		$groups  = false;
+		$IDP     = $this->index_privilege;
+		$ADP     = $this->admin_privilege;
 		
 		if (isset($data['setnull'])) {
 			$nullGroup = intval($data['setnull']['group_id']);
@@ -86,11 +104,10 @@ trait Privileges {
 			
 			$request = [];
 			foreach ($data as $moduleId => $roles) {
-				
-				$request['group_id']    = $roles['group_id'];
-				$request['module_id']	= $roles['module_id'];
-				$request[$IDP]				= $nullset;
-				$request[$ADP]				= $nullset;
+				$request['group_id']  = $roles['group_id'];
+				$request['module_id'] = $roles['module_id'];
+				$request[$IDP]        = $nullset;
+				$request[$ADP]        = $nullset;
 				
 				foreach ($roles as $role_info => $role_value) {
 					if ($IDP === $role_info || $ADP === $role_info) {
@@ -122,39 +139,40 @@ trait Privileges {
 	 * author: wisnuwidi
 	 */
 	private function get_menu() {
-		$modules		= Modules::where('active', 1)->get();
-		$menuObj		= $modules;
-		$routeData	= [];
-		$parentMenu	= [];
-		$mainMenu	= [];
+		$modules    = Modules::where('active', 1)->get();
+		$menuObj    = $modules;
+		$routeData  = [];
+		$parentMenu = [];
+		$mainMenu   = [];
 		
 		foreach ($menuObj as $menuArray) {
-			$menuData												= $menuArray->getAttributes();
-			$routeData[$menuData['route_path']]['id']		= $menuData['id'];
-			$routeData[$menuData['route_path']]['name']	= $menuData['module_name'];
-			$routeData[$menuData['route_path']]['route']	= $menuData['route_path'];
-			$routeData[$menuData['route_path']]['url']	= route("{$menuData['route_path']}.index");
-			$routeData[$menuData['route_path']]['icon']	= $menuData['icon'];
+			$menuData = $menuArray->getAttributes();
+			
+			$routeData[$menuData['route_path']]['id']    = $menuData['id'];
+			$routeData[$menuData['route_path']]['name']  = $menuData['module_name'];
+			$routeData[$menuData['route_path']]['route'] = $menuData['route_path'];
+			$routeData[$menuData['route_path']]['url']   = route("{$menuData['route_path']}.index");
+			$routeData[$menuData['route_path']]['icon']  = $menuData['icon'];
 		}
 		
 		foreach ($routeData as $key => $value) {
 			$key = explode('.', $key);
 			
 			if (count($key) === 1) {
-				$parentMenu[$key[0]]										= $key[0];
-				$mainMenu[$key[0]][$key[0]]							= $value;
+				$parentMenu[$key[0]]        = $key[0];
+				$mainMenu[$key[0]][$key[0]] = $value;
 			}
 			if (count($key) === 2 && !empty($key[1])) {
-				$parentMenu[$key[0]][$key[1]]							= $key[1];
-				$mainMenu[$key[0]][$key[1]]							= $value;
+				$parentMenu[$key[0]][$key[1]] = $key[1];
+				$mainMenu[$key[0]][$key[1]]   = $value;
 			}
 			if (count($key) === 3 && !empty($key[2])) {
-				$parentMenu[$key[0]][$key[1]][$key[2]]				= $key[2];
-				$mainMenu[$key[0]][$key[1]][$key[2]]				= $value;
+				$parentMenu[$key[0]][$key[1]][$key[2]] = $key[2];
+				$mainMenu[$key[0]][$key[1]][$key[2]]   = $value;
 			}
 			if (count($key) === 4 && !empty($key[3])) {
-				$parentMenu[$key[0]][$key[1]][$key[2]][$key[3]]	= $key[3];
-				$mainMenu[$key[0]][$key[1]][$key[2]][$key[3]]	= $value;
+				$parentMenu[$key[0]][$key[1]][$key[2]][$key[3]] = $key[3];
+				$mainMenu[$key[0]][$key[1]][$key[2]][$key[3]]   = $value;
 			}
 		}
 		
@@ -244,27 +262,27 @@ trait Privileges {
 		// Frontend Privileges
 		if (true === $this->viewIndexPrivilege) {
 			$IDP                    = $this->index_privilege;
-			$checkedIndex				= [];
-			$checkedIndex['read']	= diy_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
-			$checkedIndex['write']	= diy_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
-			$checkedIndex['modify']	= diy_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
-			$checkedIndex['delete']	= diy_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, false, 'danger delete-destroy');
+			$checkedIndex           = [];
+			$checkedIndex['read']   = diy_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
+			$checkedIndex['write']  = diy_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
+			$checkedIndex['modify'] = diy_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
+			$checkedIndex['delete'] = diy_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, false, 'danger delete-destroy');
 			
 			if (isset($this->module_privileges[$IDP][$module_data->id])) {
 				if (isset($this->module_privileges[$IDP][$module_data->id]['8']) && $this->module_privileges[$IDP][$module_data->id]['8'] >= 1)
-					$checkedIndex['read']	= diy_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
+					$checkedIndex['read']   = diy_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
 				if (isset($this->module_privileges[$IDP][$module_data->id]['4']) && $this->module_privileges[$IDP][$module_data->id]['4'] >= 1)
-					$checkedIndex['write']	= diy_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
+					$checkedIndex['write']  = diy_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
 				if (isset($this->module_privileges[$IDP][$module_data->id]['2']) && $this->module_privileges[$IDP][$module_data->id]['2'] >= 1)
-					$checkedIndex['modify']	= diy_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
+					$checkedIndex['modify'] = diy_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
 				if (isset($this->module_privileges[$IDP][$module_data->id]['1']) && $this->module_privileges[$IDP][$module_data->id]['1'] >= 1)
-					$checkedIndex['delete']	= diy_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
+					$checkedIndex['delete'] = diy_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
 			}
 		}
 		
 		// Backend Privileges
 		$ADP                    = $this->admin_privilege;
-		$checkedAdmin				= [];
+		$checkedAdmin           = [];
 		$checkedAdmin['read']	= diy_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
 		$checkedAdmin['write']	= diy_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
 		$checkedAdmin['modify']	= diy_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
@@ -273,13 +291,13 @@ trait Privileges {
 		if (isset($this->module_privileges[$ADP][$module_data->id])) {
 			// Backend Privileges
 			if (isset($this->module_privileges[$ADP][$module_data->id]['8']) && $this->module_privileges[$ADP][$module_data->id]['8'] >= 1)
-				$checkedAdmin['read']	= diy_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
+				$checkedAdmin['read']   = diy_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
 			if (isset($this->module_privileges[$ADP][$module_data->id]['4']) && $this->module_privileges[$ADP][$module_data->id]['4'] >= 1)
-				$checkedAdmin['write']	= diy_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
+				$checkedAdmin['write']  = diy_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
 			if (isset($this->module_privileges[$ADP][$module_data->id]['2']) && $this->module_privileges[$ADP][$module_data->id]['2'] >= 1)
-				$checkedAdmin['modify']	= diy_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
+				$checkedAdmin['modify'] = diy_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
 			if (isset($this->module_privileges[$ADP][$module_data->id]['1']) && $this->module_privileges[$ADP][$module_data->id]['1'] >= 1)
-				$checkedAdmin['delete']	= diy_form_checkList("modules[{$ADP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
+				$checkedAdmin['delete'] = diy_form_checkList("modules[{$ADP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
 		}
 		
 		$opt                = ['align' => 'center', 'id' => strtolower($module_name) . '-row'];
@@ -333,14 +351,14 @@ trait Privileges {
 		$row_table[]      = array_merge_recursive($rowData['head'], $rowData['admin'], $rowData['index']);
 		
 		foreach ($this->menu_privileges as $parent => $childs) {
-			//	$parent_check	= diy_form_checkList(strtolower($parent));
+		//	$parent_check	= diy_form_checkList(strtolower($parent));
 			$parent_title	= ucwords(str_replace('_', ' ', $parent));
 			if (!empty($childs->name)) $parent_title = $childs->name;
 			$row_table[]	= [diy_table_row_attr($icon . $parent_title, ['style' => 'font-weight:500;text-indent:5pt', 'colspan' => 9])];
 			
 			foreach ($childs as $child_name => $data_module) {
 				if (isset($data_module->id) === false) {
-					//	$child_check	= diy_form_checkList(strtolower($child_name));
+				//	$child_check	= diy_form_checkList(strtolower($child_name));
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					

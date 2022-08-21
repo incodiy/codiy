@@ -649,13 +649,13 @@ if (!function_exists('diy_generate_table')) {
 		
 		if (false !== $title) $_title = '<div class="panel-heading"><div class="pull-left"><h3 class="panel-title">' . $title . '</h3></div><div class="clearfix"></div></div>';
 		
-		$start_tag	= false;
-		$end_tag	= false;
-		$dataTables	= false;
+		$start_tag  = false;
+		$end_tag    = false;
+		$dataTables = false;
 		if (false !== $containers) {
-			$start_tag	= "<div class=\"row\"><div class=\"col-md-12\"><div class=\"panel\">{$_title}<br /><div class=\"panel-body no-padding\"><div class=\"table-responsive\" style=\"margin-top: -1px;\">";
-			$end_tag	= "</div></div></div></div></div>";
-			$_columns	= implode(',', $aoColumns);
+			$start_tag = "<div class=\"row\"><div class=\"col-md-12\"><div class=\"panel\">{$_title}<br /><div class=\"panel-body no-padding\"><div class=\"table-responsive\" style=\"margin-top: -1px;\">";
+			$end_tag   = "</div></div></div></div></div>";
+			$_columns  = implode(',', $aoColumns);
 			
 			$_ajax_url	= 'renderDataTables';
 			if (!empty($server_side_custom_url)) {
@@ -670,13 +670,13 @@ if (!function_exists('diy_generate_table')) {
 					if ('filters'!== $name && '' !== $value) {
 						if (!is_array($value)) {
 							if (
-									$name !== $_ajax_url	&&
-									$name !== 'draw'		&&
-									$name !== 'columns'		&&
-									$name !== 'order'		&&
-									$name !== 'start'		&&
-									$name !== 'length'		&&
-									$name !== 'search'		&&
+									$name !== $_ajax_url &&
+									$name !== 'draw'     &&
+									$name !== 'columns'  &&
+									$name !== 'order'    &&
+									$name !== 'start'    &&
+									$name !== 'length'   &&
+									$name !== 'search'   &&
 									$name !== '_'
 								) {
 									$fstrings[] = "input_filters[{$name}]={$value}";

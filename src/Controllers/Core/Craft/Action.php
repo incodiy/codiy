@@ -156,26 +156,34 @@ trait Action {
 	
 	public function model_find($id) {
 		$this->model_data = $this->model->find($id);
-		if (!is_null($this->model_data->deleted_at)) {
-			$this->is_softdeleted = true;
+		
+		if (true === $this->softDeletedModel) {
+			if (!is_null($this->model_data->deleted_at)) {
+				$this->is_softdeleted = true;
+			}
 		}
 	}
 	
+	public $model_filters = [];
 	/**
 	 * Get Data Model
 	 *
 	 * @param object $class
 	 */
-	protected function model($class) {
+	protected function model($class, $filter = []) {
 		$this->model_path       = $class;
-		$this->model            = new $this->model_path();
-		$this->model_original   = $this->model;
-		$this->model_table      = $this->model->getTable();
+		$this->model_filters    = $filter;
 		$this->softDeletedModel = diy_is_softdeletes($class);
 		
+		$this->model            = new $this->model_path();
+		$this->model_table      = $this->model->getTable();
 		if (true === $this->softDeletedModel) {
-			$this->model = $this->model::withTrashed();
+			$this->model         = $this->model::withTrashed();
 		}
+		if (!empty($this->model_filters)) {
+			$this->model         = $this->model->where($this->model_filters);
+		}
+		$this->model_original   = $this->model;
 		
 		if (!empty(diy_get_current_route_id())) {
 			$this->model_id = diy_get_current_route_id();

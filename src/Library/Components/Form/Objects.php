@@ -314,7 +314,7 @@ class Objects {
 				
 				$curRoute	= diy_get_current_route_id();
 				if ('show' === $this->currentRouteName) $curRoute = diy_get_current_route_id(false);
-				
+			//	dd($model, $curRoute);
 				$model = $model->find($curRoute);
 				if (!is_null($model->{$field_name})) {
 					$value = $model->{$field_name};

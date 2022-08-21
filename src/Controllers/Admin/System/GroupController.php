@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Models\Admin\System\Group;
 use Incodiy\Codiy\Controllers\Admin\System\Includes\Privileges;
-#use Incodiy\Codiy\Models\Admin\System\Multiplatforms;
 
 /**
  * Created on Jan 19, 2018
@@ -22,50 +21,16 @@ use Incodiy\Codiy\Controllers\Admin\System\Includes\Privileges;
 class GroupController extends Controller {
 	use Privileges;
 	
-	private $route_group			 = 'system.config';
-	private $table_privilege	 = 'base_group_privilege';
+	public $data;
 	
 	private $id						 = false;
 	private $_set_tab				 = [];
 	private $_tab_config			 = [];
 	private $_hide_fields		 = ['id'];
 	private $validations			 = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
-		
-	public $data;
-	public $model;
 	
 	public function __construct() {
-		parent::__construct();
-		
-		$this->model(Group::class);
-	}
-	
-	private function set_route($path) {
-		return $this->route_group . '.group.' . $path;
-	}
-	
-	private function check_model() {
-	//	$relational = is_multiplatform();
-		if ('root' !== $this->session['user_group']) {
-			$this->model = $this->model->where('group_name', '!=', 'root');
-		}
-	}
-	
-	private function check_data($group_id, $module_id) {
-		$data = diy_query($this->table_privilege)
-			->where('group_id', $group_id)
-			->where('module_id', $module_id)
-			->first();
-		
-		return $data;
-	}
-	
-	private function check_group($group_id) {
-		$data = diy_query($this->table_privilege)
-			->where('group_id', $group_id)
-			->first();
-		
-		return $data;
+		parent::__construct(Group::class, 'system.config', ['group_name' => 'test']);
 	}
 	
 	private function set_data_before_insert($request, $model_id = false) {
@@ -94,7 +59,8 @@ class GroupController extends Controller {
 	 * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function index() {
-		$this->meta->title('Group Lists');
+		$this->setPage('Group Lists');
+		$this->model(Group::class, ['group_info' => 'Internal Admin']);
 		
 		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
 		
@@ -105,44 +71,6 @@ class GroupController extends Controller {
 		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active']);
 		
 		return $this->render();
-	}
-	
-	/**
-	 * Render Form Data Group
-	 * 
-	 * created @Sep 11, 2018
-	 * author: wisnuwidi
-	 * 
-	 * @param integer|string $id
-	 * 
-	 * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
-	 */
-	public function showx($id) {
-		$model_data = Group::find($id);
-		
-		$this->meta->title('Detail Group');
-		
-		$this->form->config_show_data_static($model_data, $this->model_table, $this->_hide_fields);
-		$this->form->model($model_data, $this->set_route('index'));
-		$this->form->table($this->model_table, $this->_set_tab, $this->_tab_config);
-				
-		return $this->render();
-	}
-	
-	/**
-	 * Render Combobox Masjid Data
-	 * 
-	 * created @Sep 11, 2018
-	 * author: wisnuwidi
-	 * 
-	 * @param boolean $user_group
-	 * 
-	 * @return array|string[]|array[]
-	 */
-	private function input_platforms($user_group = false) {/* 
-		$masjid = Multiplatforms::all();
-		
-		return set_combobox_data($masjid, 'id', 'name'); */
 	}
 	
 	/**
@@ -160,24 +88,18 @@ class GroupController extends Controller {
 	 * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function create() {
-		$this->meta->title('Add Group');
-		
-		$this->set_session();
+		$this->setPage('Add Group');
 		$this->get_menu();
-		$this->check_model();
 		
 		$this->form->model();
-		/* 
-		if ('root' === $this->session['user_group']) {
-			$this->form->selectbox($this->platform_key, $this->input_platforms(), false, ['required'], 'Masjid');
-		}
-		 */
 		$this->form->text('group_name', null, ['required']);
 		$this->form->text('group_info', null, ['required']);
 		$this->form->selectbox('active', active_box(), false, ['required']);
-		$this->form->openTab('Privilege');
+		
+		$this->form->openTab('Module Privileges');
 		$this->form->draw($this->group_privilege());
 		$this->form->closeTab();
+		
 		$this->form->close('Save Group');
 		
 		return $this->render();
@@ -262,7 +184,7 @@ class GroupController extends Controller {
 		
 		$this->set_data_before_insert($callbackRequest, $model_id);
 		$this->set_data_after_insert($this->roles);
-		$route_group = str_replace('.', '/', $this->route_group);
+		$route_group = str_replace('.', '/', $this->route_page);
 		
 		return redirect("/{$route_group}/group/{$model_id}/edit"); 
 	}
@@ -285,22 +207,23 @@ class GroupController extends Controller {
 	 *
 	 * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
-	public function edit($id) {
-		$model_data = $this->model->find($id);		
-		$this->meta->title('Edit Group');
+	public function edit($id) {	
+		$this->setPage('Edit Group');
 		$this->get_menu();
 		
 		$this->form->model();
-		
-		$this->form->text('group_name', null, ['required']);
+		$this->form->text('group_name', null, ['required', 'readonly']);
 		$this->form->text('group_info', null, ['required']);
-		$this->form->selectbox('active', active_box(), $model_data->active, ['required']);
+		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
-		// SET PRIVILEGES BOX
-		$this->form->openTab('Page Privileges');
-		$this->form->draw($this->group_privilege());
-		$this->form->closeTab();
-		
+		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
+			if ('root' !== $this->model_data->group_name && false === diy_string_contained($this->model_data->group_name, 'admin')) {
+				// SET PRIVILEGES BOX
+				$this->form->openTab('Module Privileges');
+				$this->form->draw($this->group_privilege());
+				$this->form->closeTab();
+			}
+		}
 		$this->form->close('Save Group');
 		
 		return $this->render();
@@ -347,27 +270,11 @@ class GroupController extends Controller {
 			]);
 		}
 		
-		$this->set_data_before_insert($request);
+		$this->set_data_before_insert($request, $id);
 		diy_update($this->model->find($id), $request, true);
 		$this->set_data_after_insert($this->roles);
 		$route_back = url()->current();
 		
 		return redirect("{$route_back}/edit");
-	}
-	
-	/**
-	 * Delete(soft) Group
-	 * 
-	 * created @Aug 13, 2018
-	 * author: wisnuwidi
-	 * 
-	 * @param Request $request
-	 * @param int $id
-	 * @param Group $model
-	 * 
-	 * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
-	 */
-	public function destroyx(Request $request, $id, Group $model) {
-		return diy_delete($request, $id, $model, $this->route_group . '.group');
 	}
 }
