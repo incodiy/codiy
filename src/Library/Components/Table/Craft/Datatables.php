@@ -45,10 +45,10 @@ class Datatables {
 			}
 		} else {
 			
-			$filePath	= explode('/', $string);
-			$lastSrc	= array_key_last($filePath);
-			$lastFile	= $filePath[$lastSrc];
-			$info		= "This File [ {$lastFile} ] Do Not or Never Exist!";
+			$filePath = explode('/', $string);
+			$lastSrc  = array_key_last($filePath);
+			$lastFile = $filePath[$lastSrc];
+			$info     = "This File [ {$lastFile} ] Do Not or Never Exist!";
 			
 			return "<div class=\"show-hidden-on-hover missing-file\" title=\"{$info}\"><i class=\"fa fa-warning\"></i>&nbsp;{$lastFile}</div><!--div class=\"hide\">{$info}/</div-->";
 		}
@@ -57,12 +57,12 @@ class Datatables {
 	public function process($data, $filters = []) {
 		if (!empty($data->datatables->model[$_GET['difta']['name']])) {
 			
-			$model_type		= $data->datatables->model[$_GET['difta']['name']]['type'];
-			$model_source	= $data->datatables->model[$_GET['difta']['name']]['source'];
+			$model_type   = $data->datatables->model[$_GET['difta']['name']]['type'];
+			$model_source = $data->datatables->model[$_GET['difta']['name']]['source'];
 			
 			if ('model' === $model_type) {
-				$model_data	= $model_source;
-				$table_name	= $model_data->getTable();
+				$model_data = $model_source;
+				$table_name = $model_data->getTable();
 			}
 			
 			$order_by = [];
@@ -84,13 +84,13 @@ class Datatables {
 			$action_list = $column_data[$table_name]['actions'];
 		}
 		
-		$limit				= [];
-		$limit['start']		= 0;
-		$limit['length']	= 10;
-		$limit['total']		= count($model_data->get());
+		$limit = [];
+		$limit['start']  = 0;
+		$limit['length'] = 10;
+		$limit['total']  = count($model_data->get());
 		
-		if (!empty(request()->get('start')))	$limit['start']		= request()->get('start');
-		if (!empty(request()->get('length')))	$limit['length']	= request()->get('length');
+		if (!empty(request()->get('start')))	$limit['start']  = request()->get('start');
+		if (!empty(request()->get('length')))	$limit['length'] = request()->get('length');
 		
 		$model = $model_data->skip($limit['start'])->take($limit['length']);
 		
@@ -110,15 +110,15 @@ class Datatables {
 			foreach ($filters as $name => $value) {
 				if ('filters'!== $name && '' !== $value) {
 					if (
-						$name !== $_ajax_url	&&
-						$name !== 'draw'		&&
-						$name !== 'columns'		&&
-						$name !== 'order'		&&
-						$name !== 'start'		&&
-						$name !== 'length'		&&
-						$name !== 'search'		&&
-						$name !== 'difta'		&&
-						$name !== '_token'		&&
+						$name !== $_ajax_url &&
+						$name !== 'draw'     &&
+						$name !== 'columns'  &&
+						$name !== 'order'    &&
+						$name !== 'start'    &&
+						$name !== 'length'   &&
+						$name !== 'search'   &&
+						$name !== 'difta'    &&
+						$name !== '_token'   &&
 						$name !== '_'
 					) {
 						if (!is_array($value)) {

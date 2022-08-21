@@ -21,15 +21,15 @@ use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
 class Objects extends Builder {
 	use Tab;
 	
-	public $elements		= [];
-	public $element_name	= [];
-	public $records			= [];
-	public $columns			= [];
-	public $labels			= [];
+	public $elements      = [];
+	public $element_name  = [];
+	public $records       = [];
+	public $columns       = [];
+	public $labels        = [];
 	
-	private $params			= [];
-	private $setDatatable 	= true;
-	private $tableType		= 'datatable';
+	private $params       = [];
+	private $setDatatable = true;
+	private $tableType    = 'datatable';
 	
 	/**
 	 * --[openTabHTMLForm]--
@@ -37,8 +37,8 @@ class Objects extends Builder {
 	private $opentabHTML	= '--[openTabHTMLForm]--';
 	
 	public function __construct() {
-		$this->element_name['table']		= $this->tableType;
-		$this->variables['table_class']	= 'table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
+		$this->element_name['table']    = $this->tableType;
+		$this->variables['table_class'] = 'table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
 	}
 	
 	public $filter_scripts = [];
@@ -144,7 +144,7 @@ class Objects extends Builder {
 	}
 	
 	public function orderby($column, $order = 'asc') {
-		$this->variables['orderby_column']		= ['column' => $column, 'order' => $order];
+		$this->variables['orderby_column'] = ['column' => $column, 'order' => $order];
 	}
 	
 	/**
@@ -153,7 +153,7 @@ class Objects extends Builder {
 	 * @param string|array $columns
 	 */
 	public function sortable($columns = null) {
-		$this->variables['sortable_columns']	= $this->checkColumnSet($columns);
+		$this->variables['sortable_columns'] = $this->checkColumnSet($columns);
 	}
 	
 	/**
@@ -162,7 +162,7 @@ class Objects extends Builder {
 	 * @param string|array $columns
 	 */
 	public function clickable($columns = null) {
-		$this->variables['clickable_columns']	= $this->checkColumnSet($columns);
+		$this->variables['clickable_columns'] = $this->checkColumnSet($columns);
 	}
 	
 	public $search_columns = false;
@@ -172,7 +172,7 @@ class Objects extends Builder {
 	 * @param string|array $columns
 	 */
 	public function searchable($columns = null) {
-		$this->variables['searchable_columns']	= $this->checkColumnSet($columns);
+		$this->variables['searchable_columns'] = $this->checkColumnSet($columns);
 		if (empty($columns)) {
 			if (false === $columns) {
 				$filter_columns = false;
@@ -201,10 +201,10 @@ class Objects extends Builder {
 	 * 		: if (array)fieldnames / others any columns = relate to any that column target was setted
 	 */
 	public function filterGroups($column, $type, $relate = false) {
-		$filters			= [];
-		$filters['column']	= $column;
-		$filters['type']	= $type;
-		$filters['relate']	= $relate;
+		$filters = [];
+		$filters['column'] = $column;
+		$filters['type']   = $type;
+		$filters['relate'] = $relate;
 		
 		$this->variables['filter_groups'][] = $filters;
 	}
@@ -233,23 +233,23 @@ class Objects extends Builder {
 	
 	private $variables = [];
 	private function clear_all_variables() {
-		$this->variables['merged_columns']		= [];
-		$this->variables['text_align']			= [];
-		$this->variables['background_color']	= [];
-		$this->variables['attributes']			= [];
-		$this->variables['orderby_column']		= [];
-		$this->variables['sortable_columns']	= [];
-		$this->variables['clickable_columns']	= [];
-		$this->variables['searchable_columns']	= [];
-		$this->variables['filter_groups']		= [];
+		$this->variables['merged_columns']     = [];
+		$this->variables['text_align']         = [];
+		$this->variables['background_color']   = [];
+		$this->variables['attributes']         = [];
+		$this->variables['orderby_column']     = [];
+		$this->variables['sortable_columns']   = [];
+		$this->variables['clickable_columns']  = [];
+		$this->variables['searchable_columns'] = [];
+		$this->variables['filter_groups']      = [];
 	}
 	
 	public $conditions = [];
 	public function where($field_name, $logic_operator, $value) {
 		$this->conditions['where'][] = [
-			'field_name'	=> $field_name,
-			'operator'		=> $logic_operator,
-			'value'			=> $value
+			'field_name' => $field_name,
+			'operator'   => $logic_operator,
+			'value'      => $value
 		];
 	}
 	
@@ -270,12 +270,12 @@ class Objects extends Builder {
 	 */
 	public function columnCondition(string $field_name, string $rule, $action, string $target, string $logic_operator = null, string $value = null) {
 		$this->conditions['columns'][] = [
-			'field_name'		=> $field_name,
-			'rule'				=> $rule,
-			'action'				=> $action,
-			'field_target'		=> $target,
-			'logic_operator'	=> $logic_operator,
-			'value'				=> $value
+			'field_name'     => $field_name,
+			'rule'           => $rule,
+			'action'         => $action,
+			'field_target'   => $target,
+			'logic_operator' => $logic_operator,
+			'value'          => $value
 		];
 	}
 	
@@ -291,14 +291,14 @@ class Objects extends Builder {
 	 * @param bool $node_after_node_location
 	 */
 	public function formula(string $name, string $label = null, array $field_lists, string $logic, string $node_location = null, bool $node_after_node_location = true) {
-		$this->labels[$name]			= $label;
+		$this->labels[$name] = $label;
 		$this->conditions['formula'][]	= [
-			'name'				=> $name,
-			'label'				=> $label,
-			'field_lists'		=> $field_lists,
-			'logic'				=> $logic,
-			'node_location'	=> $node_location,
-			'node_after'		=> $node_after_node_location
+			'name'          => $name,
+			'label'         => $label,
+			'field_lists'   => $field_lists,
+			'logic'         => $logic,
+			'node_location' => $node_location,
+			'node_after'    => $node_after_node_location
 		];
 	}
 	
@@ -323,8 +323,8 @@ class Objects extends Builder {
 		if (null === $table_name) {
 			if (!empty($this->variables['table_data_model'])) {
 				if ('sql' === $this->variables['table_data_model']) {
-					$sql		= $this->variables['query'];
-					$table_name	= diy_get_table_name_from_sql($sql);
+					$sql        = $this->variables['query'];
+					$table_name = diy_get_table_name_from_sql($sql);
 					$this->params[$table_name]['query'] = $sql;
 				} else {
 					$table_name = diy_get_model_table($this->variables['table_data_model']);
@@ -333,8 +333,8 @@ class Objects extends Builder {
 			
 			$this->variables['table_name'] = $table_name;
 		}
-		$this->tableName					= $table_name;
-		$this->records['index_lists']	= $numbering;
+		$this->tableName = $table_name;
+		$this->records['index_lists'] = $numbering;
 		
 		if (is_array($fields)) {
 			// Check if any column(s) set label by colon(:) separator
@@ -372,33 +372,33 @@ class Objects extends Builder {
 		$this->columns[$table_name]['lists']	= $fields;
 		$this->columns[$table_name]['actions']	= $actions;
 		
-		if (!empty($this->variables['text_align']))				$this->columns[$table_name]['align']			= $this->variables['text_align'];
-		if (!empty($this->variables['merged_columns']))			$this->columns[$table_name]['merge'] 			= $this->variables['merged_columns'];
-		if (!empty($this->variables['orderby_column']))			$this->columns[$table_name]['orderby']			= $this->variables['orderby_column'];
-		if (!empty($this->variables['clickable_columns']))		$this->columns[$table_name]['clickable']		= $this->variables['clickable_columns'];
-		if (!empty($this->variables['sortable_columns']))		$this->columns[$table_name]['sortable']		= $this->variables['sortable_columns'];
-		if (!empty($this->variables['searchable_columns']))	$this->columns[$table_name]['searchable']		= $this->variables['searchable_columns'];
-		if (!empty($this->variables['filter_groups']))			$this->columns[$table_name]['filter_groups']	= $this->variables['filter_groups'];
+		if (!empty($this->variables['text_align']))         $this->columns[$table_name]['align']         = $this->variables['text_align'];
+		if (!empty($this->variables['merged_columns']))     $this->columns[$table_name]['merge']         = $this->variables['merged_columns'];
+		if (!empty($this->variables['orderby_column']))     $this->columns[$table_name]['orderby']       = $this->variables['orderby_column'];
+		if (!empty($this->variables['clickable_columns']))  $this->columns[$table_name]['clickable']     = $this->variables['clickable_columns'];
+		if (!empty($this->variables['sortable_columns']))   $this->columns[$table_name]['sortable']      = $this->variables['sortable_columns'];
+		if (!empty($this->variables['searchable_columns'])) $this->columns[$table_name]['searchable']    = $this->variables['searchable_columns'];
+		if (!empty($this->variables['filter_groups']))      $this->columns[$table_name]['filter_groups'] = $this->variables['filter_groups'];
 		
-		$this->tableID[$table_name]	= diy_clean_strings("CoDIY_{$this->tableType}_" . $table_name . '_' . diy_random_strings(50, false));
-		$attributes['table_id']			= $this->tableID[$table_name];
-		$attributes['table_class']		= diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
+		$this->tableID[$table_name] = diy_clean_strings("CoDIY_{$this->tableType}_" . $table_name . '_' . diy_random_strings(50, false));
+		$attributes['table_id']     = $this->tableID[$table_name];
+		$attributes['table_class']  = diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
 		if (!empty($this->variables['background_color'])) $attributes['bg_color'] = $this->variables['background_color'];
 		
-		$this->params[$table_name]['actions']							= $actions;
-		$this->params[$table_name]['numbering']						= $numbering;
-		$this->params[$table_name]['attributes']						= $attributes;
-		$this->params[$table_name]['server_side']['status']		= $server_side;
-		$this->params[$table_name]['server_side']['custom_url']	= $server_side_custom_url;
+		$this->params[$table_name]['actions']                   = $actions;
+		$this->params[$table_name]['numbering']                 = $numbering;
+		$this->params[$table_name]['attributes']                = $attributes;
+		$this->params[$table_name]['server_side']['status']     = $server_side;
+		$this->params[$table_name]['server_side']['custom_url'] = $server_side_custom_url;
 		
 		if (!empty($this->conditions)) {
-			$conditions			= $this->conditions;
-			$this->conditions	= [];
+			$conditions       = $this->conditions;
+			$this->conditions = [];
 			if (!empty($conditions['formula'])) {
-				$this->formula[$table_name]				= $conditions['formula'];
+				$this->formula[$table_name]           = $conditions['formula'];
 			}
-			$this->params[$table_name]['conditions']	= $conditions;
-			$this->conditions[$table_name]				= $this->params[$table_name]['conditions'];
+			$this->params[$table_name]['conditions'] = $conditions;
+			$this->conditions[$table_name]           = $this->params[$table_name]['conditions'];
 		}
 		
 		if ('datatable' === $this->tableType) {

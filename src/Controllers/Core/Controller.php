@@ -61,13 +61,13 @@ class Controller extends BaseController {
 	 * 
 	 * @param boolean $model
 	 * @param boolean $route_page
+	 * @param array $filters
 	 */
-	public function __construct($model = false, $route_page = false) {
+	public function __construct($model = false, $route_page = false, $filters = []) {
 		ini_set('memory_limit', -1);
-	//	minify_code();
 		
 		$this->dataCollections();
-		if (false !== $model) $this->model($model);
+		if (false !== $model)      $this->model($model, $filters);
 		if (false !== $route_page) $this->set_route_page($route_page);
 	}
 	
