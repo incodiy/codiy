@@ -64,6 +64,7 @@ trait Action {
 	}
 	
 	public function edit($id) {
+		$this->setPage('&nbsp;');
 		if (!empty($this->getModel($id))) {
 			$model = $this->getModel($id);
 			$model->find($id);
@@ -89,22 +90,22 @@ trait Action {
 				$input_filters	= [];
 				
 				foreach ($_POST as $field => $value) {
-					if (!empty($value)) {
-						$input_filters[] = "infil[{$field}]={$value}";
-					}
+					if (!empty($value)) $input_filters[] = "infil[{$field}]={$value}";
 				}
 				$this->filter_datatables_string = '&filters=true&' . implode('&', $input_filters);
 			}
 		}
 		
 		$req = $request->all();
-		if (!empty($req['filters'])) {
+		if (isset($req['filters']) && !empty($req['filters'])) {
 			if ('true' === $req['filters']) {
 				$this->filterDataTable($request);
 			}
 		} else {
 			$request->validate($this->validation);
-			if (empty($model)) $model = $this->getModel();
+			
+			if (empty($model))                        $model = $this->getModel();
+			if ('Builder' === class_basename($model)) $model = $this->model_path;
 			
 			// check if any input file type submited
 			$data            = $this->checkFileInputSubmited($request);

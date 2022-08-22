@@ -60,8 +60,8 @@ class GroupController extends Controller {
 	 * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function index() {
-		$this->setPage('Group Lists');
-	//	dd($this->model_filters);
+		$this->setPage();
+		
 		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
 		
 		$this->table->searchable(['group_name', 'group_info']);
@@ -88,7 +88,7 @@ class GroupController extends Controller {
 	 * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function create() {
-		$this->setPage('Add Group');
+		$this->setPage();
 		$this->get_menu();
 		
 		$this->form->model();
@@ -208,7 +208,7 @@ class GroupController extends Controller {
 	 * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function edit($id) {	
-		$this->setPage('Edit Group');
+		$this->setPage();
 		$this->get_menu();
 		
 		$this->form->model();

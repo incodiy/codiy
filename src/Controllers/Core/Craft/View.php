@@ -144,10 +144,21 @@ trait View {
 	 * @param string $page
 	 * @param string $url
 	 */
-	protected function setPage($page, $path = false) {
+	protected function setPage($page = null, $path = false) {
 		$this->set_session();
-		$page_name  = diy_underscore_to_camelcase($page);
-		$page_title = strtolower($page);
+		if (is_empty($page)) {
+			$currentPage   = last(explode('.', current_route()));
+			if (str_contains(strtolower($currentPage), 'index')) {
+				$currentModule = strtolower(str_replace('Controller', '', class_basename($this))) . ' Lists';
+			} else {
+				$currentModule = $currentPage . ' ' . strtolower(str_replace('Controller', '', class_basename($this)));
+			}
+		} else {
+			$currentModule = $page;
+		}
+		
+		$page_name  = diy_underscore_to_camelcase($currentModule);
+		$page_title = strtolower($currentModule);
 		
 		$this->meta->title($page_name);
 		$this->template->set_breadcrumb (

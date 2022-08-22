@@ -64,7 +64,7 @@ class Controller extends BaseController {
 	 * @param array $filters
 	 */
 	public function __construct($model = false, $route_page = false, $filters = []) {
-		diy_memory();
+		diy_memory(false);
 		
 		$this->dataCollections();
 		if (false !== $model)      $this->model($model, $filters);

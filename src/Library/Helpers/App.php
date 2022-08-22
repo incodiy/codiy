@@ -635,7 +635,7 @@ if (!function_exists('diy_insert')) {
 			$modelName->fill(['password' => Hash::make($request->get('password'))]);
 		}
 		
-		$modelName = $model::create($request->all());
+		$modelName = $modelName::create($request->all());
 		
 		if (false !== $get_field) {
 			if (true === $get_field) {
@@ -683,7 +683,7 @@ if (!function_exists('diy_update')) {
 			$requests[$key] = $value;
 		}
 		$request->merge($requests);
-		
+		dd(class_basename($model), $request->all());
 		$modelName = new $model($request->all());
 		if (true === array_key_exists('password', $request->all())) {
 			$modelName->fill(['password' => Hash::make($request->get('password'))]);
@@ -1282,12 +1282,12 @@ if (!function_exists('diy_memory')) {
 	 * @param bool $min
 	 * @param integer $limit
 	 */
-	function diy_memory($min = false, $limit = -1) {
+	function diy_memory($min = null, $limit = -1) {
 		ini_set('memory_limit', $limit);
-		if (false === $min) {
+		if (null === $min) {
 			minify_code(diy_config('minify'));
 		} else {
-			minify_code();
+			minify_code($min);
 		}
 	}
 }

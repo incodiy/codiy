@@ -75,7 +75,7 @@ class FormController extends Controller {
 	}
 	
 	public function index() {
-		$this->meta->title('Form Object');
+		$this->setPage('Form Object');
 		/* 
 		$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);
 		$this->table->mergeColumns('File Merged Column', ['file_field', 'file_field_alt', 'updated_at']);
@@ -149,7 +149,7 @@ class FormController extends Controller {
 	}
 	
 	public function create() {
-		$this->meta->title('Form Object');
+		$this->setPage('Form Object');
 		
 		$this->form->modelWithFile();
 		

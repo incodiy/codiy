@@ -20,20 +20,16 @@ use Incodiy\Codiy\Models\Admin\System\Icon;
  */
 class ModulesController extends Controller {
 	public $data;
-	
-	private $name			   = 'module';
-	private $route_group	   = 'system.config';
-	
-	private $_hide_fields	= ['id'];
-	private $_set_tab			= [];
-	private $_tab_config		= [];
-	private $validations		= [
-		'route_path'	=> 'required|not_in:0',
-		'flag_status'	=> 'required',
-		'active'		=> 'required',
+		
+	private $_hide_fields = ['id'];
+	private $_set_tab     = [];
+	private $_tab_config  = [];
+	private $validations  = [
+		'route_path'  => 'required|not_in:0',
+		'flag_status' => 'required',
+		'active'      => 'required',
 	];
 	
-	private $filters = [];
 	public function __construct() {
 		parent::__construct(Modules::class, 'system.config');
 	}
@@ -127,7 +123,7 @@ class ModulesController extends Controller {
 	}
 	
 	public function index() {
-		$this->setPage(ucwords($this->name) . ' Lists');
+		$this->setPage();
 		
 		$this->table->mergeColumns('Module', ['module_name', 'parent_name']);
 		
@@ -142,7 +138,8 @@ class ModulesController extends Controller {
 	}
 	
 	public function create() {
-		$this->setPage('Add ' . camel_case($this->name));
+		$this->setPage();
+		
 		if (count($this->render_value_module_name()) >= 1) {
 			$disabled = [];
 		} else {
@@ -170,13 +167,13 @@ class ModulesController extends Controller {
 		$this->set_data_before_insert($request);
 		
 		$model       = diy_insert($this->model, $request, true);
-		$route_group = str_replace('.', '/', $this->route_group);
+		$route_group = str_replace('.', '/', $this->route_page);
 		
 		return redirect("/{$route_group}/module/{$model}/edit");
 	}
 	
 	public function edit($id) {
-		$this->setPage('Edit ' . camel_case($this->name));
+		$this->setPage();
 		
 		$model_data = $this->model->find($id);
 		
@@ -199,7 +196,7 @@ class ModulesController extends Controller {
 		$this->set_data_before_insert($request);
 		
 		diy_update($this->model->find($id), $request, true);
-		$route_group	= str_replace('.', '/', $this->route_group);
+		$route_group = str_replace('.', '/', $this->route_page);
 		
 		return redirect("/{$route_group}/module/{$id}/edit");
 	}
