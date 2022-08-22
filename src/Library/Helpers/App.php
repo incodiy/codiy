@@ -683,7 +683,7 @@ if (!function_exists('diy_update')) {
 			$requests[$key] = $value;
 		}
 		$request->merge($requests);
-		dd(class_basename($model), $request->all());
+		
 		$modelName = new $model($request->all());
 		if (true === array_key_exists('password', $request->all())) {
 			$modelName->fill(['password' => Hash::make($request->get('password'))]);
