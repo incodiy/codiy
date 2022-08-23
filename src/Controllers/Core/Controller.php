@@ -55,6 +55,7 @@ class Controller extends BaseController {
 	public $adminPage		= 'dashboard';
 	
 	private $plugins		= [];
+	private $model_class = null;
 	
 	/**
 	 * Constructor
@@ -63,12 +64,28 @@ class Controller extends BaseController {
 	 * @param boolean $route_page
 	 * @param array $filters
 	 */
-	public function __construct($model = false, $route_page = false, $filters = []) {
+	public function __construct($model = false, $route_page = false) {
 		diy_memory(false);
 		
 		$this->dataCollections();
-		if (false !== $model)      $this->model($model, $filters);
+		$this->init_model($model);
+		
 		if (false !== $route_page) $this->set_route_page($route_page);
+	}
+	
+	private function init_model($model = false) {
+		if (false !== $model) {
+			$routelists   = ['index', 'create', 'edit'];
+			$currentPage  = last(explode('.', current_route()));
+			
+			if (in_array($currentPage, $routelists)) {
+				$this->model_class = $model;
+			} else {
+				$this->model($model);
+			}
+			
+			$this->model_class = $model;
+		}
 	}
 	
 	private function dataCollections() {

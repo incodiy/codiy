@@ -49,6 +49,7 @@ class AuthController extends Controller {
 		$objects     = $maintenance::where('status', 1)->get();
 		$basePath    = str_replace(get_config('settings.index_folder'), '', get_config('settings.baseURL'));
 		$data        = [];
+		
 		foreach ($objects as $object) {
 			$time_durations = explode(' | ', $object->time_duration);
 			$date_first     = date('Y-m-d H:i:s');
@@ -68,7 +69,7 @@ class AuthController extends Controller {
 		$this->data_maintenance = $data;
 		
 		if (true === $this->maintenance) {
-			$this->getLogin	= false;
+			$this->getLogin = false;
 			if (count($_GET) >= 1) {
 				$type_as = 'name';
 				if (true === str_contains($_GET['as'], '@') || true === str_contains($_GET['as'], '.com')) {
@@ -125,15 +126,12 @@ class AuthController extends Controller {
 			$user_info	= User::find($user->id);
 			$group_info	= (object) $user_info->groupInfo();
 			
-			$userData['id']						= $user->id;
-			/* if (true === is_multiplatform()) {
-				$userData[$this->platform_key]	= $group_info->{$this->platform_key};
-			} */
-			$userData['group_id']				 = $group_info->id;
-			$userData['user_group']				 = $group_info->group_name;
-			$userData['group_info']				 = $group_info->group_info;
+			$userData['id']                   = $user->id;
+			$userData['group_id']             = $group_info->id;
+			$userData['user_group']           = $group_info->group_name;
+			$userData['group_info']           = $group_info->group_info;
 			
-			$userData['name']                 = $user->name;
+			$userData['username']             = $user->username;
 			$userData['fullname']             = $user->fullname;
 			$userData['email']                = $user->email;
 			$userData['phone']                = $user->phone;
@@ -162,11 +160,7 @@ class AuthController extends Controller {
 		
 		Session::forget('id');
 		Session::forget('group_id');
-		/* 
-		if (true === is_multiplatform()) {
-			Session::forget($this->platform_key);
-		}
-		 */
+		
 		Session::forget('user_group');
 		Session::forget('group_info');
 		Session::forget('name');
@@ -182,9 +176,6 @@ class AuthController extends Controller {
 		Session::forget('expire_date');
 		Session::forget('updated_at');
 		Session::forget('active');
-		
-		Session::forget('flag');
-		Session::forget('related_module');
 	}
 	
 	public function logout() {

@@ -69,28 +69,6 @@ trait View {
 			return $this->initRenderDatatables($filter_datatables);
 		}
 		
-		if (false !== $data) {
-			if (!is_array($data)) {
-				// if $data variable not array
-				$data_contents = [$data];
-				$merge_data    = array_merge($this->data['content_page'], $data_contents);
-			} else {
-				// if $data variable is an array
-				if (diy_is_empty($data)) {
-					// if array    = []
-					$merge_data    = $this->data['content_page'];
-				} else {
-					$data_contents = $data;
-					$merge_data    = array_merge($this->data['content_page'], $data_contents);
-				}
-			}
-			$dataContent = array_merge($merge_data, $formElements, $tableElements);
-			
-			$this->data['content_page'] = $dataContent;
-		} else {
-			$this->data['content_page'] = array_merge($formElements, $tableElements);
-		}
-		
 		$this->template->render_sidebar_menu($this->menu);
 		$this->data['menu_sidebar']    = [];
 		if (!is_null($this->template->menu_sidebar)) {
@@ -103,9 +81,35 @@ trait View {
 			$this->data['sidebar_content'] = $this->template->sidebar_content;
 		}
 		
-		$this->data['breadcrumbs']    = [];
-		if (!is_null($this->template->breadcrumbs)) {
-			$this->data['breadcrumbs'] = $this->template->breadcrumbs;
+		if (true === $this->is_module_granted) {
+			
+			$this->data['breadcrumbs']    = [];
+			if (!is_null($this->template->breadcrumbs)) $this->data['breadcrumbs'] = $this->template->breadcrumbs;
+			
+			if (false !== $data) {
+				if (!is_array($data)) {
+					// if $data variable not array
+					$data_contents = [$data];
+					$merge_data    = array_merge($this->data['content_page'], $data_contents);
+				} else {
+					// if $data variable is an array
+					if (diy_is_empty($data)) {
+						// if array    = []
+						$merge_data    = $this->data['content_page'];
+					} else {
+						$data_contents = $data;
+						$merge_data    = array_merge($this->data['content_page'], $data_contents);
+					}
+				}
+				$dataContent = array_merge($merge_data, $formElements, $tableElements);
+				
+				$this->data['content_page'] = $dataContent;
+			} else {
+				$this->data['content_page'] = array_merge($formElements, $tableElements);
+			}
+		} else {
+			$this->data['breadcrumbs'] = null;
+			$this->data['route_info']  = null;
 		}
 		
 		return view($this->pageView, $this->data, $this->dataOptions);
@@ -145,7 +149,10 @@ trait View {
 	 * @param string $url
 	 */
 	protected function setPage($page = null, $path = false) {
-		$this->set_session();
+		$this->set_session();		
+		$this->routeInfo();
+		
+		if (!empty($this->model_class)) $this->model($this->model_class);
 		if (is_empty($page)) {
 			$currentPage   = last(explode('.', current_route()));
 			if (str_contains(strtolower($currentPage), 'index')) {
@@ -166,8 +173,6 @@ trait View {
 			$page_title, [$page_title, 'home']
 		);
 		$this->configView($path);
-		
-		$this->routeInfo();
 	}
 	
 	private function uriAdmin($uri = 'index') {

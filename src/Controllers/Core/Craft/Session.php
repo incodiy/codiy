@@ -1,7 +1,7 @@
 <?php
 namespace Incodiy\Codiy\Controllers\Core\Craft;
 
-use Illuminate\Support\Facades\Session as Sessions;
+//use Illuminate\Support\Facades\Session as Sessions;
 
 /**
  * Created on 24 Mar 2021
@@ -15,14 +15,30 @@ use Illuminate\Support\Facades\Session as Sessions;
  */
 
 trait Session {
-	public $session = [];
+	public $session       = [];
+	public $session_roles = [];
 	
 	/**
 	 * Set Session From User Logged In
 	 */
 	public function set_session() {
-		$this->session				= Sessions::all();
-		$this->data['sessions']	= $this->session;
+		$session_original       = diy_sessions();
+		$this->session          = $session_original;
+		$this->data['sessions'] = $this->session;
+		
+		$sessions = [];//Sessions::all();
+		if (!empty($session_original['id'])) {
+			$sessions['roles']['user_id']    = $session_original['id'];
+			$sessions['roles']['username']   = $session_original['username'];
+			$sessions['roles']['group_id']   = $session_original['group_id'];
+			$sessions['roles']['user_group'] = $session_original['user_group'];
+			$sessions['roles']['group_info'] = $session_original['group_info'];
+			$sessions['roles']['fullname']   = $session_original['fullname'];
+			$sessions['roles']['email']      = $session_original['email'];
+			$sessions['roles']['phone']      = $session_original['phone'];
+			
+			$this->session_roles = $sessions;
+		}
 	}
 	
 	/**

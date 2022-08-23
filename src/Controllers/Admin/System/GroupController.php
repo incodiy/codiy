@@ -31,7 +31,7 @@ class GroupController extends Controller {
 	private $filterPage   = ['group_name' => 'admin'];
 	
 	public function __construct() {
-		parent::__construct(Group::class, 'system.config', $this->filterPage);
+		parent::__construct(Group::class, 'system.config');
 	}
 	
 	private function set_data_before_insert($request, $model_id = false) {
@@ -217,7 +217,7 @@ class GroupController extends Controller {
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
-			if ('root' !== $this->model_data->group_name && false === diy_string_contained($this->model_data->group_name, 'admin')) {
+			if ('root' !== $this->model_data->group_name) { //&& false === diy_string_contained($this->model_data->group_name, 'admin')) {
 				// SET PRIVILEGES BOX
 				$this->form->openTab('Module Privileges');
 				$this->form->draw($this->group_privilege());

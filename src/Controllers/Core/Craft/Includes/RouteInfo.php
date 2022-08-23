@@ -16,6 +16,7 @@ use Incodiy\Codiy\Models\Admin\System\Modules;
  */
  
 trait RouteInfo {
+	use Privileges;
 	
 	public $pageInfo;
 	public $routeInfo;
@@ -23,9 +24,6 @@ trait RouteInfo {
 	public $controllerName;
 	public $currentRoute;
 	public $actionButton     = ['index', 'index', 'edit', 'show'];
-	public $menu             = [];
-	public $module_class;
-	public $module_privilege = [];
 	
 	/**
 	 * Hide action button(s) in module page.
@@ -69,6 +67,7 @@ trait RouteInfo {
 	 */
 	public function routeInfo() {
 		if (strpos(php_sapi_name(), 'cli') === false) {
+			$this->module_privileges();
 			$this->get_pageinfo();
 			
 			$action_page                = [];
@@ -109,7 +108,6 @@ trait RouteInfo {
 				'page_info'    => $this->pageInfo
 			];
 			
-			$this->get_module_privileges();
 			$this->setDataValues('route_info', (object) array_merge($routeInfo, $action_page));
 		}
 	}
@@ -125,29 +123,6 @@ trait RouteInfo {
 			unset($routeUri[array_key_last($routeUri)]);
 			
 			return $routeURI . '::' . (int) last($routeUri);
-		}
-	}
-	
-	/**
-	 * Get Privileges Module
-	 *
-	 * created @Dec 11, 2018
-	 * author: wisnuwidi
-	 */
-	private function get_module_privileges() {
-		if (!is_null(Session('group_id'))) {
-			$root_flag = false;
-			if (1 === intval(Session('group_id'))) if (true === isset($this->session['flag'])) $root_flag = true;
-			
-			$this->module_class = new Modules();
-			
-			$pageType = false;
-			if (isset($this->data['page_type'])) {
-				$pageType = $this->data['page_type'];
-			}
-			$this->menu = $this->module_class->privileges(Session('group_id'), $pageType, $root_flag);
-			$this->module_privilege['roles'] = $this->module_class->roles;
-			$this->module_privilege['info']  = $this->module_class->privileges;
 		}
 	}
 }
