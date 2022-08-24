@@ -6,13 +6,13 @@ use Incodiy\Codiy\Models\Admin\System\Modules;
 
 /**
  * Created on 9 Apr 2021
- * Time Created	: 14:49:04
+ * Time Created : 14:49:04
  *
  * @filesource	RouteInfo.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
  
 trait RouteInfo {
@@ -23,7 +23,7 @@ trait RouteInfo {
 	public $route_page;
 	public $controllerName;
 	public $currentRoute;
-	public $actionButton     = ['index', 'index', 'edit', 'show'];
+	public $actionButton = ['index', 'index', 'edit', 'show'];
 	
 	/**
 	 * Hide action button(s) in module page.

@@ -181,42 +181,29 @@ if (!function_exists('diy_table_action_button')) {
 	 * @param array $row_data
 	 * @param string $current_url
 	 * @param bool|array $action
+	 * 	: true, 
+	 * 	: false, 
+	 * 	: index|insert|update|delete, 
+	 * 	: show|create|modify|destroy, 
+	 * 	: [index, insert, update, delete], 
+	 * 	: [show, create, modify, destroy]
 	 *
 	 * @return string
 	 */
 	function diy_table_action_button($row_data, $current_url, $action, $as_root = false) {
-		$path						= [];
-		$addActions					= [];
-		$add_path					= false;
-		$enabledAction				= [];
-		$enabledAction['read']		= false;
-		$enabledAction['write']		= false;
-		$enabledAction['modify']	= false;
-		$enabledAction['delete']	= false;
+		$path                    = [];
+		$addActions              = [];
+		$add_path                = false;
+		$enabledAction           = [];
+		$enabledAction['read']   = false;
+		$enabledAction['write']  = false;
+		$enabledAction['modify'] = false;
+		$enabledAction['delete'] = false;
 		
 		// Add Action Button if the $action parameter above set with array
-		if (true === is_array($action)) {
+		if (is_array($action)) {
 			foreach ($action as $action_data) {
-				if (!is_array($action_data)) {
-					$str_action = explode('|', $action_data);
-					$str_name	= reset($str_action);
-					$actionAttr = [];
-					
-					if (count($str_action) >= 2) {
-						$actionAttr['color']		= false;
-						if (isset($str_action[1])) {
-							$actionAttr['color']	= $str_action[1];
-						}
-						
-						$actionAttr['icon'] = false;
-						if (isset($str_action[2])) {
-							$actionAttr['icon']		= $str_action[2];
-						}
-						$addActions[$str_name]		= $actionAttr;
-					} else {
-						$addActions[$action_data]	= $action_data;
-					}
-				} else {
+				if (is_array($action_data)) {
 					foreach ($action_data as $actionValues) {
 						if ('index' === $actionValues || 'show' === $actionValues) {
 							$enabledAction['read']	 = true;
@@ -231,7 +218,45 @@ if (!function_exists('diy_table_action_button')) {
 							$enabledAction['delete'] = true;
 						}
 					}
+				} else {
+					$str_action = explode('|', $action_data);
+					$str_name	= reset($str_action);
+					$actionAttr = [];
+					
+					if (count($str_action) >= 2) {
+						$actionAttr['color']		= false;
+						if (isset($str_action[1])) {
+							$actionAttr['color']	= $str_action[1];
+						}
+						
+						$actionAttr['icon'] = false;
+						if (isset($str_action[2])) {
+							$actionAttr['icon']    = $str_action[2];
+						}
+						$addActions[$str_name]    = $actionAttr;
+					} else {
+						$addActions[$action_data] = $action_data;
+					}
 				}
+			}dd($addActions);
+		} else {
+			$str_action = explode('|', $action);
+			$str_name	= reset($str_action);
+			$actionAttr = [];
+			
+			if (count($str_action) >= 2) {
+				$actionAttr['color']    = false;
+				if (isset($str_action[1])) {
+					$actionAttr['color'] = $str_action[1];
+				}
+				
+				$actionAttr['icon'] = false;
+				if (isset($str_action[2])) {
+					$actionAttr['icon']  = $str_action[2];
+				}
+				$addActions[$str_name]  = $actionAttr;
+			} else {
+				$addActions[$action]	   = $action;
 			}
 		}
 		

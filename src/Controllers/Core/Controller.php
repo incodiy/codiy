@@ -36,9 +36,9 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
  *
  * @filesource Controller.php
  *            
- * @author     wisnuwidi@gmail.com - 2021
- * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
 class Controller extends BaseController {
 	
@@ -48,13 +48,13 @@ class Controller extends BaseController {
 	use Form, FileUpload, RouteInfo;
 	use Table;
 	
-	public $data			= [];
-	public $session_auth	= [];
-	public $getLogin		= true;
-	public $rootPage		= 'home';
-	public $adminPage		= 'dashboard';
+	public $data         = [];
+	public $session_auth = [];
+	public $getLogin     = true;
+	public $rootPage     = 'home';
+	public $adminPage    = 'dashboard';
 	
-	private $plugins		= [];
+	private $plugins     = [];
 	private $model_class = null;
 	
 	/**
