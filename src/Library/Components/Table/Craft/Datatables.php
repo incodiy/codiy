@@ -225,8 +225,8 @@ class Datatables {
 		$datatables->setRowAttr($row_attributes);
 		
 		$action_data = [];
-		$action_data['model']          = $model;
-		$action_data['current_url']    = diy_current_url();
+		$action_data['model']             = $model;
+		$action_data['current_url']       = diy_current_url();
 		$action_data['action']['data']    = $action_list;
 		$action_data['action']['removed'] = $data->datatables->button_removed;
 		

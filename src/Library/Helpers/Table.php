@@ -200,7 +200,6 @@ if (!function_exists('diy_table_action_button')) {
 		
 		if (!empty($removed_button)) {
 			if (is_array($removed_button)) {
-				
 				foreach ($removed_button as $remove) {
 					if (in_array($remove, ['view', 'index'])) {
 						$enabledAction['read']   = false;
@@ -275,15 +274,9 @@ if (!function_exists('diy_table_action_button')) {
 			$path['delete'] = "{$current_url}/{$row_data->id}/delete";
 		}
 		
-		if (false === $enabledAction['read']) {
-			$path['view'] = false;
-		}
-		if (false === $enabledAction['write'] && false === $enabledAction['modify']) {
-			$path['edit'] = false;
-		}
-		if (false === $enabledAction['delete']) {
-			$path['delete'] = false;
-		}
+		if (false === $enabledAction['read']) $path['view'] = false;
+		if (false === $enabledAction['write'] && false === $enabledAction['modify']) $path['edit'] = false;
+		if (false === $enabledAction['delete']) $path['delete'] = false;
 		
 		if (count($addActions) >= 1) {
 			foreach ($addActions as $action_name => $action_values) {
@@ -307,7 +300,7 @@ if (!function_exists('diy_add_action_button_by_string')) {
 		if (is_bool($action)) {
 			if (true === $action) {
 				$addActions['view']['color']   = 'success';
-				$addActions['view']['icon']    = 'eye';//"view|success|eye";
+				$addActions['view']['icon']    = 'eye';
 				
 				$addActions['edit']['color']   = 'primary';
 				$addActions['edit']['icon']    = 'pencil';
