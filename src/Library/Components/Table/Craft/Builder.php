@@ -512,8 +512,8 @@ class Builder {
 		if (!empty($searchable)) {
 			$filter = true;
 			$dt_info['searchable'] = $data['columns']['searchable'];
+			
 			if (!empty($data['columns']['filters'])) {
-				
 				$search_data					= [];
 				$search_data['table_name']	= $name;
 				$search_data['searchable']	= $data['columns']['searchable'];
@@ -548,6 +548,7 @@ class Builder {
 					'data-keyboard'   => 'false'
 				];
 				$dt_info['button_label']  = '<i class="fa fa-filter"></i> Filter';
+				$dt_info['action_button_removed']  = $data['attributes']['buttons_removed'];
 				$dt_info['modal_title']   = '<i class="fa fa-filter"></i> &nbsp; Filter';
 				$dt_info['modal_content'] = $search_object->render($dt_info['name'], $data['columns']['filters']);
 			}

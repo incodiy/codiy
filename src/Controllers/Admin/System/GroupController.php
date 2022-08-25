@@ -67,8 +67,11 @@ class GroupController extends Controller {
 		$this->table->searchable(['group_name', 'group_info']);
 		$this->table->clickable();
 		$this->table->sortable();
-//		$this->table->destroyButton(['view', 'edit']);
-		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active'], ['view', 'edit', ['view', 'edit'], 'manage|lilac|gears']);
+	//	$this->table->destroyButton(['view', 'edit']);
+		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active']);
+	//	$this->table->lists($this->model_table, ['group_name', 'group_info', 'active'], ['view', 'edit', 'delete', 'manage|lilac|gears']);
+	//	$this->table->lists($this->model_table, ['group_name', 'group_info', 'active'], ['manage|lilac|gears']);
+	//	$this->table->lists($this->model_table, ['group_name', 'group_info', 'active'], 'manage|lilac|gears');
 		
 		return $this->render();
 	}

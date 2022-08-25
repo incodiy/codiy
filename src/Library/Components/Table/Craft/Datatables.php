@@ -142,18 +142,14 @@ class Datatables {
 			}
 			
 			if (!empty($filters)) {
-			//	$_filters			= [];
 				$modelDataFilters	= $model_data;
 				foreach ($filters as $fieldname => $rowdata) {
 					if (count($rowdata) <= 1) {
 						foreach ($rowdata as $dataRow) {
-			//				$_filters[$fieldname] = $dataRow;
 							$modelDataFilters = $modelDataFilters->where($fieldname, 'LIKE', "%{$dataRow}%");
 						}
-			//			$modelDataFilters = $modelDataFilters->where($_filters);
 					} else {
 						foreach ($rowdata as $_dataRows) {
-			//				$modelDataFilters = $modelDataFilters->orWhere([$fieldname => $_dataRows]);
 							$modelDataFilters = $modelDataFilters->where($fieldname, 'LIKE', "%{$_dataRows}%");
 						}
 					}
@@ -166,8 +162,7 @@ class Datatables {
 		$datatables = DataTable::of($model)
 			->setTotalRecords($limit['total'])
 			->blacklist(['password', 'action', 'no'])
-		//	->orderColumn('id', 'id $1')   // asc
-			->orderColumn('id', 'id desc') // desc
+			->orderColumn('id', 'id desc')
 			->smart(true);
 		
 		$is_image = [];
@@ -230,9 +225,10 @@ class Datatables {
 		$datatables->setRowAttr($row_attributes);
 		
 		$action_data = [];
-		$action_data['model']       = $model;
-		$action_data['current_url'] = diy_current_url();
-		$action_data['action_data'] = $action_list;
+		$action_data['model']          = $model;
+		$action_data['current_url']    = diy_current_url();
+		$action_data['action']['data']    = $action_list;
+		$action_data['action']['removed'] = $data->datatables->button_removed;
 		
 		$datatables->addColumn('action', function($model) use($action_data) {
 			return $this->setRowActionURLs($model, $action_data);
@@ -251,7 +247,7 @@ class Datatables {
 	}
 	
 	private function setRowActionURLs($model, $data) {
-		return diy_table_action_button($model, $data['current_url'], $data['action_data'], true);
+		return diy_table_action_button($model, $data['current_url'], $data['action']['data'], $data['action']['removed']);
 	}
 		
 	private function imageViewColumn($model, $datatables) {

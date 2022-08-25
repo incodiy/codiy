@@ -75,16 +75,14 @@ if (!function_exists('diy_set_formula_columns')) {
 	function diy_set_formula_columns($columns, $data) {
 		arsort($data);
 		
-		$key_columns	= array_flip($columns);
-		$f_node			= [];
-		$c_action		= false;
-		if (!empty($key_columns['action'])) {
-			$c_action	= true;
-		}
-		$c_lists		= false;
-		if (isset($key_columns['number_lists'])) {
-			$c_lists	= true;
-		}
+		$key_columns = array_flip($columns);
+		$f_node      = [];
+		
+		$c_action    = false;
+		if (!empty($key_columns['action'])) $c_action = true;
+		
+		$c_lists     = false;
+		if (isset($key_columns['number_lists'])) $c_lists = true;
 		
 		foreach ($data as $formula_data) {
 			$for_node = $formula_data['node_location'];
@@ -102,9 +100,9 @@ if (!function_exists('diy_set_formula_columns')) {
 				}
 			}
 			
-			$f_node[$formula_data['name']]['field_key']		= $key_columns[$f_node[$formula_data['name']]['field_name']];
-			$f_node[$formula_data['name']]['node_after']	= $formula_data['node_after'];
-			$f_node[$formula_data['name']]['node_location']	= $formula_data['node_location'];
+			$f_node[$formula_data['name']]['field_key']     = $key_columns[$f_node[$formula_data['name']]['field_name']];
+			$f_node[$formula_data['name']]['node_after']    = $formula_data['node_after'];
+			$f_node[$formula_data['name']]['node_location'] = $formula_data['node_location'];
 		}
 		
 		foreach ($f_node as $key => $fdata) {
@@ -190,58 +188,142 @@ if (!function_exists('diy_table_action_button')) {
 	 *
 	 * @return string
 	 */
-	function diy_table_action_button($row_data, $current_url, $action, $as_root = false) {
+	function diy_table_action_button($row_data, $current_url, $action, $removed_button = null) {
 		$path                    = [];
 		$addActions              = [];
 		$add_path                = false;
 		$enabledAction           = [];
-		$enabledAction['read']   = false;
-		$enabledAction['write']  = false;
-		$enabledAction['modify'] = false;
-		$enabledAction['delete'] = false;
+		$enabledAction['read']   = true;
+		$enabledAction['write']  = true;
+		$enabledAction['modify'] = true;
+		$enabledAction['delete'] = true;
+		
+		if (!empty($removed_button)) {
+			if (is_array($removed_button)) {
+				
+				foreach ($removed_button as $remove) {
+					if (in_array($remove, ['view', 'index'])) {
+						$enabledAction['read']   = false;
+					} elseif (in_array($remove, ['edit', 'modify'])) {
+						$enabledAction['write']  = false;
+						$enabledAction['modify'] = false;
+					} elseif (in_array($remove, ['delete', 'destroy'])) {
+						$enabledAction['delete'] = false;
+					} else {
+						$enabledAction[$removed_button] = false;
+					}
+				}
+			}
+		}
 		
 		// Add Action Button if the $action parameter above set with array
 		if (is_array($action)) {
 			foreach ($action as $action_data) {
-				if (is_array($action_data)) {
-					foreach ($action_data as $actionValues) {
-						if ('index' === $actionValues || 'show' === $actionValues) {
-							$enabledAction['read']	 = true;
-						}
-						if ('create' === $actionValues || 'insert' === $actionValues) {
-							$enabledAction['write']	 = true;
-						}
-						if ('edit' === $actionValues || 'update' === $actionValues) {
-							$enabledAction['modify'] = true;
-						}
-						if ('destroy' === $actionValues) {
-							$enabledAction['delete'] = true;
-						}
-					}
+				if (diy_string_contained($action_data, '|')) {
+					$action_info = diy_add_action_button_by_string($action_data);
+					$addActions[key($action_info)] = $action_info[key($action_info)];
+					$enabledAction[key($action_info)] = true;
 				} else {
-					$str_action = explode('|', $action_data);
-					$str_name	= reset($str_action);
-					$actionAttr = [];
-					
-					if (count($str_action) >= 2) {
-						$actionAttr['color']		= false;
-						if (isset($str_action[1])) {
-							$actionAttr['color']	= $str_action[1];
-						}
+					/* 
+					if (in_array($action_data, ['view', 'index'])) {
+						$action_info = diy_add_action_button_by_string("{$action_data}|success|eye");
+						$addActions[$action_data] = $action_info[$action_data];
+						$enabledAction['read']    = true;
 						
-						$actionAttr['icon'] = false;
-						if (isset($str_action[2])) {
-							$actionAttr['icon']    = $str_action[2];
-						}
-						$addActions[$str_name]    = $actionAttr;
+					} elseif (in_array($action_data, ['edit', 'modify'])) {
+						$action_info = diy_add_action_button_by_string("{$action_data}|primary|pencil");
+						$addActions[$action_data] = $action_info[$action_data];
+						$enabledAction['write']   = true;
+						$enabledAction['modify']  = true;
+						
+					} elseif (in_array($action_data, ['delete', 'destroy'])) {
+						$action_info = diy_add_action_button_by_string("{$action_data}|danger|times");
+						$addActions[$action_data] = $action_info[$action_data];
+						$enabledAction['delete']  = true;
+						
 					} else {
-						$addActions[$action_data] = $action_data;
+						$action_info = diy_add_action_button_by_string("{$action_data}|default|link");
+						$addActions[$action_data] = $action_info[$action_data];
+					}
+					 */
+				}
+			}
+		} else {			
+			if (is_string($action)) {
+				if (diy_string_contained($action, '|')) {
+					$addActions = diy_add_action_button_by_string($action);
+				} else {
+					$addActions = diy_add_action_button_by_string("{$action}|default|link");
+				}
+			} else {
+				/* 
+				if (is_bool($action)) {
+					if (true === $action) {
+						$addActions = diy_add_action_button_by_string($action);
 					}
 				}
-			}dd($addActions);
+				 */
+			}
+		}
+		
+		// Default Action
+		$path['view'] = "{$current_url}/{$row_data->id}";
+		$path['edit'] = "{$current_url}/{$row_data->id}/edit";
+		if (!empty($row_data->deleted_at)) {
+			$path['delete'] = "{$current_url}/{$row_data->id}/restore_deleted";
 		} else {
-			$str_action = explode('|', $action);
-			$str_name	= reset($str_action);
+			$path['delete'] = "{$current_url}/{$row_data->id}/delete";
+		}
+		
+		if (false === $enabledAction['read']) {
+			$path['view'] = false;
+		}
+		if (false === $enabledAction['write'] && false === $enabledAction['modify']) {
+			$path['edit'] = false;
+		}
+		if (false === $enabledAction['delete']) {
+			$path['delete'] = false;
+		}
+		
+		if (count($addActions) >= 1) {
+			foreach ($addActions as $action_name => $action_values) {
+				$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
+				if (is_array($action_values)) {
+					foreach ($action_values as $actionKey => $actionValue) {
+						$add_path[$action_name][$actionKey] = $actionValue;
+					}
+				}
+			}
+		}
+		
+		return create_action_buttons($path['view'], $path['edit'], $path['delete'], $add_path);
+	}
+}
+
+if (!function_exists('diy_add_action_button_by_string')) {
+	
+	function diy_add_action_button_by_string($action, $is_array = false) {
+		$addActions = [];
+		if (is_bool($action)) {
+			if (true === $action) {
+				$addActions['view']['color']   = 'success';
+				$addActions['view']['icon']    = 'eye';//"view|success|eye";
+				
+				$addActions['edit']['color']   = 'primary';
+				$addActions['edit']['icon']    = 'pencil';
+				
+				$addActions['delete']['color'] = 'danger';
+				$addActions['delete']['icon']  = 'times';
+			}
+		} else {
+			if (diy_string_contained($action, '|')) {
+				$str_action = explode('|', $action);
+				$str_name	= reset($str_action);
+			} else {
+				$str_action = $action;
+				$str_name   = false;
+			}
+			
 			$actionAttr = [];
 			
 			if (count($str_action) >= 2) {
@@ -260,30 +342,7 @@ if (!function_exists('diy_table_action_button')) {
 			}
 		}
 		
-		// Default Action
-		$path['view']		= "{$current_url}/{$row_data->id}";
-		$path['edit']		= "{$current_url}/{$row_data->id}/edit";
-		
-		if (!empty($row_data->deleted_at)) {
-			$path['delete']	= "{$current_url}/{$row_data->id}/restore_deleted";
-		} else {
-			$path['delete']	= "{$current_url}/{$row_data->id}/delete";
-		}
-		
-		if (false === $enabledAction['read']   && false === $as_root) $path['view'] = false;
-		if (false === $enabledAction['write']  && false === $enabledAction['modify'] && false === $as_root) $path['edit'] = false;
-		if (false === $enabledAction['delete'] && false === $as_root) $path['delete'] = false;
-		
-		if (count($addActions) >= 1) {
-			foreach ($addActions as $action_name => $action_values) {
-				$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
-				foreach ($action_values as $actionKey => $actionValue) {
-					$add_path[$action_name][$actionKey] = $actionValue;
-				}
-			}
-		}
-		
-		return create_action_buttons($path['view'], $path['edit'], $path['delete'], $add_path, $as_root);
+		return $addActions;
 	}
 }
 
@@ -311,7 +370,7 @@ if (!function_exists('create_action_buttons')) {
 		$buttonDeleteMobile = false;
 		$restoreDeleted     = false;
 		
-		if (false !== $delete || true === $as_root) {
+		if (false !== $delete) {
 			$deletePath            = explode('/', $delete);
 			$deleteFlag            = end($deletePath);
 			$delete_id             = intval($deletePath[count($deletePath)-2]);
@@ -332,7 +391,7 @@ if (!function_exists('create_action_buttons')) {
 		
 		$buttonView       = false;
 		$buttonViewMobile = false;
-		if (false != $view || true === $as_root) {
+		if (false != $view) {
 			if (true === $restoreDeleted) {
 				$viewVisibilityAttr = 'readonly disabled class="btn btn-default btn-xs btn_view" data-toggle="tooltip" data-placement="top" data-original-title="View detail"';
 			} else {
@@ -344,7 +403,7 @@ if (!function_exists('create_action_buttons')) {
 		
 		$buttonEdit       = false;
 		$buttonEditMobile = false;
-		if (false != $edit || true === $as_root) {
+		if (false != $edit) {
 			if (true === $restoreDeleted) {
 				$editVisibilityAttr = ' readonly disabled class="btn btn-default btn-xs btn_edit" data-toggle="tooltip" data-placement="top" data-original-title="Edit"';
 			} else {

@@ -315,16 +315,14 @@ class Objects extends Builder {
 		$this->tableType = 'regular';
 	}
 	
-	public $action_buttons = ['view', 'edit', 'delete', 'create'];
+	public $button_removed = [];
 	public function destroyButton($remove = null) {
 		if (!empty($remove)) {
 			if (is_array($remove)) {
-				$remove_buttons = $remove;
+				$this->button_removed = $remove;
 			} else {
-				$remove_buttons = [$remove];
+				$this->button_removed = [$remove];
 			}
-			
-			$this->action_buttons = array_diff($this->action_buttons, $remove_buttons);
 		}
 	}
 	
@@ -336,6 +334,8 @@ class Objects extends Builder {
 	 * @param string $table_name
 	 * @param array $fields
 	 * @param boolean $actions
+	 * 	: format => string = 'button_name|button_color|button_icon'
+	 * 	: format => array  = ['view', 'edit', 'delete', 'new_button', 'button_name|button_color|button_icon']
 	 * @param boolean $server_side
 	 * @param boolean $numbering
 	 * @param array $attributes
@@ -408,7 +408,7 @@ class Objects extends Builder {
 		if (!empty($this->variables['background_color'])) $attributes['bg_color'] = $this->variables['background_color'];
 		
 		$this->params[$table_name]['actions']                   = $actions;
-		$this->params[$table_name]['buttons_role']              = $this->action_buttons;
+		$this->params[$table_name]['buttons_removed']           = $this->button_removed;
 		$this->params[$table_name]['numbering']                 = $numbering;
 		$this->params[$table_name]['attributes']                = $attributes;
 		$this->params[$table_name]['server_side']['status']     = $server_side;
