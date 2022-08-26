@@ -189,6 +189,7 @@ if (!function_exists('diy_table_action_button')) {
 	 * @return string
 	 */
 	function diy_table_action_button($row_data, $current_url, $action, $removed_button = null) {
+		$privileges              = session()->all()['privileges'];
 		$path                    = [];
 		$addActions              = [];
 		$add_path                = false;
@@ -198,10 +199,23 @@ if (!function_exists('diy_table_action_button')) {
 		$enabledAction['modify'] = true;
 		$enabledAction['delete'] = true;
 		
+		$actions = null;
+		if (in_array(current_route(), $privileges)) {
+			foreach ($privileges as $roles) {
+				if (diy_string_contained($roles, routelists_info()['base_info'])) {
+					if (!in_array(routelists_info($roles)['last_info'], ['index', 'insert', 'update', 'destroy'])) {
+						$actions[routelists_info()['base_info']][] = routelists_info($roles)['last_info'];
+					}
+				}
+			}
+			
+			$action = $actions[routelists_info()['base_info']];
+		}
+		
 		if (!empty($removed_button)) {
 			if (is_array($removed_button)) {
 				foreach ($removed_button as $remove) {
-					if (in_array($remove, ['view', 'index'])) {
+					if (in_array($remove, ['show', 'view', 'index'])) {
 						$enabledAction['read']   = false;
 					} elseif (in_array($remove, ['edit', 'modify'])) {
 						$enabledAction['write']  = false;

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 
 use Incodiy\Codiy\Models\Admin\System\User;
 use Incodiy\Codiy\Controllers\Core\Controller;
+use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
 //use App\Models\Admin\System\Maintenance;
 
 /**
@@ -22,6 +23,7 @@ use Incodiy\Codiy\Controllers\Core\Controller;
  * @email		wisnuwidi@gmail.com
  */
 class AuthController extends Controller {
+	use Privileges;
 	
 	public function login() {
 	//	$this->get_maintenance_content();
@@ -130,6 +132,7 @@ class AuthController extends Controller {
 			$userData['group_id']             = $group_info->id;
 			$userData['user_group']           = $group_info->group_name;
 			$userData['group_info']           = $group_info->group_info;
+			$userData['privileges']           = $this->set_module_privileges($group_info->id);
 			
 			$userData['username']             = $user->username;
 			$userData['fullname']             = $user->fullname;

@@ -70,6 +70,24 @@ if (!function_exists('diy_sessions')) {
 	}
 }
 
+if (!function_exists('routelists_info')) {
+	
+	function routelists_info($route = null) {
+		if (!empty($route)) {
+			$currentRoute = explode('.', $route);
+		} else {
+			$currentRoute = explode('.', current_route());
+		}
+		
+		$count_route     = intval(count($currentRoute)) - 1;
+		$actionPageInfo  = last($currentRoute);
+		unset($currentRoute[$count_route]);
+		$baseRouteInfo   = implode('.', $currentRoute);
+		
+		return ['base_info' => $baseRouteInfo, 'last_info' => $actionPageInfo];
+	}
+}
+
 if (!function_exists('diy_base_assets')) {
 	
 	/**

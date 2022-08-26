@@ -351,14 +351,12 @@ trait Privileges {
 		$row_table[]      = array_merge_recursive($rowData['head'], $rowData['admin'], $rowData['index']);
 		
 		foreach ($this->menu_privileges as $parent => $childs) {
-		//	$parent_check	= diy_form_checkList(strtolower($parent));
 			$parent_title	= ucwords(str_replace('_', ' ', $parent));
 			if (!empty($childs->name)) $parent_title = $childs->name;
 			$row_table[]	= [diy_table_row_attr($icon . $parent_title, ['style' => 'font-weight:500;text-indent:5pt', 'colspan' => 9])];
 			
 			foreach ($childs as $child_name => $data_module) {
 				if (isset($data_module->id) === false) {
-				//	$child_check	= diy_form_checkList(strtolower($child_name));
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					

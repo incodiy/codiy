@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
 use Yajra\DataTables\DataTables as DataTable;
 use Incodiy\Codiy\Models\Admin\System\DynamicTables;
+use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
 
 /**
  * Created on 21 Apr 2021
@@ -16,6 +17,7 @@ use Incodiy\Codiy\Models\Admin\System\DynamicTables;
  */
  
 class Datatables {
+	use Privileges;
 	
 	private $image_checker = ['jpg', 'jpeg', 'png', 'gif'];
 	
@@ -76,12 +78,54 @@ class Datatables {
 			}
 		}
 		
+		$privileges  = $this->set_module_privileges();
 		$index_lists = $data->datatables->records['index_lists'];
 		$column_data = $data->datatables->columns;
-		
 		$action_list = false;
 		if (!empty($column_data[$table_name]['actions'])) {
 			$action_list = $column_data[$table_name]['actions'];
+			
+			$actions       = null;
+			$_action_lists = [];
+			if ($privileges['role_group'] > 1) {
+				if (!empty($privileges['role'])) {
+					
+					if (!empty(strpos(json_encode($privileges['role']), routelists_info()['base_info']))) {
+						foreach ($privileges['role'] as $roles) {
+							
+							if (diy_string_contained($roles, routelists_info()['base_info'])) {
+								$routename = routelists_info($roles)['last_info'];
+								if (in_array($routename, ['index', 'show'])) {
+									$actions[routelists_info()['base_info']]['view'] = 'view';
+								} elseif (in_array($routename, ['create', 'insert'])) {
+									$actions[routelists_info()['base_info']]['insert'] = 'insert';
+								} elseif (in_array($routename, ['edit', 'modify', 'update'])) {
+									$actions[routelists_info()['base_info']]['edit'] = 'edit';
+								} elseif (in_array($routename, ['destroy', 'delete'])) {
+									$actions[routelists_info()['base_info']]['delete'] = 'delete';
+								}
+							}
+						}
+						
+						if (!empty($actions)) {
+							foreach ($action_list as $_list) {
+								if (isset($actions[routelists_info()['base_info']][$_list])) {
+									$_action_lists[] = $actions[routelists_info()['base_info']][$_list];
+								} else {
+									if (!in_array($_list, ['view', 'insert', 'edit', 'delete'])) {
+										$_action_lists[] = $_list;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		$removed_privileges = [];
+		if (!empty(array_diff($action_list, $_action_lists))) {
+			$removed_privileges = array_diff($action_list, $_action_lists);
 		}
 		
 		$limit = [];
@@ -215,9 +259,7 @@ class Datatables {
 		$row_attributes['rlp']   = null;
 		if (!empty($column_data[$table_name]['clickable'])) {
 			if (count($column_data[$table_name]['clickable']) >= 1) {
-				$rlp = function($model) {
-					return diy_unescape_html(encode_id(intval($model->id)));
-				};
+				$rlp = function($model) { return diy_unescape_html(encode_id(intval($model->id))); };
 			}
 			$row_attributes['class'] = 'row-list-url';
 			$row_attributes['rlp']   = $rlp;
@@ -225,10 +267,18 @@ class Datatables {
 		$datatables->setRowAttr($row_attributes);
 		
 		$action_data = [];
-		$action_data['model']             = $model;
-		$action_data['current_url']       = diy_current_url();
-		$action_data['action']['data']    = $action_list;
-		$action_data['action']['removed'] = $data->datatables->button_removed;
+		$action_data['model']          = $model;
+		$action_data['current_url']    = diy_current_url();
+		$action_data['action']['data'] = $action_list;
+		if ($privileges['role_group'] > 1) {
+			if (!empty($removed_privileges)) {
+				$action_data['action']['removed'] = $removed_privileges;
+			} else {
+				$action_data['action']['removed'] = $data->datatables->button_removed;
+			}
+		} else {
+			$action_data['action']['removed']    = $data->datatables->button_removed;
+		}
 		
 		$datatables->addColumn('action', function($model) use($action_data) {
 			return $this->setRowActionURLs($model, $action_data);
