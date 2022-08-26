@@ -838,7 +838,7 @@ if (!function_exists('diy_action_buttons')) {
 	
 	function diy_action_buttons($route_info, $background_color = 'white') {
 		if (!empty($route_info)) {
-			$box = '';
+			$box  = '';
 			$box .= "<div class=\"header {$background_color}\">";
 			
 			foreach ($route_info->action_page as $key => $value) {

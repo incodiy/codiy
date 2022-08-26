@@ -10,19 +10,13 @@
  * @email		wisnuwidi@gmail.com
  */
 
-$scripts						= [];
-$scripts['bottom_first']		= [];
-if (!empty($components->template->scripts['js']['bottom_first'])) {
-	$scripts['bottom_first']	= $components->template->scripts['js']['bottom_first'];
-}
-$scripts['bottom']				= [];
-if (!empty($components->template->scripts['js']['bottom'])) {
-	$scripts['bottom']			= $components->template->scripts['js']['bottom'];
-}
-$scripts['bottom_last']			= [];
-if (!empty($components->template->scripts['js']['bottom_last'])) {
-	$scripts['bottom_last'] 	= $components->template->scripts['js']['bottom_last'];
-}
+$scripts = [];
+$scripts['bottom_first'] = [];
+if (!empty($components->template->scripts['js']['bottom_first'])) $scripts['bottom_first'] = $components->template->scripts['js']['bottom_first'];
+$scripts['bottom']       = [];
+if (!empty($components->template->scripts['js']['bottom'])) $scripts['bottom'] = $components->template->scripts['js']['bottom'];
+$scripts['bottom_last']  = [];
+if (!empty($components->template->scripts['js']['bottom_last'])) $scripts['bottom_last'] = $components->template->scripts['js']['bottom_last'];
 ?>
     <!-- JS -->
 	@foreach ($scripts['bottom_first'] as $script)

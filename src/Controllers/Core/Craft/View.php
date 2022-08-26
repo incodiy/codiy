@@ -83,7 +83,7 @@ trait View {
 		
 		if (true === $this->is_module_granted) {
 			
-			$this->data['breadcrumbs']    = [];
+			$this->data['breadcrumbs'] = [];
 			if (!is_null($this->template->breadcrumbs)) $this->data['breadcrumbs'] = $this->template->breadcrumbs;
 			
 			if (false !== $data) {
@@ -154,7 +154,7 @@ trait View {
 		
 		if (!empty($this->model_class)) $this->model($this->model_class);
 		if (is_empty($page)) {
-			$currentPage   = last(explode('.', current_route()));
+			$currentPage = last(explode('.', current_route()));
 			if (str_contains(strtolower($currentPage), 'index')) {
 				$currentModule = strtolower(str_replace('Controller', '', class_basename($this))) . ' Lists';
 			} else {

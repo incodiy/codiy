@@ -66,34 +66,59 @@ trait RouteInfo {
 	 * Index = Add
 	 */
 	public function routeInfo() {
+		
 		if (strpos(php_sapi_name(), 'cli') === false) {
 			$this->module_privileges();
 			$this->get_pageinfo();
 			
-			$action_page                = [];
+			$action_role           = [];
+			$action_role['show']   = false;
+			$action_role['create'] = false;
+			$action_role['edit']   = false;
+			$action_role['delete'] = false;
+			
+			$actionPage            = [];
+			$actionPage['show']    = [];
+			$actionPage['create']  = [];
+			$actionPage['edit']    = [];
+			$actionPage['delete']  = [];
+			
+			$action_page = [];
 			$action_page['action_page'] = [];
 			
+			if (!empty($this->module_privilege['actions'])) {
+				foreach ($this->module_privilege['actions'] as $role_action) {
+					$action_role[$role_action] = true;
+				}
+			}
+			
 			if (count($this->actionButton) >= 1) {
-				if ('index' === $this->pageInfo) {
+				if ('index' === $this->pageInfo && true === $action_role['create']) {
 					$action_page['action_page'] = ["warning|add {$this->controllerName}" => $this->routeReplaceURL('index', 'create')];
-				} elseif ('create' === $this->pageInfo) {
+					
+				} elseif ('create' === $this->pageInfo && true === $action_role['create']) {
 					$action_page['action_page'] = ["info|back to {$this->controllerName} lists" => $this->routeReplaceURL('create', 'index')];
+					
 				} elseif ('edit' === $this->pageInfo) {
-					$actionPage = [];
-					if (true === $this->is_softdeleted) {
-						$actionPage[] = ["secondary|restore {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
-					} else {
-						$actionPage[] = ["danger|delete {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
+					
+					if (true === $action_role['delete']) {
+						if (true === $this->is_softdeleted) {
+							$actionPage['delete'] = ["secondary|restore {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
+						} else {
+							$actionPage['delete'] = ["danger|delete {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
+						}
 					}
-					$actionPage[] = [
-						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('edit', 'create'),
-						"success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current()),
-						"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')
-					];
+					if (true === $action_role['create']) {
+						$actionPage['create'] = ["warning|add {$this->controllerName}" => $this->routeReplaceURL('edit', 'create')];
+					}
+					if (true === $action_role['show']) {
+						$actionPage['edit'] = ["success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current())];
+						$actionPage['show'] = ["info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')];
+					}
 					
-					$action_page['action_page'] = array_merge_recursive($actionPage[0], $actionPage[1]);
+					$action_page['action_page'] = array_merge_recursive($actionPage['delete'], $actionPage['create'], $actionPage['edit'], $actionPage['show']);
 					
-				} elseif ('show' === $this->pageInfo) {
+				} elseif ('show' === $this->pageInfo && true === $action_role['show']) {
 					$action_page['action_page'] = [
 						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('show', 'create'),
 						"success|edit this {$this->controllerName}"  => url()->current() . '/edit',
