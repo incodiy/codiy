@@ -189,7 +189,7 @@ if (!function_exists('diy_table_action_button')) {
 	 * @return string
 	 */
 	function diy_table_action_button($row_data, $current_url, $action, $removed_button = null) {
-		$privileges              = session()->all()['privileges'];
+	//	$privileges              = session()->all()['privileges'];
 		$path                    = [];
 		$addActions              = [];
 		$add_path                = false;
@@ -198,7 +198,7 @@ if (!function_exists('diy_table_action_button')) {
 		$enabledAction['write']  = true;
 		$enabledAction['modify'] = true;
 		$enabledAction['delete'] = true;
-		
+		/* 
 		$actions = null;
 		if (in_array(current_route(), $privileges)) {
 			foreach ($privileges as $roles) {
@@ -211,7 +211,7 @@ if (!function_exists('diy_table_action_button')) {
 			
 			$action = $actions[routelists_info()['base_info']];
 		}
-		
+		 */
 		if (!empty($removed_button)) {
 			if (is_array($removed_button)) {
 				foreach ($removed_button as $remove) {
@@ -302,7 +302,7 @@ if (!function_exists('diy_table_action_button')) {
 				}
 			}
 		}
-		
+	//	dd($path, $add_path);
 		return create_action_buttons($path['view'], $path['edit'], $path['delete'], $add_path);
 	}
 }
