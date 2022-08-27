@@ -266,25 +266,28 @@ class Objects extends Builder {
 	 * Set Data Condition By Column
 	 * 
 	 * @param string $field_name
-	 * @param string $rule
-	 * 		: [ css style, prefix, suffix, prefix&suffix, replace, integer, float [ code: float or float|2 ] ]
-	 * @param string|array $action
-	 * 		: array used for "prefix&suffix" rule type.
-	 * 		  First array should be prefix value and second/last array should be suffix value.
 	 * @param string $target
-	 * 		: [ row, cell, field_name ]
+	 *       : [ row, cell, field_name ]
 	 * @param string $logic_operator
-	 * 		: [ =, != ] { dev:contains, !contain }
+	 *       : [ =, != ] { dev:contains, !contain }
 	 * @param string $value
+	 * @param string $rule
+	 *       : [ css style, prefix, suffix, prefix&suffix, replace, integer, float [ code: float or float|2 ] ]
+	 * @param string|array $action
+	 *       : array used for "prefix&suffix" rule type.
+	 *         First array should be prefix value and second/last array should be suffix value.
+	 * @example
+	 *       : $this->table->columnCondition('text_field', 'cell', '!==', 'Testing', 'prefix', '! ');
+	 *       : $this->table->columnCondition('text_field', 'row', '!==', 'Testing', 'background-color', '#F1F7CB');
 	 */
-	public function columnCondition(string $field_name, string $rule, $action, string $target, string $logic_operator = null, string $value = null) {
+	public function columnCondition(string $field_name, string $target, string $logic_operator = null, string $value = null, string $rule, $action) {
 		$this->conditions['columns'][] = [
 			'field_name'     => $field_name,
-			'rule'           => $rule,
-			'action'         => $action,
 			'field_target'   => $target,
 			'logic_operator' => $logic_operator,
-			'value'          => $value
+			'value'          => $value,
+			'rule'           => $rule,
+			'action'         => $action
 		];
 	}
 	

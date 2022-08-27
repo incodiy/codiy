@@ -154,7 +154,7 @@ class ModulesController extends Controller {
 		$this->form->selectbox('icon', $this->input_icons());
 		
 		if (count($this->render_value_module_name()) >= 1) {
-			$this->form->selectbox('flag_status', flag_status(), false, ['required']);
+			$this->form->selectbox('flag_status', flag_status(), 2, ['required']);
 			$this->form->selectbox('active', active_box(), false, ['required']);
 			$this->form->close('Save Module', ['class' => 'btn btn-primary btn-slideright pull-right']);
 		}

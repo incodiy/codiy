@@ -45,8 +45,8 @@ class Datatables {
 					return false;
 				}
 			}
-		} else {
 			
+		} else {
 			$filePath = explode('/', $string);
 			$lastSrc  = array_key_last($filePath);
 			$lastFile = $filePath[$lastSrc];
@@ -100,6 +100,7 @@ class Datatables {
 						foreach ($privileges['role'] as $roles) {
 							
 							if (diy_string_contained($roles, routelists_info()['base_info'])) {
+								
 								$routename = routelists_info($roles)['last_info'];
 								if (in_array($routename, ['index', 'show'])) {
 									$actions[routelists_info()['base_info']]['view'] = 'view';
