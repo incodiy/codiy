@@ -78,15 +78,21 @@ class Datatables {
 			}
 		}
 		
-		$privileges  = $this->set_module_privileges();
-		$index_lists = $data->datatables->records['index_lists'];
-		$column_data = $data->datatables->columns;
-		$action_list = false;
-		if (!empty($column_data[$table_name]['actions'])) {
-			$action_list = $column_data[$table_name]['actions'];
+		$privileges         = $this->set_module_privileges();
+		$index_lists        = $data->datatables->records['index_lists'];
+		$column_data        = $data->datatables->columns;
+		$action_list        = false;
+		$_action_lists      = [];
+		$removed_privileges = [];
+		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
 			
-			$actions       = null;
-			$_action_lists = [];
+			if (true === $column_data[$table_name]['actions']) {
+				$action_list = ['view', 'insert', 'edit', 'delete'];
+			} else {				
+				$action_list = $column_data[$table_name]['actions'];
+			}
+			
+			$actions = null;
 			if ($privileges['role_group'] > 1) {
 				if (!empty($privileges['role'])) {
 					
@@ -97,10 +103,13 @@ class Datatables {
 								$routename = routelists_info($roles)['last_info'];
 								if (in_array($routename, ['index', 'show'])) {
 									$actions[routelists_info()['base_info']]['view'] = 'view';
+									
 								} elseif (in_array($routename, ['create', 'insert'])) {
 									$actions[routelists_info()['base_info']]['insert'] = 'insert';
+									
 								} elseif (in_array($routename, ['edit', 'modify', 'update'])) {
 									$actions[routelists_info()['base_info']]['edit'] = 'edit';
+									
 								} elseif (in_array($routename, ['destroy', 'delete'])) {
 									$actions[routelists_info()['base_info']]['delete'] = 'delete';
 								}
@@ -121,11 +130,10 @@ class Datatables {
 					}
 				}
 			}
-		}
-		
-		$removed_privileges = [];
-		if (!empty(array_diff($action_list, $_action_lists))) {
-			$removed_privileges = array_diff($action_list, $_action_lists);
+			
+			if (!empty(array_diff($action_list, $_action_lists))) {
+				$removed_privileges = array_diff($action_list, $_action_lists);
+			}
 		}
 		
 		$limit = [];
@@ -279,7 +287,7 @@ class Datatables {
 		} else {
 			$action_data['action']['removed']    = $data->datatables->button_removed;
 		}
-		
+	//	dd($action_data);
 		$datatables->addColumn('action', function($model) use($action_data) {
 			return $this->setRowActionURLs($model, $action_data);
 		});

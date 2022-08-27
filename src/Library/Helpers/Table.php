@@ -195,7 +195,7 @@ if (!function_exists('diy_table_action_button')) {
 		$add_path                = false;
 		$enabledAction           = [];
 		$enabledAction['read']   = true;
-		$enabledAction['write']  = true;
+	//	$enabledAction['write']  = true;
 		$enabledAction['modify'] = true;
 		$enabledAction['delete'] = true;
 		/* 
@@ -211,14 +211,15 @@ if (!function_exists('diy_table_action_button')) {
 			
 			$action = $actions[routelists_info()['base_info']];
 		}
-		 */
+		*/
 		if (!empty($removed_button)) {
 			if (is_array($removed_button)) {
 				foreach ($removed_button as $remove) {
 					if (in_array($remove, ['show', 'view', 'index'])) {
 						$enabledAction['read']   = false;
+					} elseif (in_array($remove, ['insert'])) {
+					//	$enabledAction['write']  = false;
 					} elseif (in_array($remove, ['edit', 'modify'])) {
-						$enabledAction['write']  = false;
 						$enabledAction['modify'] = false;
 					} elseif (in_array($remove, ['delete', 'destroy'])) {
 						$enabledAction['delete'] = false;
@@ -288,8 +289,9 @@ if (!function_exists('diy_table_action_button')) {
 			$path['delete'] = "{$current_url}/{$row_data->id}/delete";
 		}
 		
-		if (false === $enabledAction['read']) $path['view'] = false;
-		if (false === $enabledAction['write'] && false === $enabledAction['modify']) $path['edit'] = false;
+		if (false === $enabledAction['read'])   $path['view']   = false;
+	//	if (false === $enabledAction['write'])  $path['insert'] = false;
+		if (false === $enabledAction['modify']) $path['edit']   = false;
 		if (false === $enabledAction['delete']) $path['delete'] = false;
 		
 		if (count($addActions) >= 1) {
@@ -302,7 +304,7 @@ if (!function_exists('diy_table_action_button')) {
 				}
 			}
 		}
-	//	dd($path, $add_path);
+	//	dd($action, $removed_button, $enabledAction, $path);
 		return create_action_buttons($path['view'], $path['edit'], $path['delete'], $add_path);
 	}
 }

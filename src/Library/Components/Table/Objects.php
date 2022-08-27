@@ -333,7 +333,7 @@ class Objects extends Builder {
 	 * 
 	 * @param string $table_name
 	 * @param array $fields
-	 * @param boolean $actions
+	 * @param boolean|string|array $actions
 	 * 	: format => string = 'button_name|button_color|button_icon'
 	 * 	: format => array  = ['view', 'edit', 'delete', 'new_button', 'button_name|button_color|button_icon']
 	 * @param boolean $server_side
