@@ -32,7 +32,20 @@ trait Action {
 	public $stored_id;
 	public $store_routeback          = true;
 	public $filter_datatables_string = null;
+	
+	public function index() {
+		$this->setPage();
 		
+		if (!empty($this->model_table)) {
+			$this->table->searchable();
+			$this->table->clickable();
+			$this->table->sortable();
+			
+			$this->table->lists($this->model_table);
+		}
+		return $this->render();
+	}
+	
 	public function create() {
 		return $this->render();
 	}

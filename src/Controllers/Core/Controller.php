@@ -75,8 +75,8 @@ class Controller extends BaseController {
 	
 	private function init_model($model = false) {
 		if (false !== $model) {
-			$routelists   = ['index', 'create', 'edit'];
-			$currentPage  = last(explode('.', current_route()));
+			$routelists  = ['index', 'create', 'edit'];
+			$currentPage = last(explode('.', current_route()));
 			
 			if (in_array($currentPage, $routelists)) {
 				$this->model_class = $model;

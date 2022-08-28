@@ -47,19 +47,19 @@ trait Scripts {
 		]);
 		
 		$initComplete	 = null;
-		$_searching     = '"searching":true,';
-		$_processing    = '"processing":true,';
-		$_retrieve      = '"retrieve":true,';
-		$_paginate      = '"paginate":true,';
-		$_searchDelay   = '"searchDelay":1000,';
-		$_bDeferRender  = '"bDeferRender":true,';
-		$_responsive    = '"responsive":false,';
-		$_autoWidth     = '"autoWidth":false,';
-		$_dom           = '"dom":"lBfrtip",';
-		$_lengthMenu    = 'lengthMenu: [[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
-		$_buttons       = '"buttons":' . $buttonset . ',';
+		$_searching     = '"searching"    :true,';
+		$_processing    = '"processing"   :true,';
+		$_retrieve      = '"retrieve"     :true,';
+		$_paginate      = '"paginate"     :true,';
+		$_searchDelay   = '"searchDelay"  :1000,';
+		$_bDeferRender  = '"bDeferRender" :true,';
+		$_responsive    = '"responsive"   :false,';
+		$_autoWidth     = '"autoWidth"    :false,';
+		$_dom           = '"dom"          :"lBfrtip",';
+		$_lengthMenu    = 'lengthMenu     : [[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
+		$_buttons       = '"buttons"      :' . $buttonset . ',';
+		$responsive     = "rowReorder     : {selector:'td:nth-child(2)'},responsive: false,";
 		$default_set	 = $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
-		$responsive     = "rowReorder: {selector:'td:nth-child(2)'},responsive: false,";
 		
 		$js_conditional = null;
 		if (!empty($data_info['conditions']['columns'])) {
@@ -87,14 +87,7 @@ trait Scripts {
 			$columns      = ",columns:{$columns}{$orderColumn}";
 			$url_path     = url(diy_current_route()->uri);
 			$hash         = hash_code_id();
-			$clickAction  = "
-.on('click','td.clickable', function(){ 
-	var getRLP = $(this).parent('tr').attr('rlp');
-	if(getRLP != false) {
-		var _rlp = parseInt(getRLP.replace('{$hash}','')-8*800/80);
-		window.location='{$url_path}/'+_rlp+'/edit'
-	}
-});";
+			$clickAction  = ".on('click','td.clickable', function(){ var getRLP = $(this).parent('tr').attr('rlp'); if(getRLP != false) { var _rlp = parseInt(getRLP.replace('{$hash}','')-8*800/80); window.location='{$url_path}/'+_rlp+'/edit'; } });";
 			$initComplete = ',' . $this->initComplete($attr_id, false);
 			
 			if (false !== $filters) {
@@ -132,7 +125,7 @@ trait Scripts {
 		foreach ($data as $idx => $_data) {
 			$data[$idx]['node'] = $icols[$_data['field_name']];
 		}
-	//	dd($data);
+		
 		$js = null;
 		if (!empty($data)) {
 			
