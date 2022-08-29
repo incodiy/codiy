@@ -242,7 +242,7 @@ class Datatables {
 			
 			$this->imageViewColumn($rowModel, $datatables);
 			
-			if (!empty($rowModel->flag_status))    $datatables->editColumn('flag_status',    function($model) {return diy_form_internal_flag_status($model->flag_status);});
+			if (!empty($rowModel->flag_status))    $datatables->editColumn('flag_status',    function($model) {return diy_unescape_html(diy_form_internal_flag_status($model->flag_status));});
 			if (!empty($rowModel->active))         $datatables->editColumn('active',         function($model) {return diy_form_set_active_value($model->active);});
 			if (!empty($rowModel->update_status))  $datatables->editColumn('update_status',  function($model) {return diy_form_set_active_value($model->update_status);});
 			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});

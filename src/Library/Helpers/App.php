@@ -1154,9 +1154,9 @@ if (!function_exists('flag_status')) {
 	 * Set Flag Status
 	 *
 	 * This function used to manage status module
-	 * 		[ 0 => Internal Root ]	: Just root user can manage and access the module
-	 * 		[ 1 => End User ]		: End user can manage and access the module | root can manage the module too, with special condition
-	 * 		[ 2 => Normal ]			: All users can manage and access the module
+	 * 		[ 0 => Super Admin ]   : Just root user can manage and access the module
+	 * 		[ 1 => Administrator ] : End user can manage and access the module | root can manage the module too, with special condition
+	 * 		[ 2 => End User ]      : All users can manage and access the module
 	 *
 	 * @return string[]
 	 */

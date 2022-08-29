@@ -362,16 +362,7 @@ if (!function_exists('diy_form_internal_flag_status')) {
 	 * @return string
 	 */
 	function diy_form_internal_flag_status($flag_row) {
-		$flaging = intval($flag_row);
-		if (0 == intval($flaging)) {
-			$flag_status = 'Internal <sup>( root )</sup>';
-		} elseif (1 == $flaging)  {
-			$flag_status = 'End User';
-		} else {
-			$flag_status = 'Normal <sup>( all )</sup>';
-		}
-		
-		return $flag_status;
+		return internal_flag_status(intval($flag_row));
 	}
 }
 
