@@ -23,15 +23,15 @@ class IncodiyTableSeeder extends Seeder {
 		// WEB PREFERENCE
 		DB::table('base_preference')->delete();
 		DB::table('base_preference')->insert([
-			'template'				=> 'default',
-			'session_name'			=> 'cbxpsscdeis',
-			'session_lifetime'	=> 1800,
-			'meta_author'			=> 'Wisnu Widiantoko',
-			'email_person'			=> 'wisnuwidi',
-			'email_address'		=> 'wisnuwidi@gmail.com',
-			'login_attempts'		=> 8,
-			'debug'					=> false,
-			'maintenance'			=> false
+			'template'         => 'default',
+			'session_name'     => 'cbxpsscdeis',
+			'session_lifetime' => 1800,
+			'meta_author'      => 'Wisnu Widiantoko',
+			'email_person'     => 'wisnuwidi',
+			'email_address'    => 'wisnuwidi@gmail.com',
+			'login_attempts'   => 8,
+			'debug'            => false,
+			'maintenance'      => false
 		]);
 		
 		// GROUP TABLE

@@ -122,10 +122,10 @@ class Modules extends Model {
 			foreach ($roleInfo as $role_value) {
 				$roleValue = intval($role_value);
 				
-				if (8 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['index',		'show'];
-				if (4 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['create',		'insert'];
-				if (2 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['edit',		'update'];
-				if (1 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['destroy',	'delete'];
+				if (8 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['index'  , 'show'];
+				if (4 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['create' , 'insert'];
+				if (2 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['edit'   , 'update'];
+				if (1 === $roleValue) $privilege_info[$base_route_name][$roleValue] = ['destroy', 'delete'];
 				
 				if (is_array($privilege_info[$base_route_name][$roleValue])) {
 					foreach ($privilege_info[$base_route_name][$roleValue] as $roleNameValue) {
