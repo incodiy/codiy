@@ -116,6 +116,7 @@ class CreateBaseTable extends Migration {
 			$table->smallInteger('change_password')->nullable();
 			$table->dateTime('last_change_password_date')->nullable();
 			$table->dateTime('expire_date')->nullable();
+			$table->text('cryptcode')->nullable();
 			
 			$table->bigInteger('created_by');
 			$table->bigInteger('updated_by')->nullable();
@@ -124,9 +125,9 @@ class CreateBaseTable extends Migration {
 			$table->softDeletes();
 			$table->smallInteger('active')->default(0);
 			
-			$table->index('email');
 			$table->index('username');
-			$table->index('fullname');
+			$table->index('email');
+			$table->index('cryptcode');
 		});
 		
 		// Groups Table
@@ -311,8 +312,8 @@ class CreateBaseTable extends Migration {
 			$table->integer('group_id')->unsigned();
 			$table->integer('module_id')->unsigned();
 			
-			$table->string('admin_privilege', 7)->nullable();
 			$table->string('index_privilege', 7)->nullable();
+			$table->string('admin_privilege', 7)->nullable();
 			
 			$table->index('group_id');
 			$table->index('module_id');

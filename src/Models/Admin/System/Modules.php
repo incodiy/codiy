@@ -52,23 +52,31 @@ class Modules extends Model {
 		
 		if (1 === intval($group)) {
 			// if logged in as root
-			if (false === $root_flag) {
-				$menu = Modules::where('active', 1)->where('flag_status', '!=', 1)->get();
-			} else {
-				$menu = Modules::where('active', 1)->get();
-			}
+			$menu = Modules::where('active', 1)->get();
+			
 		} else {
-			$menu = Modules::query($this->table)
+			$query = Modules::query($this->table)
 				->join('base_group_privilege', "{$this->table}.id", '=', 'base_group_privilege.module_id')
 				->join('base_group', 'base_group_privilege.group_id', '=', 'base_group.id')
 				
 				->where("{$this->table}.active", 1)
 				->where('base_group.id', intval($group))
 				->where($privilege_type, '!=', "'NULL'")
-				->where($privilege_type, '!=', 0)
-				->where("{$this->table}.flag_status", '!=', 0)
+				->where($privilege_type, '!=', 0);
 				
-				->get();
+			if (!empty(session()->all()['user_group'])) {
+				if (diy_string_contained(session()->all()['user_group'], 'admin')) {
+					$menu = $query->get();
+				} else {
+					$menu = $query->where("{$this->table}.flag_status", '>', 1)->get();
+				}
+			} else {
+				if (diy_string_contained(auth()->user()->username, 'admin')) {
+					$menu = $query->get();
+				} else {
+					$menu = $query->where("{$this->table}.flag_status", '>', 1)->get();
+				}
+			}
 		}
 		
 		$module_privileges = [];

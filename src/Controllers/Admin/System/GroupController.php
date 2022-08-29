@@ -28,27 +28,9 @@ class GroupController extends Controller {
 	private $_tab_config  = [];
 	private $_hide_fields = ['id'];
 	private $validations  = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
-	private $filterPage   = ['group_name' => 'admin'];
 	
 	public function __construct() {
 		parent::__construct(Group::class, 'system.config');
-	}
-	
-	private function set_data_before_insert($request, $model_id = false) {
-		if (false === $model_id) {
-			$getGroup = diy_query($this->model_table)
-				->where('group_name', $request->group_name)
-				->where('group_info', $request->group_info)
-				->first();
-		} else {
-			$getGroup = diy_query($this->model_table)->where('id', $model_id)->first();
-		}
-		
-		$this->privileges_before_insert($request, $getGroup);
-	}
-	
-	private function set_data_after_insert($data) {
-		$this->privileges_after_insert($data);
 	}
 	
 	/**
@@ -61,16 +43,16 @@ class GroupController extends Controller {
 	 */
 	public function index() {
 		$this->setPage();
+	//	$this->filterPage(['group_name' => 'admin']);
 		
 		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
 		
 		$this->table->searchable(['group_name', 'group_info']);
 		$this->table->clickable();
 		$this->table->sortable();
-	//	$this->table->lists($this->model_table, ['group_name', 'group_info', 'active']);
 		
 		$this->table->columnCondition('group_name', 'row', '==', $this->session['user_group'], 'background-color', 'rgba(222, 249, 195, 0.51)');
-		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active'], ['view', 'edit', 'delete', 'manage|lilac|gears']);
+		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active']);
 		
 		return $this->render();
 	}
@@ -105,31 +87,6 @@ class GroupController extends Controller {
 		$this->form->close('Save Group');
 		
 		return $this->render();
-	}
-	
-	/**
-	 * Validate Group 
-	 * 
-	 * created @Sep 11, 2018
-	 * author: wisnuwidi
-	 * 
-	 * @tutorial
-	 * 		:	This validation will count data group, filtered by [ $this->platform_key ] and group_name posted from data requests
-	 * 			used for detect duplicate group name in every [ $this->platform_key ]
-	 * 
-	 * @param object $request
-	 * 
-	 * @return number
-	 */
-	private function validation_groups($request) {
-		$dataReq	= $request->all();
-		if (true === is_multiplatform()) {
-			$objects	= diy_query($this->model_table)->where($this->platform_key, $dataReq[$this->platform_key])->where('group_name', $dataReq['group_name'])->get();
-		} else {
-			$objects	= diy_query($this->model_table)->where('group_name', $dataReq['group_name'])->get();
-		}
-		
-		return count($objects);
 	}
 	
 	/**
@@ -211,6 +168,7 @@ class GroupController extends Controller {
 	 */
 	public function edit($id) {	
 		$this->setPage();
+		$this->filterPage(['group_name' => 'admin']);
 		$this->get_menu();
 		
 		$this->form->model();
@@ -229,22 +187,6 @@ class GroupController extends Controller {
 		$this->form->close('Save Group');
 		
 		return $this->render();
-	}
-	
-	/**
-	 * Get Current Group Data
-	 * 
-	 * @tutorial: This data used for checking uniquee group name from group_name data posted
-	 * 
-	 * created @Sep 11, 2018
-	 * author: wisnuwidi
-	 * 
-	 * @param integer|string $id
-	 * 
-	 * @return object
-	 */
-	private function get_current_group($id) {
-		return diy_query($this->model_table)->where('id', $id)->first();
 	}
 	
 	public function update(Request $request, $id) {
@@ -278,5 +220,63 @@ class GroupController extends Controller {
 		$route_back = url()->current();
 		
 		return redirect("{$route_back}/edit");
+	}
+	
+	private function set_data_before_insert($request, $model_id = false) {
+		if (false === $model_id) {
+			$getGroup = diy_query($this->model_table)
+				->where('group_name', $request->group_name)
+				->where('group_info', $request->group_info)
+				->first();
+		} else {
+			$getGroup = diy_query($this->model_table)->where('id', $model_id)->first();
+		}
+		
+		$this->privileges_before_insert($request, $getGroup);
+	}
+	
+	private function set_data_after_insert($data) {
+		$this->privileges_after_insert($data);
+	}
+	
+	/**
+	 * Validate Group
+	 *
+	 * created @Sep 11, 2018
+	 * author: wisnuwidi
+	 *
+	 * @tutorial
+	 * 		:	This validation will count data group, filtered by [ $this->platform_key ] and group_name posted from data requests
+	 * 			used for detect duplicate group name in every [ $this->platform_key ]
+	 *
+	 * @param object $request
+	 *
+	 * @return number
+	 */
+	private function validation_groups($request) {
+		$dataReq	= $request->all();
+		if (true === is_multiplatform()) {
+			$objects	= diy_query($this->model_table)->where($this->platform_key, $dataReq[$this->platform_key])->where('group_name', $dataReq['group_name'])->get();
+		} else {
+			$objects	= diy_query($this->model_table)->where('group_name', $dataReq['group_name'])->get();
+		}
+		
+		return count($objects);
+	}
+	
+	/**
+	 * Get Current Group Data
+	 *
+	 * @tutorial: This data used for checking uniquee group name from group_name data posted
+	 *
+	 * created @Sep 11, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param integer|string $id
+	 *
+	 * @return object
+	 */
+	private function get_current_group($id) {
+		return diy_query($this->model_table)->where('id', $id)->first();
 	}
 }

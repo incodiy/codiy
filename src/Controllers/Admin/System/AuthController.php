@@ -146,6 +146,7 @@ class AuthController extends Controller {
 			$userData['last_change_password'] = $user->last_change_password_date;
 			$userData['expire_date']          = $user->expire_date;
 			$userData['updated_at']           = $user->updated_at;
+			$userData['cryptcode']            = $user->cryptcode;
 			$userData['active']               = $user->active;
 		}
 		

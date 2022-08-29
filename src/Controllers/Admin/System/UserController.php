@@ -24,6 +24,7 @@ use Incodiy\Codiy\Models\Admin\System\Timezone;
 class UserController extends Controller {
 	
 	private $group_id;
+	private $user_groups;
 	private $validations	= [
 		'username' => 'required',
 		'fullname' => 'required',
@@ -34,69 +35,6 @@ class UserController extends Controller {
 	
 	public function __construct() {
 		parent::__construct(User::class, 'system.accounts.user');
-	}
-	
-	private $user_groups;
-	private function input_group() {
-		if ('root' !== $this->session['user_group']) {
-			if (true === is_multiplatform()) {
-				$this->user_groups = Group::where('group_name', '!=', 'root')->where($this->platform_key, $this->session[$this->platform_key])->get();
-			} else {
-				$this->user_groups = Group::where('group_name', '!=', 'root')->get();
-			}
-		} else {
-			$this->user_groups = Group::all();
-		}
-		
-		return diy_selectbox($this->user_groups, 'id', 'group_info');
-	}
-	
-	private function input_language() {
-		return diy_selectbox(Language::all(), 'abbr', 'language');
-	}
-	
-	private function input_timezone() {
-		return diy_selectbox(Timezone::all(), 'id', 'timezone');
-	}
-	
-	private function set_data_before_post($request, $action_type = 'create') {
-		if (true === is_object($request)) {
-			$requests = $request;
-		} else {
-			$req      = new Request();
-			$requests = $req->merge($request);
-		}
-		
-		$group_id = [
-			'group_id' => $requests->group_id,
-			'email'    => $requests->email
-		];
-		$this->group_id = $group_id;
-		
-		$requests->offsetUnset('group_id');
-		$requests->merge(["{$action_type}d_by" => $this->session['id']]);
-	}
-	
-	private function set_data_after_post($data, $id = false) {
-		$email = $data['email'];
-		$user  = $this->model->select('id')->where('email', $email)->first();
-		unset($data['email']);
-		
-		$new_array = array_merge($data, ['user_id' => $user->id]);
-		$request   = new Request();
-		$request->merge($new_array);
-		
-		$user_group = new Usergroup();
-		if (false !== $id) {
-			$userGroup = diy_query_get_id($user_group, ['user_id' => intval($id)]);
-			if (!is_null($userGroup)) {
-				diy_update($user_group->find($userGroup->id), $request, true);
-			} else {
-				diy_insert($user_group, $request, true);
-			}
-		} else {
-			diy_insert($user_group, $request, true);
-		}
 	}
 	
 	public function index() {
@@ -248,5 +186,67 @@ class UserController extends Controller {
 		
 		$route_back = str_replace('.', '/', $this->route_page);
 		return redirect("{$route_back}/{$id}/edit");
+	}
+	
+	private function input_group() {
+		if ('root' !== $this->session['user_group']) {
+			if (true === is_multiplatform()) {
+				$this->user_groups = Group::where('group_name', '!=', 'root')->where($this->platform_key, $this->session[$this->platform_key])->get();
+			} else {
+				$this->user_groups = Group::where('group_name', '!=', 'root')->get();
+			}
+		} else {
+			$this->user_groups = Group::all();
+		}
+		
+		return diy_selectbox($this->user_groups, 'id', 'group_info');
+	}
+	
+	private function input_language() {
+		return diy_selectbox(Language::all(), 'abbr', 'language');
+	}
+	
+	private function input_timezone() {
+		return diy_selectbox(Timezone::all(), 'id', 'timezone');
+	}
+	
+	private function set_data_before_post($request, $action_type = 'create') {
+		if (true === is_object($request)) {
+			$requests = $request;
+		} else {
+			$req      = new Request();
+			$requests = $req->merge($request);
+		}
+		
+		$group_id = [
+			'group_id' => $requests->group_id,
+			'email'    => $requests->email
+		];
+		$this->group_id = $group_id;
+		
+		$requests->offsetUnset('group_id');
+		$requests->merge(["{$action_type}d_by" => $this->session['id']]);
+	}
+	
+	private function set_data_after_post($data, $id = false) {
+		$email = $data['email'];
+		$user  = $this->model->select('id')->where('email', $email)->first();
+		unset($data['email']);
+		
+		$new_array = array_merge($data, ['user_id' => $user->id]);
+		$request   = new Request();
+		$request->merge($new_array);
+		
+		$user_group = new Usergroup();
+		if (false !== $id) {
+			$userGroup = diy_query_get_id($user_group, ['user_id' => intval($id)]);
+			if (!is_null($userGroup)) {
+				diy_update($user_group->find($userGroup->id), $request, true);
+			} else {
+				diy_insert($user_group, $request, true);
+			}
+		} else {
+			diy_insert($user_group, $request, true);
+		}
 	}
 }

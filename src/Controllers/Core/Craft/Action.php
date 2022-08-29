@@ -179,6 +179,10 @@ trait Action {
 	}
 	
 	public $model_filters = [];
+	public function filterPage($filters = []) {
+		$this->model_filters = $filters;
+	}
+	
 	/**
 	 * Get Data Model
 	 *

@@ -3,7 +3,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-#use Expresscode\Models\Admin\System\User;
 use Incodiy\Codiy\Models\Admin\System\User;
 
 /**
@@ -35,16 +34,16 @@ class IncodiyTableSeeder extends Seeder {
 			'maintenance'			=> false
 		]);
 		
-		// USER TABLE
-		DB::table('users')->delete();
-		User::create(['username' => 'wisnuwidi', 'fullname' => 'Wisnu Widiantoko', 'email' => 'wisnuwidi@gmail.com', 'password' => bcrypt('@wisnuwidi'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
-		User::create(['username' => 'admin', 'fullname' => 'Administrator', 'email' => 'admin@gmail.com', 'password' => bcrypt('@admin'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
-		
 		// GROUP TABLE
 		DB::table('base_group')->delete();
-		DB::table('base_group')->insert(['group_name' => 'root', 'group_info' => 'Internal Admin', 'active' => 1]);
+		DB::table('base_group')->insert(['group_name' => 'root' , 'group_info' => 'Super Admin'  , 'active' => 1]);
 		DB::table('base_group')->insert(['group_name' => 'admin', 'group_info' => 'Administrator', 'active' => 1]);
 		
+		// USER TABLE
+		DB::table('users')->delete();
+		User::create(['username' => 'eclipsync', 'fullname' => 'Eclip Sync'   , 'email' => 'eclipsync@gmail.com', 'password' => bcrypt('@eclipsync'), 'cryptcode' => diy_user_cryptcode('eclipsync', 'eclipsync@gmail.com'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
+		User::create(['username' => 'admin'    , 'fullname' => 'Administrator', 'email' => 'admin@gmail.com'    , 'password' => bcrypt('@admin')    , 'cryptcode' => diy_user_cryptcode('admin'    , 'admin@gmail.com')    , 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+				
 		// USER RELATION GROUP TABLE
 		DB::table('base_user_group')->delete();
 		DB::table('base_user_group')->insert(['user_id'	=> 1, 'group_id' => 1]);
@@ -52,10 +51,10 @@ class IncodiyTableSeeder extends Seeder {
 		
 		// MODULE TABLE
 		DB::table('base_module')->delete();
-		DB::table('base_module')->insert(['route_path' => 'dashboard', 'parent_name' => 'Dashboard', 'module_name' => 'Dashboard', 'flag_status' => 2, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.accounts.user', 'parent_name' => 'System Config', 'module_name' => 'User', 'flag_status' => 2, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.config.group', 'parent_name' => 'System Config', 'module_name' => 'Group', 'flag_status' => 2, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.config.module', 'parent_name' => 'System Config', 'module_name' => 'Module', 'flag_status' => 0, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'dashboard'           , 'parent_name' => 'Dashboard'    , 'module_name' => 'Dashboard', 'flag_status' => 2, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.config.module', 'parent_name' => 'System Config', 'module_name' => 'Module'   , 'flag_status' => 0, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.config.group' , 'parent_name' => 'System Config', 'module_name' => 'Group'    , 'flag_status' => 0, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.accounts.user', 'parent_name' => 'System Config', 'module_name' => 'User'     , 'flag_status' => 2, 'active' => 1]);
 		
 		$this->timezone();
 		$this->languages();

@@ -180,6 +180,20 @@ if (!function_exists('diy_decrypt')) {
 	}
 }
 
+if (!function_exists('diy_user_cryptcode')) {
+	
+	/**
+	 * Encrypt
+	 *
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	function diy_user_cryptcode($user_name, $user_email) {
+		return diy_encrypt($user_name . diy_config('encode_separate') . $user_email);
+	}
+}
+
 if (!function_exists('diy_clean_strings')) {
 	
 	/**
@@ -1147,7 +1161,7 @@ if (!function_exists('flag_status')) {
 	 * @return string[]
 	 */
 	function flag_status() {
-		return [null => ''] + ['Internal ( Root )', 'End User', 'Normal ( All )'];
+		return [null => ''] + ['Super Admin', 'Administrator', 'End User'];
 	}
 }
 
@@ -1166,11 +1180,11 @@ if (!function_exists('internal_flag_status')) {
 	function internal_flag_status($flag_row) {
 		$flaging = intval($flag_row);
 		if (0 == intval($flaging)) {
-			$flag_status = 'Internal <sup>( root )</sup>';
+			$flag_status = 'Super Admin <sup>( root )</sup>';
 		} elseif (1 == $flaging)  {
-			$flag_status = 'End User';
+			$flag_status = 'Administrator';
 		} else {
-			$flag_status = 'Normal <sup>( all )</sup>';
+			$flag_status = 'End User <sup>( all )</sup>';
 		}
 		
 		return $flag_status;
