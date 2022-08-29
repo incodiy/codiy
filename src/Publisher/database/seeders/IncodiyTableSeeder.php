@@ -52,9 +52,16 @@ class IncodiyTableSeeder extends Seeder {
 		// MODULE TABLE
 		DB::table('base_module')->delete();
 		DB::table('base_module')->insert(['route_path' => 'dashboard'           , 'parent_name' => 'Dashboard'    , 'module_name' => 'Dashboard', 'flag_status' => 2, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.config.module', 'parent_name' => 'System Config', 'module_name' => 'Module'   , 'flag_status' => 0, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.config.group' , 'parent_name' => 'System Config', 'module_name' => 'Group'    , 'flag_status' => 0, 'active' => 1]);
-		DB::table('base_module')->insert(['route_path' => 'system.accounts.user', 'parent_name' => 'System Config', 'module_name' => 'User'     , 'flag_status' => 2, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.config.module', 'parent_name' => 'System Config', 'module_name' => 'Module'   , 'flag_status' => 1, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.config.group' , 'parent_name' => 'System Config', 'module_name' => 'Group'    , 'flag_status' => 1, 'active' => 1]);
+		DB::table('base_module')->insert(['route_path' => 'system.accounts.user', 'parent_name' => 'System Config', 'module_name' => 'User'     , 'flag_status' => 1, 'active' => 1]);
+		
+		// GROUP PRIVILEGES MODULE TABLE
+		DB::table('base_group_privilege')->delete();
+		DB::table('base_group_privilege')->insert(['group_id' => 2, 'module_id' => 1, 'admin_privilege' => '8:4:2:1']);
+		DB::table('base_group_privilege')->insert(['group_id' => 2, 'module_id' => 2, 'admin_privilege' => '8:4:2:1']);
+		DB::table('base_group_privilege')->insert(['group_id' => 2, 'module_id' => 3, 'admin_privilege' => '8:4:2:1']);
+		DB::table('base_group_privilege')->insert(['group_id' => 2, 'module_id' => 4, 'admin_privilege' => '8:4:2:1']);
 		
 		$this->timezone();
 		$this->languages();

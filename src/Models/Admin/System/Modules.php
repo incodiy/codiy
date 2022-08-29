@@ -55,28 +55,31 @@ class Modules extends Model {
 			$menu = Modules::where('active', 1)->get();
 			
 		} else {
-			$query = Modules::query($this->table)
-				->join('base_group_privilege', "{$this->table}.id", '=', 'base_group_privilege.module_id')
-				->join('base_group', 'base_group_privilege.group_id', '=', 'base_group.id')
+			$condition = null;
+			$query     = Modules::query($this->table)
+				->join('base_group_privilege', "{$this->table}.id"            , '=', 'base_group_privilege.module_id')
+				->join('base_group'          , 'base_group_privilege.group_id', '=', 'base_group.id')
 				
 				->where("{$this->table}.active", 1)
 				->where('base_group.id', intval($group))
 				->where($privilege_type, '!=', "'NULL'")
 				->where($privilege_type, '!=', 0);
-				
+			
 			if (!empty(session()->all()['user_group'])) {
 				if (diy_string_contained(session()->all()['user_group'], 'admin')) {
-					$menu = $query->get();
+					$condition = '>=';
 				} else {
-					$menu = $query->where("{$this->table}.flag_status", '>', 1)->get();
+					$condition = '>';
 				}
 			} else {
 				if (diy_string_contained(auth()->user()->username, 'admin')) {
-					$menu = $query->get();
+					$condition = '>=';
 				} else {
-					$menu = $query->where("{$this->table}.flag_status", '>', 1)->get();
+					$condition = '>';
 				}
 			}
+			
+			$menu = $query->where("{$this->table}.flag_status", $condition, 1)->get();
 		}
 		
 		$module_privileges = [];

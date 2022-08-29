@@ -312,8 +312,8 @@ class CreateBaseTable extends Migration {
 			$table->integer('group_id')->unsigned();
 			$table->integer('module_id')->unsigned();
 			
-			$table->string('index_privilege', 7)->nullable();
 			$table->string('admin_privilege', 7)->nullable();
+			$table->string('index_privilege', 7)->nullable();
 			
 			$table->index('group_id');
 			$table->index('module_id');
