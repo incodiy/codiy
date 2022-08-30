@@ -21,11 +21,11 @@ use Incodiy\Codiy\Models\Admin\System\Timezone;
  */
 class PreferenceController extends Controller {
 	public $data;
+	public $model;
+	public $model_table	= 'base_preference';
 	
 	private $name			= 'base_preference';
 	private $route_group	= 'system.config.preference';
-	private $model_table	= 'base_preference';
-	private $model;
 	
 	private $_set_tab		= [];
 	private $_tab_config	= [];
