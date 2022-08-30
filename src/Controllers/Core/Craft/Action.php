@@ -189,6 +189,9 @@ trait Action {
 	 * @param object $class
 	 */
 	protected function model($class, $filter = []) {
+		$routeprocessor         = ['store', 'update', 'delete'];
+		$currentPage            = last(explode('.', current_route()));
+		
 		$this->model_path       = $class;
 		$this->model_filters    = $filter;
 		$this->softDeletedModel = diy_is_softdeletes($class);
@@ -196,7 +199,9 @@ trait Action {
 		$this->model            = new $this->model_path();
 		$this->model_table      = $this->model->getTable();
 		if (true === $this->softDeletedModel) {
-			$this->model         = $this->model::withTrashed();
+			if (!in_array($currentPage, $routeprocessor)) {
+				$this->model      = $this->model::withTrashed();
+			}
 		}
 		if (!empty($this->model_filters)) {
 			$this->model         = $this->model->where($this->model_filters);

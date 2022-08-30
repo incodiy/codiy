@@ -48,11 +48,16 @@ trait RouteInfo {
 	private function get_pageinfo() {
 		$this->currentRoute   = Route::getCurrentRoute();
 		$action_route         = (object) $this->currentRoute->getAction();
-		
 		$controller_path      = $action_route->controller;
-		$slice_controller     = explode('Controllers', $controller_path);
-		$slice_controller     = explode('Controller', $slice_controller[1]);
-		$this->pageInfo       = str_replace('@', '', $slice_controller[1]);
+		
+		if (!diy_string_contained($controller_path, 'Controllers@')) {
+			$slice_controller     = explode('Controllers', $controller_path);
+			$slice_controller     = explode('Controller', $slice_controller[1]);
+			$this->pageInfo       = str_replace('@', '', $slice_controller[1]);
+		} else {
+			$slice_controller     = explode('@', $controller_path);
+			$this->pageInfo       = $slice_controller[1];
+		}
 		
 		$slice_controller     = explode('\\', $slice_controller[0]);
 		$this->controllerName = last($slice_controller);

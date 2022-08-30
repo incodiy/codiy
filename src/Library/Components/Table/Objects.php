@@ -127,6 +127,10 @@ class Objects extends Builder {
 		$this->variables['background_color'][$color] = ['code' => $color, 'text' => $text_color, 'columns' => $columns, 'header' => $header, 'body' => $body];
 	}
 	
+	public function setColumnWidth($field_name, $width = false) {
+		$this->variables['column_width'][$field_name] = $width;
+	}
+	
 	private $all_columns = 'all::columns';
 	private function checkColumnSet($columns) {
 		if (empty($columns)) {
@@ -241,6 +245,7 @@ class Objects extends Builder {
 		$this->variables['clickable_columns']  = [];
 		$this->variables['searchable_columns'] = [];
 		$this->variables['filter_groups']      = [];
+		$this->variables['column_width']       = [];
 	}
 	
 	public $conditions = [];
@@ -366,7 +371,7 @@ class Objects extends Builder {
 			$recola = [];
 			foreach ($fields as $icol => $cols) {
 				if (diy_string_contained($cols, ':')) {
-					$split_cname = explode(':', $cols);
+					$split_cname   = explode(':', $cols);
 					$this->labels[$split_cname[0]] = $split_cname[1];
 					$recola[$icol] = $split_cname[0];
 				} else {
@@ -410,12 +415,15 @@ class Objects extends Builder {
 		$attributes['table_class']  = diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
 		if (!empty($this->variables['background_color'])) $attributes['bg_color'] = $this->variables['background_color'];
 		
-		$this->params[$table_name]['actions']                   = $actions;
-		$this->params[$table_name]['buttons_removed']           = $this->button_removed;
-		$this->params[$table_name]['numbering']                 = $numbering;
-		$this->params[$table_name]['attributes']                = $attributes;
-		$this->params[$table_name]['server_side']['status']     = $server_side;
-		$this->params[$table_name]['server_side']['custom_url'] = $server_side_custom_url;
+		$this->params[$table_name]['actions']                       = $actions;
+		$this->params[$table_name]['buttons_removed']               = $this->button_removed;
+		$this->params[$table_name]['numbering']                     = $numbering;
+		$this->params[$table_name]['attributes']                    = $attributes;
+		$this->params[$table_name]['server_side']['status']         = $server_side;
+		$this->params[$table_name]['server_side']['custom_url']     = $server_side_custom_url;
+		if (!empty($this->variables['column_width'])){
+			$this->params[$table_name]['attributes']['column_width'] = $this->variables['column_width'];
+		}
 		
 		if (!empty($this->conditions)) {
 			$conditions       = $this->conditions;

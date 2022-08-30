@@ -134,10 +134,10 @@ class GroupController extends Controller {
 			$modules            = [];
 			$modules['modules'] = $requests['modules'];                  // get modules requests, if any
 			$request->offsetUnset('modules');                            // throw modules request before insert to group table)
-			$model_id           = diy_insert(new Group, $request, true); // get group id after request (get last id)
+			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
 			$callbackRequest    = $request->merge($modules);             // callback the all requests
 		} else {
-			$model_id           = diy_insert(new Group, $request, true); // get group id after request (get last id)
+			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
 			$callbackRequest    = $request;
 		}
 		

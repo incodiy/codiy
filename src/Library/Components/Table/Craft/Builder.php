@@ -119,14 +119,15 @@ class Builder {
 	}
 	
 	private function header($data = []) {
-		$columns	= $data['columns'];
+		$columns    = $data['columns'];
 		$attributes = $data['attributes'];
 		
 		$sortable	= false;
 		if (!empty($data['columns']['sortable'])) $sortable = $data['columns']['sortable'];
 		
-		$actions   = false;
-		$numbering = false;
+		$actions     = false;
+		$numbering   = false;
+		$widthColumn = [];
 		
 		// COLUMN DATA MANIPULATION
 		$attributes['sortable_columns']					= $sortable;
@@ -135,6 +136,12 @@ class Builder {
 		if (!empty($attributes)) {
 			if (!empty($attributes['actions']))   $actions   = $attributes['actions'];
 			if (!empty($attributes['numbering'])) $numbering = $attributes['numbering'];
+			
+			if (!empty($attributes['attributes']['column_width'])) {
+				foreach ($attributes['attributes']['column_width'] as $column_name => $column_width) {
+					$widthColumn[$column_name] = $column_width;
+				}
+			}
 		}
 		
 		$alignColumn = [];
@@ -210,7 +217,7 @@ class Builder {
 						$classAttributes	= null;
 						
 						if (!empty($alignColumn['header'][$column])) {
-							$classAttributes .= $alignColumn['header'][$column];//$this->setAttributes(['class' => $alignColumn['header'][$column]]);
+							$classAttributes .= $alignColumn['header'][$column];
 						}
 						
 						if ('action' === strtolower($column)) {
@@ -227,11 +234,14 @@ class Builder {
 						} elseif ('number_lists' === strtolower($column)) {
 							$headerTable .= '<th width="30"' . $headerColor . '>No</th>';
 							$headerTable .= '<th width="30"' . $headerColor . '>ID</th>';
-						} else {							
+						} else {
+							$width_column = null;
+							if (!empty($widthColumn[strtolower($column)])) $width_column = ' width="' . $widthColumn[strtolower($column)] . '"';
+							
 							if (!empty($columnColor[$column])) {
-								$headerTable .= "<th{$class}{$headerColor}{$columnColor[$column]}>{$headerLabel}</th>";
+								$headerTable .= "<th{$class}{$headerColor}{$columnColor[$column]}{$width_column}>{$headerLabel}</th>";
 							} else {
-								$headerTable .= "<th{$class}{$headerColor}>{$headerLabel}</th>";
+								$headerTable .= "<th{$class}{$headerColor}{$width_column}>{$headerLabel}</th>";
 							}
 						}
 					}
@@ -250,7 +260,6 @@ class Builder {
 	}
 	
 	private function mergeColumns($mergeColumn = [], $columns = [], $attributes = []) {
-		
 		$headerTable  = null;
 		$mergedTable  = null;
 		$setMergeText = '::merge::';
@@ -274,7 +283,7 @@ class Builder {
 						foreach ($mergeData['columns'] as $merge_column) {
 							if ($column === $merge_column) {
 								if (!empty($attributes['attributes']['column']['class'][$merge_column])) {
-									$columnClass  = $this->setAttributes(['class' => $attributes['attributes']['column']['class'][$merge_column]]);
+									$columnClass = $this->setAttributes(['class' => $attributes['attributes']['column']['class'][$merge_column]]);
 									
 									// coloring background
 									if (!empty($columnColor[$column])) {
@@ -309,7 +318,7 @@ class Builder {
 				
 				if (str_contains($column, $setMergeText)) {
 					$merge_label  = explode($setMergeText, $column);
-					$colspan	  = intval($merge_label[1]);
+					$colspan      = intval($merge_label[1]);
 					$headerLabel  = ucwords(str_replace('_', ' ', $merge_label[0]));
 					$headerTable .= "<th colspan=\"{$colspan}\"{$headerColor}>{$headerLabel}</th>";
 				} else {
@@ -331,10 +340,16 @@ class Builder {
 							$columnClass = $this->setAttributes(['class' => $classAttributes]);
 						}
 						
+						$width_column = null;
+						if (!empty($attributes['attributes']['column_width'][strtolower($column)])) {
+							$width_column = ' width="' . $attributes['attributes']['column_width'][strtolower($column)] . '"';
+						}
+						
+						
 						if (!empty($columnColor[$column])) {
-							$headerTable .= "<th rowspan=\"2\"{$columnClass}{$headerColor}{$columnColor[$column]}>{$headerLabel}</th>";
+							$headerTable .= "<th rowspan=\"2\"{$columnClass}{$headerColor}{$columnColor[$column]}{$width_column}>{$headerLabel}</th>";
 						} else {
-							$headerTable .= "<th rowspan=\"2\"{$columnClass}{$headerColor}>{$headerLabel}</th>";
+							$headerTable .= "<th rowspan=\"2\"{$columnClass}{$headerColor}{$width_column}>{$headerLabel}</th>";
 						}
 					}
 				}
