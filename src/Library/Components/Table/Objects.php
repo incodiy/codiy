@@ -324,22 +324,31 @@ class Objects extends Builder {
 	 * Format Data
 	 *
 	 * @param string|array $fields
+	 * @param int $decimal_endpoint
+	 * 	: Specifies how many decimals
 	 * @param string $separator
 	 * 	: [,], [.]
-	 * @param int|string $decimal_endpoint
-	 * 	: Specifies how many decimals
 	 * @param string $format
 	 * 	: number, boolean
 	 */
-	public function format($fields, $separator = '.', $decimal_endpoint = null, $format = 'number') {
+	public function format($fields, int $decimal_endpoint = 0, $separator = '.', $format = 'number') {
 		if (is_array($fields)) {
 			foreach ($fields as $field) {
 				$this->variables['format_data'][$field] = [
+					'field_name'       => $field,
+					'decimal_endpoint' => $decimal_endpoint,
 					'format_type'      => $format,
-					'separator'        => $separator,
-					'decimal_endpoint' => $decimal_endpoint
+					'separator'        => $separator
 				];
 			}
+			
+		} else {
+			$this->variables['format_data'][$fields] = [
+				'field_name'          => $fields,
+				'decimal_endpoint'    => $decimal_endpoint,
+				'format_type'         => $format,
+				'separator'           => $separator
+			];
 		}
 	}
 	

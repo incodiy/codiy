@@ -122,33 +122,33 @@ if (!function_exists('diy_format')) {
 	/**
 	 * Format Data
 	 *
-	 * @param string|array $data
+	 * @param string $data
+	 * @param int $decimal_endpoint
+	 * 	: Specifies how many decimals
 	 * @param string $format_type
 	 * 	: number, boolean
 	 * @param string $separator
 	 * 	: [,], [.]
-	 * @param int|string $decimal_endpoint
-	 * 	: Specifies how many decimals
 	 *
 	 * @return object
 	 */
-	function diy_format($data, $separator = '.', $decimal_endpoint = null, $format_type = 'number') {
-		$format = [];
-		if (is_array($data)) {
-			foreach ($data as $value) {
-				$format = number_format($number);
-			}
-		} else {
-			$_separator = [',', '.'];
-			if ('.' !== $separator) {
-				$_separator = ['.', ','];
+	function diy_format($data, int $decimal_endpoint = 0, $separator = '.', $format_type = 'number') {
+		if (!empty($data)) {
+			if (!empty($decimal_endpoint)) {
+				$format_type = 'decimal';
 			}
 			
-			if ($format_type === 'decimal') {
-				return number_format($data, $decimal_endpoint, $_separator[0], $_separator[1]);
+			$_separator  = [',', '.'];
+			if ('.' !== $separator) $_separator = ['.', ','];
+			
+			$format_data = null;
+			if ($format_type === 'decimal' || !empty($decimal_endpoint)) {
+				$format_data = number_format($data, $decimal_endpoint, $_separator[0], $_separator[1]);
 			} else {
-				return number_format($data, 0, $_separator[0], $_separator[1]);
+				$format_data = number_format($data, 0, $_separator[0], $_separator[1]);
 			}
+			
+			return $format_data;
 		}
 	}
 }

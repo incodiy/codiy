@@ -263,14 +263,14 @@ class Datatables {
 			}
 		}
 		
-		if (!empty($data->datatables->columns[$table_name])) {
+		if (!empty($data->datatables->columns[$table_name]['format_data'])) {
 			$data_format = $data->datatables->columns[$table_name]['format_data'];
 			
-			foreach ($data_format as $format_field => $format_info) {
-				$formatData[$format_field] = $format_info;
-				$datatables->editColumn($format_field, function($data) use ($formatData) {
-					foreach ($formatData as $fieldname => $formatInfo) {
-						return diy_format($data->getAttributes()[$fieldname], $formatInfo['separator'], $formatInfo['decimal_endpoint'], $formatInfo['format_type']);
+			foreach ($data_format as $field => $format) {
+				$datatables->editColumn($format['field_name'], function($data) use ($field, $format) {
+					if ($field === $format['field_name']) {
+						$dataValue = $data->getAttributes();
+						return diy_format($dataValue[$field], $format['decimal_endpoint'], $format['separator'], $format['format_type']);
 					}
 				});
 			}
