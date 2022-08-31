@@ -37,7 +37,7 @@ class Search {
 	public function render(string $table, array $fields) {
 		$this->search_box($table, $this->getColumnInfo($table, $fields), $this->model);
 		
-		$data = [];
+		$data         = [];
 		$data['name'] = ucwords(str_replace('-', ' ', diy_clean_strings($table)));
 		$data['html'] = $this->html;
 		
@@ -48,7 +48,7 @@ class Search {
 		return diy_query($sql, 'select');
 	}
 	
-	private $data = [];
+	private $data   = [];
 	private function getFilterData($data) {
 		$all_columns = [];
 		$relists     = [];
@@ -67,6 +67,7 @@ class Search {
 				} else {
 					$relists[$key] = $row['relate'];
 				}
+				
 			} else {
 				$relists[$key] = $row['relate'];
 			}
@@ -124,119 +125,117 @@ class Search {
 	
 	private $html = false;
 	private function search_box($name, $data, $model) {
-	    
-	    $this->form->excludeFields = ['password_field'];
-	    $this->form->hideFields    = ['id'];
-	    
-	    $script_elements = [];
-	    if (!empty($this->relations['type'])) {
-	        $field_value = [];
-	        $values      = null;
-	        $open_field  = null;
-	        
-	        if (!empty($this->relations['lists'][0])) {
-	        	$open_field = $this->relations['lists'][0];
-	        }
-	        
-	        if (!empty($open_field)) {
-	        	foreach ($this->relations['type'] as $field => $type) {
-	        		if ($open_field === $field) {
-	        			$field_value[$field] = $this->selections($name, [$field]);
-	        			if (!empty($field_value[$field]->selections[$field])) {
-	        				if (!empty($field_value[$field]->selections[$field])) {
-	        					$values = $field_value[$field]->selections[$field];
-	        				}
-	        			}
-	        		} else {
-	        			$values = null;
+		$this->form->excludeFields = ['password_field'];
+		$this->form->hideFields    = ['id'];
+	//	dd($this, $name, $data, $model);
+		
+		$script_elements = [];
+		if (!empty($this->relations['type'])) {
+			$field_value  = [];
+			$values       = null;
+			$open_field   = null;
+			
+			if (!empty($this->relations['lists'][0])) {
+				$open_field = $this->relations['lists'][0];
+			}
+			
+			if (!empty($open_field)) {
+				foreach ($this->relations['type'] as $field => $type) {
+					if ($open_field === $field) {
+						$field_value[$field] = $this->selections($name, [$field]);
+						if (!empty($field_value[$field]->selections[$field])) {
+							if (!empty($field_value[$field]->selections[$field])) {
+								$values = $field_value[$field]->selections[$field];
+							}
+						}
+					} else {
+						$values = null;
+					}
+					
+					if (!empty($values)) {
+						$attributes = ['id' => $field];
+					} else {
+						$attributes = ['disabled' => 'disabled'];
+					}
+					
+					$field_label = ucwords(diy_clean_strings($field, ' '));
+					if ('selectbox' === $type) {
+						if (null === $values) {
+							$values[null] = 'No Data ' . $field_label . ' Found';
+							ksort($values);
+						} else {
+							$values[null] = 'Select ' . $field_label;
+							ksort($values);
+						}
+					}
+					
+					if ('radiobox' === $type) {
+						if (null !== $values && count($values) > 1) $values[null] = 'Clear!';
+					}
+					
+					switch ($type) {
+						case 'selectbox':
+							$this->form->selectbox($field, $values, false, $attributes, true, false);
+							break;
+						case 'checkbox':
+							if (!empty($values)) {
+								if (!in_array('', $values) || !in_array(null, $values)) {
+									$this->form->checkbox($field, $values);
+								}
+							}
+						break;
+						case 'radiobox':
+							if (!empty($values)) {
+								if (!in_array('', $values) || !in_array(null, $values)) {
+									$this->form->radiobox($field, $values);
+								}
+							}
+							break;
+						default:
+							if (!empty($values)) $this->form->text($field, $values, ['id' => $field]);
 	        		}
-	        		
-	        		if (!empty($values)) {
-	        			$attributes = ['id' => $field];
-	        		} else {
-	        			$attributes = ['disabled' => 'disabled'];
-	        		}
-	        		
-	        		$field_label = ucwords(diy_clean_strings($field, ' '));
-	        		if ('selectbox' === $type) {
-	        			if (null === $values) {
-	        				$values[null] = 'No Data ' . $field_label . ' Found';
-	        				ksort($values);
-	        			} else {
-	        				$values[null] = 'Select ' . $field_label;
-	        				ksort($values);
-	        			}
-	        		}
-	        		if ('radiobox' === $type) {
-	        			if (null !== $values && count($values) > 1) $values[null] = 'Clear!';
-	        		}
-	        		
-	        		switch ($type) {
-	        			case 'selectbox':
-	        				$this->form->selectbox($field, $values, false, $attributes, true, false);
-	        				break;
-	        			case 'checkbox':
-	        				if (!empty($values)) {
-	        					if (!in_array('', $values) || !in_array(null, $values)) {
-	        						$this->form->checkbox($field, $values);
-	        					}
-	        				}
-	        				break;
-	        			case 'radiobox':
-	        				if (!empty($values)) {
-	        					if (!in_array('', $values) || !in_array(null, $values)) {
-	        						$this->form->radiobox($field, $values);
-	        					}
-	        				}
-	        				break;
-	        			default:
-	        				if (!empty($values)) $this->form->text($field, $values, ['id' => $field]);
-	        		}
-	        		
 	        		$script_elements[$field] = $type;
-	        	}
-	        }
-	    } else {
-	    	
-	    	foreach ($data as $field => $type) {
-	    		switch ($type) {
-	    			case 'string':
-	    				$this->form->text($field, null, ['id' => $field]);
-	    				break;
-	    			case 'text':
-	    				$this->form->text($field, null, ['id' => $field]);
-	    				break;
-	    			case 'smallint':
-	    				$this->form->selectbox($field, [], false, ['id' => $field]);
-	    				break;
-	    			case 'date':
-	    				$this->form->date($field, null, ['id' => $field]);
-	    				break;
-	    			case 'datetime':
-	    				$this->form->datetime($field, null, ['id' => $field]);
-	    				break;
-	    			case 'time':
-	    				$this->form->time($field, null, ['id' => $field]);
-	    				break;
-	    			case 'daterange':
-	    				$this->form->daterange($field, null, ['id' => $field]);
-	    				break;
-	    			default:
-	    				$this->form->text($field, null, ['id' => $field]);
-	    		}
-	    		
-	    		$script_elements[$field] = $type;
-	    	}
-	    }
+				}
+			}
+		} else {
+			
+			foreach ($data as $field => $type) {
+				switch ($type) {
+					case 'string':
+						$this->form->text($field, null, ['id' => $field]);
+						break;
+					case 'text':
+						$this->form->text($field, null, ['id' => $field]);
+						break;
+					case 'smallint':
+						$this->form->selectbox($field, [], false, ['id' => $field]);
+						break;
+					case 'date':
+						$this->form->date($field, null, ['id' => $field]);
+						break;
+					case 'datetime':
+						$this->form->datetime($field, null, ['id' => $field]);
+						break;
+					case 'time':
+						$this->form->time($field, null, ['id' => $field]);
+						break;
+					case 'daterange':
+						$this->form->daterange($field, null, ['id' => $field]);
+						break;
+					default:
+						$this->form->text($field, null, ['id' => $field]);
+				}
+				$script_elements[$field] = $type;
+			}
+		}
 	    
 		$this->addScriptsTemplate($script_elements, $name);
-	    
-	    $title      = ucwords(str_replace('-', ' ', diy_clean_strings($name)));
-	    $name       = diy_clean_strings($name);
-	    $this->html = diy_modal_content_html($name, $title, $this->form->elements);
+		$title      = ucwords(str_replace('-', ' ', diy_clean_strings($name)));
+		$name       = diy_clean_strings($name);
+		$this->html = diy_modal_content_html($name, $title, $this->form->elements);
 	}
 	
-	public $add_scripts = [];
+	public $add_scripts  = [];
 	private function addScriptsTemplate(array $element_scripts, string $table) {
 		$current_template = diy_template_config('admin.' . diy_current_template());
 		unset($current_template['position']);
@@ -262,7 +261,7 @@ class Search {
 					foreach ($data as $script_type => $script_paths) {
 						if ('js' === $script_type) {
 							foreach ($script_paths as $script_path) {
-								$this->add_scripts['js'][] = diy_script_check_string_path(str_replace('last:js', 'js', $script_path));
+								$this->add_scripts['js'][]  = diy_script_check_string_path(str_replace('last:js', 'js', $script_path));
 							}
 						} else {
 							foreach ($script_paths as $script_path) {
@@ -276,17 +275,14 @@ class Search {
 	}
 	
 	private $scriptToHTML = 'diyScriptNode::';
-	private function script_next_data($identity, $fields, $table) {
+	private function script_next_data($identity, $fields, $table) {;
 		$currKey     = key($fields['current']);
 		$next_target = null;
-		if (!empty($fields['others'][$currKey+1])) {
-			$next_target = $fields['others'][key($fields['current'])+1];
-		}
 		
-		$nests       = [];
+		if (!empty($fields['others'][$currKey+1])) $next_target = $fields['others'][key($fields['current'])+1];
 		
+		$nests       = [];		
 		$prev        = null;
-	//	$prevdata    = "null";
 		$prevscript  = "null";
 		$prevscripts = [];
 		
@@ -304,7 +300,6 @@ class Search {
 				$prevscripts[] = "$('#{$preval}').val()";
 			}
 			$prevscript = implode("+'|'+", $prevscripts);
-		//	$prevdata   = $prev;
 		}
 		
 		$nest     = null;
@@ -339,10 +334,9 @@ class Search {
 			";
 		}
 		
-		$uri	= url(diy_current_route()->uri) . '?filterDataTables=true';
-		$token	= csrf_token();
-		$target	= ucwords(str_replace('_', ' ', $next_target));
-		
+		$uri         = url(diy_current_route()->uri) . '?filterDataTables=true';
+		$token       = csrf_token();
+		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;
 		if (!empty($next_target)) {
 			$ajaxSuccess = "
@@ -350,14 +344,14 @@ class Search {
 				var _prefS{$identity}	= {$prevscript};
 				
 				$.ajax ({
-					type		: 'POST',
-					url			: '{$uri}',
-					data		: {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}'},
-					dataType	: 'json',
-					beforeSend	: function() {
+					type       : 'POST',
+					url        : '{$uri}',
+					data       : {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}'},
+					dataType   : 'json',
+					beforeSend : function() {
 						$('#cdyInpLdr{$next_target}').show();
 					},
-					success		: function(data) {
+					success    : function(data) {
 						if (data) {
 							if ('' != '{$next_target}' && null != '{$next_target}') {
 								$('#{$next_target}').removeAttr('disabled').trigger('chosen:updated');

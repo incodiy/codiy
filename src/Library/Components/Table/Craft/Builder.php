@@ -78,8 +78,14 @@ class Builder {
 		$foot .= '<th></th>';
 		$foot .= '</tr></tfoot>';
 		 */
+		$baseTableAttributes = ['id' => $tableID, 'class' => $tableClass];
+		$tableAttributes     = $baseTableAttributes;
+		if (!empty($attributes[$name]['attributes']['add_attributes'])) {
+			$tableAttributes = array_merge_recursive($baseTableAttributes, $attributes[$name]['attributes']['add_attributes']);
+		}
+		
 		$table  = '<div class="panel-body no-padding">';
-		$table .= '<table' . $this->setAttributes(['id' => $tableID, 'class' => $tableClass]) . '>';
+		$table .= '<table' . $this->setAttributes($tableAttributes) . '>';
 		$table .= $this->header($data[$name]);
 		$table .= null;
 		//	$table .= $foot;

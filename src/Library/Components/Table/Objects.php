@@ -131,6 +131,14 @@ class Objects extends Builder {
 		$this->variables['column_width'][$field_name] = $width;
 	}
 	
+	public function addAttributes($attributes = []) {
+		$this->variables['add_table_attributes'] = $attributes;
+	}
+	
+	public function setWidth(int $width, string $measurement = 'px') {
+		return $this->addAttributes(['style' => "min-width:{$width}{$measurement};"]);
+	}
+	
 	private $all_columns = 'all::columns';
 	private function checkColumnSet($columns) {
 		if (empty($columns)) {
@@ -199,12 +207,12 @@ class Objects extends Builder {
 	 * 		: inputbox, selectbox, checkbox, radiobox, datebox, daterangebox
 	 * @param boolean|string|array $relate
 	 * 		: if false = no relational Data
-	 * 		: if true = relational data set to all others columns/fieldname members
-	 * 		: if (string)fieldname / other coulumn = relate to just one that column target was setted
-	 * 		: if (array)fieldnames / others any columns = relate to any that column target was setted
+	 * 		: if true  = relational data set to all others columns/fieldname members
+	 * 		: if (string) fieldname / other column = relate to just one that column target was setted
+	 * 		: if (array) fieldnames / others any columns = relate to any that column target was setted
 	 */
 	public function filterGroups($column, $type, $relate = false) {
-		$filters = [];
+		$filters           = [];
 		$filters['column'] = $column;
 		$filters['type']   = $type;
 		$filters['relate'] = $relate;
@@ -236,17 +244,18 @@ class Objects extends Builder {
 	
 	private $variables = [];
 	private function clear_all_variables() {
-		$this->variables['merged_columns']     = [];
-		$this->variables['text_align']         = [];
-		$this->variables['background_color']   = [];
-		$this->variables['attributes']         = [];
-		$this->variables['orderby_column']     = [];
-		$this->variables['sortable_columns']   = [];
-		$this->variables['clickable_columns']  = [];
-		$this->variables['searchable_columns'] = [];
-		$this->variables['filter_groups']      = [];
-		$this->variables['column_width']       = [];
-		$this->variables['format_data']        = [];
+		$this->variables['merged_columns']       = [];
+		$this->variables['text_align']           = [];
+		$this->variables['background_color']     = [];
+		$this->variables['attributes']           = [];
+		$this->variables['orderby_column']       = [];
+		$this->variables['sortable_columns']     = [];
+		$this->variables['clickable_columns']    = [];
+		$this->variables['searchable_columns']   = [];
+		$this->variables['filter_groups']        = [];
+		$this->variables['column_width']         = [];
+		$this->variables['format_data']          = [];
+		$this->variables['add_table_attributes'] = [];
 	}
 	
 	public $conditions = [];
@@ -449,14 +458,17 @@ class Objects extends Builder {
 		$attributes['table_class']  = diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
 		if (!empty($this->variables['background_color'])) $attributes['bg_color'] = $this->variables['background_color'];
 		
-		$this->params[$table_name]['actions']                       = $actions;
-		$this->params[$table_name]['buttons_removed']               = $this->button_removed;
-		$this->params[$table_name]['numbering']                     = $numbering;
-		$this->params[$table_name]['attributes']                    = $attributes;
-		$this->params[$table_name]['server_side']['status']         = $server_side;
-		$this->params[$table_name]['server_side']['custom_url']     = $server_side_custom_url;
-		if (!empty($this->variables['column_width'])){
-			$this->params[$table_name]['attributes']['column_width'] = $this->variables['column_width'];
+		$this->params[$table_name]['actions']                         = $actions;
+		$this->params[$table_name]['buttons_removed']                 = $this->button_removed;
+		$this->params[$table_name]['numbering']                       = $numbering;
+		$this->params[$table_name]['attributes']                      = $attributes;
+		$this->params[$table_name]['server_side']['status']           = $server_side;
+		$this->params[$table_name]['server_side']['custom_url']       = $server_side_custom_url;
+		if (!empty($this->variables['column_width'])) {
+			$this->params[$table_name]['attributes']['column_width']   = $this->variables['column_width'];
+		}
+		if (!empty($this->variables['add_table_attributes'])) {
+			$this->params[$table_name]['attributes']['add_attributes'] = $this->variables['add_table_attributes'];
 		}
 		
 		if (!empty($this->conditions)) {
