@@ -204,7 +204,12 @@ class Objects extends Builder {
 	 * @param string $column
 	 * 		: field name target
 	 * @param string $type
-	 * 		: inputbox, selectbox, checkbox, radiobox, datebox, daterangebox
+	 * 		: inputbox     [no relational data $relate auto set with false], 
+	 *         datebox      [no relational data $relate auto set with false], 
+	 *         daterangebox [no relational data $relate auto set with false], 
+	 *         selectbox    [single or multi], 
+	 *         checkbox, 
+	 *         radiobox
 	 * @param boolean|string|array $relate
 	 * 		: if false = no relational Data
 	 * 		: if true  = relational data set to all others columns/fieldname members
