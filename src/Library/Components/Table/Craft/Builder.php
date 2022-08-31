@@ -399,13 +399,13 @@ class Builder {
 		$actions     = false;
 		$numbering   = false;
 		if (!empty($attributes['attributes']['table_id'])) {
-			$tableID = $attributes['attributes']['table_id'];
+			$tableID  = $attributes['attributes']['table_id'];
 		}
 		if (!empty($attributes['actions']))   $actions   = $attributes['actions'];
 		if (!empty($attributes['numbering'])) $numbering = $attributes['numbering'];
 		
 		// COLUMN DATA MANIPULATION
-		$columns	 = $columnData['lists'];
+		$columns = $columnData['lists'];
 		if (true === $numbering) {
 			$number  = ['number_lists'];
 			$columns = array_merge($number, $columns);
@@ -514,7 +514,7 @@ class Builder {
 			}
 		}
 		
-		$dt_info = [];
+		$dt_info                = [];
 		$dt_info['searchable']	= [];
 		$dt_info['name']			= $name;
 		if (!empty($data['columns']['sortable'])) $dt_info['sortable'] = $data['columns']['sortable'];
@@ -562,10 +562,10 @@ class Builder {
 					'data-backdrop'   => 'static',
 					'data-keyboard'   => 'false'
 				];
-				$dt_info['button_label']  = '<i class="fa fa-filter"></i> Filter';
-				$dt_info['action_button_removed']  = $data['attributes']['buttons_removed'];
-				$dt_info['modal_title']   = '<i class="fa fa-filter"></i> &nbsp; Filter';
-				$dt_info['modal_content'] = $search_object->render($dt_info['name'], $data['columns']['filters']);
+				$dt_info['button_label']          = '<i class="fa fa-filter"></i> Filter';
+				$dt_info['action_button_removed'] = $data['attributes']['buttons_removed'];
+				$dt_info['modal_title']           = '<i class="fa fa-filter"></i> &nbsp; Filter';
+				$dt_info['modal_content']         = $search_object->render($dt_info['name'], $data['columns']['filters']);
 			}
 		}
 		$datatables[$name]['columns']    = $dt_columns;
@@ -586,8 +586,8 @@ class Builder {
 	private function getFilterDataTables() {
 		$filter_strings = null;
 		if (!empty($_GET['filters'])) {
-			$input_filters	= [];
-			$_ajax_url		= 'renderDataTables';
+			$input_filters = [];
+			$_ajax_url     = 'renderDataTables';
 			foreach ($_GET as $name => $value) {
 				if ('filters'!== $name && '' !== $value) {
 					if (!is_array($value)) {

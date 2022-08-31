@@ -84,6 +84,7 @@ class Datatables {
 		$action_list        = false;
 		$_action_lists      = [];
 		$removed_privileges = [];
+		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
 			
 			if (true === $column_data[$table_name]['actions']) {
@@ -137,13 +138,13 @@ class Datatables {
 			}
 		}
 		
-		$limit = [];
+		$limit           = [];
 		$limit['start']  = 0;
 		$limit['length'] = 10;
 		$limit['total']  = count($model_data->get());
 		
-		if (!empty(request()->get('start')))	$limit['start']  = request()->get('start');
-		if (!empty(request()->get('length')))	$limit['length'] = request()->get('length');
+		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
+		if (!empty(request()->get('length'))) $limit['length'] = request()->get('length');
 		
 		$model = $model_data->skip($limit['start'])->take($limit['length']);
 		
@@ -175,7 +176,7 @@ class Datatables {
 						$name !== '_'
 					) {
 						if (!is_array($value)) {
-							$fstrings[] = [$name => $value];
+							$fstrings[]    = [$name => $value];
 						} else {
 							foreach ($value as $val) {
 								$fstrings[] = [$name => $val];
@@ -262,8 +263,21 @@ class Datatables {
 			}
 		}
 		
-		$rlp = false;
-		$row_attributes = [];
+		if (!empty($data->datatables->columns[$table_name])) {
+			$data_format = $data->datatables->columns[$table_name]['format_data'];
+			
+			foreach ($data_format as $format_field => $format_info) {
+				$formatData[$format_field] = $format_info;
+				$datatables->editColumn($format_field, function($data) use ($formatData) {
+					foreach ($formatData as $fieldname => $formatInfo) {
+						return diy_format($data->getAttributes()[$fieldname], $formatInfo['separator'], $formatInfo['decimal_endpoint'], $formatInfo['format_type']);
+					}
+				});
+			}
+		}
+		
+		$rlp                     = false;
+		$row_attributes          = [];
 		$row_attributes['class'] = null;
 		$row_attributes['rlp']   = null;
 		if (!empty($column_data[$table_name]['clickable'])) {
@@ -288,7 +302,7 @@ class Datatables {
 		} else {
 			$action_data['action']['removed']    = $data->datatables->button_removed;
 		}
-	//	dd($action_data);
+		
 		$datatables->addColumn('action', function($model) use($action_data) {
 			return $this->setRowActionURLs($model, $action_data);
 		});

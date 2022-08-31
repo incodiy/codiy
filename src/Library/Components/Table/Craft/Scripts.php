@@ -139,7 +139,6 @@ trait Scripts {
 					if ('row' === $condition['field_target']) $js .= "$(row).children('td').css({'{$condition['rule']}': '{$condition['action']}'});";
 					
 					if ('cell' === $condition['field_target']) {
-					//	$td_rule = $this->getJsContainMatch($condition['value'], $logic);$js .= "$(row).children('td{$td_rule}').css({'{$condition['rule']}': '{$condition['action']}'});";
 						if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule'] && 'prefix&suffix' !== $condition['rule']) {
 							$js .= "$(cells[\"{$condition['node']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
 						}

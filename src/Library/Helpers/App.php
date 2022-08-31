@@ -117,6 +117,42 @@ if (!function_exists('diy_object')) {
     }
 }
 
+if (!function_exists('diy_format')) {
+	
+	/**
+	 * Format Data
+	 *
+	 * @param string|array $data
+	 * @param string $format_type
+	 * 	: number, boolean
+	 * @param string $separator
+	 * 	: [,], [.]
+	 * @param int|string $decimal_endpoint
+	 * 	: Specifies how many decimals
+	 *
+	 * @return object
+	 */
+	function diy_format($data, $separator = '.', $decimal_endpoint = null, $format_type = 'number') {
+		$format = [];
+		if (is_array($data)) {
+			foreach ($data as $value) {
+				$format = number_format($number);
+			}
+		} else {
+			$_separator = [',', '.'];
+			if ('.' !== $separator) {
+				$_separator = ['.', ','];
+			}
+			
+			if ($format_type === 'decimal') {
+				return number_format($data, $decimal_endpoint, $_separator[0], $_separator[1]);
+			} else {
+				return number_format($data, 0, $_separator[0], $_separator[1]);
+			}
+		}
+	}
+}
+
 if (!function_exists('diy_get_model')) {
 	
 	/**

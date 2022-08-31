@@ -183,7 +183,7 @@ class Objects extends Builder {
 				$filter_columns = $this->all_columns;
 			}
 		} else {
-			$filter_columns = $columns;
+			$filter_columns    = $columns;
 		}
 		
 		$this->search_columns = $filter_columns;
@@ -246,6 +246,7 @@ class Objects extends Builder {
 		$this->variables['searchable_columns'] = [];
 		$this->variables['filter_groups']      = [];
 		$this->variables['column_width']       = [];
+		$this->variables['format_data']        = [];
 	}
 	
 	public $conditions = [];
@@ -308,7 +309,7 @@ class Objects extends Builder {
 	 * @param bool $node_after_node_location
 	 */
 	public function formula(string $name, string $label = null, array $field_lists, string $logic, string $node_location = null, bool $node_after_node_location = true) {
-		$this->labels[$name] = $label;
+		$this->labels[$name]             = $label;
 		$this->conditions['formula'][]	= [
 			'name'          => $name,
 			'label'         => $label,
@@ -317,6 +318,29 @@ class Objects extends Builder {
 			'node_location' => $node_location,
 			'node_after'    => $node_after_node_location
 		];
+	}
+	
+	/**
+	 * Format Data
+	 *
+	 * @param string|array $fields
+	 * @param string $separator
+	 * 	: [,], [.]
+	 * @param int|string $decimal_endpoint
+	 * 	: Specifies how many decimals
+	 * @param string $format
+	 * 	: number, boolean
+	 */
+	public function format($fields, $separator = '.', $decimal_endpoint = null, $format = 'number') {
+		if (is_array($fields)) {
+			foreach ($fields as $field) {
+				$this->variables['format_data'][$field] = [
+					'format_type'      => $format,
+					'separator'        => $separator,
+					'decimal_endpoint' => $decimal_endpoint
+				];
+			}
+		}
 	}
 	
 	public function set_regular_table() {
@@ -409,6 +433,7 @@ class Objects extends Builder {
 		if (!empty($this->variables['sortable_columns']))   $this->columns[$table_name]['sortable']      = $this->variables['sortable_columns'];
 		if (!empty($this->variables['searchable_columns'])) $this->columns[$table_name]['searchable']    = $this->variables['searchable_columns'];
 		if (!empty($this->variables['filter_groups']))      $this->columns[$table_name]['filter_groups'] = $this->variables['filter_groups'];
+		if (!empty($this->variables['format_data']))        $this->columns[$table_name]['format_data']   = $this->variables['format_data'];
 		
 		$this->tableID[$table_name] = diy_clean_strings("CoDIY_{$this->tableType}_" . $table_name . '_' . diy_random_strings(50, false));
 		$attributes['table_id']     = $this->tableID[$table_name];
