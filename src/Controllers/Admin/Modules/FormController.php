@@ -25,18 +25,19 @@ class FormController extends Controller {
 	
 	private $setTableFields		= ['email_field:Email', 'text_field', 'number_field:Number', 'month_field:Month', 'time_field', 'file_field', 'file_field_alt', 'updated_at'];
 	
+	private $fieldlists = ['region', 'cluster', 'category', 'distributor', 'actual', 'target'];//, 'achv%', 'weight%', 'max_cap%:Max %**', 'total_point:Total Point*'];
+	
 	public function __construct() {
-		parent::__construct();
+		parent::__construct(Form::class, 'modules');
 		
-		$this->model(Form::class);
 		
 		$this->preventInsertDbThumbnail('file_field_alt');
 	//	$this->setImageElements('file_field', 1, true);
 	//	$this->setFileElements('file_field_alt', 'file', 'txt,xlx,xlxs,pdf', 2);
 	}
 	
-	public function indexz() {
-		$this->meta->title('Form Object');
+	public function index() {
+		$this->setPage();
 		
 	//	$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);
 	//	$this->table->setCenterColumns(['month_field'], true, true);
@@ -46,7 +47,7 @@ class FormController extends Controller {
 		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
-		
+		/* 
 		$this->table->columnCondition('text_field', 'row', '!==', 'Testing', 'background-color', '#F1F7CB');
 		$this->table->columnCondition('email_field', 'row', '==', 'test@mail.com', 'background-color', '#FFC107');
 		$this->table->columnCondition('email_field', 'cell', '==', 'testing@mail.com', 'background-color', '#CDE3A2');
@@ -71,10 +72,17 @@ class FormController extends Controller {
 		
 		$this->table->lists('test_inputform', $this->setTableFields, true);
 		
+		 */
+		$this->table->filterGroups('region', 'selectbox', true);
+		$this->table->filterGroups('cluster', 'selectbox', true);
+		$this->table->filterGroups('category', 'selectbox', true);
+		
+		$this->table->lists('t_view_mantra_kpi_distributors', $this->fieldlists, false);
+		
 		return $this->render();
 	}
 	
-	public function index() {
+	public function indexX() {
 		$this->setPage('Form Object');
 		/* 
 		$this->table->mergeColumns('Text Merged Column', ['text_field', 'email_field']);

@@ -197,7 +197,6 @@ class Objects extends Builder {
 		$this->search_columns = $filter_columns;
 	}
 	
-	public $filter_groups = [];
 	/**
 	 * Set Searching Data Filter
 	 * 

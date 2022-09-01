@@ -194,7 +194,7 @@ class Builder {
 		// COLORING BACKGROUD
 		$columnColor = [];
 		$headerColor = null;
-		$bgColor	 = null;
+		$bgColor     = null;
 		if (!empty($attributes['attributes']['bg_color'])) $bgColor = $attributes['attributes']['bg_color'];
 		$tableColor  = $this->backgroundColor($bgColor);
 		if (!empty($tableColor['columns'])) $columnColor = $tableColor['columns'];
@@ -222,24 +222,18 @@ class Builder {
 						$class				= null;
 						$classAttributes	= null;
 						
-						if (!empty($alignColumn['header'][$column])) {
-							$classAttributes .= $alignColumn['header'][$column];
-						}
-						
-						if ('action' === strtolower($column)) {
-							$classAttributes .= ' diy-column-action';
-						}
-						
-						if (!empty($classAttributes)) {
-							$class = $this->setAttributes(['class' => $classAttributes]);
-						}
+						if (!empty($alignColumn['header'][$column])) $classAttributes .= $alignColumn['header'][$column];
+						if ('action' === strtolower($column))        $classAttributes .= ' diy-column-action';						
+						if (!empty($classAttributes))                $class = $this->setAttributes(['class' => $classAttributes]);
 						
 						$headerLabel = ucwords(str_replace('_', ' ', $column));
 						if ('no' === strtolower($column) || 'id' === strtolower($column) || 'nik' === strtolower($column)) {
 							$headerTable .= "<th width=\"50\"{$headerColor}>{$headerLabel}</th>";
+							
 						} elseif ('number_lists' === strtolower($column)) {
 							$headerTable .= '<th width="30"' . $headerColor . '>No</th>';
 							$headerTable .= '<th width="30"' . $headerColor . '>ID</th>';
+							
 						} else {
 							$width_column = null;
 							if (!empty($widthColumn[strtolower($column)])) $width_column = ' width="' . $widthColumn[strtolower($column)] . '"';
@@ -330,26 +324,18 @@ class Builder {
 				} else {
 					if ('no' === strtolower($column) || 'id' === strtolower($column) || 'nik' === strtolower($column)) {
 						$headerTable .= "<th rowspan=\"2\" width=\"50\"{$headerColor}>{$headerLabel}</th>";
+						
 					} elseif ('number_lists' === strtolower($column)) {
 						$headerTable .= "<th rowspan=\"2\" width=\"30\"{$headerColor}>No</th><th rowspan=\"2\" width=\"30\"{$headerColor}>ID</th>";
+						
 					} else {
 						$classAttributes = null;
-						if (!empty($attributes['attributes']['column']['class'][$column])) {
-							$classAttributes .= $attributes['attributes']['column']['class'][$column];
-						}
-						
-						if ('action' === strtolower($column)) {
-							$classAttributes .= ' diy-column-action';
-						}
-						
-						if (!empty($classAttributes)) {
-							$columnClass = $this->setAttributes(['class' => $classAttributes]);
-						}
+						if (!empty($attributes['attributes']['column']['class'][$column])) $classAttributes .= $attributes['attributes']['column']['class'][$column];						
+						if ('action' === strtolower($column))                              $classAttributes .= ' diy-column-action';						
+						if (!empty($classAttributes))                                      $columnClass = $this->setAttributes(['class' => $classAttributes]);
 						
 						$width_column = null;
-						if (!empty($attributes['attributes']['column_width'][strtolower($column)])) {
-							$width_column = ' width="' . $attributes['attributes']['column_width'][strtolower($column)] . '"';
-						}
+						if (!empty($attributes['attributes']['column_width'][strtolower($column)])) $width_column = ' width="' . $attributes['attributes']['column_width'][strtolower($column)] . '"';
 						
 						
 						if (!empty($columnColor[$column])) {
@@ -404,11 +390,9 @@ class Builder {
 		
 		$actions     = false;
 		$numbering   = false;
-		if (!empty($attributes['attributes']['table_id'])) {
-			$tableID  = $attributes['attributes']['table_id'];
-		}
-		if (!empty($attributes['actions']))   $actions   = $attributes['actions'];
-		if (!empty($attributes['numbering'])) $numbering = $attributes['numbering'];
+		if (!empty($attributes['attributes']['table_id'])) $tableID   = $attributes['attributes']['table_id'];
+		if (!empty($attributes['actions']))                $actions   = $attributes['actions'];
+		if (!empty($attributes['numbering']))              $numbering = $attributes['numbering'];
 		
 		// COLUMN DATA MANIPULATION
 		$columns = $columnData['lists'];
@@ -478,6 +462,7 @@ class Builder {
 					$dt_columns[]   = $column_id;
 				}
 				$jsonData          = [];
+				
 			} else if ($formula_column === $column) {
 				$jsonData['data']  = $column;
 				$jsonData['name']  = $column;
@@ -492,6 +477,7 @@ class Builder {
 				}
 				
 				$dt_columns[] = $jsonData;
+				
 			} else {
 				$jsonData['data']	= $column;
 				$jsonData['name']	= $column;
@@ -558,15 +544,15 @@ class Builder {
 				$dt_info['id']         = $tableID;
 				$dt_info['class']      = 'dt-button buttons-filter';
 				$dt_info['attributes'] = [
-					'id'              => "{$tableID}_cdyFILTER",
-					'class'           => "modal fade {$tableID}",
-					'role'            => 'dialog',
-					'tabindex'        => '-1',
-					'aria-hidden'     => 'true',
-					'aria-controls'   => $tableID,
-					'aria-labelledby' => $tableID,
-					'data-backdrop'   => 'static',
-					'data-keyboard'   => 'false'
+					'id'                => "{$tableID}_cdyFILTER",
+					'class'             => "modal fade {$tableID}",
+					'role'              => 'dialog',
+					'tabindex'          => '-1',
+					'aria-hidden'       => 'true',
+					'aria-controls'     => $tableID,
+					'aria-labelledby'   => $tableID,
+					'data-backdrop'     => 'static',
+					'data-keyboard'     => 'false'
 				];
 				$dt_info['button_label']          = '<i class="fa fa-filter"></i> Filter';
 				$dt_info['action_button_removed'] = $data['attributes']['buttons_removed'];
@@ -613,6 +599,7 @@ class Builder {
 					}
 				}
 			}
+			
 			$filter_strings = '&filters=true&' . implode('&', $input_filters);
 		}
 		
@@ -631,9 +618,7 @@ class Builder {
 				}
 				
 				if (empty($dataColor['columns'])) {
-					if (true === $dataColor['header']) {
-						$tableDataColor['header'] = $this->setAttributes(['style' => "background-color:{$colorCode} !important;{$textColor}"]);
-					}
+					if (true === $dataColor['header']) $tableDataColor['header'] = $this->setAttributes(['style' => "background-color:{$colorCode} !important;{$textColor}"]);
 				}
 			}
 			
