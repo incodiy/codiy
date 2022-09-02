@@ -173,7 +173,17 @@ if (!function_exists('diy_get_model')) {
 
 if (!function_exists('diy_query')) {
 	
-	function diy_query($sql, $type = 'table') {
+	/**
+	 * Query Data Table
+	 * 
+	 * @param string $sql
+	 * @param string $type
+	 * 	: 'TABLE' [by default],
+	 * 	: 'SELECT'
+	 * 
+	 * @return array|object
+	 */
+	function diy_query($sql, $type = 'TABLE') {
 		return Illuminate\Support\Facades\DB::{$type}($sql);
 	}
 }

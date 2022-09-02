@@ -272,6 +272,7 @@ trait Scripts {
 		$js  = "$('#diy-{$id}-search-box').appendTo('.cody_{$id}_diy-dt-filter-box');";
 		$js .= "$('.diy-dt-search-box').removeClass('hide');";
 		
+		$js .= "$.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name=\"csrf-token\"]').attr('content') } });";
 		$js .= "$('#{$id}_cdyFILTERForm').on('submit', function(event) {";
 			$js .= "$('#{$id}_cdyProcessing').hide();";
 			$js .= "event.preventDefault();";
@@ -302,17 +303,17 @@ trait Scripts {
 								$js .= "{$varTableID}_filterURI.push(index + '=' + value);";
 							$js .= "} else if ('object' === typeof(value)) {";
 								$js .= "$.each(value, function(idx, _val) {";
-								$js .= "{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + _val);";
-							$js .= "});";
+									$js .= "{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + _val);";
+								$js .= "});";
+							$js .= "}";
 						$js .= "}";
-					$js .= "}";
-				$js .= "});";
+					$js .= "});";
 				
-				$js .= "var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';";
-				$js .= "cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).load();";
+					$js .= "var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';";
+					$js .= "cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).load();";
 				$js .= "},";
 				
-				$js .= "complete	: function() {";
+				$js .= "complete : function() {";
 					$js .= "$('#{$id}_cdyProcessing').hide();";
 					$js .= "$('#{$id}_cdyFILTER').modal('hide');";
 				$js .= "}";

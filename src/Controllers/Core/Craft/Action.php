@@ -88,15 +88,13 @@ trait Action {
 		}
 	}
 	
-	public function insert_data(Request $request, $routeback = true) {
-		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
-	}
-	
-	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
-		$model = null;
-		$this->store_routeback = $routeback;
+	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
+		if (!empty($_GET['filterDataTables'])) {
+			if (!empty($_POST['_token'])) {
+				return $this->initFilterDatatables();
+			}
+		}
 		
-		if (!empty($_GET['filterDataTables'])) return $this->initFilterDatatables();
 		if (!empty($_GET['renderDataTables'])) {
 			if (!empty($_POST)) {
 				unset($_POST['_token']);
@@ -105,9 +103,21 @@ trait Action {
 				foreach ($_POST as $field => $value) {
 					if (!empty($value)) $input_filters[] = "infil[{$field}]={$value}";
 				}
+				
 				$this->filter_datatables_string = '&filters=true&' . implode('&', $input_filters);
 			}
 		}
+	}
+	
+	public function insert_data(Request $request, $routeback = true) {
+		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
+	}
+	
+	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
+		$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
+		
+		$model = null;
+		$this->store_routeback = $routeback;
 		
 		$req = $request->all();
 		if (isset($req['filters']) && !empty($req['filters'])) {
@@ -127,6 +137,12 @@ trait Action {
 	}
 	
 	protected function store(Request $request) {
+		if (!empty($_GET['filterDataTables'])) {
+			if (!empty($_POST['_token'])) {
+				return $this->initFilterDatatables();
+			}
+		}
+		
 		$this->INSERT_DATA_PROCESSOR($request);
 		
 		if (true === $this->store_routeback) {
@@ -287,7 +303,7 @@ trait Action {
 	
 	private function initFilterDatatables() {
 		
-		if ('false' != $_GET['filterDataTables']) {
+		if (!empty($_GET['filterDataTables'])) {
 			$fdata  = explode('::', $_POST['_fita']);
 			$table  = $fdata[1];
 			$target = $fdata[2];
@@ -333,7 +349,7 @@ trait Action {
 			}
 			
 			$wheres = implode(' AND ', $wheres);
-			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}");
+			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
 			
 			return $rows;
 		}
