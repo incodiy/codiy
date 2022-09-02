@@ -127,7 +127,6 @@ class Search {
 	private function search_box($name, $data, $model) {
 		$this->form->excludeFields = ['password_field'];
 		$this->form->hideFields    = ['id'];
-	//	dd($this, $name, $data, $model);
 		
 		$script_elements = [];
 		if (!empty($this->relations['type'])) {
@@ -142,12 +141,14 @@ class Search {
 			if (!empty($open_field)) {
 				foreach ($this->relations['type'] as $field => $type) {
 					if ($open_field === $field) {
+						
 						$field_value[$field] = $this->selections($name, [$field]);
 						if (!empty($field_value[$field]->selections[$field])) {
 							if (!empty($field_value[$field]->selections[$field])) {
 								$values = $field_value[$field]->selections[$field];
 							}
 						}
+						
 					} else {
 						$values = null;
 					}

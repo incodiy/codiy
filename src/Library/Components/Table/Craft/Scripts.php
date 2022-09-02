@@ -272,7 +272,6 @@ trait Scripts {
 		$js  = "$('#diy-{$id}-search-box').appendTo('.cody_{$id}_diy-dt-filter-box');";
 		$js .= "$('.diy-dt-search-box').removeClass('hide');";
 		
-		$js .= "$.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name=\"csrf-token\"]').attr('content') } });";
 		$js .= "$('#{$id}_cdyFILTERForm').on('submit', function(event) {";
 			$js .= "$('#{$id}_cdyProcessing').hide();";
 			$js .= "event.preventDefault();";

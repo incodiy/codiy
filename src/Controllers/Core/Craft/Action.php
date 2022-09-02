@@ -322,16 +322,16 @@ trait Action {
 			$wherepPrefious = null;
 			if ('#null' !== $prev) {
 				$previous  = explode("#", $prev);
-				$prevields = explode('|', $previous[0]);
-				$previeldt = explode('|', $previous[1]);
+				$preFields = explode('|', $previous[0]);
+				$preFieldt = explode('|', $previous[1]);
 				
 				$prevields = [];
-				foreach ($prevields as $idf => $prev_field) {
+				foreach ($preFields as $idf => $prev_field) {
 					$prevields[$idf] = $prev_field;
 				}
 				
 				$previeldt = [];
-				foreach ($previeldt as $idd => $prev_field_data) {
+				foreach ($preFieldt as $idd => $prev_field_data) {
 					$previeldt[$idd] = $prev_field_data;
 				}
 				
