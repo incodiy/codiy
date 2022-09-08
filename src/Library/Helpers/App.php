@@ -451,7 +451,7 @@ if (!function_exists('diy_random_strings')) {
 	 * @param number $length
 	 * @return string
 	 */
-	function diy_random_strings($length = 8, $symbol = true) {
+	function diy_random_strings($length = 8, $symbol = true, $string_set = null) {
 		$random_strings = '';
 		$strSymbol      = false;
 		if (true === $symbol) {
@@ -464,7 +464,11 @@ if (!function_exists('diy_random_strings')) {
 			$random_strings .= $strings[rand(0, $stringsLength - 1)];
 		}
 		
-		return $random_strings;
+		if (!empty($string_set)) {
+			return $string_set . '_' . $random_strings;
+		} else {
+			return $random_strings;
+		}
 	}
 }
 
@@ -974,8 +978,53 @@ if (!function_exists('diy_action_button_box')) {
 	}
 }
 
-
-
+if (!function_exists('diy_get_model_controllers_info')) {
+	
+	function diy_get_model_controllers_info($table_replace_map = null, $restriction_path = 'App\Http\Controllers\Admin\\') {
+		$routeLists = Route::getRoutes();
+		$models     = [];
+		
+		foreach ($routeLists as $list) {
+			$route_name = $list->getName();
+			$routeObj   = explode('.', $route_name);
+			$actionName = $list->getActionName();
+			
+			if (str_contains($actionName, $restriction_path)) {
+				// check if controller created in Admin folder
+				if (count($routeObj) > 1) {
+					if (in_array('index', $routeObj)) {
+						$controllerPath = str_replace('@index', '', $actionName);
+						$controller     = new $controllerPath();
+						$controllerName = str_replace('Controller', ' Controller', class_basename($controller));
+						
+						if (is_array($controller->model_class_path)) {
+							foreach ($controller->model_class_path as $model) {
+								$modelclass = new $model();
+								$baseRoute = str_replace('.index', '', $route_name);
+								
+								$models[$baseRoute]['controller']['route_base']  = str_replace('.index', '', $route_name);
+								$models[$baseRoute]['controller']['route_index'] = $route_name;
+								$models[$baseRoute]['controller']['path']        = $controllerPath;
+								$models[$baseRoute]['controller']['name']        = $controllerName;
+								$models[$baseRoute]['model']['name']             = class_basename($modelclass);
+								$models[$baseRoute]['model']['path']             = get_class($modelclass);
+								$models[$baseRoute]['model']['table']            = $modelclass->getTable();
+								// use if any new table set for replace current table used in model
+								if (!empty($table_replace_map)) {
+									$models[$baseRoute]['model']['table_map']     = $table_replace_map;
+								} else {
+									$models[$baseRoute]['model']['table_map']     = $modelclass->getTable();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return $models;
+	}
+}
 
 if (!function_exists('get_route_lists')) {
 	
@@ -1007,18 +1056,10 @@ if (!function_exists('get_route_lists')) {
 				if (count($routeObj) > 1) {
 					if (in_array('index', $routeObj)) {
 						$route_cat = count($routeObj);
-						if (5 === $route_cat) {
-							$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]][$routeObj[3]]['index'] = $routeObj[4];
-						}
-						if (4 === $route_cat) {
-							$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]] = $routeObj[3];
-						}
-						if (3 === $route_cat) {
-							$routelists[$routeObj[0]][$routeObj[1]]['index'] = $routeObj[2];
-						}
-						if (2 === $route_cat) {
-							$routelists[$routeObj[0]]['index'] = $routeObj[1];
-						}
+						if (5 === $route_cat) $routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]][$routeObj[3]]['index'] = $routeObj[4];
+						if (4 === $route_cat) $routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]]                        = $routeObj[3];
+						if (3 === $route_cat) $routelists[$routeObj[0]][$routeObj[1]]['index']                             = $routeObj[2];
+						if (2 === $route_cat) $routelists[$routeObj[0]]['index']                                           = $routeObj[1];
 					}
 				}
 			}

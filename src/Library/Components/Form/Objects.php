@@ -59,9 +59,7 @@ class Objects {
 	 * @author: wisnuwidi
 	 */
 	public function draw($data = []) {
-		if ($data) {
-			$this->elements[] = $data;
-		}
+		if ($data) $this->elements[] = $data;
 	}
 	
 	public function render($object) {
@@ -126,6 +124,7 @@ class Objects {
 				$type = 'action';
 			}
 		}
+		
 		$array[$type] = $path;
 		if (false !== $method) $array['method'] = $method;
 		
@@ -298,7 +297,6 @@ class Objects {
 	}
 	
 	private function getModelValue($field_name, $function_name) {
-	//	$this->getCurrentRoute();
 		$value = null;
 		
 		if ('edit' === $this->currentRouteName || 'show' === $this->currentRouteName) {
@@ -314,7 +312,7 @@ class Objects {
 				
 				$curRoute	= diy_get_current_route_id();
 				if ('show' === $this->currentRouteName) $curRoute = diy_get_current_route_id(false);
-			//	dd($model, $curRoute);
+				
 				$model = $model->find($curRoute);
 				if (!is_null($model->{$field_name})) {
 					$value = $model->{$field_name};
@@ -338,9 +336,7 @@ class Objects {
 	 * @param string|array $selected
 	 */
 	private function setModelValueAndSelectedToParams($function_name, $name, $value, $selected) {
-		if ('select' === $function_name) {
-		//	$this->getCurrentRoute();
-			
+		if ('select' === $function_name) {			
 			if ('create' === $this->currentRouteName) {
 				$value		= $value;
 				$selected	= $selected;
@@ -351,6 +347,7 @@ class Objects {
 				$value		= $value;
 				$selected	= $this->getModelValue($name, $function_name);
 			}
+			
 		} elseif ('checkbox' === $function_name) {
 			$value		= $value;
 			$selected	= $this->getModelValue($name, $function_name);
@@ -362,9 +359,11 @@ class Objects {
 				}
 				$selected = $select;
 			}
+			
 		} elseif ('radio' === $function_name) {
 			$value		= $value;
 			$selected	= $this->getModelValue($name, $function_name);
+			
 		} else {
 			$value		= $this->getModelValue($name, $function_name);
 			$selected	= $selected;

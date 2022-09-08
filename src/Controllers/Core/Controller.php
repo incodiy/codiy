@@ -70,6 +70,7 @@ class Controller extends BaseController {
 		$this->dataCollections();
 		$this->init_model($model);
 		
+		
 		if (false !== $route_page) $this->set_route_page($route_page);
 	}
 	
@@ -85,6 +86,10 @@ class Controller extends BaseController {
 			}
 			
 			$this->model_class = $model;
+		}
+		
+		if (!empty($this->model_class)) {
+			$this->model_class_path[$this->model_class] = $this->model_class;
 		}
 	}
 	

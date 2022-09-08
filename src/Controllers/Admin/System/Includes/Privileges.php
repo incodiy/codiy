@@ -132,6 +132,7 @@ trait Privileges {
 		}
 	}
 	
+	protected $module_class = [];
 	/**
 	 * Render Modular Menu Data
 	 *
@@ -139,11 +140,12 @@ trait Privileges {
 	 * author: wisnuwidi
 	 */
 	private function get_menu() {
-		$modules    = Modules::where('active', 1)->get();
-		$menuObj    = $modules;
-		$routeData  = [];
-		$parentMenu = [];
-		$mainMenu   = [];
+		$this->module_class = Modules::where('active', 1)->get();
+		$modules            = $this->module_class;
+		$menuObj            = $modules;
+		$routeData          = [];
+		$parentMenu         = [];
+		$mainMenu           = [];
 		
 		foreach ($menuObj as $menuArray) {
 			$menuData = $menuArray->getAttributes();

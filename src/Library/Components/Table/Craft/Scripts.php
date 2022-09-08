@@ -275,11 +275,11 @@ trait Scripts {
 		$js .= "$('#{$id}_cdyFILTERForm').on('submit', function(event) {";
 			$js .= "$('#{$id}_cdyProcessing').hide();";
 			$js .= "event.preventDefault();";
-			$js .= "var form = $(this);";
+			$js .= "var {$varTableID}_form = $(this);";
 			
 			$js .= "$.ajax ({";
 				$js .= "type : 'GET',";
-				$js .= "data : form.serialize(),";
+				$js .= "data : {$varTableID}_form.serialize(),";
 				$js .= "url  : '{$url}&filters=true',";
 				
 				$js .= "beforeSend : function() {";

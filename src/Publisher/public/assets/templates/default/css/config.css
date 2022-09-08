@@ -33,6 +33,10 @@ body {
 	padding: 0 3px;
 }
 
+.relative-box {
+	position: relative !important;
+}
+
 .loader {
 	background: url('../images/icon/loader.gif');
 }
@@ -66,12 +70,41 @@ body {
 	box-shadow: #f4f4f4 1px 1px 2px;
 }
 
+.full-width,
+table td .ckbox.full-width,
+table td .ckbox.full-width label,
+table td .rdio.full-width label {
+	width: 100% !important;
+}
+
+.text-left,
+table td .ckbox.text-left,
+table td .ckbox.text-left label,
+table td .rdio.text-left label {
+	text-align: left !important;
+	line-height: 12px;
+}
+
+.ckbox.text-left label::before, .rdio.text-left label::before {
+	top: 1px !important;
+	left: -1px !important;
+}
+
 table.codiy-datatable .diy-column-action {
 	min-width: 86px;
 }
 
 .diy-dt-filter-box {
 	position: relative;
+}
+
+div.input-group .cke {
+	width: 100% !important;
+}
+
+.btn.btn-primary.btn-file:hover {
+	cursor: hand !important;
+	cursor: pointer !important;
 }
 
 .diy-dt-search-box button.dt-button.buttons-filter, 
@@ -3542,7 +3575,7 @@ table.dataTable th[aria-label="No"]:after {
 table td .ckbox,
 table td .rdio label {
 	text-align: center !important;
-	width: 14px !important;
+	width: 14px;
 	height: 14px !important;
 }
 table td .ckbox label,

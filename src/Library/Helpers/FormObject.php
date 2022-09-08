@@ -1,4 +1,6 @@
 <?php
+use Collective\Html\FormFacade;
+
 /**
  * Created on 16 Mar 2021
  * Time Created	: 03:17:49
@@ -261,6 +263,24 @@ if (!function_exists('diy_form_checkList')) {
 		$o = "<div class=\"ckbox ckbox-{$class}\"><input type=\"checkbox\"{$valueAttr}{$nameAttr}{$idAttr}{$checkBox}><label{$idForAttr}>{$labelName}</label></div>";
 		
 		return $o;
+	}
+}
+
+if (!function_exists('diy_form_selectbox')) {
+	
+	function diy_form_selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => 'Select']) {
+		$default_attr = ['class' => 'chosen-select-deselect chosen-selectbox form-control'];
+		if (!empty($attributes)) {
+			$attributes = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox form-control');
+		} else {
+			$attributes = $default_attr;
+		}
+		
+		if (!empty($set_first_value)) $values = array_merge_recursive($set_first_value, $values);
+		
+		$selectbox = FormFacade::select($name, $values, $selected, $attributes);
+		
+		return $selectbox;
 	}
 }
 

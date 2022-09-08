@@ -20,7 +20,8 @@ return [
 						'vendor/node_modules/jquery/dist/jquery.min.js',
 						'vendor/node_modules/popper.js/dist/umd/popper.min.js',
 						'vendor/node_modules/bootstrap/dist/js/bootstrap.min.js',
-						'vendor/node_modules/ion-sound/js/ion.sound.min.js'
+						'vendor/node_modules/ion-sound/js/ion.sound.min.js',
+						'js/firscripts.js'
 					],
 					'css'	=> [
     					'vendor/node_modules/bootstrap/dist/css/bootstrap.css'

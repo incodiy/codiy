@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Models\Admin\System\Group;
 use Incodiy\Codiy\Controllers\Admin\System\Includes\Privileges;
+use Incodiy\Codiy\Controllers\Admin\System\Includes\MappingPage;
 
 /**
  * Created on Jan 19, 2018
@@ -19,7 +20,7 @@ use Incodiy\Codiy\Controllers\Admin\System\Includes\Privileges;
  * @email		wisnuwidi@gmail.com
  */
 class GroupController extends Controller {
-	use Privileges;
+	use Privileges, MappingPage;
 	
 	public $data;
 	
@@ -74,7 +75,7 @@ class GroupController extends Controller {
 	public function create() {
 		$this->setPage();
 		$this->get_menu();
-		
+				
 		$this->form->model();
 		$this->form->text('group_name', null, ['required']);
 		$this->form->text('group_info', null, ['required']);
@@ -115,6 +116,10 @@ class GroupController extends Controller {
 			if (true === is_multiplatform()) {
 				$request->merge([$this->platform_key => $this->session[$this->platform_key]]);
 			}
+		}
+		
+		if (!empty($_GET['rolemapage'])) {
+			return $this->renderMap($_POST);
 		}
 		
 		$this->validations['group_name'] = 'required';//'required|unique:base_group';
@@ -168,7 +173,7 @@ class GroupController extends Controller {
 	 */
 	public function edit($id) {	
 		$this->setPage();
-		$this->filterPage(['group_name' => 'admin']);
+	//	$this->filterPage(['group_name' => 'admin']);
 		$this->get_menu();
 		
 		$this->form->model();
@@ -178,9 +183,13 @@ class GroupController extends Controller {
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
 			if ('root' !== $this->model_data->group_name) {
-				// SET PRIVILEGES BOX
-				$this->form->openTab('Module Privileges');
-				$this->form->draw($this->group_privilege());
+				// SET MODULE PRIVILEGES
+			//	$this->form->openTab('Module Privileges');
+			//	$this->form->draw($this->group_privilege());
+				
+				// SET PAGE PRIVILEGES
+				$this->form->openTab('Mapping Page Privileges');
+				$this->mapping();
 				$this->form->closeTab();
 			}
 		}
@@ -189,8 +198,31 @@ class GroupController extends Controller {
 		return $this->render();
 	}
 	
+	public $mapping_page = [];
+	public function mapping() {
+		$title_id                         = 'page_privileges_' . diy_random_strings(50, false);
+		$headerData                       = [];
+		$headerData['module_id']          = [diy_table_row_attr('Module Name' , ['style' => 'text-align:center'])];
+		$headerData['target_table']       = [diy_table_row_attr('Table Name'  , ['style' => 'text-align:center'])];
+		$headerData['target_field_name']  = [diy_table_row_attr('Field Name'  , ['style' => 'text-align:center'])];
+		$headerData['target_field_value'] = [diy_table_row_attr('Field Value' , ['style' => 'text-align:center'])];
+		$header                           = array_merge_recursive($headerData['module_id'], $headerData['target_table'], $headerData['target_field_name'], $headerData['target_field_value']);
+		
+		$row_table = $this->mapping_box();
+		
+		return $this->form->draw(diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false));
+		/* 
+		$this->form->selectbox('module_id');
+		$this->form->selectbox('target_table');
+		$this->form->selectbox('target_field_name');
+		$this->form->selectbox('target_field_value');
+		
+		return $this; */
+	}
+	
 	public function update(Request $request, $id) {
 		$this->get_session();
+		
 		if ('root' !== $this->session['user_group']) {
 			if (true === is_multiplatform()) {
 				$request->merge([$this->platform_key => $this->session[$this->platform_key]]);

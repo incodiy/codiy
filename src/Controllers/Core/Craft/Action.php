@@ -195,10 +195,20 @@ trait Action {
 	}
 	
 	public $model_filters = [];
+	/**
+	 * Filter Page
+	 * 
+	 * @param array $filters
+	 * 	: [
+	 * 		'field_name' => 'value', 
+	 * 		'field_name' => 'value'
+	 * 	  ]
+	 */
 	public function filterPage($filters = []) {
 		$this->model_filters = $filters;
 	}
 	
+	public $model_class_path = null;
 	/**
 	 * Get Data Model
 	 *

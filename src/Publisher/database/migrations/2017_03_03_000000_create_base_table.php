@@ -321,6 +321,26 @@ class CreateBaseTable extends Migration {
 			$table->foreign('group_id')->references('id')->on('base_group')->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('module_id')->references('id')->on('base_module')->onUpdate('cascade')->onDelete('cascade');
 		});
+		
+		// Mapping Page Privilege Table
+		Schema::create('base_page_privilege', function (Blueprint $table) {
+			$this->set_engine($table->engine, $this->engine);
+			
+			$table->bigInteger('id', true)->unsigned();
+			
+			$table->integer('group_id')->unsigned();
+			$table->integer('module_id')->unsigned();
+			
+			$table->string('target_table', 150)->nullable();
+			$table->string('target_field_name', 50)->nullable();
+			$table->string('target_field_value', 50)->nullable();
+			
+			$table->index('group_id');
+			$table->index('module_id');
+			
+			$table->foreign('group_id')->references('id')->on('base_group')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('module_id')->references('id')->on('base_module')->onUpdate('cascade')->onDelete('cascade');
+		});
 	}
 	
 	private function multiple_modular_tables() {
@@ -918,6 +938,7 @@ class CreateBaseTable extends Migration {
 	
 	private function multiple_drop_schema() {
 		// RELATIONAL
+		Schema::dropIfExists('base_page_privilege');
 		Schema::dropIfExists('base_group_privilege');
 		Schema::dropIfExists('base_user_group');
 		

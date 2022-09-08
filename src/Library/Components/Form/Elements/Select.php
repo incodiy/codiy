@@ -24,7 +24,7 @@ trait Select {
 	 * @param array|bool $set_first_value
 	 * 		: if !false = [null => 'Select All'] or you can set the other array value
 	 */
-	public function selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => 'Select All']) {
+	public function selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => 'Select']) {
 		$attributes = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');
 		if (false !== $set_first_value) {
 			$values = array_merge($set_first_value, $values);

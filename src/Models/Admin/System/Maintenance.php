@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Maintenance extends Model {
 	use SoftDeletes;
 	
-	protected $table	= 'base_maintenance';
-	protected $guarded	= [];
-	protected $dates	= ['deleted_at'];
+	protected $table   = 'base_maintenance';
+	protected $guarded = [];
+	protected $dates   = ['deleted_at'];
 }

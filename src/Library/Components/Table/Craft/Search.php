@@ -313,7 +313,7 @@ class Search {
 				
 				$('#{$next_target}')
 					.empty()
-					.append('<option value=\"\">No Data ' + _ucwords(_reident{$next_target}) + ' Found</option>')
+					.append('<option value=\"\">No Data ' + ucwords(_reident{$next_target}) + ' Found</option>')
 					.prop('disabled', true)
 					.trigger('chosen:updated');
 				
@@ -326,7 +326,7 @@ class Search {
 							var _reident{$identity} = obj.replace('_', ' ');
 							$('#' + obj)
 								.empty()
-								.append('<option value=\"\">No Data ' + _ucwords(_reident{$identity}) + ' Found</option>')
+								.append('<option value=\"\">No Data ' + ucwords(_reident{$identity}) + ' Found</option>')
 								.prop('disabled', true)
 								.trigger('chosen:updated');
 						}
@@ -387,23 +387,12 @@ class Search {
 		$FieldSets = [];
 		if (!empty($fields)) {
 			foreach ($fields as $index => $field) {
-				if ($index >= 1) {
-					$FieldSets[] = "$('#{$field}').before('<span class=\"inputloader loader hide\" id=\"cdyInpLdr{$field}\"></span>');";
-				}
+				if ($index >= 1) $FieldSets[] = "loader('{$field}');";
 			}
 		}
 		$fieldScripts = implode('', $FieldSets);
-		
-		$script = "
-			function _ucwords (str) {
-			    return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
-			        return $1.toUpperCase();
-			    });
-			}
-			{$fieldScripts}
-		";
-		
-		$this->add_scripts['js'][] = "{$this->scriptToHTML}{$script}";
+				
+		$this->add_scripts['js'][] = "{$this->scriptToHTML}{$fieldScripts}";
 	}
 	
 	private function getColumnInfo(string $table, array $fields) {
