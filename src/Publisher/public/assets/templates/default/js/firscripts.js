@@ -5,11 +5,12 @@ function ucwords(str, force) {
 	});
 }
 
-function updateSelectChosen(target, optstring = 'Select an Option') {
-	$(target)
-		.find('option').remove().end()
-		.append('<option value=\"\">' + optstring + '</option>')
-		.trigger('chosen:updated');
+function updateSelectChosen(target, reset = true, optstring = 'Select an Option') {
+	var chosenTarget = $(target);
+	if (true === reset) {
+		chosenTarget.find('option').remove().end();
+	}
+	chosenTarget.append('<option value=\"\">' + optstring + '</option>').trigger('chosen:updated');
 }
 
 function loader(target_id, view = 'hide') {
@@ -19,7 +20,7 @@ function loader(target_id, view = 'hide') {
 	if ('remove' == view) {
 		$('span.inputloader').remove();
 	} else if ('fadeOut' == view) {
-		$('span.inputloader').fadeOut(1800);
+		$('span.inputloader').fadeOut(1800, function() { $(this).remove(); });
 	} else {
 		$(_loaderTarget).before('<span class=\"inputloader loader ' + view + '\" id=\"'+ _loaderID + '\"></span>');
 	}

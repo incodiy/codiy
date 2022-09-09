@@ -451,7 +451,7 @@ if (!function_exists('diy_random_strings')) {
 	 * @param number $length
 	 * @return string
 	 */
-	function diy_random_strings($length = 8, $symbol = true, $string_set = null) {
+	function diy_random_strings($length = 8, $symbol = true, $string_set = null, $node = '_') {
 		$random_strings = '';
 		$strSymbol      = false;
 		if (true === $symbol) {
@@ -465,7 +465,7 @@ if (!function_exists('diy_random_strings')) {
 		}
 		
 		if (!empty($string_set)) {
-			return $string_set . '_' . $random_strings;
+			return $string_set . $node . $random_strings;
 		} else {
 			return $random_strings;
 		}

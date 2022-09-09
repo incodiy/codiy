@@ -43,7 +43,8 @@ return [
 					'last'	=> [
 						'js'	=> [
 							'js/plugins.js',
-							'js/scripts.js'
+							'js/scripts.js',
+							'js/diyscripts.js'
 						],
 						'css'	=> []
 					]

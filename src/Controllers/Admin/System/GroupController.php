@@ -119,7 +119,7 @@ class GroupController extends Controller {
 		}
 		
 		if (!empty($_GET['rolemapage'])) {
-			return $this->renderMap($_POST);
+			return $this->renderMap($_POST, $_GET['usein']);
 		}
 		
 		$this->validations['group_name'] = 'required';//'required|unique:base_group';
@@ -196,28 +196,6 @@ class GroupController extends Controller {
 		$this->form->close('Save Group');
 		
 		return $this->render();
-	}
-	
-	public $mapping_page = [];
-	public function mapping() {
-		$title_id                         = 'page_privileges_' . diy_random_strings(50, false);
-		$headerData                       = [];
-		$headerData['module_id']          = [diy_table_row_attr('Module Name' , ['style' => 'text-align:center'])];
-		$headerData['target_table']       = [diy_table_row_attr('Table Name'  , ['style' => 'text-align:center'])];
-		$headerData['target_field_name']  = [diy_table_row_attr('Field Name'  , ['style' => 'text-align:center'])];
-		$headerData['target_field_value'] = [diy_table_row_attr('Field Value' , ['style' => 'text-align:center'])];
-		$header                           = array_merge_recursive($headerData['module_id'], $headerData['target_table'], $headerData['target_field_name'], $headerData['target_field_value']);
-		
-		$row_table = $this->mapping_box();
-		
-		return $this->form->draw(diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false));
-		/* 
-		$this->form->selectbox('module_id');
-		$this->form->selectbox('target_table');
-		$this->form->selectbox('target_field_name');
-		$this->form->selectbox('target_field_value');
-		
-		return $this; */
 	}
 	
 	public function update(Request $request, $id) {
