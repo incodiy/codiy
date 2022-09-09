@@ -122,7 +122,7 @@ class GroupController extends Controller {
 			return $this->renderMap($_POST, $_GET['usein']);
 		}
 		
-		$this->validations['group_name'] = 'required';//'required|unique:base_group';
+		$this->validations['group_name'] = 'required|unique:base_group';
 		$request->validate($this->validations);
 		$this->validate(request(), [
 			'group_name' => [function ($attribute, $value, $fail) {

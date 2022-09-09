@@ -60,7 +60,7 @@ trait MappingPage {
 					$rows['field_name'] = $explode[1];
 					
 					$fieldset = $rows['field_name'];
-					$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']};", 'SELECT');
+					$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
 				}
 				
 				$rows  = [];
@@ -147,7 +147,7 @@ trait MappingPage {
 							];
 							$resultBox['scripts']['table'] = [
 								diy_table_row_attr (
-									$this->js_rolemap_table($tableID, $fieldID) . 
+									$this->js_rolemap_table($tableID, $fieldID, $valueID) . 
 									$this->js_rolemap_fieldname($fieldID, $valueID), 
 									['align' => 'center', 'id' => strtolower($module_name) . '-row']
 								)								
@@ -200,9 +200,9 @@ trait MappingPage {
 		$this->ajaxUrli = $current_url . '?' . implode('&', $uri);
 	}
 	
-	private function js_rolemap_table($id, $target_id) {
+	private function js_rolemap_table($id, $target_id, $second_target) {
 		$this->ajax_urli('table_name');
-		return "<script type='text/javascript'>$(document).ready(function() { mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}'); });</script>";
+		return "<script type='text/javascript'>$(document).ready(function() { mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}'); });</script>";
 	}
 	
 	private function js_rolemap_fieldname($id, $target_id) {
