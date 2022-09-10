@@ -547,9 +547,26 @@ if (!function_exists('diy_current_baseroute')) {
 	 * @return mixed
 	 */
 	function diy_current_baseroute() {
-		$lastRoute = _last_explode('.', _current_route()->getName());
+		$lastRoute = diy_last_explode('.', diy_current_route()->getName());
 		
-		return str_replace(".{$lastRoute}", '', _current_route()->getName());
+		return str_replace(".{$lastRoute}", '', diy_current_route()->getName());
+	}
+}
+
+if (!function_exists('diy_last_explode')) {
+	/**
+	 * Get Last Array
+	 *
+	 * created @Dec 11, 2018
+	 * author: wisnuwidi
+	 *
+	 * @param string $delimeter
+	 * @param array $array
+	 *
+	 * @return mixed
+	 */
+	function diy_last_explode($delimeter, $array) {
+		return last(explode($delimeter, $array));
 	}
 }
 

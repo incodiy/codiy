@@ -119,7 +119,7 @@ class GroupController extends Controller {
 		}
 		
 		if (!empty($_GET['rolemapage'])) {
-			return $this->renderMap($_POST, $_GET['usein']);
+			return $this->rolepage($_POST, $_GET['usein']);
 		}
 		
 		$this->validations['group_name'] = 'required|unique:base_group';

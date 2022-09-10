@@ -48,6 +48,17 @@ body {
 .modal-content .modal-header button.close {
 	
 }
+#mapping-page-privileges .chosen-container:first-child {
+	margin-top: 0 !important;
+}
+#mapping-page-privileges .chosen-container {
+	margin-top: 2px !important;
+	margin-bottom: 2px !important;
+}
+
+#mapping-page-privileges div#role-filter-query .chosen-container:first-child {
+/* 	margin-top: 0 !important; */
+}
 
 .inputloader {
 	width: 30px;
@@ -5223,7 +5234,7 @@ div.dataTables_paginate ul.pagination {
 }
 div.dt-buttons {
 	margin: 1% 1.5% 0% 1.5%;
-	width: calc(100% - 402px);
+	width: calc(100% - 420px);
 	text-align: center;
 	font-weight: lighter;
 }

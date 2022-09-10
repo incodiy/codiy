@@ -457,7 +457,7 @@ if (!function_exists('diy_table_row_attr')) {
 	 * Set Default Row Attributes for Table
 	 *
 	 * @param string $str_value
-	 * @param string $attribute
+	 * @param string $attributes
 	 * 		=> colspan=2|id=idLists OR ['colspan' => 2, 'id' => 'idLists']
 	 *
 	 * @return string

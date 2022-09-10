@@ -1,6 +1,8 @@
 <?php
 namespace Incodiy\Codiy\Controllers\Admin\System\Includes;
 
+use Incodiy\Codiy\Models\Admin\System\MappingPage as MappingData;
+
 /**
  * Created on Sep 6, 2022
  * 
@@ -19,7 +21,7 @@ trait MappingPage {
 	private $mapTable;
 	
 	public $mapping_page = [];
-	public function mapping() {
+	private function mapping() {
 		$title_id                         = 'page_privileges_' . diy_random_strings(50, false);
 		$headerData                       = [];
 		$headerData['module_id']          = [diy_table_row_attr('Module Name' , ['style' => 'text-align:center'])];
@@ -33,46 +35,8 @@ trait MappingPage {
 		return $this->form->draw(diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false));
 	}
 	
-	public function renderMap($data, $usein) {
-		$this->getFieldName($data, $usein);
-	}
-	
-	private function getFieldName($data, $usein) {
-		if ('table_name' === $usein) {
-			$fields = [];
-			foreach (diy_get_table_columns($data['table_name']) as $fieldname) {
-				$fields[$fieldname] = $fieldname;
-			}
-			
-			$data = json_encode($fields);
-		}
-		
-		if ('field_name' === $usein) {
-			$rows  = [];
-			$query = [];
-			if (is_array($data['field_name'])) {
-				
-				$fieldset = [];
-				foreach ($data['field_name'] as $value) {
-					$explode = explode('::', $value);
-					
-					$rows['table_name'] = explode($this->nodeID, $explode[0])[0];
-					$rows['field_name'] = $explode[1];
-					
-					$fieldset = $rows['field_name'];
-					$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
-				}
-				
-				$rows  = [];
-				foreach ($query as $row) {
-					$rows[$row->{$fieldset}] = $row->{$fieldset};
-				}
-				
-				$data = json_encode($rows);
-			}
-		}
-		
-		echo $data;
+	public function rolepage($data, $usein) {
+		return MappingData::getFieldName($data, $usein, $this->nodeID);
 	}
 	
 	private $model_class_info;
@@ -145,11 +109,14 @@ trait MappingPage {
 								diy_table_row_attr($roleColumns['field_name'] , $opt),
 								diy_table_row_attr($roleColumns['field_value'], $opt)
 							];
+							
+							$nodebtn = "node_btn_{$tableID}{$this->nodeActionButton}{$fieldID}{$this->nodeActionButton}{$valueID}";
 							$resultBox['scripts']['table'] = [
 								diy_table_row_attr (
-									$this->js_rolemap_table($tableID, $fieldID, $valueID) . 
+									$this->buttonAdd($nodebtn, $tableID, $fieldID, $valueID) . 
+									$this->js_rolemap_table($tableID, $fieldID, $valueID, $nodebtn) . 
 									$this->js_rolemap_fieldname($fieldID, $valueID), 
-									['align' => 'center', 'id' => strtolower($module_name) . '-row']
+									['align' => 'center', 'id' => strtolower($module_name) . '-row', 'width' => 70, 'style' => 'padding:8px']
 								)								
 							];
 							
@@ -174,7 +141,7 @@ trait MappingPage {
 					$child_title = ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					//	$row_table[] = $this->_checkboxes($child_title, $data_module, $icon, 'text-indent:15pt');
+					$row_table[] = $this->_checkboxes($child_title, $data_module, $icon, 'text-indent:15pt');
 				}
 			}
 			
@@ -185,7 +152,7 @@ trait MappingPage {
 	
 	private $ajaxUrli = null;
 	private function ajax_urli($usein) {
-		$current_url  = url('system/config/group');
+		$current_url  = url(str_replace('.', '/', diy_current_baseroute()));
 		$urlset       = [
 			'rolemapage' => 'true',
 			'usein'      => $usein,
@@ -200,13 +167,30 @@ trait MappingPage {
 		$this->ajaxUrli = $current_url . '?' . implode('&', $uri);
 	}
 	
-	private function js_rolemap_table($id, $target_id, $second_target) {
+	private function js_rolemap_table($id, $target_id, $second_target, $nodebtn) {
 		$this->ajax_urli('table_name');
-		return "<script type='text/javascript'>$(document).ready(function() { mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}'); });</script>";
+		return "<script type='text/javascript'>$(document).ready(function() { mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}'); });</script>";
 	}
 	
 	private function js_rolemap_fieldname($id, $target_id) {
 		$this->ajax_urli('field_name');
 		return "<script type='text/javascript'>$(document).ready(function() { mappingPageFieldnameValues('{$id}', '{$target_id}', '{$this->ajaxUrli}'); });</script>";
+	}
+	
+	private $nodeActionButton = '__btnact__';
+	private function buttonAdd($node_btn, $id, $target_id, $second_target) {
+		$this->ajax_urli('field_name');
+		$btn = "
+			<div id='{$node_btn}' class='action-buttons-box'>
+				<div class='hidden-sm hidden-xs action-buttons'>
+					<a id='plus{$node_btn}' class='btn btn-success btn-xs btn_view'>
+						<i class='fa fa-plus-circle' aria-hidden='true'></i>
+					</a><a id='minus{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-minus-circle' aria-hidden='true'></i></a>
+				</div>
+			</div>
+		";
+		
+		$js = "<script type='text/javascript'>$(document).ready(function() {mappingPageButtonManipulation('{$node_btn}', '{$id}', '{$target_id}', '{$second_target}', '{$this->ajaxUrli}');});</script>";
+		return $btn . $js;
 	}
 }
