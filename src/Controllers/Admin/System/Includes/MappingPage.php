@@ -92,15 +92,21 @@ trait MappingPage {
 							$roleColumns['table_name']     = diy_form_checkList($roleAttributes['table_name'] , $roleData['model']['table_map'], $roleData['model']['table_map'], false, 'success read-select full-width text-left', $tableID);
 							
 							$fieldID                       = $this->setID($roleData['model']['table_map']);
-							$roleColumns['field_name']     = '<div class="' . $routeToAttribute . ' relative-box" id="role-filter-query role-filter-query-field-table">';
-							$roleColumns['field_name']    .= diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , false, ['id' => $fieldID, 'class' => $routeToAttribute], false);
-							$roleColumns['field_name']    .= '</div>';
+							$roleColumns['field_name']     = '<div class="' . $routeToAttribute . ' relative-box role-filter-query" id="role-filter-query role-filter-query-field-table">';
+							$roleColumns['field_name']    .= "<div id=\"row-box-{$fieldID}\" class=\"relative-box row-box-{$fieldID}\">" . diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , false, ['id' => $fieldID, 'class' => $routeToAttribute], false);
+							$roleColumns['field_name']    .= "<span id=\"remove-row{$fieldID}\" class=\"remove-row{$fieldID} multi-chain-buttons\"><i class='fa fa-minus-circle' aria-hidden='true'></i></span>";
+							$roleColumns['field_name']    .= "</div></div>";
 							
+							$valueID                       = $this->setID($roleData['model']['table_map']);
+							$roleColumns['field_value']    = '<div class="' . $routeToAttribute . ' relative-box role-filter-query" id="role-filter-query role-filter-query-field-value-table">';
+							$roleColumns['field_value']   .= "<div id=\"row-box-{$valueID}\" class=\"relative-box row-box-{$fieldID}\">" . diy_form_selectbox($roleAttributes['field_value'] , $roleValues['field_value'] , false, ['id' => $valueID, 'class' => $routeToAttribute], false);
+							$roleColumns['field_value']   .= "</div></div>";
+							/* 
 							$valueID                       = $this->setID($roleData['model']['table_map']);
 							$roleColumns['field_value']    = '<div class="' . $routeToAttribute . ' relative-box" id="role-filter-query role-filter-query-field-value-table">';
 							$roleColumns['field_value']   .= diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], false, ['id' => $valueID, 'class' => $routeToAttribute], false);
 							$roleColumns['field_value']   .= '</div>';
-							
+							 */
 							$opt                  = ['align' => 'center', 'id' => strtolower($module_name) . '-row'];
 							$resultBox            = [];
 							$resultBox['head']    = [diy_table_row_attr($icon . $module_name, ['style' => 'text-indent:25pt', 'id' => strtolower($module_name) . '-row'])];
@@ -180,15 +186,13 @@ trait MappingPage {
 	private $nodeActionButton = '__btnact__';
 	private function buttonAdd($node_btn, $id, $target_id, $second_target) {
 		$this->ajax_urli('field_name');
-		$btn = "
-			<div id='{$node_btn}' class='action-buttons-box'>
-				<div class='hidden-sm hidden-xs action-buttons'>
-					<a id='plus{$node_btn}' class='btn btn-success btn-xs btn_view'>
-						<i class='fa fa-plus-circle' aria-hidden='true'></i>
-					</a><a id='minus{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-minus-circle' aria-hidden='true'></i></a>
-				</div>
-			</div>
-		";
+		
+		$btn  = "<div id='{$node_btn}' class='action-buttons-box'>";
+		$btn .= "<div class='hidden-sm hidden-xs action-buttons'>";
+		$btn .= "<a id='plus{$node_btn}' class='btn btn-success btn-xs btn_view'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>";
+		$btn .= "<a id='reset{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-recycle' aria-hidden='true'></i></a>";
+		$btn .= "</div>";
+		$btn .= "</div>";
 		
 		$js = "<script type='text/javascript'>$(document).ready(function() {mappingPageButtonManipulation('{$node_btn}', '{$id}', '{$target_id}', '{$second_target}', '{$this->ajaxUrli}');});</script>";
 		return $btn . $js;

@@ -37,6 +37,31 @@ body {
 	position: relative !important;
 }
 
+.multi-chain-buttons {
+	position: absolute;
+	right: -10%;
+	top: 20%;
+}
+
+.multi-chain-buttons:hover {
+	cursor: hand;
+	cursor: pointer;
+}
+
+.multi-chain-buttons .fa-minus-circle {
+	color: #E9573F;
+}
+
+.multi-chain-buttons .fa-plus-circle {
+	color: #8CC152;
+}
+/* 
+.multi-chain-buttons .fa-minus-circle::before {
+	border: #E9573F solid 1px;
+	border-radius: 50%;
+	padding: 1px 2px 1px 1px;
+}
+ */
 .loader {
 	background: url('../images/icon/loader.gif');
 }
@@ -69,6 +94,11 @@ body {
 	background-size: 30px;
 	right: 30px;
 	top: 1px;
+}
+
+.role-filter-query > .relative-box > span.inputloader {	
+	right: 14pt !important;
+	top: 2pt !important;
 }
 
 .cdy-img-thumb {
