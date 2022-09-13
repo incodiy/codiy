@@ -355,14 +355,14 @@ trait Privileges {
 		foreach ($this->menu_privileges as $parent => $childs) {
 			$parent_title	= ucwords(str_replace('_', ' ', $parent));
 			if (!empty($childs->name)) $parent_title = $childs->name;
-			$row_table[]	= [diy_table_row_attr($icon . $parent_title, ['style' => 'font-weight:500;text-indent:5pt', 'colspan' => 9])];
+			$row_table[]	= [diy_table_row_attr($icon . $parent_title, ['style' => 'font-weight:500;text-indent:5pt;color:black', 'colspan' => 9])];
 			
 			foreach ($childs as $child_name => $data_module) {
 				if (isset($data_module->id) === false) {
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:15pt', 'colspan' => 9])];
+					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:15pt;color:green', 'colspan' => 9])];
 					foreach ($data_module as $module_name => $module_data) {
 						
 						if (!empty($module_data->id)) {

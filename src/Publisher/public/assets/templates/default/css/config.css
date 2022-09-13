@@ -48,12 +48,19 @@ body {
 	cursor: pointer;
 }
 
-.multi-chain-buttons .fa-minus-circle {
+.multi-chain-buttons .fa-minus-circle.danger {
 	color: #E9573F;
+	background-color: transparent !important;
 }
 
-.multi-chain-buttons .fa-plus-circle {
+.multi-chain-buttons .fa-minus-circle.warning {
+	color: #F6BB42;
+	background-color: transparent !important;
+}
+
+.multi-chain-buttons .fa-plus-circle.success {
 	color: #8CC152;
+	background-color: transparent !important;
 }
 /* 
 .multi-chain-buttons .fa-minus-circle::before {

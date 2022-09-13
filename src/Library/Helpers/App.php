@@ -1295,6 +1295,31 @@ if (!function_exists('internal_flag_status')) {
 	}
 }
 
+if (!function_exists('diy_mappage_button_add')) {
+	
+	/**
+	 * 
+	 * @param string $ajax_url
+	 * @param string $node_btn
+	 * @param string $id
+	 * @param string $target_id
+	 * @param string $second_target
+	 * 
+	 * @return string
+	 */
+	function diy_mappage_button_add($ajax_url, $node_btn, $id, $target_id, $second_target) {
+		$o  = "<div id='{$node_btn}' class='action-buttons-box'>";
+		$o .= "<div class='hidden-sm hidden-xs action-buttons'>";
+		$o .= "<a id='plus{$node_btn}' class='btn btn-success btn-xs btn_view'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>";
+		$o .= "<a id='reset{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-recycle' aria-hidden='true'></i></a>";
+		$o .= "</div>";
+		$o .= "</div>";
+		$o .= "<script type='text/javascript'>$(document).ready(function() {mappingPageButtonManipulation('{$node_btn}', '{$id}', '{$target_id}', '{$second_target}', '{$ajax_url}');});</script>";
+		
+		return $o;
+	}
+}
+
 if (!function_exists('diy_merge_request')) {
 	
 	/**
@@ -1323,8 +1348,6 @@ if (!function_exists('diy_is_softdeletes')) {
 		return in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($model), true);
 	}
 }
-
-
 
 if (!function_exists('diy_attributes_to_string')) {
 	
