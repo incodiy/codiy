@@ -6,7 +6,7 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 		success : function(d) {
 			
 			loader(target_id, 'show');
-			updateSelectChosen('select#' + target_id, true, '');
+			updateSelectChosen('select#' + target_id, true, false);
 			
 			$.each(JSON.parse(d), function(index, item) {
 				if (item != '') {
@@ -24,7 +24,7 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 				}
 			});
 			
-			updateSelectChosen('select#' + target_id, false, '');
+			updateSelectChosen('select#' + target_id, false, false);
 		},
 		error: function() {
 			alert(onError);
@@ -42,9 +42,9 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 	
 	var firstRemove = $('span#remove-row' + target_id);
 	
-	updateSelectChosen('select#' + target_id);
+	updateSelectChosen('select#' + target_id, true);
 	if (null != target_opt) {
-		updateSelectChosen('select#' + target_opt);
+		updateSelectChosen('select#' + target_opt, true);
 	}
 	
 	$('#' + id).change(function(e) {
@@ -55,26 +55,26 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 		} else {
 			loader(target_id, 'show');
 			loader(target_id, 'fadeOut');
-			updateSelectChosen('select#' + target_id);
+			updateSelectChosen('select#' + target_id, true);
 			
 			if (null != target_opt) {
 				loader(target_opt, 'show');
 				loader(target_opt, 'fadeOut');
-				updateSelectChosen('select#' + target_opt);
+				updateSelectChosen('select#' + target_opt, true);
 			}
 			
 			firstRemove.fadeOut(1000);
 			
 			node_btn.fadeOut(1800);
-			$('#reset'  + nodebtn).fadeOut(500);
-			$('div.'    + node_add).chosen('destroy').fadeOut(500, function() { $(this).remove(); });
+			$('#reset' + nodebtn).fadeOut(500);
+			$('.' + node_add).chosen('destroy').fadeOut(500, function() { $(this).remove(); });
 		}
 	});
 }
 
 function mappingPageFieldnameValues(id, target_id, url, method = 'POST', onError = 'Error') {
 	var firstRemove = $('span#remove-row' + id);
-	updateSelectChosen('select#' + target_id);
+	updateSelectChosen('select#' + target_id, true);
 	
 	$('#' + id).change(function(e) {
 		if ($(this).val() !== '') {
@@ -83,7 +83,7 @@ function mappingPageFieldnameValues(id, target_id, url, method = 'POST', onError
 		} else {
 			loader(target_id, 'show');
 			loader(target_id, 'fadeOut');
-			updateSelectChosen('select#' + target_id);
+			updateSelectChosen('select#' + target_id, true);
 			firstRemove.fadeOut(1000);
 		}
 	});
@@ -93,34 +93,39 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 	var node_add    = 'role-add-' + target_id;
 	var firstRemove = $('span#remove-row' + target_id);
 	
-	$('#reset' + node_btn).hide();
-	
-	$('#plus' + node_btn).click(function(e) {
+	$('#reset' + node_btn).hide();	
+	$('#plusn' + node_btn).click(function(e) {
+		$('span.inputloader').removeAttr('style').hide();
+		
 		if (firstRemove.attr('style').trim()) {
 			firstRemove.attr({'style': ''}).fadeIn();
 		}
 		
-		var random_target_id         = target_id     + diy_random();
-		var random_second_target     = second_target + diy_random();
-		var node_row                 = 'remove-row'  + random_target_id;
+		var random_target_id     = target_id     + diy_random();
+		var random_second_target = second_target + diy_random();
+		var node_row             = 'remove-row'  + random_target_id;		
+		var baserowbox           = $('tr#row-box-' + target_id);
+		var clonerowbox          = baserowbox.clone().attr({'id': 'row-box-' + random_target_id, 'class': baserowbox.attr('class') + ' ' + node_add});
 		
-		var clone_target_id          = $('select#' + target_id).clone().attr({'id': random_target_id});
-		var clone_box_target_id      = $('<div id=\"row-box-' + random_target_id + '\" class=\"' + node_add + ' ' + node_row + ' relative-box\"></div>').insertAfter($('div#row-box-' + target_id)).prepend(clone_target_id);
-		clone_box_target_id.children('#' + random_target_id).chosen();
-		
-		var clone_delete_button      = $('span#remove-row' + target_id).clone().attr({'id': 'remove-row' + random_target_id});
-		clone_delete_button.find('.fa').attr({'class': 'fa fa-minus-circle danger'});
-		clone_delete_button.fadeOut(1);
-		clone_delete_button.insertAfter($('select#' + random_target_id));		
-		clone_delete_button.fadeIn(1000);
-		
-		var clone_second_target      = $('select#' + second_target).clone().attr({'id': random_second_target});
-		var clone_box_second_target  = $('<div id=\"row-box-' + random_second_target + '\" class=\"' + node_add + ' ' + node_row + ' relative-box\"></div>').insertAfter($('div#row-box-' + second_target)).prepend(clone_second_target);
-		clone_box_second_target.children('#' + random_second_target).chosen(); //var clone_second_target  = $('select#' + second_target).clone().attr({'id': random_second_target, 'class': node_add}).insertAfter($('#' + second_target));clone_second_target.chosen();
-		
+		clonerowbox.find('td').each(function(x, n) {
+			if (~$(this).attr('class').indexOf("field-name-box")) {
+				$(this).children('div.chosen-container').remove();				
+				$(this).children('select').attr({'id': random_target_id}).chosen();
+				$(this).children('span#remove-row' + target_id)
+					.removeAttr('id').attr({'id':node_row})
+					.find('.fa')
+					.attr({'class': 'fa fa-minus-circle danger'});
+			}
+			
+			if (~$(this).attr('class').indexOf("field-value-box")) {
+				$(this).children('div.chosen-container').remove();
+				$(this).children('select').attr({'id': random_second_target}).chosen();
+			}
+		});
+		clonerowbox.insertAfter(baserowbox);
 		mappingPageFieldnameValues(random_target_id, random_second_target, url, method, onError);
 		
-		if (clone_target_id.length >= 1) {
+		if (clonerowbox.length >= 1) {
 			firstRemove.fadeIn();
 			$('#reset' + node_btn).fadeIn();
 		} else {
@@ -128,13 +133,13 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 		}
 		
 		$('span#' + node_row).click(function(x) {
-			$('div.' + node_row).fadeOut(300, function() { $(this).remove(); });
+			$('tr#row-box-' + random_target_id).fadeOut(300, function() { $(this).remove(); });
 		});
 	});
 	
 	$('#reset' + node_btn).click(function(e) {
-		$('div.' + node_add).chosen('destroy').fadeOut(500, function() { $(this).remove(); });//.chosen('destroy').remove();
-		$('#reset'  + node_btn).fadeOut(500);
+		$('.'   + node_add).chosen('destroy').fadeOut(500, function() { $(this).remove(); });
+		$('#reset' + node_btn).fadeOut(500);
 		
 		firstResetRowButton(id, target_id, second_target, url, method, onError, false);
 	});
@@ -149,11 +154,13 @@ function firstResetRowButton(id, target_id, second_target, url, method = 'POST',
 		firstRemove.click(function(e) {
 			setAjaxSelectionBox($('#' + id), id, target_id, url.replace('field_name', 'table_name'), method, onError);
 			mappingPageFieldnameValues(target_id, second_target, url, method, onError);
+			updateSelectChosen('select#' + second_target, true, false);
 			$(this).fadeOut(1000);
 		});
 	} else {
 		setAjaxSelectionBox($('#' + id), id, target_id, url.replace('field_name', 'table_name'), method, onError);
 		mappingPageFieldnameValues(target_id, second_target, url, method, onError);
+		updateSelectChosen('select#' + second_target, true, false);
 		firstRemove.fadeOut();
 	}
 }

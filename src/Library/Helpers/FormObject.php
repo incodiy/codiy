@@ -276,10 +276,14 @@ if (!function_exists('diy_form_selectbox')) {
 			$attributes = $default_attr;
 		}
 		
-		if (!empty($set_first_value)) $values = array_merge_recursive($set_first_value, $values);
+		if (!empty($set_first_value)) {
+			$values = array_merge_recursive($set_first_value, $values);
+		}
 		
 		$selectbox = FormFacade::select($name, $values, $selected, $attributes);
-		
+		if (false === $set_first_value) {
+		//	dd($selectbox);
+		}
 		return $selectbox;
 	}
 }

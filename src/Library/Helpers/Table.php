@@ -532,119 +532,36 @@ if (!function_exists('diy_generate_table')) {
 		$hCheck    = false;
 		$hEmpty    = false;
 		$_header   = false;
-		$aoColumns = [];
 		
 		if (true === $numbering) {
 			$number = ['number_lists'];
 			$header = array_merge($number, $header);
 		}
 		
-		$actionVisibility = false;
-		if (in_array('action', $header)) {
-			$actionVisibility = true;
-		}
-		
-		$set_fieldID = false;
 		if (false !== $header) {
-			$_header = '<thead><tr>';
-			if (false !== $server_side) {
-				$set_fieldID = "{data:'id',name:'id'}";
-			}
+			$_merge   = [];
+			$_header  = '<thead><tr>';
 			foreach ($header as $hIndex => $hList) {
-				$HKEY       = false;
-				$HVAL       = false;
 				if (is_array($hList)) {
-					$keyList = array_keys($hList);
-					$HKEY    = $keyList[0];
-					$HVAL    = $hList[$HKEY];
+					$_merge[$hIndex] = $hList['merge'];
+				}
+				
+				if (is_array($hList)) {
+					$_header .= tableColumn($header, $hIndex, $hList['column']);
 				} else {
-					$HKEY    = $hList;
-					$HVAL    = trim(ucwords(str_replace('_', ' ', $HKEY)));
+					$_header .= tableColumn($header, $hIndex, $hList);
 				}
-				$hList      = $HKEY;
-				$hLabel     = $HVAL;
-				
-				$hListFields = $hList;
-				if (true === str_contains($hList, '|')) {
-					$newHList    = explode('|', $hList);
-					$hList       = $newHList[1];
-					$hListFields = "{$relations}.{$hList}";
-				}
-				if (true === str_contains($hList, '.')) {
-					$newHList = explode('.', $hList);
-					$hList    = $newHList[0];
-				}
-				
-				// check if header label : no|id|nik
-				$idHeader = $header[$hIndex];
-				if (is_array($idHeader)) {
-					$fHead    = array_keys($idHeader);
-					$idHeader = $fHead[0];
-				}
-				if ('no' === strtolower($idHeader) || 'id' === strtolower($idHeader) || 'nik' === strtolower($idHeader)) $hNumber = $hIndex;
-				
-				if (true === diy_string_contained($hList, '<input type="checkbox"')) $hCheck = $hIndex;
-				if (is_empty($hList)) $hEmpty = $hIndex;
-				
-				$hList = trim(ucwords(str_replace('_', ' ', $hList)));
-				if ($hNumber === $hIndex) {
-					$_header     .= "<th class=\"center\" width=\"50\">{$hList}</th>";
-					$aoColumns[]  = "null";
-				} else if (true === str_contains($hList, ':changeHeaderName:')) {
-					$newHList     = explode(':changeHeaderName:', $hList);
-					$hList        = ucwords($newHList[1]);
-					$hListFields  = $hList;
-					$hDataFields  = strtolower($newHList[0]);
-					$_header     .= "<th class=\"center\" width=\"120\">{$hListFields}</th>";
-					$aoColumns[]  = "{data:'{$hDataFields}',name:'{$hDataFields}','sortable': true,'searchable': true}";
-				} else if ($hCheck === $hIndex) {
-					$_header     .= "<th width=\"50\">{$hList}</th>";
-					$aoColumns[]	 = "{'bSortable': false}";
-				} else if ($hEmpty === $hIndex) {
-					$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[] = "{'bSortable': false}";
-				} else if ('Action' === $hList) {
-					$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[] = "{data:'action',name:'action','sortable': false,'searchable': false,'class':'center un-clickable'}";
-				} else if ('Active' === $hList) {
-					$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[] = "{data:'active',name:'active','sortable': false,'searchable': true,'class':'center un-clickable'}";
-				} else if ('Flag Status' === $hList) {
-					$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
-					$aoColumns[] = "{data:'flag_status',name:'flag_status','sortable': true,'searchable': true,'class':'center'}";
-				} else {
-					if ('number_lists' === strtolower($idHeader)) {
-						$_header    .= "<th class=\"center\" width=\"30\">No</th><th class=\"center\" width=\"30\">ID</th>";
-						$aoColumns[] = "{data:'DT_RowIndex',name:'DT_RowIndex','sortable': false,'searchable': false,'class':'center un-clickable','onclick':'return false'}";
-						if (false !== $set_fieldID) $aoColumns[] = $set_fieldID;
-					} else {
-						$row_attr = false;
-						if (true === str_contains($hList, '{:}')) {
-							$reList = explode('{:}', $hList);
-							$hList  = $reList[0];
-							
-							if (isset($reList[1])) {
-								$rowAttr  = explode('|', $reList[1]);
-								$row_attr = ' ' . implode(' ', $rowAttr);
-							}
-							
-							$row_list = "<th{$row_attr}>{$hList}</th>";
-						} else {
-							$row_list = "<th>{$hLabel}</th>";
-						}
-						
-						$clickableClass = false;
-						if (false !== $actionVisibility) {
-							$clickableClass = 'clickable ';
-						}
-						
-						$_header    .= $row_list;
-						$aoColumns[] = "{data:'{$hListFields}',name:'{$hListFields}',class:'{$clickableClass}auto-cut-text'}";
+			}
+			$_header .= '</tr>';
+			
+			if (!empty($_merge)) {
+				foreach ($_merge as $_mergedata) {
+					foreach ($_mergedata as $idx => $mdList) {
+						$_header .= tableColumn($_mergedata, $idx, $mdList);
 					}
 				}
 			}
-			
-			$_header .= '</tr></thead>';
+			$_header .= '</thead>';
 		}
 		
 		// set body list(s) table
@@ -735,56 +652,94 @@ if (!function_exists('diy_generate_table')) {
 			$_body = null;
 		}
 		
-		$_tools = false;
-		$_title = false;
-		$attrId = false;
-		if (!empty($_attributes['id'])) $attrId = $_attributes['id'];
 		
-		if (false !== $title) $_title = '<div class="panel-heading"><div class="pull-left"><h3 class="panel-title">' . $title . '</h3></div><div class="clearfix"></div></div>';
+		$table = "<table{$attributes}>{$_header}{$_body}</table>";
 		
-		$start_tag  = false;
-		$end_tag    = false;
-		$dataTables = false;
-		if (false !== $containers) {
-			$start_tag = "<div class=\"row\"><div class=\"col-md-12\"><div class=\"panel\">{$_title}<br /><div class=\"panel-body no-padding\"><div class=\"table-responsive\" style=\"margin-top: -1px;\">";
-			$end_tag   = "</div></div></div></div></div>";
-			$_columns  = implode(',', $aoColumns);
-			
-			$_ajax_url	= 'renderDataTables';
-			if (!empty($server_side_custom_url)) {
-				$_ajax_url = $server_side_custom_url;
-			}
-			
-			//	$filter_strings = filters=true&input_filters[route_path]=developments.testing&input_filters[id]=30
-			$filter_strings = false;
-			if (!empty($_GET['filters'])) {
-				$fstrings	= [];
-				foreach ($_GET as $name => $value) {
-					if ('filters'!== $name && '' !== $value) {
-						if (!is_array($value)) {
-							if (
-									$name !== $_ajax_url &&
-									$name !== 'draw'     &&
-									$name !== 'columns'  &&
-									$name !== 'order'    &&
-									$name !== 'start'    &&
-									$name !== 'length'   &&
-									$name !== 'search'   &&
-									$name !== '_'
-								) {
-									$fstrings[] = "input_filters[{$name}]={$value}";
-								}
-						}
-					}
-				}
-				$filter_strings = '&filters=true&' . implode('&', $fstrings);
-			}
-			
-			$dataTables	= js_render_datatables($attrId, $_columns, $server_side, $filter_strings, $server_side_custom_url);
+		return $table;
+	}
+	
+	function tableColumn($header, $hIndex, $hList) {
+		$hNumber   = false;
+		$hCheck    = false;
+		$hEmpty    = false;
+		$_header   = false;
+		
+		$HKEY       = false;
+		$HVAL       = false;
+		if (is_array($hList)) {
+			$keyList = array_keys($hList);
+			$HKEY    = $keyList[0];
+			$HVAL    = $hList[$HKEY];
+		} else {
+			$HKEY    = $hList;
+			$HVAL    = trim(ucwords(str_replace('_', ' ', $HKEY)));
+		}
+		$hList      = $HKEY;
+		$hLabel     = $HVAL;
+		
+		$hListFields = $hList;
+		if (true === str_contains($hList, '|')) {
+			$newHList    = explode('|', $hList);
+			$hList       = $newHList[1];
+			$hListFields = $hList;
+		}
+		if (true === str_contains($hList, '.')) {
+			$newHList = explode('.', $hList);
+			$hList    = $newHList[0];
 		}
 		
-		$table = "{$start_tag}{$_tools}<table{$attributes}>{$_header}{$_body}</table>{$end_tag}";
+		// check if header label : no|id|nik
+		$idHeader = $header[$hIndex];
+		if (is_array($idHeader)) {
+			$fHead    = array_keys($idHeader);
+			$idHeader = $fHead[0];
+		}
+		if ('no' === strtolower($idHeader) || 'id' === strtolower($idHeader) || 'nik' === strtolower($idHeader)) $hNumber = $hIndex;
 		
-		return $table . $dataTables;
+		if (true === diy_string_contained($hList, '<input type="checkbox"')) $hCheck = $hIndex;
+		if (is_empty($hList)) $hEmpty = $hIndex;
+		
+		$hList = trim(ucwords(str_replace('_', ' ', $hList)));
+		if ($hNumber === $hIndex) {
+			$_header     .= "<th class=\"center\" width=\"50\">{$hList}</th>";
+		} else if (true === str_contains($hList, ':changeHeaderName:')) {
+			$newHList     = explode(':changeHeaderName:', $hList);
+			$hList        = ucwords($newHList[1]);
+			$hListFields  = $hList;
+			$_header     .= "<th class=\"center\" width=\"120\">{$hListFields}</th>";
+		} else if ($hCheck === $hIndex) {
+			$_header     .= "<th width=\"50\">{$hList}</th>";
+		} else if ($hEmpty === $hIndex) {
+			$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
+		} else if ('Action' === $hList) {
+			$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
+		} else if ('Active' === $hList) {
+			$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
+		} else if ('Flag Status' === $hList) {
+			$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
+		} else {
+			if ('number_lists' === strtolower($idHeader)) {
+				$_header    .= "<th class=\"center\" width=\"30\">No</th><th class=\"center\" width=\"30\">ID</th>";
+			} else {
+				$row_attr = false;
+				if (true === str_contains($hList, '{:}')) {
+					$reList = explode('{:}', $hList);
+					$hList  = $reList[0];
+					
+					if (isset($reList[1])) {
+						$rowAttr  = explode('|', $reList[1]);
+						$row_attr = ' ' . implode(' ', $rowAttr);
+					}
+					
+					$row_list = "<th{$row_attr}>{$hList}</th>";
+				} else {
+					$row_list = "<th>{$hLabel}</th>";
+				}
+				
+				$_header    .= $row_list;
+			}
+		}
+		
+		return $_header;
 	}
 }

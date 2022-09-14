@@ -80,11 +80,11 @@ class GroupController extends Controller {
 		$this->form->text('group_name', null, ['required']);
 		$this->form->text('group_info', null, ['required']);
 		$this->form->selectbox('active', active_box(), false, ['required']);
-		
+		/* 
 		// SET MODULE PRIVILEGES
 		$this->form->openTab('Module Privileges');
 		$this->form->draw($this->group_privilege());
-		
+		 */
 		// SET PAGE PRIVILEGES
 		$this->form->openTab('Mapping Page Privileges');
 		$this->mapping();
@@ -115,7 +115,7 @@ class GroupController extends Controller {
 	 * @param Request $request
 	 * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
 	 */
-	public function store(Request $request) {
+	public function store(Request $request) {//dd($request->all());
 		$this->get_session();
 		if ('root' !== $this->session['user_group']) {
 			if (true === is_multiplatform()) {

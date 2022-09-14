@@ -37,10 +37,15 @@ body {
 	position: relative !important;
 }
 
+.mapping-table .chosen-choices {
+	height: auto !important;
+}
+
 .multi-chain-buttons {
 	position: absolute;
-	right: -10%;
-	top: 20%;
+	right: -6px;
+	top: 9px;
+	z-index: 10;
 }
 
 .multi-chain-buttons:hover {

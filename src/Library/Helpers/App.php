@@ -1298,6 +1298,7 @@ if (!function_exists('internal_flag_status')) {
 if (!function_exists('diy_mappage_button_add')) {
 	
 	/**
+	 * Acction Buttons for Mapping Page Module
 	 * 
 	 * @param string $ajax_url
 	 * @param string $node_btn
@@ -1309,10 +1310,11 @@ if (!function_exists('diy_mappage_button_add')) {
 	 */
 	function diy_mappage_button_add($ajax_url, $node_btn, $id, $target_id, $second_target) {
 		$o  = "<div id='{$node_btn}' class='action-buttons-box'>";
-		$o .= "<div class='hidden-sm hidden-xs action-buttons'>";
-		$o .= "<a id='plus{$node_btn}' class='btn btn-success btn-xs btn_view'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>";
-		$o .= "<a id='reset{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-recycle' aria-hidden='true'></i></a>";
-		$o .= "</div>";
+			$o .= "<div class='hidden-sm hidden-xs action-buttons'>";
+				$o .= "<a id='plusn{$node_btn}' class='btn btn-success btn-xs btn_view'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>";
+				$o .= "<a id='plusr{$node_btn}' class='btn teal btn-xs btn_view color-white' style=\"color: white !important;\"><i class='fa fa-plus' aria-hidden='true'></i></a>";
+				$o .= "<a id='reset{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-recycle' aria-hidden='true'></i></a>";
+			$o .= "</div>";
 		$o .= "</div>";
 		$o .= "<script type='text/javascript'>$(document).ready(function() {mappingPageButtonManipulation('{$node_btn}', '{$id}', '{$target_id}', '{$second_target}', '{$ajax_url}');});</script>";
 		
