@@ -37,13 +37,36 @@ body {
 	position: relative !important;
 }
 
-.mapping-table .chosen-choices {
+table.mapping-table .chosen-choices {
 	height: auto !important;
+}
+
+table.mapping-table,
+table.mapping-table tr,
+table.mapping-table tr td {
+	background-color: transparent !important;
+}
+
+table.mapping-table tr td {
+	min-width: 200px !important;
+}
+
+table.mapping-table tr td.field-name-box {
+	border-top-color: transparent !important;
+	border-bottom-color: transparent !important;
+	border-left-color: transparent !important;
+	vertical-align: top !important;
+}
+
+table.mapping-table tr td.field-value-box {
+	border-top-color: transparent !important;
+	border-right-color: transparent !important;
+	border-bottom-color: transparent !important;
 }
 
 .multi-chain-buttons {
 	position: absolute;
-	right: -6px;
+	left: -6px;
 	top: 9px;
 	z-index: 10;
 }
@@ -98,14 +121,14 @@ body {
 }
 
 .inputloader {
-	width: 30px;
-	height: 30px;
+	width: 29px;
+	height: 29px;
 	display: block;
 	position: absolute;
 	z-index: 1;
 	background-size: 30px;
 	right: 30px;
-	top: 1px;
+	top: 5px;
 }
 
 .role-filter-query > .relative-box > span.inputloader {	

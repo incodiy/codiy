@@ -25,13 +25,59 @@ trait MappingPage {
 	private $ajaxUrli         = null;
 	private $nodeID           = '__node__';
 	private $nodeActionButton = '__btnact__';
-		
+	
 	public function rolepage($data, $usein) {
 		return MappingData::getFieldName($data, $usein, $this->nodeID);
 	}
 
-	public function mapping_before_insert($request, $group) {
+	public function mapping_before_insert($requests, $group) {
+		$role    = [];
+		$request = $requests->all();
 		
+		if (!empty($request['field_value'])) {
+			foreach ($request['field_value'] as $mod => $role_data) {
+				$role[$group->id][$mod] = $role_data;
+			}
+		}
+		
+		$roles = [];
+		foreach ($role as $group_id => $data) {
+			foreach ($data as $route_path => $tableData) {
+				
+				$module_id = intval($request['module'][$route_path]);
+				foreach ($tableData as $table_name => $field_data) {
+					
+					foreach ($field_data as $field_name => $field_values) {
+						$roles[$field_name]['group_id']            = $group_id;
+						$roles[$field_name]['module_id']           = $module_id;
+						$roles[$field_name]['target_table']        = $table_name;
+						$roles[$field_name]['target_field_name']   = $field_name;
+						$roles[$field_name]['target_field_values'] = implode('::', $field_values);
+					}
+				}
+			}
+		}
+		
+		$table = 'base_page_privilege';
+		foreach ($roles as $rowdata) {
+			$query = diy_query($table)
+				->where('group_id'         , $rowdata['group_id'])
+				->where('module_id'        , $rowdata['module_id'])
+				->where('target_table'     , $rowdata['target_table'])
+				->where('target_field_name', $rowdata['target_field_name']);
+			 
+			if (is_empty($query->first())) {
+				diy_query($table)->insert([
+					'group_id'           => $rowdata['group_id'],
+					'module_id'          => $rowdata['module_id'],
+					'target_table'       => $rowdata['target_table'],
+					'target_field_name'  => $rowdata['target_field_name'],
+					'target_field_value' => $rowdata['target_field_values']				
+				]);
+			} else {
+				diy_query($table)->update(['target_field_value' => $rowdata['target_field_values']]);
+			}
+		}
 	}
 	
 	private function mapping() {
@@ -129,18 +175,28 @@ trait MappingPage {
 		return $row_table;
 	}
 	
+	private function rolename($basename, $identify = []) {
+		$rolename = [];
+		
+		if (!empty($identify)) {
+			return $rolename[$basename] = "{$basename}[$identify][]";
+		} else {
+			return $rolename[$basename] = "{$basename}[]";
+		}
+	}
+	
 	private function buildRoleBox($roleData, $module_name, $module_data, $icon, $indent = false) {
 		if ($roleData) {
 			
-			$routeName = strtolower($module_data->route);
-		//	dump($routeName);
+			$identifier                    = $roleData['model']['table_map'];
+			$routeName                     = strtolower($module_data->route);
 			$routeNameAttribute            = str_replace('.', '-', $module_data->route);
 			$routeToAttribute              = 'role__' . $routeNameAttribute . '__' . $roleData['model']['table_map'];
 			
 			$roleAttributes                = [];
-			$roleAttributes['table_name']  = "table_name";
-			$roleAttributes['field_name']  = "field_name[]";
-			$roleAttributes['field_value'] = "field_value[]";
+			$roleAttributes['table_name']  = $this->rolename('table_name');
+			$roleAttributes['field_name']  = 'field_name';
+			$roleAttributes['field_value'] = $this->rolename('field_value', $identifier);
 			
 			$roleValues                    = [];
 			$roleValues['field_name']      = [];
@@ -148,44 +204,28 @@ trait MappingPage {
 			
 			$roleColumns                   = [];
 			
-			$tableID                       = $this->setID($roleData['model']['table_map']);
+			$tableID                       = $this->setID($identifier);
 			$tableLabel                    = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
-			$roleColumns['table_name']     = diy_form_checkList($roleAttributes['table_name'] , $roleData['model']['table_map'], $tableLabel, false, 'success read-select full-width text-left', $tableID);
-			/* 
-			$fieldID                       = $this->setID($roleData['model']['table_map']);
-			$roleColumns['field_name']     = '<div class="' . $routeToAttribute . ' relative-box role-filter-query" id="role-filter-query role-filter-query-field-table">';
-			$roleColumns['field_name']    .= "<div id=\"row-box-{$fieldID}\" class=\"relative-box row-box-{$fieldID}\">" . diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , false, ['id' => $fieldID, 'class' => $routeToAttribute], false, false);
-			$roleColumns['field_name']    .= "<span id=\"remove-row{$fieldID}\" class=\"remove-row{$fieldID} multi-chain-buttons\" style=\"display: none;\"><i class='fa fa-recycle warning' aria-hidden='true'></i></span>";
-			$roleColumns['field_name']    .= "</div></div>";
-			
-			$valueID                       = $this->setID($roleData['model']['table_map']);
-			$roleColumns['field_value']    = '<div class="' . $routeToAttribute . ' relative-box role-filter-query" id="role-filter-query role-filter-query-field-value-table">';
-			$roleColumns['field_value']   .= "<div id=\"row-box-{$valueID}\" class=\"relative-box row-box-{$fieldID}\">" . diy_form_selectbox($roleAttributes['field_value'] , $roleValues['field_value'] , false, ['id' => $valueID, 'class' => $routeToAttribute, 'multiple'], false, false);
-			$roleColumns['field_value']   .= "</div></div>";
-			 */
-			
-			
-			
-			$fieldID                       = $this->setID($roleData['model']['table_map']);
-			$roleColumns['field_name']     = diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , false, ['id' => $fieldID, 'class' => $routeToAttribute], false, false);
+			$roleColumns['table_name']     = diy_form_checkList($roleAttributes['table_name'], $roleData['model']['table_map'], $tableLabel, false, 'success read-select full-width text-left', $tableID);
 						
-			$valueID                       = $this->setID($roleData['model']['table_map']);
-			$roleColumns['field_value']    = diy_form_selectbox($roleAttributes['field_value'] , $roleValues['field_value'] , false, ['id' => $valueID, 'class' => $routeToAttribute, 'multiple'], false, false);
+			$fieldID                       = $this->setID($identifier);
+			$roleColumns['field_name']     = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], false, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
+			
+			$valueID                       = $this->setID($identifier);
+			$roleColumns['field_value']    = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], false, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
 			
 			
 			
 			$module_name_label    = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
 			$opt                  = ['align' => 'center', 'id' => strtolower($module_name) . '-row', 'colspan' => 2, 'style' => 'padding: 0 !important;'];
-			$moduleInfoBox        = "<input type=\"hidden\" name=\"{$routeName}\" value=\"{$module_data->id}\" />";
-			
-			$mergeBox = $this->drawQueryMapTable($routeToAttribute, $fieldID, $valueID, $roleColumns);
+			$moduleInfoBox        = "<input type=\"hidden\" id=\"qmod-{$identifier}\" class=\"{$routeName}\" value=\"{$module_data->id}\" />";			
+			$mergeBox             = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns);
 			
 			$resultBox            = [];
 			$resultBox['head']    = [diy_table_row_attr($icon . $module_name_label . $moduleInfoBox, ['style' => 'text-indent:25pt', 'id' => strtolower($module_name) . '-row'])];
 			$resultBox['body']    = [
 				diy_table_row_attr($roleColumns['table_name'] , ['align' => 'left', 'id' => strtolower($module_name) . '-row']),
 				diy_table_row_attr($mergeBox , $opt),
-			//	diy_table_row_attr($roleColumns['field_value'], $opt)
 			];
 			
 			$nodebtn = "node_btn_{$tableID}{$this->nodeActionButton}{$fieldID}{$this->nodeActionButton}{$valueID}";
@@ -202,23 +242,6 @@ trait MappingPage {
 			
 			return $o;
 		}
-	}
-	
-	private function drawQueryMapTable($name, $field_id, $value_id, $data) {
-		//	'$routeToAttribute, $fieldID, $valueID, $roleColumns';
-		return "
-<table class=\"table display responsive mapping-table {$name}\" style=\"background-color:transparent;border:none !important\">
-	<tr id=\"row-box-{$field_id}\" class=\"relative-box row-box-{$field_id}\" style=\"background-color:transparent;border:none !important\">
-		<td class=\"qmap-box-{$field_id} relative-box field-name-box\" style=\"background-color:transparent;min-width:200px;border:none !important;vertical-align:top;\" valign=\"top\">
-			{$data['field_name']}
-			<span id=\"remove-row{$field_id}\" class=\"remove-row{$field_id} multi-chain-buttons\" style=\"display: none;\">
-				<i class='fa fa-recycle warning' aria-hidden='true'></i>
-			</span>
-		</td>
-		<td class=\"qmap-box-{$field_id} relative-box field-value-box\" style=\"background-color:transparent;min-width:200px;border:none !important;vertical-align:top;\">{$data['field_value']}</td>
-	</tr>
-</table>
-		";
 	}
 	
 	private function ajax_urli($usein, $return_data = false) {
@@ -252,8 +275,7 @@ trait MappingPage {
 	}
 	
 	private function buttonAdd($node_btn, $id, $target_id, $second_target) {
-		$this->ajax_urli('field_name');
-		
+		$this->ajax_urli('field_name');		
 		return diy_mappage_button_add($this->ajaxUrli, $node_btn, $id, $target_id, $second_target);
 	}
 }

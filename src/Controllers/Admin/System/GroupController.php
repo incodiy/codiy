@@ -115,7 +115,7 @@ class GroupController extends Controller {
 	 * @param Request $request
 	 * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
 	 */
-	public function store(Request $request) {//dd($request->all());
+	public function store(Request $request) {
 		$this->get_session();
 		if ('root' !== $this->session['user_group']) {
 			if (true === is_multiplatform()) {
@@ -187,11 +187,11 @@ class GroupController extends Controller {
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
-			if ('root' !== $this->model_data->group_name) {
+			if ('root' !== $this->model_data->group_name) {/* 
 				// SET MODULE PRIVILEGES
 				$this->form->openTab('Module Privileges');
 				$this->form->draw($this->group_privilege());
-				
+				 */
 				// SET PAGE PRIVILEGES
 				$this->form->openTab('Mapping Page Privileges');
 				$this->mapping();
@@ -247,7 +247,8 @@ class GroupController extends Controller {
 			$getGroup = diy_query($this->model_table)->where('id', $model_id)->first();
 		}
 		
-		$this->privileges_before_insert($request, $getGroup);
+	//	$this->privileges_before_insert($request, $getGroup);
+		$this->mapping_before_insert($request, $getGroup);
 	}
 	
 	private function set_data_after_insert($data) {

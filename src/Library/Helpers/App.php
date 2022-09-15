@@ -1316,6 +1316,8 @@ if (!function_exists('diy_mappage_button_add')) {
 				$o .= "<a id='reset{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-recycle' aria-hidden='true'></i></a>";
 			$o .= "</div>";
 		$o .= "</div>";
+		
+		$o .= "<div id=\"qc_{$id}\" class=\"qc_{$id}\" style=\"display:none;\"></div>";
 		$o .= "<script type='text/javascript'>$(document).ready(function() {mappingPageButtonManipulation('{$node_btn}', '{$id}', '{$target_id}', '{$second_target}', '{$ajax_url}');});</script>";
 		
 		return $o;
