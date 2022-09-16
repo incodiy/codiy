@@ -333,7 +333,7 @@ class CreateBaseTable extends Migration {
 			
 			$table->string('target_table', 150)->nullable();
 			$table->string('target_field_name', 50)->nullable();
-			$table->string('target_field_value', 50)->nullable();
+			$table->text('target_field_value')->nullable();
 			
 			$table->index('group_id');
 			$table->index('module_id');
