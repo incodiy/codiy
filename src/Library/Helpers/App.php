@@ -997,7 +997,7 @@ if (!function_exists('diy_action_button_box')) {
 
 if (!function_exists('diy_get_model_controllers_info')) {
 	
-	function diy_get_model_controllers_info($table_replace_map = null, $restriction_path = 'App\Http\Controllers\Admin\\') {
+	function diy_get_model_controllers_info($buffers = [], $table_replace_map = null, $restriction_path = 'App\Http\Controllers\Admin\\') {
 		$routeLists = Route::getRoutes();
 		$models     = [];
 		
@@ -1031,6 +1031,10 @@ if (!function_exists('diy_get_model_controllers_info')) {
 									$models[$baseRoute]['model']['table_map']     = $table_replace_map;
 								} else {
 									$models[$baseRoute]['model']['table_map']     = $modelclass->getTable();
+								}
+								
+								if (!empty($buffers[$baseRoute]['model'])) {
+									$models[$baseRoute]['model']['buffers']       = $buffers[$baseRoute]['model'];
 								}
 							}
 						}

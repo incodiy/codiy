@@ -227,7 +227,7 @@ trait Privileges {
 				foreach ($frontend as $index_role) $roles[$index][$role->module_id][$index_role] = $index_role;
 				
 				$backend  = explode(':', $role->{$admin});
-				foreach ($backend as $admin_role) $roles[$admin][$role->module_id][$admin_role] = $admin_role;
+				foreach ($backend  as $admin_role) $roles[$admin][$role->module_id][$admin_role] = $admin_role;
 			}
 		}
 		

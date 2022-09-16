@@ -62,6 +62,11 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 	if (null != target_opt) {
 		updateSelectChosen('select#' + target_opt, true);
 	}
+
+	if ($('#' + id).is(':checked')) {
+		node_btn.fadeIn(1800);
+	//	setAjaxSelectionBox($('#' + id), id, target_id, url, method, onError);
+	}
 	
 	$('#' + id).change(function(e) {
 		if ($(this).is(':checked')) {

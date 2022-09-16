@@ -26,8 +26,12 @@ trait MappingPage {
 	private $nodeID           = '__node__';
 	private $nodeActionButton = '__btnact__';
 	
+	private function map() {
+		return new MappingData();
+	}
+	
 	public function rolepage($data, $usein) {
-		return MappingData::getFieldName($data, $usein, $this->nodeID);
+		return MappingData::getData($data, $usein, $this->nodeID);
 	}
 
 	public function mapping_before_insert($requests, $group) {
@@ -58,35 +62,15 @@ trait MappingPage {
 			}
 		}
 		
-		$table = 'base_page_privilege';
-		foreach ($roles as $rowdata) {
-			$query = diy_query($table)
-				->where('group_id'         , $rowdata['group_id'])
-				->where('module_id'        , $rowdata['module_id'])
-				->where('target_table'     , $rowdata['target_table'])
-				->where('target_field_name', $rowdata['target_field_name']);
-			 
-			if (is_empty($query->first())) {
-				diy_query($table)->insert([
-					'group_id'           => $rowdata['group_id'],
-					'module_id'          => $rowdata['module_id'],
-					'target_table'       => $rowdata['target_table'],
-					'target_field_name'  => $rowdata['target_field_name'],
-					'target_field_value' => $rowdata['target_field_values']				
-				]);
-			} else {
-				diy_query($table)->update(['target_field_value' => $rowdata['target_field_values']]);
-			}
-		}
+		$this->map()->insert_process($roles);
 	}
 	
 	private function mapping() {
-		$title_id                         = 'page_privileges_' . diy_random_strings(50, false) . ' role-priv';
-		
-		$headerData                       = [];
-		$headerData['module_id']          = [diy_table_row_attr('Module Name' , ['style' => 'text-align:center', 'rowspan' => 2])];
-		$headerData['target_table']       = [diy_table_row_attr('Table Name'  , ['style' => 'text-align:center', 'rowspan' => 2])];
-		$headerData['target_roles']       = [
+		$title_id                    = 'page_privileges_' . diy_random_strings(50, false) . ' role-priv';
+		$headerData                  = [];
+		$headerData['module_id']     = [diy_table_row_attr('Module Name' , ['style' => 'text-align:center', 'rowspan' => 2])];
+		$headerData['target_table']  = [diy_table_row_attr('Table Name'  , ['style' => 'text-align:center', 'rowspan' => 2])];
+		$headerData['target_roles']  = [
 			[
 				'column' => diy_table_row_attr('Role Query'  , ['style' => 'text-align:center;min-width:420px;', 'colspan' => 2]),
 				'merge'  => [
@@ -95,16 +79,31 @@ trait MappingPage {
 				]
 			]
 		];
-		$headerData['action_button']      = [diy_table_row_attr('Action'  , ['style' => 'text-align:center', 'rowspan' => 2])];
+		$headerData['action_button'] = [diy_table_row_attr('Action'  , ['style' => 'text-align:center', 'rowspan' => 2])];
 		
 		$header    = array_merge_recursive($headerData['module_id'], $headerData['target_table'], $headerData['target_roles'], $headerData['action_button']);		
 		$row_table = $this->mapping_box();
 		
-		return $this->form->draw(diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false));
+		return diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false);
 	}
 	
+	private $group_id;
 	private function get_data_map() {
-		$this->model_class_info = diy_get_model_controllers_info();
+		$urli = explode('/', url()->current());
+		if ('edit' === last($urli)) {
+			unset($urli[count($urli)-1]);
+			$this->group_id = intval(last($urli));
+		}
+		
+		$current_rolemaps = [];
+		if (!empty($this->map()->current_data($this->group_id))) {
+			foreach ($this->map()->current_data($this->group_id) as $current_module => $current_module_data) {
+				$module_data = diy_query("base_module")->where('id', intval($current_module))->first();
+				$current_rolemaps[$module_data->route_path]['model']['page_roles'] = $current_module_data;
+			}
+		}
+		
+		$this->model_class_info = diy_get_model_controllers_info($current_rolemaps);
 	}
 	
 	private function setID($string, $node = null) {
@@ -156,6 +155,7 @@ trait MappingPage {
 							}
 						}
 					}
+					
 				} else {
 					$child_title = ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
@@ -188,42 +188,90 @@ trait MappingPage {
 	private function buildRoleBox($roleData, $module_name, $module_data, $icon, $indent = false) {
 		if ($roleData) {
 			
-			$identifier                    = $roleData['model']['table_map'];
-			$routeName                     = strtolower($module_data->route);
-			$routeNameAttribute            = str_replace('.', '-', $module_data->route);
-			$routeToAttribute              = 'role__' . $routeNameAttribute . '__' . $roleData['model']['table_map'];
+			$identifier                     = $roleData['model']['table_map'];
+			$routeName                      = strtolower($module_data->route);
+			$routeNameAttribute             = str_replace('.', '-', $module_data->route);
+			$routeToAttribute               = 'role__' . $routeNameAttribute . '__' . $roleData['model']['table_map'];
 			
-			$roleAttributes                = [];
-			$roleAttributes['table_name']  = $this->rolename('table_name');
-			$roleAttributes['field_name']  = 'field_name';
-			$roleAttributes['field_value'] = $this->rolename('field_value', $identifier);
-			
-			$roleValues                    = [];
-			$roleValues['field_name']      = [];
-			$roleValues['field_value']     = [];
-			
-			$roleColumns                   = [];
-			
-			$tableID                       = $this->setID($identifier);
-			$tableLabel                    = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
-			$roleColumns['table_name']     = diy_form_checkList($roleAttributes['table_name'], $roleData['model']['table_map'], $tableLabel, false, 'success read-select full-width text-left', $tableID);
+			$roleAttributes                 = [];
+			$roleAttributes['table_name']   = $this->rolename('table_name');
+			$roleAttributes['field_name']   = 'field_name';
+			$roleAttributes['field_value']  = $this->rolename('field_value', $identifier);
 						
-			$fieldID                       = $this->setID($identifier);
-			$roleColumns['field_name']     = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], false, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
+			$roleValues                     = [];
+			$roleValues['table_checked']    = false;
+			$roleValues['table_map']        = $identifier;
+			$roleValues['field_name']       = [];
+			$roleValues['field_value']      = [];
 			
-			$valueID                       = $this->setID($identifier);
-			$roleColumns['field_value']    = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], false, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+			$buffers     = [];
+			$buffer_data = [];
+			if (isset($roleData['model']['buffers']['page_roles'])) {
+				$buffers  = $roleData['model']['buffers']['page_roles'];
+				
+				$roleValues['table_checked'] = true;				
+				foreach ($buffers as $buffer_table => $buffer_data) {
+					$roleValues['table_map']  = $buffer_table;
+					
+					if (!empty($buffer_data)) {
+						foreach ($buffer_data as $buffer_field => $buffered) {
+							$buffered_values = [];
+							foreach (explode('::', $buffered->target_field_value) as $value_buffered) {
+								$buffered_values[$value_buffered] = $value_buffered;
+							}
+							
+							$roleValues['field_name'][$buffer_table][$buffer_field]  = [$buffered->target_field_name => $buffered->target_field_name];
+							$roleValues['field_value'][$buffer_table][$buffer_field] = $buffered_values;
+						}
+					}
+				}
+			}
 			
+			$roleColumns                    = [];
 			
+			$roleColumns['identifier']      = "<input type=\"hidden\" id=\"qmod-{$identifier}\" class=\"{$routeName}\" value=\"{$module_data->id}\" />";
+			$tableID                        = $this->setID($identifier);
+			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
+			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID);
+						
+			if (!empty($buffer_data)) {
+				
+				$n         = 0;
+				$rand      = [];
+				$rand['f'] = null;
+				$rand['v'] = null;
+				
+				foreach ($buffer_data as $buffer_field => $buffered) {
+					$n++;
+					
+					if ($n > 1) {
+						$rand['f'] = diy_random_strings(8, false, null, null);
+						$rand['v'] = diy_random_strings(8, false, null, null);
+					}
+					
+					$fieldID                  = $this->setID($identifier) . $rand['f'];
+					$fieldNameValues          = $roleValues['field_name'][$identifier][$buffer_field];
+					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox($roleAttributes['field_name'], $fieldNameValues, $roleValues['field_name'], ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
+					
+					$fieldDataValues          = $roleValues['field_value'][$identifier][$buffer_field];
+					$valueID                  = $this->setID($identifier) . $rand['v'];
+					$roleColumns['field_value'][$identifier][$buffer_field] = diy_form_selectbox($roleAttributes['field_value'], $fieldDataValues, false, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+				}
+			} else {
+				$fieldID                        = $this->setID($identifier);
+				$roleColumns['field_name']      = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], $roleValues['field_name'], ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
+				
+				$valueID                        = $this->setID($identifier);
+				$roleColumns['field_value']     = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], false, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+			}
+			$module_name_label = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
+			$opt               = ['align' => 'center', 'id' => strtolower($module_name) . '-row', 'colspan' => 2, 'style' => 'padding: 0 !important;'];
 			
-			$module_name_label    = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
-			$opt                  = ['align' => 'center', 'id' => strtolower($module_name) . '-row', 'colspan' => 2, 'style' => 'padding: 0 !important;'];
-			$moduleInfoBox        = "<input type=\"hidden\" id=\"qmod-{$identifier}\" class=\"{$routeName}\" value=\"{$module_data->id}\" />";			
-			$mergeBox             = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns);
+			$mergeBox          = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns, $buffers);
 			
-			$resultBox            = [];
-			$resultBox['head']    = [diy_table_row_attr($icon . $module_name_label . $moduleInfoBox, ['style' => 'text-indent:25pt', 'id' => strtolower($module_name) . '-row'])];
-			$resultBox['body']    = [
+			$resultBox         = [];
+			$resultBox['head'] = [diy_table_row_attr($icon . $module_name_label . $roleColumns['identifier'], ['style' => 'text-indent:25pt', 'id' => strtolower($module_name) . '-row'])];
+			$resultBox['body'] = [
 				diy_table_row_attr($roleColumns['table_name'] , ['align' => 'left', 'id' => strtolower($module_name) . '-row']),
 				diy_table_row_attr($mergeBox , $opt),
 			];

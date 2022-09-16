@@ -743,9 +743,31 @@ if (!function_exists('diy_generate_table')) {
 
 if (!function_exists('diy_draw_query_map_page_table')) {
 	
-	function diy_draw_query_map_page_table($name, $field_id, $value_id, $data) {
+	function diy_draw_query_map_page_table($name, $field_id, $value_id, $data, $buffers) {
 		
 		$o  = "<table class=\"table mapping-table display responsive relative-box {$name}\">";
+		
+		if (!empty($buffers)) {
+			$id = explode('__node__', $field_id)[0];
+			
+			foreach ($buffers[$id] as $field_info => $value) {
+				$field_name_box  = $data['field_name'][$value->target_table][$value->target_field_name];
+				$field_value_box = $data['field_value'][$value->target_table][$field_info];
+				
+				$o .= "<tr id=\"row-box-{$field_id}\" class=\"relative-box row-box-{$field_id}\">";
+					$o .= "<td class=\"qmap-box-{$field_id} field-name-box\">";
+						$o .= $field_name_box;
+					$o .= "</td>";
+					$o .= "<td class=\"qmap-box-{$field_id} relative-box field-value-box\">";
+						$o .= $field_value_box;
+						$o .= "<span id=\"remove-row{$field_id}\" class=\"remove-row{$field_id} multi-chain-buttons\" style=\"display:none;\">";
+							$o .= "<i class='fa fa-recycle warning' aria-hidden='true'></i>";
+						$o .= "</span>";
+					$o .= "</td>";
+				$o .= "</tr>";
+			}
+			
+		} else {
 			$o .= "<tr id=\"row-box-{$field_id}\" class=\"relative-box row-box-{$field_id}\">";
 				$o .= "<td class=\"qmap-box-{$field_id} field-name-box\">";
 					$o .= "{$data['field_name']}";
@@ -757,6 +779,8 @@ if (!function_exists('diy_draw_query_map_page_table')) {
 					$o .= "</span>";
 				$o .= "</td>";
 			$o .= "</tr>";
+		}
+		
 		$o .= "</table>";
 		
 		return $o;
