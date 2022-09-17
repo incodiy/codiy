@@ -22,7 +22,7 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 			}
 			
 			loader(target_id, 'show');
-			updateSelectChosen('select#' + target_id, true, false);
+			updateSelectChosen('select#' + target_id, true, '');
 			
 			$.each(JSON.parse(d), function(index, item) {
 				if (item != '') {
@@ -40,7 +40,7 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 				}
 			});
 			
-			updateSelectChosen('select#' + target_id, false, false);
+			updateSelectChosen('select#' + target_id, false, '');
 		},
 		error: function() {
 			alert(onError);
@@ -55,7 +55,6 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 	var node_add    = 'role-add-' + target_id;	
 	var node_btn    = $('#' + nodebtn);
 	var firstRemove = $('span#remove-row' + target_id);	
-//	updateSelectChosen('select#' + target_id, true); if (null != target_opt) updateSelectChosen('select#' + target_opt, true);
 	
 	node_btn.hide();
 	if ($('#' + id).is(':checked')) {
@@ -70,12 +69,12 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 		} else {
 			loader(target_id, 'show');
 			loader(target_id, 'fadeOut');
-			updateSelectChosen('select#' + target_id, true);
+			updateSelectChosen('select#' + target_id, true, '');
 			
 			if (null != target_opt) {
 				loader(target_opt, 'show');
 				loader(target_opt, 'fadeOut');
-				updateSelectChosen('select#' + target_opt, true);
+				updateSelectChosen('select#' + target_opt, true, '');
 			}
 			
 			firstRemove.fadeOut(1000);
@@ -95,7 +94,6 @@ function rowButtonRemovalMapRoles(id, target_id, url = null) {
 
 function mappingPageFieldnameValues(id, target_id, url = null, method = 'POST', onError = 'Error') {
 	var firstRemove = $('span#remove-row' + id);
-//	updateSelectChosen('select#' + target_id, true);
 	
 	$('#' + id).change(function(e) {
 		if ($(this).val() !== '') {
@@ -105,7 +103,7 @@ function mappingPageFieldnameValues(id, target_id, url = null, method = 'POST', 
 		} else {
 			loader(target_id, 'show');
 			loader(target_id, 'fadeOut');
-			updateSelectChosen('select#' + target_id, true);
+			updateSelectChosen('select#' + target_id, true, '');
 			firstRemove.fadeOut(1000);
 		}
 	});
@@ -118,14 +116,14 @@ function firstResetRowButton(id, target_id, second_target, url, method = 'POST',
 		firstRemove.click(function(e) {
 			setAjaxSelectionBox($('#' + id), id, target_id, url.replace('field_name', 'table_name'), method, onError);
 			mappingPageFieldnameValues(target_id, second_target, url, method, onError);
-			updateSelectChosen('select#' + second_target, true, false);
+			updateSelectChosen('select#' + second_target, true, '');
 			$(this).fadeOut(1000);
 		});
 		
 	} else {
 		setAjaxSelectionBox($('#' + id), id, target_id, url.replace('field_name', 'table_name'), method, onError);
 		mappingPageFieldnameValues(target_id, second_target, url, method, onError);
-		updateSelectChosen('select#' + second_target, true, false);
+		updateSelectChosen('select#' + second_target, true, '');
 		firstRemove.fadeOut();
 	}
 }
@@ -138,11 +136,7 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 	var firstRemove   = $('span#remove-row' + target_id);
 	var fieldnamebox  = $('select#' + target_id);
 	var fieldvaluebox = $('select#' + second_target);
-	
-	$('span#remove-row' + target_id).click(function(e) {
-	//	alert($(this));
-	});
-	
+		
 	$('#reset' + node_btn).hide();	
 	$('#plusn' + node_btn).click(function(e) {
 		$('span.inputloader').removeAttr('style').hide();
@@ -160,12 +154,12 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 		clonerowbox.find('td').each(function(x, n) {
 			if (~$(this).attr('class').indexOf("field-name-box")) {
 				$(this).children('div.chosen-container').remove();				
-				$(this).children('select').attr({'id': random_target_id}).chosen();
+				$(this).children('select').attr({'id': random_target_id}).prop('selectedIndex', -1).chosen();
 			}
 			
 			if (~$(this).attr('class').indexOf("field-value-box")) {
 				$(this).children('div.chosen-container').remove();
-				$(this).children('select').attr({'id': random_second_target, 'name': ''}).chosen();
+				$(this).children('select').attr({'id': random_second_target, 'name': ''}).find('option').remove().end().chosen();
 				$(this).children('span#remove-row' + target_id)
 					.removeAttr('id').attr({'id': node_row})
 					.find('.fa')
@@ -187,10 +181,16 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 		});
 	});
 	
+	tablecource.each(function(x, n) {
+		var tr = $(this).children('tbody').children('tr').length;
+		if (tr > 1) {
+			$('#reset' + node_btn).fadeIn();
+		}
+	});
+	
 	$('#reset' + node_btn).click(function(e) {
 		$('.'  + node_add).chosen('destroy').fadeOut(500, function() { $(this).remove(); });
 		$('#reset' + node_btn).fadeOut(500);
-		
 		firstResetRowButton(id, target_id, second_target, url, method, onError, false);
 	});
 	

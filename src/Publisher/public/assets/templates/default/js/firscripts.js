@@ -10,7 +10,12 @@ function updateSelectChosen(target, reset = true, optstring = 'Select an Option'
 	if (true === reset) {
 		chosenTarget.find('option').remove().end();
 	}
-	chosenTarget.append('<option value=\"\">' + optstring + '</option>').trigger('chosen:updated');
+	if (false !== optstring) {
+		chosenTarget.append('<option value=\"\">' + optstring + '</option>').trigger('chosen:updated');
+	} else {
+		chosenTarget.trigger('chosen:updated');
+	}
+	
 }
 
 function loader(target_id, view = 'hide') {
