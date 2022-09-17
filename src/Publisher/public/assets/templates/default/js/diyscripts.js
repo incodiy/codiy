@@ -54,18 +54,12 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebtn = null, method = 'POST', onError = 'Error') {
 	var node_add    = 'role-add-' + target_id;	
 	var node_btn    = $('#' + nodebtn);
+	var firstRemove = $('span#remove-row' + target_id);	
+//	updateSelectChosen('select#' + target_id, true); if (null != target_opt) updateSelectChosen('select#' + target_opt, true);
+	
 	node_btn.hide();
-	
-	var firstRemove = $('span#remove-row' + target_id);
-	
-	updateSelectChosen('select#' + target_id, true);
-	if (null != target_opt) {
-		updateSelectChosen('select#' + target_opt, true);
-	}
-
 	if ($('#' + id).is(':checked')) {
 		node_btn.fadeIn(1800);
-	//	setAjaxSelectionBox($('#' + id), id, target_id, url, method, onError);
 	}
 	
 	$('#' + id).change(function(e) {
@@ -93,9 +87,15 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 	});
 }
 
-function mappingPageFieldnameValues(id, target_id, url, method = 'POST', onError = 'Error') {
+function rowButtonRemovalMapRoles(id, target_id, url = null) {
+	$('span#remove-row' + id).click(function(e) {
+		$('tr#row-box-' + id).fadeOut(300, function() { $(this).remove(); });
+	});
+}
+
+function mappingPageFieldnameValues(id, target_id, url = null, method = 'POST', onError = 'Error') {
 	var firstRemove = $('span#remove-row' + id);
-	updateSelectChosen('select#' + target_id, true);
+//	updateSelectChosen('select#' + target_id, true);
 	
 	$('#' + id).change(function(e) {
 		if ($(this).val() !== '') {
@@ -134,9 +134,14 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 	var node_add      = 'role-add-' + target_id;
 	var baserowbox    = $('tr#row-box-' + target_id);
 	var tablecource   = baserowbox.parent('tbody').parent('table');
+	
 	var firstRemove   = $('span#remove-row' + target_id);
 	var fieldnamebox  = $('select#' + target_id);
 	var fieldvaluebox = $('select#' + second_target);
+	
+	$('span#remove-row' + target_id).click(function(e) {
+	//	alert($(this));
+	});
 	
 	$('#reset' + node_btn).hide();	
 	$('#plusn' + node_btn).click(function(e) {
@@ -148,7 +153,7 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 		
 		var random_target_id     = target_id       + diy_random();
 		var random_second_target = second_target   + diy_random();
-		var node_row             = 'remove-row'    + random_target_id;		
+		var node_row             = 'remove-row'    + random_target_id;
 		var nextcloneid          = 'row-box-'      + random_target_id;
 		var clonerowbox          = baserowbox.clone().attr({'id': nextcloneid, 'class': baserowbox.attr('class') + ' ' + node_add});
 		
@@ -180,10 +185,6 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 		$('span#' + node_row).click(function(x) {
 			$('tr#row-box-' + random_target_id).fadeOut(300, function() { $(this).remove(); });
 		});
-		
-		
-		var qinputbox   = $('div#qc_' + id);
-		console.log(id);
 	});
 	
 	$('#reset' + node_btn).click(function(e) {

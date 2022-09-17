@@ -453,11 +453,11 @@ if (!function_exists('diy_random_strings')) {
 	 */
 	function diy_random_strings($length = 8, $symbol = true, $string_set = null, $node = '_') {
 		$random_strings = '';
-		$strSymbol      = false;
+		$strSymbol      = null;
 		if (true === $symbol) {
 			$strSymbol   = '!@#$%';
 		}
-		$strings        = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{$strSymbol}";
+		$strings        = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789{$strSymbol}";
 		$stringsLength  = strlen($strings);
 		
 		for ($i = 0; $i < $length; $i ++) {
@@ -1316,7 +1316,7 @@ if (!function_exists('diy_mappage_button_add')) {
 		$o  = "<div id='{$node_btn}' class='action-buttons-box'>";
 			$o .= "<div class='hidden-sm hidden-xs action-buttons'>";
 				$o .= "<a id='plusn{$node_btn}' class='btn btn-success btn-xs btn_view'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>";
-				$o .= "<a id='plusr{$node_btn}' class='btn teal btn-xs btn_view color-white' style=\"color: white !important;\"><i class='fa fa-plus' aria-hidden='true'></i></a>";
+			//	$o .= "<a id='plusr{$node_btn}' class='btn teal btn-xs btn_view color-white' style=\"color: white !important;\"><i class='fa fa-plus' aria-hidden='true'></i></a>";
 				$o .= "<a id='reset{$node_btn}' class='btn btn-danger btn-xs btn_view'><i class='fa fa-recycle' aria-hidden='true'></i></a>";
 			$o .= "</div>";
 		$o .= "</div>";

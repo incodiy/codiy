@@ -743,26 +743,37 @@ if (!function_exists('diy_generate_table')) {
 
 if (!function_exists('diy_draw_query_map_page_table')) {
 	
-	function diy_draw_query_map_page_table($name, $field_id, $value_id, $data, $buffers) {
+	function diy_draw_query_map_page_table($name, $field_id, $value_id, $data, $buffers, $fieldbuff) {		
+		$fieldID   = $field_id;
+		$trClass   = null;
 		
-		$o  = "<table class=\"table mapping-table display responsive relative-box {$name}\">";
-		
+		$o         = "<table class=\"table mapping-table display responsive relative-box {$name}\"><tbody>";
 		if (!empty($buffers)) {
-			$id = explode('__node__', $field_id)[0];
+			$n      = 0;
+			$id     = explode('__node__', $field_id)[0];
+			$ico    = 'fa fa-recycle warning';
+			$script = null;
 			
 			foreach ($buffers[$id] as $field_info => $value) {
-				$field_name_box  = $data['field_name'][$value->target_table][$value->target_field_name];
-				$field_value_box = $data['field_value'][$value->target_table][$field_info];
+				$n++;
 				
-				$o .= "<tr id=\"row-box-{$field_id}\" class=\"relative-box row-box-{$field_id}\">";
-					$o .= "<td class=\"qmap-box-{$field_id} field-name-box\">";
-						$o .= $field_name_box;
+				if ($n > 1) {
+					$field_id = $fieldbuff['ranid'][$field_info];
+					$trClass  = " role-add-{$fieldID}";
+					$ico      = 'fa fa-minus-circle danger';
+					$script   = "<script type='text/javascript'>$(document).ready(function() { rowButtonRemovalMapRoles('{$field_id}', '{$value_id}'); });</script>";
+				}
+				
+				$o .= "<tr id=\"row-box-{$field_id}\" class=\"relative-box row-box-{$fieldID}{$trClass}\">";
+					$o .= "<td class=\"qmap-box-{$fieldID} field-name-box\">";
+						$o .= $data['field_name'][$value->target_table][$value->target_field_name];
 					$o .= "</td>";
-					$o .= "<td class=\"qmap-box-{$field_id} relative-box field-value-box\">";
-						$o .= $field_value_box;
-						$o .= "<span id=\"remove-row{$field_id}\" class=\"remove-row{$field_id} multi-chain-buttons\" style=\"display:none;\">";
-							$o .= "<i class='fa fa-recycle warning' aria-hidden='true'></i>";
+					$o .= "<td class=\"qmap-box-{$fieldID} relative-box field-value-box\">";
+						$o .= $data['field_value'][$value->target_table][$field_info];
+						$o .= "<span id=\"remove-row{$field_id}\" class=\"remove-row{$fieldID} multi-chain-buttons\" style=\"\">";
+							$o .= "<i class='{$ico}' aria-hidden='true'></i>";
 						$o .= "</span>";
+						$o .= $script;
 					$o .= "</td>";
 				$o .= "</tr>";
 			}
@@ -781,7 +792,7 @@ if (!function_exists('diy_draw_query_map_page_table')) {
 			$o .= "</tr>";
 		}
 		
-		$o .= "</table>";
+		$o .= "</tbody></table>";
 		
 		return $o;
 	}

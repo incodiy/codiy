@@ -179,10 +179,25 @@ trait MappingPage {
 		$rolename = [];
 		
 		if (!empty($identify)) {
-			return $rolename[$basename] = "{$basename}[$identify][]";
+			if (is_array($identify)) {
+				return $rolename[$basename] = "{$basename}[{$identify[0]}][{$identify[1]}][{$identify[2]}][]";
+			} else {
+				return $rolename[$basename] = "{$basename}[$identify][]";
+			}
 		} else {
 			return $rolename[$basename] = "{$basename}[]";
 		}
+	}
+	
+	private function getFieldTable($table_name, $func) {
+		$result = [];
+		$data   = MappingData::{$func}($table_name);
+		
+		foreach ((array)json_decode($data) as $label => $value) {
+			$result[$value] = ucwords(str_replace('-', ' ', diy_clean_strings($label)));
+		}
+		
+		return $result;
 	}
 	
 	private function buildRoleBox($roleData, $module_name, $module_data, $icon, $indent = false) {
@@ -214,13 +229,15 @@ trait MappingPage {
 					$roleValues['table_map']  = $buffer_table;
 					
 					if (!empty($buffer_data)) {
-						foreach ($buffer_data as $buffer_field => $buffered) {
+						foreach ($buffer_data as $buffer_field => $buffered) {							
+							$roleValues['field_name'][$buffer_table][$buffer_field]['selected']  = [$buffered->target_field_name => $buffered->target_field_name];
+							$roleValues['field_name'][$buffer_table][$buffer_field]['data']      = $this->getFieldTable($buffer_table, 'getTableFields');//[$buffered->target_field_name => ucwords(str_replace('-', ' ', diy_clean_strings($buffered->target_field_name)))];
+							
 							$buffered_values = [];
 							foreach (explode('::', $buffered->target_field_value) as $value_buffered) {
-								$buffered_values[$value_buffered] = $value_buffered;
+								$buffered_values['selected'][$value_buffered] = $value_buffered;
+								$buffered_values['data']                      = $this->getFieldTable([$buffer_table => [$buffer_field]], 'getFieldValues');
 							}
-							
-							$roleValues['field_name'][$buffer_table][$buffer_field]  = [$buffered->target_field_name => $buffered->target_field_name];
 							$roleValues['field_value'][$buffer_table][$buffer_field] = $buffered_values;
 						}
 					}
@@ -233,41 +250,64 @@ trait MappingPage {
 			$tableID                        = $this->setID($identifier);
 			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
 			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID);
-						
+			
+			$fieldID   = $this->setID($identifier);
+			$valueID   = $this->setID($identifier);
+			
+			$rand      = [];
+			$fieldbuff = [];
+			
 			if (!empty($buffer_data)) {
-				
-				$n         = 0;
-				$rand      = [];
-				$rand['f'] = null;
-				$rand['v'] = null;
-				
+				$n = 0;
 				foreach ($buffer_data as $buffer_field => $buffered) {
 					$n++;
 					
+					$rand['f'] = diy_random_strings(8, false, null, null);
+					$rand['v'] = diy_random_strings(8, false, null, null);
+					
+					$fieldbuff['field'] = $fieldID . $rand['f'];
+					$fieldbuff['value'] = $valueID . $rand['v'];
+					$fieldbuff['ranid'][$buffer_field] = $fieldID . $rand['f'];
+					
 					if ($n > 1) {
-						$rand['f'] = diy_random_strings(8, false, null, null);
-						$rand['v'] = diy_random_strings(8, false, null, null);
+						$fieldNameAttr  = ['id' => $fieldbuff['field'], 'class' => $routeToAttribute . "{$fieldID}field_name"];
+						$fieldValueAttr = ['id' => $fieldbuff['value'], 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
+					} else {
+						$fieldNameAttr  = ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"];
+						$fieldValueAttr = ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
 					}
 					
-					$fieldID                  = $this->setID($identifier) . $rand['f'];
-					$fieldNameValues          = $roleValues['field_name'][$identifier][$buffer_field];
-					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox($roleAttributes['field_name'], $fieldNameValues, $roleValues['field_name'], ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
+					$fieldNameValues  = $roleValues['field_name'][$identifier][$buffer_field];
+					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox (
+						$this->rolename('field_name', $identifier), 
+						$fieldNameValues['data'], 
+						$fieldNameValues['selected'], 
+						$fieldNameAttr, 
+						false, 
+						false
+					);
 					
-					$fieldDataValues          = $roleValues['field_value'][$identifier][$buffer_field];
-					$valueID                  = $this->setID($identifier) . $rand['v'];
-					$roleColumns['field_value'][$identifier][$buffer_field] = diy_form_selectbox($roleAttributes['field_value'], $fieldDataValues, false, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+					$fieldDataValues  = $roleValues['field_value'][$identifier][$buffer_field];
+					$roleColumns['field_value'][$identifier][$buffer_field] = diy_form_selectbox (
+						$this->rolename('field_value', [$routeName, $identifier, array_keys($fieldNameValues['selected'])[0]]), 
+						$fieldDataValues['data'], 
+						$fieldDataValues['selected'], 
+						$fieldValueAttr, 
+						false, 
+						false
+					);
 				}
 			} else {
 				$fieldID                        = $this->setID($identifier);
-				$roleColumns['field_name']      = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], $roleValues['field_name'], ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
+				$roleColumns['field_name']      = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
 				
 				$valueID                        = $this->setID($identifier);
-				$roleColumns['field_value']     = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], false, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+				$roleColumns['field_value']     = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
 			}
 			$module_name_label = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
 			$opt               = ['align' => 'center', 'id' => strtolower($module_name) . '-row', 'colspan' => 2, 'style' => 'padding: 0 !important;'];
 			
-			$mergeBox          = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns, $buffers);
+			$mergeBox          = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns, $buffers, $fieldbuff);
 			
 			$resultBox         = [];
 			$resultBox['head'] = [diy_table_row_attr($icon . $module_name_label . $roleColumns['identifier'], ['style' => 'text-indent:25pt', 'id' => strtolower($module_name) . '-row'])];
