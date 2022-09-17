@@ -759,9 +759,10 @@ if (!function_exists('diy_draw_query_map_page_table')) {
 				
 				if ($n > 1) {
 					$field_id = $fieldbuff['ranid'][$field_info];
+					$value_id = $fieldbuff['ranval'][$field_info];
 					$trClass  = " role-add-{$fieldID}";
 					$ico      = 'fa fa-minus-circle danger';
-					$script   = "<script type='text/javascript'>$(document).ready(function() { rowButtonRemovalMapRoles('{$field_id}', '{$value_id}'); });</script>";
+					$script   = "<script type='text/javascript'>$(document).ready(function() { rowButtonRemovalMapRoles('{$field_id}', '{$value_id}'); mappingPageFieldnameValues('{$field_id}', '{$value_id}', '{$data['ajax_field_name']}'); });</script>";
 				}
 				
 				$o .= "<tr id=\"row-box-{$field_id}\" class=\"relative-box row-box-{$fieldID}{$trClass}\">";

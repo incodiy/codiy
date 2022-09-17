@@ -231,7 +231,7 @@ trait MappingPage {
 					if (!empty($buffer_data)) {
 						foreach ($buffer_data as $buffer_field => $buffered) {							
 							$roleValues['field_name'][$buffer_table][$buffer_field]['selected']  = [$buffered->target_field_name => $buffered->target_field_name];
-							$roleValues['field_name'][$buffer_table][$buffer_field]['data']      = $this->getFieldTable($buffer_table, 'getTableFields');//[$buffered->target_field_name => ucwords(str_replace('-', ' ', diy_clean_strings($buffered->target_field_name)))];
+							$roleValues['field_name'][$buffer_table][$buffer_field]['data']      = $this->getFieldTable($buffer_table, 'getTableFields');
 							
 							$buffered_values = [];
 							foreach (explode('::', $buffered->target_field_value) as $value_buffered) {
@@ -246,6 +246,7 @@ trait MappingPage {
 			
 			$roleColumns                    = [];
 			
+			$roleColumns['ajax_field_name'] = $this->ajax_urli('field_name', true);
 			$roleColumns['identifier']      = "<input type=\"hidden\" id=\"qmod-{$identifier}\" class=\"{$routeName}\" value=\"{$module_data->id}\" />";
 			$tableID                        = $this->setID($identifier);
 			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
@@ -267,7 +268,9 @@ trait MappingPage {
 					
 					$fieldbuff['field'] = $fieldID . $rand['f'];
 					$fieldbuff['value'] = $valueID . $rand['v'];
-					$fieldbuff['ranid'][$buffer_field] = $fieldID . $rand['f'];
+					
+					$fieldbuff['ranid'][$buffer_field]  = $fieldID . $rand['f'];
+					$fieldbuff['ranval'][$buffer_field] = $valueID . $rand['v'];
 					
 					if ($n > 1) {
 						$fieldNameAttr  = ['id' => $fieldbuff['field'], 'class' => $routeToAttribute . "{$fieldID}field_name"];
@@ -297,13 +300,12 @@ trait MappingPage {
 						false
 					);
 				}
-			} else {
-				$fieldID                        = $this->setID($identifier);
-				$roleColumns['field_name']      = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);
 				
-				$valueID                        = $this->setID($identifier);
+			} else {
+				$roleColumns['field_name']      = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);				
 				$roleColumns['field_value']     = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
 			}
+			
 			$module_name_label = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
 			$opt               = ['align' => 'center', 'id' => strtolower($module_name) . '-row', 'colspan' => 2, 'style' => 'padding: 0 !important;'];
 			
