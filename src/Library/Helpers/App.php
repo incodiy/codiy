@@ -1328,6 +1328,29 @@ if (!function_exists('diy_mappage_button_add')) {
 	}
 }
 
+if (!function_exists('diy_input')) {
+	
+	function diy_input($type, $id = null, $class = null, $name = null, $value = null) {
+		$id    = " id=\"{$id}\"";
+		$class = " class=\"{$class}\"";
+		$value = " value=\"{$value}\"";
+		$name  = " name=\"{$name}\"";
+		
+		return "<input type=\"{$type}\"{$id}{$class}{$value}{$name} />";
+	}
+}
+
+if (!function_exists('diy_script')) {
+	
+	function diy_script($script, $ready = true) {
+		if (true === $ready) {
+			return "<script type='text/javascript'>$(document).ready(function() { {$script} });</script>";
+		} else {
+			return "<script type='text/javascript'>{$script}</script>";
+		}
+	}
+}
+
 if (!function_exists('diy_merge_request')) {
 	
 	/**

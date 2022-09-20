@@ -34,26 +34,108 @@ class MappingPage extends Model {
 		return $this->role_data;
 	}
 	
-	public function insert_process($role_data) {
-		foreach ($role_data as $rowdata) {
-			$query = diy_query($this->table)
-				->where('group_id'         , $rowdata['group_id'])
-				->where('module_id'        , $rowdata['module_id'])
-				->where('target_table'     , $rowdata['target_table'])
-				->where('target_field_name', $rowdata['target_field_name']);
-			
-			if (is_empty($query->first())) {
-				diy_query($this->table)->insert([
-					'group_id'           => $rowdata['group_id'],
-					'module_id'          => $rowdata['module_id'],
-					'target_table'       => $rowdata['target_table'],
-					'target_field_name'  => $rowdata['target_field_name'],
-					'target_field_value' => $rowdata['target_field_values']
-				]);
-			} else {
-				diy_query($this->table)->update(['target_field_value' => $rowdata['target_field_values']]);
+	public function insert_process($role_data, $group) {
+		$checkTables = diy_query($this->table)->get();
+		$checkData   = [];
+		$qchecks     = [];
+		
+		$tables = [];
+		foreach ($checkTables as $table) {
+			$tables[$table->target_table][$table->target_field_name] = $table;
+		}
+		
+		foreach ($role_data as $dataRequests) {
+			foreach ($dataRequests as $req) {
+				$qchecks[$req['target_table']] = diy_query($this->table)
+					->where('group_id'    , $group->id /* $req['group_id'] */ )
+					->where('module_id'   , $req['module_id'])
+					->where('target_table', $req['target_table'])
+					->get();
 			}
-		}dd($role_data);
+		}
+		
+		foreach ($qchecks as $qcTable => $qrcheck) {
+			foreach ($qrcheck as $qcheck) {
+				$checkData[$qcTable][$qcheck->target_field_name]['id']                  = $qcheck->id;
+				$checkData[$qcTable][$qcheck->target_field_name]['group_id']            = $group->id;//$qcheck->group_id;
+				$checkData[$qcTable][$qcheck->target_field_name]['module_id']           = $qcheck->module_id;
+				$checkData[$qcTable][$qcheck->target_field_name]['target_table']        = $qcheck->target_table;
+				$checkData[$qcTable][$qcheck->target_field_name]['target_field_name']   = $qcheck->target_field_name;
+				$checkData[$qcTable][$qcheck->target_field_name]['target_field_values'] = $qcheck->target_field_values;
+			}
+		}
+		
+		$buffers = [];
+		foreach ($role_data as $role_tables => $role_modules) {
+			// cek if target_table not found in database
+			if (empty($checkData[$role_tables])) {
+				$buffers['insert'][$role_tables] = $role_modules;
+			} else {
+				foreach ($role_modules as $role_field => $role_values) {
+					if (!empty($checkData[$role_tables][$role_field])) {
+						// find diff data
+						if (array_diff($role_values, $checkData[$role_tables][$role_field])) {
+							$buffers['update'][$role_tables][$role_field]['info'] = intval($checkData[$role_tables][$role_field]['id']);
+							$buffers['update'][$role_tables][$role_field]['data'] = array_diff($role_values, $checkData[$role_tables][$role_field]);
+						}
+					} else {
+						$buffers['insert'][$role_tables][$role_field] = $role_values;
+					}
+				}
+			}
+		}
+		
+		foreach ($tables as $table_name => $table_field) {
+			if (!isset($checkData[$table_name])) {
+				// check if request target_table was null
+				foreach ($table_field as $table_fieldname => $table_data) {
+					$buffers['delete'][$table_name][$table_fieldname] = (array) $table_data;
+				}
+			}
+		}
+		
+		foreach ($checkData as $check_tables => $check_modules) {
+			foreach ($check_modules as $check_fields => $check_values) {
+				// check if field was deleted
+				if (empty($role_data[$check_tables][$check_fields])) {
+					$buffers['delete'][$check_tables][$check_fields] = $check_values;
+				}
+			}
+		}
+		
+		foreach ($buffers as $action => $dataMapping) {
+			if ('insert' === $action) {
+				foreach ($dataMapping as $tablename => $moduleData) {
+					foreach ($moduleData as $fieldName => $fieldValues) {
+						diy_query($this->table)->insert([
+							'group_id'            => $fieldValues['group_id'],
+							'module_id'           => $fieldValues['module_id'],
+							'target_table'        => $tablename,
+							'target_field_name'   => $fieldName,
+							'target_field_values' => $fieldValues['target_field_values']
+						]);
+					}
+				}
+			}
+			
+			if ('update' === $action) {
+				foreach ($dataMapping as $tablename => $moduleData) {
+					foreach ($moduleData as $fieldName => $fieldValues) {
+						diy_query($this->table)->where('id', $fieldValues['info'])->update($fieldValues['data']);
+					}
+				}
+			}
+			
+			if ('delete' === $action) {
+				foreach ($dataMapping as $tablename => $moduleData) {
+					foreach ($moduleData as $fieldName => $fieldValues) {
+						diy_query($this->table)->where('id', $fieldValues['id'])->delete();
+					}
+				}
+			}
+		}
+		
+		dd($buffers);
 	}
 	
 	public static function getTableFields($data) {
@@ -73,46 +155,66 @@ class MappingPage extends Model {
 		return json_encode($fields);
 	}
 	
-	public static function getFieldValues($data, $node_id = '__node__') {
-		$rows     = [];
+	private static function queryFieldValues($requests, $tablename, $node = null) {
 		$query    = [];
 		$fieldset = [];
 		
+		if (is_array($requests)) {
+			foreach ($requests as $request) {
+				
+				$fieldNameValue     = $request;
+				if (diy_string_contained($request, '::')) {
+					$explode         = explode('::', $request);
+					$fieldNameValue  = $explode[1];
+				}
+				
+				$rows['table_name'] = $tablename;
+				$rows['field_name'] = $fieldNameValue;
+				
+				$fieldset = $rows['field_name'];
+				$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
+			}
+		} else {
+			$explode = explode('::', $requests);
+			
+			$rows['table_name'] = explode($node, $explode[0])[0];
+			$rows['field_name'] = $explode[1];
+			
+			$fieldset = $rows['field_name'];
+			$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
+		}
+		
+		$data             = [];
+		$data['data']     = $query;
+		$data['fieldset'] = $fieldset;
+		
+		return $data;		
+	}
+	
+	public static function getFieldValues($data, $node_id = '__node__') {
+		$rows  = [];
+		$query = [];
+		
 		if (is_array($data)) {
-			foreach ($data as $tablename => $requests) {
-				if (is_array($requests)) {
-					foreach ($requests as $request) {
-						
-						$fieldNameValue     = $request;
-						if (diy_string_contained($request, '::')) {
-							$explode         = explode('::', $request);
-							$fieldNameValue  = $explode[1];
-						}
-						
-						$rows['table_name'] = $tablename;
-						$rows['field_name'] = $fieldNameValue;
-						
-						$fieldset = $rows['field_name'];
-						$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
+			if (isset($_POST) && !empty($_GET['usein'])) {
+				foreach ($data as $moduleData) {
+					foreach ($moduleData as $tablename => $requests) {
+						$query = self::queryFieldValues($requests, $tablename);
 					}
-				} else {
-					$explode = explode('::', $requests);
-					
-					$rows['table_name'] = explode($node_id, $explode[0])[0];
-					$rows['field_name'] = $explode[1];
-					
-					$fieldset = $rows['field_name'];
-					$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
+				}
+			} else {
+				foreach ($data as $tablename => $requests) {
+					$query = self::queryFieldValues($requests, $tablename);
 				}
 			}
-			
-			$rows  = [];
-			foreach ($query as $row) {
-				$rows[$row->{$fieldset}] = $row->{$fieldset};
-			}
-			
-			return json_encode($rows);
 		}
+		
+		$rows  = [];
+		foreach ($query['data'] as $row) {
+			$rows[$row->{$query['fieldset']}] = $row->{$query['fieldset']};
+		}
+		
+		return json_encode($rows);
 	}
 	
 	public static function getData($data, $usein, $node_id) {

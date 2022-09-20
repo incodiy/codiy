@@ -14,7 +14,7 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 			
 			if (~$('select#' + target_id).attr('class').indexOf('field_name')) {
 				$('input#qmod-' + idsplit[0]).attr({'name': 'module[' + inputSource.attr('class') + ']'});
-				$('select#' + target_id).attr({'name': 'field_name[' + idsplit[0] + '][]'});
+				$('select#' + target_id).attr({'name': 'field_name[' + inputSource.attr('class') + '][' + idsplit[0] + '][]'});
 			}
 			
 			if (~$('select#' + target_id).attr('class').indexOf('field_value')) {
@@ -64,9 +64,12 @@ function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebt
 	$('#' + id).change(function(e) {
 		if ($(this).is(':checked')) {
 			node_btn.fadeIn(1800);
-			
 			setAjaxSelectionBox($(this), id, target_id, url, method, onError);
 		} else {
+
+			var idsplit = id.split('__node__');
+			$('input#qmod-' + idsplit[0]).removeAttr('name');
+			
 			loader(target_id, 'show');
 			loader(target_id, 'fadeOut');
 			updateSelectChosen('select#' + target_id, true, '');

@@ -80,14 +80,15 @@ class GroupController extends Controller {
 		$this->form->text('group_name', null, ['required']);
 		$this->form->text('group_info', null, ['required']);
 		$this->form->selectbox('active', active_box(), false, ['required']);
-		/* 
+		
 		// SET MODULE PRIVILEGES
 		$this->form->openTab('Module Privileges');
 		$this->form->draw($this->group_privilege());
-		 */
+		
 		// SET PAGE PRIVILEGES
 		$this->form->openTab('Mapping Page Privileges');
 		$this->form->draw($this->mapping());
+		
 		$this->form->closeTab();
 		
 		$this->form->close('Save Group');

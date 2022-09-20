@@ -37,10 +37,22 @@ trait MappingPage {
 	public function mapping_before_insert($requests, $group) {
 		$role    = [];
 		$request = $requests->all();
-		
+		/* 
 		if (!empty($request['field_value'])) {
 			foreach ($request['field_value'] as $mod => $role_data) {
 				$role[$group->id][$mod] = $role_data;
+			}
+		} */
+		
+		foreach ($request['field_name'] as $mname => $mdata) {
+			foreach ($mdata as $tname => $tdata) {
+				foreach ($tdata as $fieldTarget) {
+					if (isset($request['field_value'][$mname][$tname][$fieldTarget])) {
+						$role[$group->id][$mname][$tname][$fieldTarget] = $request['field_value'][$mname][$tname][$fieldTarget];
+					} else {
+						$role[$group->id][$mname][$tname][$fieldTarget] = null;
+					}
+				}
 			}
 		}
 		
@@ -48,21 +60,28 @@ trait MappingPage {
 		foreach ($role as $group_id => $data) {
 			foreach ($data as $route_path => $tableData) {
 				
-				$module_id = intval($request['module'][$route_path]);
-				foreach ($tableData as $table_name => $field_data) {
-					
-					foreach ($field_data as $field_name => $field_values) {
-						$roles[$field_name]['group_id']            = $group_id;
-						$roles[$field_name]['module_id']           = $module_id;
-						$roles[$field_name]['target_table']        = $table_name;
-						$roles[$field_name]['target_field_name']   = $field_name;
-						$roles[$field_name]['target_field_values'] = implode('::', $field_values);
+				if (!empty($request['module'][$route_path])) {
+					$module_id = intval($request['module'][$route_path]);
+					foreach ($tableData as $table_name => $field_data) {
+						
+						foreach ($field_data as $field_name => $field_values) {
+							$target_field_values    = null;
+							if (!empty($field_values)) {
+								$target_field_values = implode('::', $field_values);
+							}
+							
+							$roles[$table_name][$field_name]['group_id']            = $group_id;
+							$roles[$table_name][$field_name]['module_id']           = $module_id;
+							$roles[$table_name][$field_name]['target_table']        = $table_name;
+							$roles[$table_name][$field_name]['target_field_name']   = $field_name;
+							$roles[$table_name][$field_name]['target_field_values'] = $target_field_values;
+						}
 					}
 				}
 			}
 		}
 		
-		$this->map()->insert_process($roles);
+		$this->map()->insert_process($roles, $group);
 	}
 	
 	private function mapping() {
@@ -180,7 +199,11 @@ trait MappingPage {
 		
 		if (!empty($identify)) {
 			if (is_array($identify)) {
-				return $rolename[$basename] = "{$basename}[{$identify[0]}][{$identify[1]}][{$identify[2]}][]";
+				if (!empty($identify[2])) {
+					return $rolename[$basename] = "{$basename}[{$identify[0]}][{$identify[1]}][{$identify[2]}][]";
+				} else {
+					return $rolename[$basename] = "{$basename}[{$identify[0]}][{$identify[1]}][]";
+				}
 			} else {
 				return $rolename[$basename] = "{$basename}[$identify][]";
 			}
@@ -219,12 +242,13 @@ trait MappingPage {
 			$roleValues['field_name']       = [];
 			$roleValues['field_value']      = [];
 			
-			$buffers     = [];
-			$buffer_data = [];
+			$buffers                        = [];
+			$buffer_data                    = [];
+			
 			if (isset($roleData['model']['buffers']['page_roles'])) {
-				$buffers  = $roleData['model']['buffers']['page_roles'];
+				$buffers                     = $roleData['model']['buffers']['page_roles'];				
+				$roleValues['table_checked'] = true;
 				
-				$roleValues['table_checked'] = true;				
 				foreach ($buffers as $buffer_table => $buffer_data) {
 					$roleValues['table_map']  = $buffer_table;
 					
@@ -234,10 +258,11 @@ trait MappingPage {
 							$roleValues['field_name'][$buffer_table][$buffer_field]['data']      = $this->getFieldTable($buffer_table, 'getTableFields');
 							
 							$buffered_values = [];
-							foreach (explode('::', $buffered->target_field_value) as $value_buffered) {
-								$buffered_values['selected'][$value_buffered] = $value_buffered;
-								$buffered_values['data']                      = $this->getFieldTable([$buffer_table => [$buffer_field]], 'getFieldValues');
+							foreach (explode('::', $buffered->target_field_values) as $value_buffered) {
+								$buffered_values['selected'][$value_buffered]         = $value_buffered;
+								$buffered_values['data']                              = $this->getFieldTable([$buffer_table => [$buffer_field]], 'getFieldValues');
 							}
+							
 							$roleValues['field_value'][$buffer_table][$buffer_field] = $buffered_values;
 						}
 					}
@@ -245,9 +270,8 @@ trait MappingPage {
 			}
 			
 			$roleColumns                    = [];
-			
 			$roleColumns['ajax_field_name'] = $this->ajax_urli('field_name', true);
-			$roleColumns['identifier']      = "<input type=\"hidden\" id=\"qmod-{$identifier}\" class=\"{$routeName}\" value=\"{$module_data->id}\" />";
+			$roleColumns['identifier']      = diy_input('hidden', "qmod-{$identifier}", $routeName, null, $module_data->id);
 			$tableID                        = $this->setID($identifier);
 			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
 			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID);
@@ -263,8 +287,8 @@ trait MappingPage {
 				foreach ($buffer_data as $buffer_field => $buffered) {
 					$n++;
 					
-					$rand['f'] = diy_random_strings(8, false, null, null);
-					$rand['v'] = diy_random_strings(8, false, null, null);
+					$rand['f']          = diy_random_strings(8, false, null, null);
+					$rand['v']          = diy_random_strings(8, false, null, null);
 					
 					$fieldbuff['field'] = $fieldID . $rand['f'];
 					$fieldbuff['value'] = $valueID . $rand['v'];
@@ -273,16 +297,18 @@ trait MappingPage {
 					$fieldbuff['ranval'][$buffer_field] = $valueID . $rand['v'];
 					
 					if ($n > 1) {
-						$fieldNameAttr  = ['id' => $fieldbuff['field'], 'class' => $routeToAttribute . "{$fieldID}field_name"];
-						$fieldValueAttr = ['id' => $fieldbuff['value'], 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
+						$fieldNameAttr   = ['id' => $fieldbuff['field'], 'class' => $routeToAttribute . "{$fieldID}field_name"];
+						$fieldValueAttr  = ['id' => $fieldbuff['value'], 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
 					} else {
-						$fieldNameAttr  = ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"];
-						$fieldValueAttr = ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
+						$fieldNameAttr   = ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"];
+						$fieldValueAttr  = ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
 					}
 					
-					$fieldNameValues  = $roleValues['field_name'][$identifier][$buffer_field];
+					$roleColumns['identifier'] = diy_input('hidden', "qmod-{$identifier}", $routeName, "module[{$module_data->route}]", $module_data->id);
+					
+					$fieldNameValues    = $roleValues['field_name'][$identifier][$buffer_field];
 					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox (
-						$this->rolename('field_name', $identifier), 
+						$this->rolename('field_name', [$routeName, $identifier]), 
 						$fieldNameValues['data'], 
 						$fieldNameValues['selected'], 
 						$fieldNameAttr, 
@@ -290,20 +316,22 @@ trait MappingPage {
 						false
 					);
 					
-					$fieldDataValues  = $roleValues['field_value'][$identifier][$buffer_field];
+					$fieldDataValues    = $roleValues['field_value'][$identifier][$buffer_field];
+				//	if (empty($fieldDataValues['data']) && !empty($fieldDataValues['selected'])) $fieldDataValues['data'] = $fieldDataValues['selected'];					
 					$roleColumns['field_value'][$identifier][$buffer_field] = diy_form_selectbox (
 						$this->rolename('field_value', [$routeName, $identifier, array_keys($fieldNameValues['selected'])[0]]), 
-						$fieldDataValues['data'], 
+						$fieldDataValues['data'],
 						$fieldDataValues['selected'], 
 						$fieldValueAttr, 
 						false, 
 						false
 					);
+				//	dump($fieldNameValues['selected'], $fieldDataValues['data']);
 				}
-				
+			//	dd($roleColumns);
 			} else {
-				$roleColumns['field_name']      = diy_form_selectbox($roleAttributes['field_name'], $roleValues['field_name'], null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);				
-				$roleColumns['field_value']     = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+				$roleColumns['field_name']  = diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);				
+				$roleColumns['field_value'] = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
 			}
 			
 			$module_name_label = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
@@ -356,12 +384,12 @@ trait MappingPage {
 	
 	private function js_rolemap_table($id, $target_id, $second_target, $nodebtn) {
 		$this->ajax_urli('table_name');
-		return "<script type='text/javascript'>$(document).ready(function() { mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}'); });</script>";
+		return diy_script("mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}');");
 	}
 	
 	private function js_rolemap_fieldname($id, $target_id) {
 		$this->ajax_urli('field_name');
-		return "<script type='text/javascript'>$(document).ready(function() { mappingPageFieldnameValues('{$id}', '{$target_id}', '{$this->ajaxUrli}'); });</script>";
+		return diy_script("mappingPageFieldnameValues('{$id}', '{$target_id}', '{$this->ajaxUrli}');");
 	}
 	
 	private function buttonAdd($node_btn, $id, $target_id, $second_target) {
