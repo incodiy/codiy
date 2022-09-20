@@ -134,8 +134,6 @@ class MappingPage extends Model {
 				}
 			}
 		}
-		
-		dd($buffers);
 	}
 	
 	public static function getTableFields($data) {

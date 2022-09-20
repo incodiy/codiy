@@ -37,12 +37,6 @@ trait MappingPage {
 	public function mapping_before_insert($requests, $group) {
 		$role    = [];
 		$request = $requests->all();
-		/* 
-		if (!empty($request['field_value'])) {
-			foreach ($request['field_value'] as $mod => $role_data) {
-				$role[$group->id][$mod] = $role_data;
-			}
-		} */
 		
 		foreach ($request['field_name'] as $mname => $mdata) {
 			foreach ($mdata as $tname => $tdata) {
@@ -80,6 +74,12 @@ trait MappingPage {
 				}
 			}
 		}
+		
+		// CLEARING MAPPING PAGE REQUESTS
+		request()->offsetUnset('module');
+		request()->offsetUnset('table_name');
+		request()->offsetUnset('field_name');
+		request()->offsetUnset('field_value');
 		
 		$this->map()->insert_process($roles, $group);
 	}

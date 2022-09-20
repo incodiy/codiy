@@ -250,7 +250,7 @@ class GroupController extends Controller {
 			$getGroup = diy_query($this->model_table)->where('id', $model_id)->first();
 		}
 		
-	//	$this->privileges_before_insert($request, $getGroup);
+		$this->privileges_before_insert($request, $getGroup);
 		$this->mapping_before_insert($request, $getGroup);
 	}
 	
