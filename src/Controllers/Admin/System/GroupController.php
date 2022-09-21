@@ -156,7 +156,7 @@ class GroupController extends Controller {
 			
 			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
 			$requestCollections = array_merge($modules, $rolepages);
-			$callbackRequest    = $request->merge($requestCollections);    // callback the all requests
+			$callbackRequest    = $request->merge($requestCollections);     // callback the all requests
 		} else {
 			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
 			$callbackRequest    = $request;
