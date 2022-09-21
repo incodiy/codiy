@@ -1,8 +1,17 @@
 /* [ START ] MAPPING PAGE FUNCTION */
 function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onError = 'Error') {
-	var qtarget = null;
-	var idsplit = id.split('__node__');
+	var qtarget     = null;
+	var idsplit     = id.split('__node__');
 	var inputSource = $('input#qmod-' + idsplit[0]);
+	var roleNode    = 'rolePages';
+	var prefixNode  = {'module':'module','field_name':'field_name','field_value':'field_value'};
+	if (roleNode) {
+		prefixNode  = {
+			'module'     : roleNode + '[module]',
+			'field_name' : roleNode + '[field_name]',
+			'field_value': roleNode + '[field_value]'
+		};
+	}
 	
 	$.ajax({
 		type    : method,
@@ -13,12 +22,12 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 			qtarget   = sourcebox.val();
 			
 			if (~$('select#' + target_id).attr('class').indexOf('field_name')) {
-				$('input#qmod-' + idsplit[0]).attr({'name': 'module[' + inputSource.attr('class') + ']'});
-				$('select#' + target_id).attr({'name': 'field_name[' + inputSource.attr('class') + '][' + idsplit[0] + '][]'});
+				$('input#qmod-' + idsplit[0]).attr({'name': prefixNode.module + '[' + inputSource.attr('class') + ']'});
+				$('select#' + target_id).attr({'name': prefixNode.field_name + '[' + inputSource.attr('class') + '][' + idsplit[0] + '][]'});
 			}
 			
 			if (~$('select#' + target_id).attr('class').indexOf('field_value')) {
-				$('select#' + target_id).attr({'name': 'field_value[' + inputSource.attr('class') + '][' + idsplit[0] + '][' + qtarget + '][]'});
+				$('select#' + target_id).attr({'name': prefixNode.field_value + '[' + inputSource.attr('class') + '][' + idsplit[0] + '][' + qtarget + '][]'});
 			}
 			
 			loader(target_id, 'show');
@@ -148,10 +157,10 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 			firstRemove.attr({'style': ''}).fadeIn();
 		}
 		
-		var random_target_id     = target_id       + diy_random();
-		var random_second_target = second_target   + diy_random();
-		var node_row             = 'remove-row'    + random_target_id;
-		var nextcloneid          = 'row-box-'      + random_target_id;
+		var random_target_id     = target_id     + diy_random();
+		var random_second_target = second_target + diy_random();
+		var node_row             = 'remove-row'  + random_target_id;
+		var nextcloneid          = 'row-box-'    + random_target_id;
 		var clonerowbox          = baserowbox.clone().attr({'id': nextcloneid, 'class': baserowbox.attr('class') + ' ' + node_add});
 		
 		clonerowbox.find('td').each(function(x, n) {

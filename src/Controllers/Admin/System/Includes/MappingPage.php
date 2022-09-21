@@ -36,52 +36,53 @@ trait MappingPage {
 
 	public function mapping_before_insert($requests, $group) {
 		$role    = [];
-		$request = $requests->all();
+		$reqs    = $requests->all();
 		
-		foreach ($request['field_name'] as $mname => $mdata) {
-			foreach ($mdata as $tname => $tdata) {
-				foreach ($tdata as $fieldTarget) {
-					if (isset($request['field_value'][$mname][$tname][$fieldTarget])) {
-						$role[$group->id][$mname][$tname][$fieldTarget] = $request['field_value'][$mname][$tname][$fieldTarget];
-					} else {
-						$role[$group->id][$mname][$tname][$fieldTarget] = null;
-					}
-				}
-			}
-		}
-		
-		$roles = [];
-		foreach ($role as $group_id => $data) {
-			foreach ($data as $route_path => $tableData) {
-				
-				if (!empty($request['module'][$route_path])) {
-					$module_id = intval($request['module'][$route_path]);
-					foreach ($tableData as $table_name => $field_data) {
-						
-						foreach ($field_data as $field_name => $field_values) {
-							$target_field_values    = null;
-							if (!empty($field_values)) {
-								$target_field_values = implode('::', $field_values);
-							}
-							
-							$roles[$table_name][$field_name]['group_id']            = $group_id;
-							$roles[$table_name][$field_name]['module_id']           = $module_id;
-							$roles[$table_name][$field_name]['target_table']        = $table_name;
-							$roles[$table_name][$field_name]['target_field_name']   = $field_name;
-							$roles[$table_name][$field_name]['target_field_values'] = $target_field_values;
+		if (isset($reqs[MappingData::$prefixNode])) {
+			$request = $reqs[MappingData::$prefixNode];
+			
+			foreach ($request['field_name'] as $mname => $mdata) {
+				foreach ($mdata as $tname => $tdata) {
+					foreach ($tdata as $fieldTarget) {
+						if (isset($request['field_value'][$mname][$tname][$fieldTarget])) {
+							$role[$group->id][$mname][$tname][$fieldTarget] = $request['field_value'][$mname][$tname][$fieldTarget];
+						} else {
+							$role[$group->id][$mname][$tname][$fieldTarget] = null;
 						}
 					}
 				}
 			}
+			
+			$roles = [];
+			foreach ($role as $group_id => $data) {
+				foreach ($data as $route_path => $tableData) {
+					
+					if (!empty($request['module'][$route_path])) {
+						$module_id = intval($request['module'][$route_path]);
+						foreach ($tableData as $table_name => $field_data) {
+							
+							foreach ($field_data as $field_name => $field_values) {
+								$target_field_values    = null;
+								if (!empty($field_values)) {
+									$target_field_values = implode('::', $field_values);
+								}
+								
+								$roles[$table_name][$field_name]['group_id']            = $group_id;
+								$roles[$table_name][$field_name]['module_id']           = $module_id;
+								$roles[$table_name][$field_name]['target_table']        = $table_name;
+								$roles[$table_name][$field_name]['target_field_name']   = $field_name;
+								$roles[$table_name][$field_name]['target_field_values'] = $target_field_values;
+							}
+						}
+					}
+				}
+			}
+			
+			// CLEARING MAPPING PAGE REQUESTS
+			request()->offsetUnset(MappingData::$prefixNode);
+			
+			$this->map()->insert_process($roles, $group);
 		}
-		
-		// CLEARING MAPPING PAGE REQUESTS
-		request()->offsetUnset('module');
-		request()->offsetUnset('table_name');
-		request()->offsetUnset('field_name');
-		request()->offsetUnset('field_value');
-		
-		$this->map()->insert_process($roles, $group);
 	}
 	
 	private function mapping() {
@@ -194,9 +195,12 @@ trait MappingPage {
 		return $row_table;
 	}
 	
+	private $roleNode;
 	private function rolename($basename, $identify = []) {
-		$rolename = [];
+		$rolename       = [];
+		$this->roleNode = MappingData::$prefixNode;
 		
+		$basename = "{$this->roleNode}[{$basename}]";
 		if (!empty($identify)) {
 			if (is_array($identify)) {
 				if (!empty($identify[2])) {
@@ -205,10 +209,10 @@ trait MappingPage {
 					return $rolename[$basename] = "{$basename}[{$identify[0]}][{$identify[1]}][]";
 				}
 			} else {
-				return $rolename[$basename] = "{$basename}[$identify][]";
+				return $rolename[$basename]    = "{$basename}[$identify][]";
 			}
 		} else {
-			return $rolename[$basename] = "{$basename}[]";
+			return $rolename[$basename]       = "{$basename}[]";
 		}
 	}
 	
@@ -233,9 +237,9 @@ trait MappingPage {
 			
 			$roleAttributes                 = [];
 			$roleAttributes['table_name']   = $this->rolename('table_name');
-			$roleAttributes['field_name']   = 'field_name';
+			$roleAttributes['field_name']   = "{$this->roleNode}[field_name]";
 			$roleAttributes['field_value']  = $this->rolename('field_value', $identifier);
-						
+			
 			$roleValues                     = [];
 			$roleValues['table_checked']    = false;
 			$roleValues['table_map']        = $identifier;
@@ -304,7 +308,7 @@ trait MappingPage {
 						$fieldValueAttr  = ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
 					}
 					
-					$roleColumns['identifier'] = diy_input('hidden', "qmod-{$identifier}", $routeName, "module[{$module_data->route}]", $module_data->id);
+					$roleColumns['identifier'] = diy_input('hidden', "qmod-{$identifier}", $routeName, "{$this->roleNode}[module][{$module_data->route}]", $module_data->id);
 					
 					$fieldNameValues    = $roleValues['field_name'][$identifier][$buffer_field];
 					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox (
@@ -316,8 +320,7 @@ trait MappingPage {
 						false
 					);
 					
-					$fieldDataValues    = $roleValues['field_value'][$identifier][$buffer_field];
-				//	if (empty($fieldDataValues['data']) && !empty($fieldDataValues['selected'])) $fieldDataValues['data'] = $fieldDataValues['selected'];					
+					$fieldDataValues    = $roleValues['field_value'][$identifier][$buffer_field];			
 					$roleColumns['field_value'][$identifier][$buffer_field] = diy_form_selectbox (
 						$this->rolename('field_value', [$routeName, $identifier, array_keys($fieldNameValues['selected'])[0]]), 
 						$fieldDataValues['data'],
@@ -326,9 +329,7 @@ trait MappingPage {
 						false, 
 						false
 					);
-				//	dump($fieldNameValues['selected'], $fieldDataValues['data']);
 				}
-			//	dd($roleColumns);
 			} else {
 				$roleColumns['field_name']  = diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);				
 				$roleColumns['field_value'] = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);

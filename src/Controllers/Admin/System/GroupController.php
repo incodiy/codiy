@@ -140,13 +140,13 @@ class GroupController extends Controller {
 			}]
 		]);
 		
-		$requests = $request->all();                                    // collect all requests
+		$requests = $request->all();                                       // collect all requests
 		if (isset($requests['modules'])) {
 			$modules            = [];
-			$modules['modules'] = $requests['modules'];                  // get modules requests, if any
-			$request->offsetUnset('modules');                            // throw modules request before insert to group table)
+			$modules['modules'] = $requests['modules'];                     // get modules requests, if any
+			$request->offsetUnset('modules');                               // throw modules request before insert to group table)
 			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
-			$callbackRequest    = $request->merge($modules);             // callback the all requests
+			$callbackRequest    = $request->merge($modules);                // callback the all requests
 		} else {
 			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
 			$callbackRequest    = $request;
@@ -188,14 +188,14 @@ class GroupController extends Controller {
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
-			if ('root' !== $this->model_data->group_name) {
-				// SET PAGE PRIVILEGES
-				$this->form->openTab('Mapping Page Privileges');
-				$this->form->draw($this->mapping());
-				
+			if ('root' !== $this->model_data->group_name) {				
 				// SET MODULE PRIVILEGES
 				$this->form->openTab('Module Privileges');
 				$this->form->draw($this->group_privilege());
+				
+				// SET PAGE PRIVILEGES
+				$this->form->openTab('Mapping Page Privileges');
+				$this->form->draw($this->mapping());
 				
 				$this->form->closeTab();
 				
@@ -224,9 +224,9 @@ class GroupController extends Controller {
 		
 		if ($current_name != $post_name) {
 			$this->validate(request(), [
-				'group_name' => [function ($attribute, $value, $fail) {
-					$groupname = ucwords(str_replace('_', ' ', $attribute));
-					$check = $this->validation_groups(request());
+				'group_name'   => [function ($attribute, $value, $fail) {
+					$groupname  = ucwords(str_replace('_', ' ', $attribute));
+					$check      = $this->validation_groups(request());
 					if ($check >= 1) $fail("{$groupname} dengan nama '{$value}' sudah terdaftar. Tolong pilih nama lainnya!");
 				}]
 			]);

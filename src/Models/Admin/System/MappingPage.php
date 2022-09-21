@@ -85,51 +85,53 @@ class MappingPage extends Model {
 			}
 		}
 		
-		foreach ($tables as $table_name => $table_field) {
-			if (!isset($checkData[$table_name])) {
-				// check if request target_table was null
-				foreach ($table_field as $table_fieldname => $table_data) {
-					$buffers['delete'][$table_name][$table_fieldname] = (array) $table_data;
-				}
-			}
-		}
-		
-		foreach ($checkData as $check_tables => $check_modules) {
-			foreach ($check_modules as $check_fields => $check_values) {
-				// check if field was deleted
-				if (empty($role_data[$check_tables][$check_fields])) {
-					$buffers['delete'][$check_tables][$check_fields] = $check_values;
-				}
-			}
-		}
-		
-		foreach ($buffers as $action => $dataMapping) {
-			if ('insert' === $action) {
-				foreach ($dataMapping as $tablename => $moduleData) {
-					foreach ($moduleData as $fieldName => $fieldValues) {
-						diy_query($this->table)->insert([
-							'group_id'            => $fieldValues['group_id'],
-							'module_id'           => $fieldValues['module_id'],
-							'target_table'        => $tablename,
-							'target_field_name'   => $fieldName,
-							'target_field_values' => $fieldValues['target_field_values']
-						]);
+		if (!empty($buffers)) {
+			foreach ($tables as $table_name => $table_field) {
+				if (!isset($checkData[$table_name])) {
+					// check if request target_table was null
+					foreach ($table_field as $table_fieldname => $table_data) {
+						$buffers['delete'][$table_name][$table_fieldname] = (array) $table_data;
 					}
 				}
 			}
 			
-			if ('update' === $action) {
-				foreach ($dataMapping as $tablename => $moduleData) {
-					foreach ($moduleData as $fieldName => $fieldValues) {
-						diy_query($this->table)->where('id', $fieldValues['info'])->update($fieldValues['data']);
+			foreach ($checkData as $check_tables => $check_modules) {
+				foreach ($check_modules as $check_fields => $check_values) {
+					// check if field was deleted
+					if (empty($role_data[$check_tables][$check_fields])) {
+						$buffers['delete'][$check_tables][$check_fields] = $check_values;
 					}
 				}
 			}
 			
-			if ('delete' === $action) {
-				foreach ($dataMapping as $tablename => $moduleData) {
-					foreach ($moduleData as $fieldName => $fieldValues) {
-						diy_query($this->table)->where('id', $fieldValues['id'])->delete();
+			foreach ($buffers as $action => $dataMapping) {
+				if ('insert' === $action) {
+					foreach ($dataMapping as $tablename => $moduleData) {
+						foreach ($moduleData as $fieldName => $fieldValues) {
+							diy_query($this->table)->insert([
+								'group_id'            => $fieldValues['group_id'],
+								'module_id'           => $fieldValues['module_id'],
+								'target_table'        => $tablename,
+								'target_field_name'   => $fieldName,
+								'target_field_values' => $fieldValues['target_field_values']
+							]);
+						}
+					}
+				}
+				
+				if ('update' === $action) {
+					foreach ($dataMapping as $tablename => $moduleData) {
+						foreach ($moduleData as $fieldName => $fieldValues) {
+							diy_query($this->table)->where('id', $fieldValues['info'])->update($fieldValues['data']);
+						}
+					}
+				}
+				
+				if ('delete' === $action) {
+					foreach ($dataMapping as $tablename => $moduleData) {
+						foreach ($moduleData as $fieldName => $fieldValues) {
+							diy_query($this->table)->where('id', $fieldValues['id'])->delete();
+						}
 					}
 				}
 			}
@@ -215,7 +217,10 @@ class MappingPage extends Model {
 		return json_encode($rows);
 	}
 	
+	public static $prefixNode = 'rolePages';
 	public static function getData($data, $usein, $node_id) {
+		$data = $data[self::$prefixNode];
+		
 		if ('table_name' === $usein) $output = self::getTableFields($data['table_name']);
 		if ('field_name' === $usein) $output = self::getFieldValues($data['field_name'], $node_id);
 		
