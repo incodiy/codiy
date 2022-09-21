@@ -35,7 +35,7 @@ class MappingPage extends Model {
 	}
 	
 	public function insert_process($role_data, $group) {
-		$checkTables = diy_query($this->table)->get();
+		$checkTables = diy_query($this->table)->where('group_id', intval($group->id))->get();
 		$checkData   = [];
 		$qchecks     = [];
 		
@@ -47,7 +47,7 @@ class MappingPage extends Model {
 		foreach ($role_data as $dataRequests) {
 			foreach ($dataRequests as $req) {
 				$qchecks[$req['target_table']] = diy_query($this->table)
-					->where('group_id'    , $group->id /* $req['group_id'] */ )
+					->where('group_id'    , $group->id)
 					->where('module_id'   , $req['module_id'])
 					->where('target_table', $req['target_table'])
 					->get();
@@ -57,7 +57,7 @@ class MappingPage extends Model {
 		foreach ($qchecks as $qcTable => $qrcheck) {
 			foreach ($qrcheck as $qcheck) {
 				$checkData[$qcTable][$qcheck->target_field_name]['id']                  = $qcheck->id;
-				$checkData[$qcTable][$qcheck->target_field_name]['group_id']            = $group->id;//$qcheck->group_id;
+				$checkData[$qcTable][$qcheck->target_field_name]['group_id']            = $group->id;
 				$checkData[$qcTable][$qcheck->target_field_name]['module_id']           = $qcheck->module_id;
 				$checkData[$qcTable][$qcheck->target_field_name]['target_table']        = $qcheck->target_table;
 				$checkData[$qcTable][$qcheck->target_field_name]['target_field_name']   = $qcheck->target_field_name;
@@ -85,36 +85,41 @@ class MappingPage extends Model {
 			}
 		}
 		
+		foreach ($tables as $table_name => $table_field) {
+			if (!isset($checkData[$table_name])) {
+				// check if request target_table was null
+				foreach ($table_field as $table_fieldname => $table_data) {
+					$buffers['delete'][$table_name][$table_fieldname] = (array) $table_data;
+				}
+			}
+		}
+		
+		foreach ($checkData as $check_tables => $check_modules) {
+			foreach ($check_modules as $check_fields => $check_values) {
+				// check if field was deleted
+				if (empty($role_data[$check_tables][$check_fields])) {
+					$buffers['delete'][$check_tables][$check_fields] = $check_values;
+				}
+			}
+		}
+		
 		if (!empty($buffers)) {
-			foreach ($tables as $table_name => $table_field) {
-				if (!isset($checkData[$table_name])) {
-					// check if request target_table was null
-					foreach ($table_field as $table_fieldname => $table_data) {
-						$buffers['delete'][$table_name][$table_fieldname] = (array) $table_data;
-					}
-				}
-			}
-			
-			foreach ($checkData as $check_tables => $check_modules) {
-				foreach ($check_modules as $check_fields => $check_values) {
-					// check if field was deleted
-					if (empty($role_data[$check_tables][$check_fields])) {
-						$buffers['delete'][$check_tables][$check_fields] = $check_values;
-					}
-				}
-			}
 			
 			foreach ($buffers as $action => $dataMapping) {
 				if ('insert' === $action) {
 					foreach ($dataMapping as $tablename => $moduleData) {
+						
 						foreach ($moduleData as $fieldName => $fieldValues) {
-							diy_query($this->table)->insert([
-								'group_id'            => $fieldValues['group_id'],
-								'module_id'           => $fieldValues['module_id'],
-								'target_table'        => $tablename,
-								'target_field_name'   => $fieldName,
-								'target_field_values' => $fieldValues['target_field_values']
-							]);
+							if (intval($group->id) === intval($fieldValues['group_id'])) {
+								
+								diy_query($this->table)->insert([
+									'group_id'            => $fieldValues['group_id'],
+									'module_id'           => $fieldValues['module_id'],
+									'target_table'        => $tablename,
+									'target_field_name'   => $fieldName,
+									'target_field_values' => $fieldValues['target_field_values']
+								]);
+							}
 						}
 					}
 				}
@@ -122,7 +127,7 @@ class MappingPage extends Model {
 				if ('update' === $action) {
 					foreach ($dataMapping as $tablename => $moduleData) {
 						foreach ($moduleData as $fieldName => $fieldValues) {
-							diy_query($this->table)->where('id', $fieldValues['info'])->update($fieldValues['data']);
+							diy_query($this->table)->where(['group_id' => intval($group->id), 'id' => $fieldValues['info']])->update($fieldValues['data']);
 						}
 					}
 				}
@@ -130,7 +135,7 @@ class MappingPage extends Model {
 				if ('delete' === $action) {
 					foreach ($dataMapping as $tablename => $moduleData) {
 						foreach ($moduleData as $fieldName => $fieldValues) {
-							diy_query($this->table)->where('id', $fieldValues['id'])->delete();
+							diy_query($this->table)->where(['group_id' => intval($group->id), 'id' => $fieldValues['id']])->delete();
 						}
 					}
 				}

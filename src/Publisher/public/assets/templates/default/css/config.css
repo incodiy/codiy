@@ -207,10 +207,16 @@ div.input-group .cke {
 	padding: 10px 0 !important;
 }
 
+.expresscode-table {
+	position: relative;
+	z-index: 1;
+}
+
 .diy-action-box {
 	position: relative;
 	display: inline-table;
 	width: 100%;
+	z-index: 0;
 }
 
 .diy-action-box button {

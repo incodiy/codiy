@@ -145,8 +145,18 @@ class GroupController extends Controller {
 			$modules            = [];
 			$modules['modules'] = $requests['modules'];                     // get modules requests, if any
 			$request->offsetUnset('modules');                               // throw modules request before insert to group table)
+			
+			$mapPage            = $this->map();
+			$mapNode            = $mapPage::$prefixNode;
+			$rolepages          = [];
+			if (isset($requests['rolePages'])) {
+				$rolepages[$mapNode] = $requests[$mapNode];
+				$request->offsetUnset('rolePages');
+			}
+			
 			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
-			$callbackRequest    = $request->merge($modules);                // callback the all requests
+			$requestCollections = array_merge($modules, $rolepages);
+			$callbackRequest    = $request->merge($requestCollections);    // callback the all requests
 		} else {
 			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
 			$callbackRequest    = $request;
