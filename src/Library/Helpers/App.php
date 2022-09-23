@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Session;
 
 use Incodiy\Codiy\Models\Admin\System\Modules;
 use Incodiy\Codiy\Models\Admin\System\Preference;
+use Incodiy\Codiy\Library\Components\MetaTags;
 
 /**
  * Created on 10 Mar 2021
@@ -17,6 +18,15 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
+
+if (!function_exists('meta')) {
+	
+	function meta() {
+		$meta = new MetaTags();
+		
+		return $meta;
+	}
+}
 
 if (!function_exists('diy_config')) {
 	
@@ -777,6 +787,11 @@ if (!function_exists('diy_update')) {
 			
 			if (diy_string_contained($value, 'WIB')) {
 				$value = str_replace(' WIB', ':' . date('s'), $value);
+			}
+			
+			$passwordKey = ['pass', 'password', 'passkey'];
+			if (in_array($key, $passwordKey)) {
+				$value = Hash::make($value);
 			}
 			
 			$requests[$key] = $value;

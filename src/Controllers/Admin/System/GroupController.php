@@ -131,9 +131,9 @@ class GroupController extends Controller {
 		$this->validations['group_name'] = 'required|unique:base_group';
 		$request->validate($this->validations);
 		$this->validate(request(), [
-			'group_name' => [function ($attribute, $value, $fail) {
-				$groupname = ucwords(str_replace('_', ' ', $attribute));
-				$check = $this->validation_groups(request());
+			'group_name'   => [function ($attribute, $value, $fail) {
+				$groupname  = ucwords(str_replace('_', ' ', $attribute));
+				$check      = $this->validation_groups(request());
 				if ($check >= 1) {
 					$fail(":{$groupname} dengan nama '{$value}' sudah terdaftar. Tolong pilih nama lainnya!");
 				}

@@ -296,6 +296,56 @@ class Objects {
 		return $tag;
 	}
 	
+	private $ajaxUrli;
+	private function ajax_urli($return_data = false) {
+		$current_url  = route('ajax.post');//url(str_replace('.', '/', diy_current_baseroute()));
+		$urlset       = [
+			'AjaxPosF' => 'true'
+			,'_token'    => csrf_token()
+		];
+		
+		$uri      = [];
+		foreach ($urlset as $fieldurl => $urlvalue) {
+			$uri[] = "{$fieldurl}={$urlvalue}";
+		}
+		
+		$this->ajaxUrli = $current_url . '?' . implode('&', $uri);
+		
+		if (true === $return_data) {
+			return $this->ajaxUrli;
+		}
+	}
+	
+	public $syncs = [];
+	/**
+	 * Ajax Relational Fields
+	 * 
+	 * @param string $source_field
+	 * @param string $target_field
+	 * @param string $values
+	 * @param string $labels
+	 * @param string $query
+	 */
+	public function sync(string $source_field, string $target_field, string $values, string $labels = null, string $query) {
+	/* 	$syncs                                         = [];
+		$syncs[$source_field][$target_field]['values'] = $values;
+		$syncs[$source_field][$target_field]['labels'] = $labels;
+		$syncs[$source_field][$target_field]['query']  = $query;
+		 */
+		$this->ajax_urli();
+		
+		$o = diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$this->ajaxUrli}');");
+		$this->draw($o);
+	}
+	
+	public function ajaxProcessing() {
+		if (true == $_GET['AjaxPosF']) {
+			if (!empty($_POST)) {
+				dd($this->syncs);
+			}
+		}
+	}
+	
 	private function getModelValue($field_name, $function_name) {
 		$value = null;
 		

@@ -1,3 +1,34 @@
+function ajaxSelectionBox(id, target_id, url, method = 'POST', onError = 'Error') {
+	object = $('#' + id);
+	
+	object.change(function(e) {
+		var qtarget = null;
+		if ($(this).val() !== '') {
+			$.ajax({
+				type    : method,
+				url     : url,
+				data    : object.serialize(),
+				success : function(d) {
+					sourcebox = $('select#' + id);
+					qtarget   = sourcebox.val();
+					console.log(sourcebox, qtarget);
+				//	updateSelectChosen('select#' + target_id, false, '');
+				},
+				error: function() {
+					alert(onError);
+				},
+				complete: function() {
+					loader(target_id, 'fadeOut');
+				}
+			});
+			
+		}
+		
+	});
+	/*
+	*/
+}
+
 function ucwords(str, force) {
 	str=force ? str.toLowerCase() : str;  
 	return str.replace(/(\b)([a-zA-Z])/g, function(firstLetter) {

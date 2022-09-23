@@ -74,7 +74,6 @@ trait Text {
 	 * Create Input Password
 	 *
 	 * @param string $name
-	 * @param string $value
 	 * @param array $attributes
 	 * @param boolean $label
 	 */

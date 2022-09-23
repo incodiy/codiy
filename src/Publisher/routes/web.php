@@ -30,7 +30,7 @@ Route::group(['middleware' => ['web']], function () {
 	
     Route::group(['middleware' => 'auth'], function() {
     	
-    	Route::resource('dashboard', 'Admin\System\DashboardController');
+    	Route::resource('dashboard', 'App\Http\Controllers\Admin\System\DashboardController');
     	
 		// SYSTEM
 		Route::group(['prefix' => 'system'], function() {
@@ -54,6 +54,15 @@ Route::group(['middleware' => ['web']], function () {
 		
     	Route::group(['prefix' => 'modules'], function() {
     		Route::resource('form', 'App\Http\Controllers\Admin\Modules\FormController', ['as' => 'modules']);
+    		
+    		Route::group(['prefix' => 'mantra'], function() {
+    			Route::resource('kpi_distributors', 'App\Http\Controllers\Admin\Modules\Mantra\KpiDistributorControllers', ['as' => 'modules.mantra']);
+    		});
     	});
+    	
+    	Route::group(['prefix' => 'ajax'], function() {
+    		Route::post('post', ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@post', 'as' => 'ajax.post']);
+    	});
+    	
     });
 });

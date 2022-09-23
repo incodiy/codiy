@@ -69,6 +69,10 @@ trait View {
 			return $this->initRenderDatatables($filter_datatables);
 		}
 		
+		if (!empty($_GET['ajaxfproc'])) {
+			return $this->form->ajaxProcessing();
+		}
+		
 		$this->template->render_sidebar_menu($this->menu);
 		$this->data['menu_sidebar']    = [];
 		if (!is_null($this->template->menu_sidebar)) {
