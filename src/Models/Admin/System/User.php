@@ -121,4 +121,21 @@ class User extends Authenticatable {
 			return $user_info;
 		}
 	}
+	
+	public static function sqlFirstRoute() {
+		return "
+			SELECT
+				g.id group_id,
+				g.group_name,
+				g.group_info,
+				m.id module_id,
+				m.route_path,
+				m.module_name,
+				m.parent_name
+			FROM base_group g
+			JOIN base_group_privilege gp
+				ON g.id = gp.group_id
+			JOIN base_module m
+				ON gp.module_id = m.id";
+	}
 }

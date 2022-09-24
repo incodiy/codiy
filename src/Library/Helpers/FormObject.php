@@ -281,9 +281,7 @@ if (!function_exists('diy_form_selectbox')) {
 		}
 		
 		$selectbox = FormFacade::select($name, $values, $selected, $attributes);
-		if (false === $set_first_value) {
-		//	dd($selectbox);
-		}
+		
 		return $selectbox;
 	}
 }

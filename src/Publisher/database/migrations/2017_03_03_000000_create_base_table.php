@@ -107,6 +107,7 @@ class CreateBaseTable extends Migration {
 			
 			$table->string('timezone', 20)->nullable();
 			$table->string('ip_address', 20)->unique()->nullable();
+			$table->string('first_route', 100)->nullable();
 			
 			$table->dateTime('reg_date')->nullable();
 			$table->dateTime('last_visit_date')->nullable();

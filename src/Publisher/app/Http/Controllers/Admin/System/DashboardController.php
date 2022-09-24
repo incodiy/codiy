@@ -17,10 +17,9 @@ use Incodiy\Codiy\Controllers\Core\Controller;
  
 class DashboardController extends Controller {
 	
-	private $model			= [];
 	private $name			= 'article';
 	private $route_group	= 'modules.article';
-	private $table			= 'base_article';
+	public $table			= 'base_article';
 	
 	private $_hide_fields	= ['id'];
 	private $_set_tab		= [];

@@ -11,6 +11,7 @@ use Incodiy\Codiy\Library\Components\Form\Elements\File;
 use Incodiy\Codiy\Library\Components\Form\Elements\Check;
 use Incodiy\Codiy\Library\Components\Form\Elements\Radio;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
+use Incodiy\Codiy\Controllers\Admin\System\AjaxController;
 
 /**
  * Created on 16 Mar 2021
@@ -296,26 +297,6 @@ class Objects {
 		return $tag;
 	}
 	
-	private $ajaxUrli;
-	private function ajax_urli($return_data = false) {
-		$current_url  = route('ajax.post');//url(str_replace('.', '/', diy_current_baseroute()));
-		$urlset       = [
-			'AjaxPosF' => 'true'
-			,'_token'    => csrf_token()
-		];
-		
-		$uri      = [];
-		foreach ($urlset as $fieldurl => $urlvalue) {
-			$uri[] = "{$fieldurl}={$urlvalue}";
-		}
-		
-		$this->ajaxUrli = $current_url . '?' . implode('&', $uri);
-		
-		if (true === $return_data) {
-			return $this->ajaxUrli;
-		}
-	}
-	
 	public $syncs = [];
 	/**
 	 * Ajax Relational Fields
@@ -326,24 +307,20 @@ class Objects {
 	 * @param string $labels
 	 * @param string $query
 	 */
-	public function sync(string $source_field, string $target_field, string $values, string $labels = null, string $query) {
-	/* 	$syncs                                         = [];
-		$syncs[$source_field][$target_field]['values'] = $values;
-		$syncs[$source_field][$target_field]['labels'] = $labels;
-		$syncs[$source_field][$target_field]['query']  = $query;
-		 */
-		$this->ajax_urli();
+	public function sync(string $source_field, string $target_field, string $values, string $labels = null, string $query, $selected = null) {
+		$syncs             = [];
+		$syncs['source']   = $source_field;
+		$syncs['target']   = $target_field;
+		$syncs['values']   = encrypt($values);
+		$syncs['labels']   = encrypt($labels);
+		$syncs['selected'] = encrypt($selected);
+		$syncs['query']    = encrypt(trim(preg_replace('/\s\s+/', ' ', $query)));
+		$data              = json_encode($syncs);
 		
-		$o = diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$this->ajaxUrli}');");
-		$this->draw($o);
-	}
-	
-	public function ajaxProcessing() {
-		if (true == $_GET['AjaxPosF']) {
-			if (!empty($_POST)) {
-				dd($this->syncs);
-			}
-		}
+		$ajaxURL = new AjaxController();
+		$ajaxURL::urli();
+		
+		$this->draw(diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL::$ajaxUrli}', '{$data}');"));
 	}
 	
 	private function getModelValue($field_name, $function_name) {

@@ -74,25 +74,7 @@ class UserController extends Controller {
 			}
 			$this->form->selectbox('group_id', $this->input_group(), false, ['required'], 'User Group');
 			$this->form->selectbox('first_route', [], false, ['required'], 'First Redirect');
-			$this->form->sync(
-				'group_id', 
-				'first_route', 
-				'route_path',
-				'module_name',
-				"SELECT
-					g.id group_id,
-					g.group_name,
-					g.group_info,
-					m.id module_id,
-					m.route_path,
-					m.module_name,
-					m.parent_name
-				FROM `base_group` g
-				JOIN base_group_privilege gp
-					ON g.id = gp.group_id
-				JOIN base_module m
-					ON gp.module_id = m.id"
-			);
+			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute());
 		}
 		
 		$this->form->openTab('User Status');
@@ -103,12 +85,6 @@ class UserController extends Controller {
 		$this->form->close('Submit');
 		
 		return $this->render();
-	}
-	
-	private function sql() {
-		return "
-
-		";
 	}
 	
 	public function store(Request $request) {
@@ -168,9 +144,9 @@ class UserController extends Controller {
 				$this->form->selectbox($this->platform_key, $this->input_platform(), $platform_platforms, ['required'], $this->platform_label);
 			}
 			
-			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required', 'multiple'], 'User Group');
-			$this->form->selectbox('first_route', [], false, ['required'], 'First Redirect');
-		//	$this->form->sync('group_id', 'first_route');
+			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
+			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
+			$this->form->sync('group_id', 'first_route', 'route_path', 'route_path', User::sqlFirstRoute(), $this->model_data->first_route);
 		}
 		
 		$this->form->openTab('User Status');

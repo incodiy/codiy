@@ -1,4 +1,4 @@
-function ajaxSelectionBox(id, target_id, url, method = 'POST', onError = 'Error') {
+function ajaxSelectionBox(id, target_id, url, data = [], method = 'POST', onError = 'Error') {
 	object = $('#' + id);
 	
 	object.change(function(e) {
@@ -25,8 +25,6 @@ function ajaxSelectionBox(id, target_id, url, method = 'POST', onError = 'Error'
 		}
 		
 	});
-	/*
-	*/
 }
 
 function ucwords(str, force) {
