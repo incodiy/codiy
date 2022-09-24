@@ -33,7 +33,6 @@ class AjaxController extends Controller {
 		}
 		
 		self::$ajaxUrli = $current_url . '?' . implode('&', $uri);
-		
 		if (true === $return_data) {
 			return self::$ajaxUrli;
 		}
