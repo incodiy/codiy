@@ -1,29 +1,61 @@
-function ajaxSelectionBox(id, target_id, url, data = [], method = 'POST', onError = 'Error') {
-	object = $('#' + id);
+function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'POST', onError = 'Error') {
+	var dataInfo = JSON.parse(data);
+	var lURL     = 'l=' + dataInfo.labels;
+	var vURL     = 'v=' + dataInfo.values;
+	var sURL     = 's=' + dataInfo.selected;
+	var qURL     = diy_random() + '=' + dataInfo.query;
+	var selected = null;
+	var pinned   = null;
 	
-	object.change(function(e) {
-		var qtarget = null;
-		if ($(this).val() !== '') {
-			$.ajax({
-				type    : method,
-				url     : url,
-				data    : object.serialize(),
-				success : function(d) {
-					sourcebox = $('select#' + id);
-					qtarget   = sourcebox.val();
-					console.log(sourcebox, qtarget);
-				//	updateSelectChosen('select#' + target_id, false, '');
-				},
-				error: function() {
-					alert(onError);
-				},
-				complete: function() {
-					loader(target_id, 'fadeOut');
+	$.ajax({
+		type    : method,
+		url     : url + '&' + lURL + '&' + vURL + '&' + sURL + '&' + qURL,
+		data    : object.serialize(),
+		success : function(d) {
+			var result = JSON.parse(d);
+			selected   = result.selected;
+			
+			loader(target_id, 'show');
+			updateSelectChosen('select#' + target_id, true, '');
+			
+			$.each(result.data, function(index, item) {
+				if (selected === item) {
+					pinned = ' selected';
+				}
+				
+				if (item != '') {
+					var optValue = null;
+					
+					if (~item.indexOf('_')) {
+						optValue = ucwords(item.replaceAll('_', ' '));
+					} else if (~item.indexOf('.')) {
+						optValue = ucwords(item.replaceAll('.', ' '));
+					} else {
+						optValue = ucwords(item);
+					}
+					
+					$('select#' + target_id).append('<option value=\"' + item + '\"' + pinned + '>' + optValue + '</option>');
 				}
 			});
 			
+			updateSelectChosen('select#' + target_id, false, '');
+		},
+		error: function() {
+			alert(onError);
+		},
+		complete: function() {
+			loader(target_id, 'fadeOut');
 		}
-		
+	});
+}
+
+function ajaxSelectionBox(id, target_id, url, data = [], method = 'POST', onError = 'Error') {
+	var object   = $('select#' + id);
+	if (object.val() !== '') {
+		ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
+	}
+	object.change(function(e) {
+		ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
 	});
 }
 
