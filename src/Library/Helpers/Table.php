@@ -1,13 +1,13 @@
 <?php
 /**
  * Created on 13 Apr 2021
- * Time Created	: 04:05:22
+ * Time Created : 04:05:22
  *
  * @filesource	Table.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
  
 if (!function_exists('diy_get_model_table')) {
@@ -189,16 +189,15 @@ if (!function_exists('diy_table_action_button')) {
 	 * @return string
 	 */
 	function diy_table_action_button($row_data, $current_url, $action, $removed_button = null) {
-	//	$privileges              = session()->all()['privileges'];
+		$privileges              = session()->all()['privileges'];
 		$path                    = [];
 		$addActions              = [];
 		$add_path                = false;
 		$enabledAction           = [];
 		$enabledAction['read']   = true;
-	//	$enabledAction['write']  = true;
 		$enabledAction['modify'] = true;
 		$enabledAction['delete'] = true;
-		/* 
+		
 		$actions = null;
 		if (in_array(current_route(), $privileges)) {
 			foreach ($privileges as $roles) {
@@ -211,14 +210,12 @@ if (!function_exists('diy_table_action_button')) {
 			
 			$action = $actions[routelists_info()['base_info']];
 		}
-		*/
+		
 		if (!empty($removed_button)) {
 			if (is_array($removed_button)) {
 				foreach ($removed_button as $remove) {
 					if (in_array($remove, ['show', 'view', 'index'])) {
 						$enabledAction['read']   = false;
-					} elseif (in_array($remove, ['insert'])) {
-					//	$enabledAction['write']  = false;
 					} elseif (in_array($remove, ['edit', 'modify'])) {
 						$enabledAction['modify'] = false;
 					} elseif (in_array($remove, ['delete', 'destroy'])) {
@@ -237,29 +234,6 @@ if (!function_exists('diy_table_action_button')) {
 					$action_info = diy_add_action_button_by_string($action_data);
 					$addActions[key($action_info)] = $action_info[key($action_info)];
 					$enabledAction[key($action_info)] = true;
-				} else {
-					/* 
-					if (in_array($action_data, ['view', 'index'])) {
-						$action_info = diy_add_action_button_by_string("{$action_data}|success|eye");
-						$addActions[$action_data] = $action_info[$action_data];
-						$enabledAction['read']    = true;
-						
-					} elseif (in_array($action_data, ['edit', 'modify'])) {
-						$action_info = diy_add_action_button_by_string("{$action_data}|primary|pencil");
-						$addActions[$action_data] = $action_info[$action_data];
-						$enabledAction['write']   = true;
-						$enabledAction['modify']  = true;
-						
-					} elseif (in_array($action_data, ['delete', 'destroy'])) {
-						$action_info = diy_add_action_button_by_string("{$action_data}|danger|times");
-						$addActions[$action_data] = $action_info[$action_data];
-						$enabledAction['delete']  = true;
-						
-					} else {
-						$action_info = diy_add_action_button_by_string("{$action_data}|default|link");
-						$addActions[$action_data] = $action_info[$action_data];
-					}
-					 */
 				}
 			}
 		} else {			
@@ -269,14 +243,6 @@ if (!function_exists('diy_table_action_button')) {
 				} else {
 					$addActions = diy_add_action_button_by_string("{$action}|default|link");
 				}
-			} else {
-				/* 
-				if (is_bool($action)) {
-					if (true === $action) {
-						$addActions = diy_add_action_button_by_string($action);
-					}
-				}
-				 */
 			}
 		}
 		
@@ -290,7 +256,6 @@ if (!function_exists('diy_table_action_button')) {
 		}
 		
 		if (false === $enabledAction['read'])   $path['view']   = false;
-	//	if (false === $enabledAction['write'])  $path['insert'] = false;
 		if (false === $enabledAction['modify']) $path['edit']   = false;
 		if (false === $enabledAction['delete']) $path['delete'] = false;
 		
@@ -304,7 +269,7 @@ if (!function_exists('diy_table_action_button')) {
 				}
 			}
 		}
-	//	dd($action, $removed_button, $enabledAction, $path);
+		
 		return create_action_buttons($path['view'], $path['edit'], $path['delete'], $add_path);
 	}
 }
@@ -475,8 +440,6 @@ if (!function_exists('diy_table_row_attr')) {
 		return "{$str_value}{:}$attr";
 	}
 }
-
-
 
 if (!function_exists('diy_generate_table')) {
 	

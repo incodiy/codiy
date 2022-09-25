@@ -53,7 +53,6 @@ class Modules extends Model {
 		if (1 === intval($group)) {
 			// if logged in as root
 			$menu = Modules::where('active', 1)->get();
-			
 		} else {
 			$condition = null;
 			$query     = Modules::query($this->table)

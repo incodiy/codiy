@@ -38,7 +38,7 @@ trait Select {
 			}
 			$values = $optionValues;
 		}
-		
+//		if ('route_path' === $name) dd($values);
 		$this->setParams('select', $name, $values, $attributes, $label, $selected);
 		$this->inputDraw('select', $name);
 	}

@@ -178,7 +178,7 @@ class ModulesController extends Controller {
 		$model_data = $this->model->find($id);
 		
 		$this->form->model();
-		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['required', 'disabled' => 'disabled']);
+		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['required', 'readonly']);
 		$this->form->text('parent_name', null, ['disabled' => 'disabled']);
 		$this->form->text('module_name');
 		$this->form->textarea('module_info');

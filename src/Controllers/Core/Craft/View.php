@@ -85,6 +85,7 @@ trait View {
 			$this->data['sidebar_content'] = $this->template->sidebar_content;
 		}
 		
+		// CHECK ROLE MODULE
 		if (true === $this->is_module_granted) {
 			
 			$this->data['breadcrumbs'] = [];

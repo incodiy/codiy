@@ -52,7 +52,7 @@ class Datatables {
 			$lastFile = $filePath[$lastSrc];
 			$info     = "This File [ {$lastFile} ] Do Not or Never Exist!";
 			
-			return "<div class=\"show-hidden-on-hover missing-file\" title=\"{$info}\"><i class=\"fa fa-warning\"></i>&nbsp;{$lastFile}</div><!--div class=\"hide\">{$info}/</div-->";
+			return "<div class=\"show-hidden-on-hover missing-file\" title=\"{$info}\"><i class=\"fa fa-warning\"></i>&nbsp;{$lastFile}</div><!--div class=\"hide\">{$info}</div-->";
 		}
 	}
 	

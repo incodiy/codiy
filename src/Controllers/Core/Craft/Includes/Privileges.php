@@ -14,7 +14,6 @@ use Incodiy\Codiy\Models\Admin\System\Modules;
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
-
 trait Privileges {
 	private $module_class;
 	private $role_group;
@@ -31,13 +30,13 @@ trait Privileges {
 	 */
 	private function module_privileges() {
 		if (!is_null(Session('group_id'))) {
-			$this->role_group = Session('group_id');
+			$this->role_group   = Session('group_id');
 		}
 		
 		if (!is_null($this->role_group)) {
-			$root_flag = false;
-			$pageType  = false;
-			$actions   = [];
+			$root_flag          = false;
+			$pageType           = false;
+			$actions            = [];
 			$this->module_class = new Modules();
 			$baseRouteInfo      = $this->routelists_info()['base_info'];
 			
