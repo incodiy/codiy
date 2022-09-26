@@ -38,9 +38,9 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 					var optValue = null;
 					
 					if (~item.indexOf('_')) {
-						optValue = ucwords(item.replace('_', ' '));
+						optValue = ucwords(item.replaceAll('_', ' '));
 					} else if (~item.indexOf('.')) {
-						optValue = ucwords(item.replace('.', ' '));
+						optValue = ucwords(item.replaceAll('.', ' '));
 					} else {
 						optValue = ucwords(item);
 					}
