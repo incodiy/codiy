@@ -735,6 +735,11 @@ if (!function_exists('diy_insert')) {
 				$value = str_replace(' WIB', ':' . date('s'), $value);
 			}
 			
+			$passwordKey = ['pass', 'password', 'passkey'];
+			if (in_array($key, $passwordKey)) {
+				$value = Hash::make($value);
+			}
+			
 			$requests[$key] = $value;
 		}
 		$request->merge($requests);

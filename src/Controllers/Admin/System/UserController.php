@@ -146,7 +146,7 @@ class UserController extends Controller {
 			
 			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
-			$this->form->sync('group_id', 'first_route', 'route_path', 'route_path', User::sqlFirstRoute(), $this->model_data->first_route);
+			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute(), $this->model_data->first_route);
 		}
 		
 		$this->form->openTab('User Status');

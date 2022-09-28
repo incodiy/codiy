@@ -5,7 +5,7 @@ function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'P
 	var sURL     = 's=' + dataInfo.selected;
 	var qURL     = diy_random() + '=' + dataInfo.query;
 	var selected = null;
-	var pinned   = null;
+	var pinned   = '';
 	
 	$.ajax({
 		type    : method,
@@ -17,28 +17,24 @@ function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'P
 			
 			loader(target_id, 'show');
 			updateSelectChosen('select#' + target_id, true, '');
-			
-			$.each(result.data, function(index, item) {
-				if (selected === item) {
-					pinned = ' selected';
-				}
+			$.each(result.data, function(value, label) {				
+				if (selected === value) pinned = ' selected';
 				
-				if (item != '') {
-					var optValue = null;
+				if (value != '') {
+					var optionLabel = null;
 					
-					if (~item.indexOf('_')) {
-						optValue = ucwords(item.replaceAll('_', ' '));
-					} else if (~item.indexOf('.')) {
-						optValue = ucwords(item.replaceAll('.', ' '));
+					if (~label.indexOf('_')) {
+						optionLabel = ucwords(label.replaceAll('_', ' '));
+					} else if (~label.indexOf('.')) {
+						optionLabel = ucwords(label.replaceAll('.', ' '));
 					} else {
-						optValue = ucwords(item);
+						optionLabel = ucwords(label);
 					}
 					
-					$('select#' + target_id).append('<option value=\"' + item + '\"' + pinned + '>' + optValue + '</option>');
+					$('select#' + target_id).append('<option value=\"' + value + '\"' + pinned + '>' + optionLabel + '</option>');
 				}
 			});
-			
-			updateSelectChosen('select#' + target_id, false, '');
+			updateSelectChosen('select#' + target_id, false, false);
 		},
 		error: function() {
 			alert(onError);

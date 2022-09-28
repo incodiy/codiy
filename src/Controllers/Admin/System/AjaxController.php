@@ -67,7 +67,7 @@ class AjaxController extends Controller {
 				
 				$queryData     = [];
 				if (!empty($info['query'])) {
-					$queryData = diy_query("{$info['query']} WHERE `{$postKEY}` = '{$postValue}'", 'SELECT');
+					$queryData = diy_query("{$info['query']} WHERE `{$postKEY}` = '{$postValue}' ORDER BY `{$postKEY}` DESC", 'SELECT');
 				}
 				
 				$result = [];
