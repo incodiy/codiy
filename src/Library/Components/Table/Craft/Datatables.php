@@ -226,6 +226,7 @@ class Datatables {
 			}
 			$limitTotal = count($model->get());
 		} else {
+			$model      = $model_filters->where('id', '!=', null);
 			$limitTotal = count($model_filters->get());
 		}
 		
