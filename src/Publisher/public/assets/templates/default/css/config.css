@@ -3332,7 +3332,8 @@ table.dataTable thead .sorting_desc_disabled {
 	background: none;
 }
 table.dataTable th[aria-label="No"] {
-	width: 20px !important;
+	width: auto;
+	max-width: 38px !important;
 	cursor: default;
 }
 table.dataTable th[aria-label="No"]:after {
