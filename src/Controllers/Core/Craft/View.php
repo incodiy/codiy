@@ -182,6 +182,7 @@ trait View {
 			$page_title, [$page_title, 'home']
 		);
 		$this->configView($path);
+	//	$this->filterPage();
 	}
 	
 	private function uriAdmin($uri = 'index') {

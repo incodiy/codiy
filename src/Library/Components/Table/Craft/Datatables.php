@@ -139,10 +139,12 @@ class Datatables {
 			}
 		}
 		
+		$limitTotal      = 0;
 		$limit           = [];
 		$limit['start']  = 0;
 		$limit['length'] = 10;
-		$model           = $model_data->skip($limit['start'])->take($limit['length']);
+		
+//		$model           = $model_data->skip($limit['start'])->take($limit['length']);
 		
 		// Conditions [ Where ]
 		$model_condition  = [];
@@ -169,6 +171,13 @@ class Datatables {
 		// Filter
 		$fstrings	= [];
 		$_ajax_url	= 'renderDataTables';
+		
+		if (!empty($where_conditions)) {
+			$model_filters = $model_condition;
+		} else {
+			$model_filters = $model_data;
+		}
+		
 		if (!empty($filters) && true == $filters) {
 			foreach ($filters as $name => $value) {
 				if ('filters'!== $name && '' !== $value) {
@@ -206,21 +215,21 @@ class Datatables {
 			
 			if (!empty($filters)) {
 				
-				if (!empty($where_conditions)) {
-					$model_filters = $model_condition;
-				} else {
-					$model_filters = $model_data;
-				}
-				
+				$fconds = [];
 				foreach ($filters as $fieldname => $rowdata) {
 					foreach ($rowdata as $dataRow) {
-						$model = $model_filters->where($fieldname, 'LIKE', "%{$dataRow}%");
+						$fconds[$fieldname] = $dataRow;
 					}
 				}
+				
+				$model = $model_filters->where($fconds);
 			}
+			$limitTotal = count($model->get());
+		} else {
+			$limitTotal = count($model_filters->get());
 		}
 		
-		$limit['total']  = count($model->get());
+		$limit['total'] = intval($limitTotal);
 		
 		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
 		if (!empty(request()->get('length'))) $limit['length'] = request()->get('length');
