@@ -60,13 +60,12 @@ trait View {
 		
 		// RENDER DATATABLES!!!
 		if (!empty($_GET['renderDataTables'])) {
+			$filter_datatables = [];
 			if (!empty($this->model_filters)) {
 				$filter_datatables = $this->model_filters;
-			} else {
-				$filter_datatables = [];
 			}
 			
-			return $this->initRenderDatatables($filter_datatables);
+			return $this->initRenderDatatables([], $filter_datatables);
 		}
 		
 		if (!empty($_GET['ajaxfproc'])) {
@@ -120,7 +119,7 @@ trait View {
 		return view($this->pageView, $this->data, $this->dataOptions);
 	}
 	
-	private function initRenderDatatables($filters = []) {
+	private function initRenderDatatables($filters = [], $model_filters = []) {
 		if ('false' != $_GET['renderDataTables']) {
 			$Datatables = [];
 			$Datatables['datatables'] = $this->data['components']->table;
@@ -131,8 +130,7 @@ trait View {
 			}
 			
 			$DataTables = new Datatables();
-			
-			return $DataTables->process($datatables, $filters);
+			return $DataTables->process($datatables, $filters, $model_filters);
 		}
 	}
 	
@@ -144,6 +142,8 @@ trait View {
 		}
 	}
 	
+	
+	public $filter_page = [];
 	/**
 	 * Set Page Attributes
 	 *
@@ -156,6 +156,10 @@ trait View {
 	protected function setPage($page = null, $path = false) {
 		$this->set_session();		
 		$this->routeInfo();
+		
+		if (!empty($this->session['id'])) {
+			$this->filter_page = diy_mapping_page(intval($this->session['id']));
+		}
 		
 		if (!empty($this->model_class)) $this->model($this->model_class);
 		if (is_empty($page)) {

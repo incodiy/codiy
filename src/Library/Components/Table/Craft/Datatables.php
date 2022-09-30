@@ -19,6 +19,7 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
 class Datatables {
 	use Privileges;
 	
+	public $filter_model   = [];
 	private $image_checker = ['jpg', 'jpeg', 'png', 'gif'];
 	
 	private function setAssetPath($file_path, $http = false, $public_path = 'public') {
@@ -56,7 +57,7 @@ class Datatables {
 		}
 	}
 	
-	public function process($data, $filters = []) {
+	public function process($data, $filters = [], $filter_page = []) {
 		if (!empty($data->datatables->model[$_GET['difta']['name']])) {
 			
 			$model_type   = $data->datatables->model[$_GET['difta']['name']]['type'];
@@ -141,20 +142,28 @@ class Datatables {
 		$limit           = [];
 		$limit['start']  = 0;
 		$limit['length'] = 10;
-		$limit['total']  = count($model_data->get());
-		
-		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
-		if (!empty(request()->get('length'))) $limit['length'] = request()->get('length');
-		
-		$model = $model_data->skip($limit['start'])->take($limit['length']);
+		$model           = $model_data->skip($limit['start'])->take($limit['length']);
 		
 		// Conditions [ Where ]
+		$model_condition  = [];
 		$where_conditions = [];
-		if (!empty($data->datatables->conditions['where'])) {
-			foreach ($data->datatables->conditions['where'] as $conditional_where) {
-				$where_conditions[] = [$conditional_where['field_name'], $conditional_where['operator'], $conditional_where['value']];
+		if (!empty($data->datatables->conditions[$table_name]['where'])) {
+			foreach ($data->datatables->conditions[$table_name]['where'] as $conditional_where) {
+				if (!is_array($conditional_where['value'])) {
+					$where_conditions['o'][] = [$conditional_where['field_name'], $conditional_where['operator'], $conditional_where['value']];
+				} else {
+					$where_conditions['i'][$conditional_where['field_name']] = $conditional_where['value'];
+				}
 			}
-			$model = $model_data->where($where_conditions);
+			
+			$model_condition = $model_data->where($where_conditions['o']);
+			if (!empty($where_conditions['i'])) {
+				foreach ($where_conditions['i'] as $if => $iv) {
+					$model_condition = $model_condition->whereIn($if, $iv);
+				}
+			}
+			
+			$model = $model_condition;
 		}
 		
 		// Filter
@@ -196,22 +205,27 @@ class Datatables {
 			}
 			
 			if (!empty($filters)) {
-				$modelDataFilters	= $model_data;
+				
+				if (!empty($where_conditions)) {
+					$model_filters = $model_condition;
+				} else {
+					$model_filters = $model_data;
+				}
+				
 				foreach ($filters as $fieldname => $rowdata) {
-					if (count($rowdata) <= 1) {
-						foreach ($rowdata as $dataRow) {
-							$modelDataFilters = $modelDataFilters->where($fieldname, 'LIKE', "%{$dataRow}%");
-						}
-					} else {
-						foreach ($rowdata as $_dataRows) {
-							$modelDataFilters = $modelDataFilters->where($fieldname, 'LIKE', "%{$_dataRows}%");
-						}
+					foreach ($rowdata as $dataRow) {
+						$model = $model_filters->where($fieldname, 'LIKE', "%{$dataRow}%");
 					}
 				}
-				$limit['total'] = count($modelDataFilters->get());
-				$model = $modelDataFilters->skip($limit['start'])->take($limit['length']);
 			}
 		}
+		
+		$limit['total']  = count($model->get());
+		
+		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
+		if (!empty(request()->get('length'))) $limit['length'] = request()->get('length');
+		
+		$model->skip($limit['start'])->take($limit['length']);
 		
 		$datatables = DataTable::of($model)
 			->setTotalRecords($limit['total'])
@@ -370,6 +384,65 @@ class Datatables {
 					}
 				});
 			}
+		}
+	}
+	
+	public $filter_datatables = [];
+	public function filter_datatable($request) {
+		$this->filter_datatables = $request->all();
+	}
+	
+	public function init_filter_datatables($get = [], $post = []) {
+		
+		if (!empty($get['filterDataTables'])) {
+			$fdata  = explode('::', $post['_fita']);
+			$table  = $fdata[1];
+			$target = $fdata[2];
+			$prev   = $fdata[3];
+			
+			unset($post['filterDataTables']);
+			unset($post['_fita']);
+			unset($post['_token']);
+			unset($post['_n']);
+			
+			$wheres = [];
+			foreach ($post as $key => $value) {
+				$wheres[] = "`{$key}` = '{$value}'";
+			}
+			
+			$wherepPrefious = null;
+			if ('#null' !== $prev) {
+				$previous  = explode("#", $prev);
+				$preFields = explode('|', $previous[0]);
+				$preFieldt = explode('|', $previous[1]);
+				
+				$prevields = [];
+				foreach ($preFields as $idf => $prev_field) {
+					$prevields[$idf] = $prev_field;
+				}
+				
+				$previeldt = [];
+				foreach ($preFieldt as $idd => $prev_field_data) {
+					$previeldt[$idd] = $prev_field_data;
+				}
+				
+				$previousData = [];
+				foreach ($prevields as $idp => $prev_data) {
+					$previousData[$prev_data] = $previeldt[$idp];
+				}
+				
+				$previousdata = [];
+				foreach ($previousData as $_field => $_value) {
+					$previousdata[] = "`{$_field}` = '{$_value}'";
+				}
+				
+				$wherepPrefious = ' AND ' . implode(' AND ', $previousdata);
+			}
+			
+			$wheres = implode(' AND ', $wheres);
+			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
+			
+			return $rows;
 		}
 	}
 }

@@ -2,6 +2,8 @@
 namespace Incodiy\Codiy\Controllers\Core\Craft;
 
 use Illuminate\Http\Request;
+use Incodiy\Codiy\Library\Components\Table\Craft\Search;
+use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
 
 /**
  * Created on 24 Mar 2021
@@ -205,7 +207,25 @@ trait Action {
 	 * 	  ]
 	 */
 	public function filterPage($filters = []) {
-		$this->model_filters = $filters;
+		if (!empty($filters)) {
+			$this->model_filters = $filters;
+		} else {
+			if (!empty($this->filter_page)) {
+				$this->model_filters = $this->filter_page;
+			} else {
+				$this->model_filters = $filters;
+			}
+		}
+		
+		foreach ($this->model_filters as $fieldname => $fieldvalue) {
+			$this->table->conditions['where'][] = [
+				'field_name' => $fieldname,
+				'operator'   => '=',
+				'value'      => $fieldvalue
+			//	'value'      => "('" . implode("', '", $fieldvalue) . "')"
+			];
+			//	$this->table->where('region', '=', 'BALI NUSRA');
+		}
 	}
 	
 	public $model_class_path = null;
@@ -305,63 +325,23 @@ trait Action {
 		return $this->getModel($find)->getTable();
 	}
 	
+	private $datatables = [];
+	private function datatableClass() {
+		$this->datatables = new Datatables();
+	}
+	
 	public $filter_datatables = [];
 	protected function filterDataTable(Request $request) {
-		$this->filter_datatables = $request->all();
+		$this->datatableClass();
+		$this->filter_datatables = $this->datatables->filter_datatable($request);
+		
 		return $this;
 	}
 	
 	private function initFilterDatatables() {
-		
 		if (!empty($_GET['filterDataTables'])) {
-			$fdata  = explode('::', $_POST['_fita']);
-			$table  = $fdata[1];
-			$target = $fdata[2];
-			$prev   = $fdata[3];
-			
-			unset($_POST['filterDataTables']);
-			unset($_POST['_fita']);
-			unset($_POST['_token']);
-			unset($_POST['_n']);
-			
-			$wheres = [];
-			foreach ($_POST as $key => $value) {
-				$wheres[] = "`{$key}` = '{$value}'";
-			}
-			
-			$wherepPrefious = null;
-			if ('#null' !== $prev) {
-				$previous  = explode("#", $prev);
-				$preFields = explode('|', $previous[0]);
-				$preFieldt = explode('|', $previous[1]);
-				
-				$prevields = [];
-				foreach ($preFields as $idf => $prev_field) {
-					$prevields[$idf] = $prev_field;
-				}
-				
-				$previeldt = [];
-				foreach ($preFieldt as $idd => $prev_field_data) {
-					$previeldt[$idd] = $prev_field_data;
-				}
-				
-				$previousData = [];
-				foreach ($prevields as $idp => $prev_data) {
-					$previousData[$prev_data] = $previeldt[$idp];
-				}
-				
-				$previousdata = [];
-				foreach ($previousData as $_field => $_value) {
-					$previousdata[] = "`{$_field}` = '{$_value}'";
-				}
-				
-				$wherepPrefious = ' AND ' . implode(' AND ', $previousdata);
-			}
-			
-			$wheres = implode(' AND ', $wheres);
-			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
-			
-			return $rows;
+			$this->datatableClass();
+			return $this->datatables->init_filter_datatables($_GET, $_POST);
 		}
 	}
 	

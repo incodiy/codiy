@@ -33,7 +33,7 @@ class Objects extends Builder {
 	/**
 	 * --[openTabHTMLForm]--
 	 */
-	private $opentabHTML	= '--[openTabHTMLForm]--';
+	private $opentabHTML	 = '--[openTabHTMLForm]--';
 	
 	public function __construct() {
 		$this->element_name['table']    = $this->tableType;
@@ -222,6 +222,11 @@ class Objects extends Builder {
 		$filters['relate'] = $relate;
 		
 		$this->variables['filter_groups'][] = $filters;
+	}
+	
+	protected $filter_model = [];
+	public function filterModel(array $data = []) {
+		$this->filter_model = $data;
 	}
 	
 	private function check_column_exist($table_name, $fields) {
@@ -483,6 +488,10 @@ class Objects extends Builder {
 			}
 			$this->params[$table_name]['conditions'] = $conditions;
 			$this->conditions[$table_name]           = $this->params[$table_name]['conditions'];
+		}
+		
+		if (!empty($this->filter_model)) {
+			$this->params[$table_name]['filter_model'] = $this->filter_model;
 		}
 		
 		if ('datatable' === $this->tableType) {

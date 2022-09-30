@@ -125,10 +125,10 @@ class Builder {
 	}
 	
 	private function header($data = []) {
-		$columns    = $data['columns'];
-		$attributes = $data['attributes'];
+		$columns     = $data['columns'];
+		$attributes  = $data['attributes'];
 		
-		$sortable	= false;
+		$sortable	 = false;
 		if (!empty($data['columns']['sortable'])) $sortable = $data['columns']['sortable'];
 		
 		$actions     = false;
@@ -415,11 +415,11 @@ class Builder {
 		}
 		
 		// SORTABLE
-		$sortable	= $this->setColumnElements('sortable', $columnData, $data);
+		$sortable	= $this->setColumnElements('sortable'  , $columnData, $data);
 		// SEARCHABLE
 		$searchable	= $this->setColumnElements('searchable', $columnData, $data);
 		// CLICKABLE
-		$clickable	= $this->setColumnElements('clickable', $columnData, $data);
+		$clickable	= $this->setColumnElements('clickable' , $columnData, $data);
 		
 		$dt_columns = [];
 		$jsonData	= [];
@@ -528,6 +528,10 @@ class Builder {
 				
 				if (!empty($data['columns']['filter_groups'])) {
 					$search_data['filter_groups'] = $data['columns']['filter_groups'];
+				}
+				
+				if (!empty($data['attributes']['filter_model'])) {
+					$search_data['filter_model']  = $data['attributes']['filter_model'];
 				}
 				
 				if (!empty($data['sql'])) {

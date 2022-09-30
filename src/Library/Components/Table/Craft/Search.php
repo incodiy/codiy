@@ -2,6 +2,7 @@
 namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
 use Incodiy\Codiy\Library\Components\Form\Objects as Form;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Created on 24 Apr 2021
@@ -23,8 +24,18 @@ class Search {
 	private $sql;
 	private $table;
 	
-	public function __construct($model = null, $filters = [], $sql = null) {
-		if (!empty($model)) $this->model = new $model();
+	private $model_filters = [];
+	public function __construct($model = null, $filters = [], $sql = null) {		
+		if (!empty($model)) {
+			$model = new $model();
+		}
+		
+		if (!empty($filters['filter_model'])) {
+			$this->model_filters = $filters['filter_model'];
+			$this->model = $model->where($this->model_filters);
+		} else {
+			$this->model = $model;
+		}
 		
 		$this->form    = new Form();
 		$this->filters = $filters;
@@ -45,7 +56,7 @@ class Search {
 	}
 	
 	private function select($sql) {
-		return diy_query($sql, 'select');
+		return diy_query($sql, 'SELECT');
 	}
 	
 	private $data   = [];
@@ -104,6 +115,29 @@ class Search {
 		$where     = null;
 		if (!empty($condition)) {
 		    $where = "WHERE ID IS NOT NULL ";
+		}
+		
+		if (!empty($this->model_filters)) {
+			$mf_where = [];
+			$n        = 0;
+			foreach ($this->model_filters as $mf_field => $mf_values) {
+				$n ++;
+				
+				$mf_cond = 'AND ';
+				if ($n <= 1) {
+					$mf_cond = 'WHERE ';
+				}
+				
+				
+				if (!is_array($mf_values)) {
+					$mf_where[] = "{$mf_cond}{$mf_field} = '{$mf_values}'";
+				} else {
+					$mf_value = implode("', '", $mf_values);
+					$mf_value = " IN ('{$mf_value}')";
+					$mf_where[] = "{$mf_cond}{$mf_field}{$mf_value}";
+				}
+			}
+			$where = implode(' ', $mf_where);
 		}
 		
 		$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};");

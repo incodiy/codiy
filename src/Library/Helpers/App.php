@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Incodiy\Codiy\Models\Admin\System\Modules;
 use Incodiy\Codiy\Models\Admin\System\Preference;
 use Incodiy\Codiy\Library\Components\MetaTags;
+use Incodiy\Codiy\Controllers\Admin\System\GroupController;
 
 /**
  * Created on 10 Mar 2021
@@ -205,6 +206,14 @@ if (!function_exists('diy_get_table_name_from_sql')) {
 		$query = explode(' ', $query[1]);
 		
 		return $query[0];
+	}
+}
+
+if (!function_exists('diy_mapping_page')) {
+	
+	function diy_mapping_page($user_id) {
+		$groupController = new GroupController();
+		return $groupController->get_data_mapping_page($user_id);
 	}
 }
 

@@ -231,4 +231,61 @@ class MappingPage extends Model {
 		
 		return $output;
 	}
+	
+	public function getUserDataMapping($user_id) {
+		$sql = "
+			SELECT
+				bug.user_id,
+				bpp.group_id,
+				bpp.module_id,
+				u.username,
+				u.email,
+				u.fullname,
+				bg.group_name,
+				bg.group_info,
+				bm.route_path,
+				bm.parent_name,
+				bm.module_name,
+				bm.module_info,
+				bpp.target_table,
+				bpp.target_field_name,
+				bpp.target_field_values
+			FROM `base_page_privilege` bpp
+			JOIN base_group bg ON bpp.group_id = bg.id
+			JOIN base_user_group bug ON bg.id = bug.group_id 
+				AND bpp.group_id = bg.id
+			JOIN users u ON u.id = bug.user_id
+			JOIN base_module bm ON bpp.module_id = bm.id
+			WHERE u.id = {$user_id}
+			GROUP BY bug.user_id, bpp.group_id, bpp.module_id, u.username, u.email, u.fullname, bg.group_name, bg.group_info, bm.route_path, bm.parent_name, bm.module_name, bm.module_info, bpp.target_table, bpp.target_field_name, bpp.target_field_values
+			ORDER BY bug.user_id, bpp.group_id, bpp.module_id, u.username, u.email, u.fullname, bg.group_name, bg.group_info, bm.route_path, bm.parent_name, bm.module_name, bm.module_info, bpp.target_table, bpp.target_field_name, bpp.target_field_values
+		";
+		
+		$map    = [];
+		$object = diy_query($sql, 'SELECT');
+		
+		foreach ($object as $row) {
+			$target_field_values = $row->target_field_values;
+			
+			if (is_null($row->target_field_values)) {
+				$target_field_values = 'IS NOT NULL';
+			}
+			
+			$filter_query = $target_field_values;
+			if (diy_string_contained($row->target_field_values, '::')) {
+				$target_field_values = explode('::', $row->target_field_values);
+				$filter_query        = "IN ('" . implode("', '", $target_field_values) . "')";
+			}
+			
+			$map[$row->user_id][$row->route_path][$row->target_table]['table_name']                                   = $row->target_table;
+			$map[$row->user_id][$row->route_path][$row->target_table]['target_field_name'][]                          = $row->target_field_name;
+			$map[$row->user_id][$row->route_path][$row->target_table]['target_field_values'][]                        = $target_field_values;
+			$map[$row->user_id][$row->route_path][$row->target_table]['target_filter_query'][$row->target_field_name] = $target_field_values;
+			
+			$map[$row->user_id][$row->route_path][$row->target_table]['filter_query'][$row->target_field_name]        = $filter_query;
+			$map[$row->user_id][$row->route_path][$row->target_table]['filter_data'][$row->target_field_name]         = $target_field_values;
+		}
+		
+		return $map;
+	}
 }

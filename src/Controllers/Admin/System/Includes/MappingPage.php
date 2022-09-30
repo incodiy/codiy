@@ -30,6 +30,25 @@ trait MappingPage {
 		return new MappingData();
 	}
 	
+	public $filter_page_maps = [];
+	public function get_data_mapping_page($user_id) {
+		$currentRoute = diy_current_baseroute();
+		$dataPageMaps = [];
+		
+		if (!empty($this->map()->getUserDataMapping($user_id))) {
+			$sessionID    = intval(session()->all()['id']);
+			$dataPageMaps = $this->map()->getUserDataMapping($user_id);
+			
+			if (!empty($dataPageMaps[$sessionID][$currentRoute])) {
+				foreach ($dataPageMaps[$sessionID][$currentRoute] as $dataTable) {
+					$this->filter_page_maps = $dataTable['filter_data'];
+				}
+			}
+		}
+		
+		return $this->filter_page_maps;
+	}
+	
 	public function rolepage($data, $usein) {
 		return MappingData::getData($data, $usein, $this->nodeID);
 	}
