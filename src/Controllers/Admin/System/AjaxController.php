@@ -56,8 +56,7 @@ class AjaxController extends Controller {
 			if (!empty($_GET['AjaxPosF'])) {
 				return $this->post_filters();
 			} elseif (!empty($_GET['filterDataTables'])) {
-				$this->datatableClass();
-				return $this->datatables->init_filter_datatables($_GET, $_POST);
+				return $this->initFilterDatatables($_GET, $_POST);
 			}
 		}
 	}
