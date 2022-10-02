@@ -40,11 +40,12 @@ class UserController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		$this->table->searchable(['username', 'email']);
+		$this->table->searchable(['username', 'group_name']);
 		$this->table->clickable();
 		$this->table->sortable();
 		
-		$this->table->lists($this->model_table, ['username', 'email', 'address', 'phone', 'active']);
+		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name', 'Group Label');
+		$this->table->lists($this->model_table, ['username:User', 'email', 'group_name', 'address', 'phone', 'active']);
 		
 		return $this->render();
 	}

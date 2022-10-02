@@ -52,15 +52,9 @@ class User extends Authenticatable {
 		return $this->belongsToMany(Group::class, 'base_user_group');
 	}
 	
-	public function relation() {
+	public function relational_group() {
 		return $this->belongsToMany(Group::class, 'base_user_group');
 	}
-	
-	/* 
-	public function relations() {
-		return $this->belongsToMany(Group::class, 'base_user_group');
-	}
-	 */
 	
 	/**
 	 * Print Out Group Info Logged In

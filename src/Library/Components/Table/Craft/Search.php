@@ -437,7 +437,9 @@ class Search {
 		
 		$info = [];
 		foreach ($fields as $field) {
-			$info[$field] = $columns[$field];
+			if (!empty($columns[$field])) {
+				$info[$field] = $columns[$field];
+			}
 		}
 		
 		return $info;

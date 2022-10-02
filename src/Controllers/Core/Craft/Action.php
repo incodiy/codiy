@@ -222,9 +222,7 @@ trait Action {
 				'field_name' => $fieldname,
 				'operator'   => '=',
 				'value'      => $fieldvalue
-			//	'value'      => "('" . implode("', '", $fieldvalue) . "')"
 			];
-			//	$this->table->where('region', '=', 'BALI NUSRA');
 		}
 	}
 	

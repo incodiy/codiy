@@ -128,6 +128,21 @@ if (!function_exists('diy_object')) {
     }
 }
 
+if (!function_exists('diy_clean_strings')) {
+	
+	/**
+	 * Clean Strings
+	 *
+	 * @param string $strings
+	 * @return string
+	 */
+	function diy_clean_strings($strings, $node = '-') {
+		$strings = trim(preg_replace('/[;\.\/\?\\\:@&=+\$,_\~\*\'"\!\|%<>\{\}\^\[\]`\-]/', ' ', $strings));
+		
+		return strtolower(preg_replace('/\s+/', $node, $strings));
+	}
+}
+
 if (!function_exists('diy_format')) {
 	
 	/**
@@ -364,6 +379,32 @@ if (!function_exists('diy_array_to_object_recursive')) {
         
         return $array;
     }
+}
+
+if (!function_exists('diy_array_insert_new')) {
+	
+	/**
+	 * Insert Data In Spesific array pos
+	 *
+	 * @author: https://stackoverflow.com/a/11321318/20139717
+	 *
+	 * @param array $array
+	 * @param int $index
+	 * @param string $val
+	 *
+	 * @return number|array
+	 */
+	function diy_array_insert_new($array, $index, $val) {
+		$size = count($array);
+		if (!is_int($index) || $index <0 || $index > $size) {
+			return -1;
+		} else {
+			$temp   = array_slice($array, 0, $index);
+			$temp[] = $val;
+			
+			return array_merge($temp, array_slice($array, $index, $size));
+		}
+	}
 }
 
 if (!function_exists('diy_array_insert')) {

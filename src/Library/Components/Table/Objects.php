@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Library\Components\Table;
 
 use Incodiy\Codiy\Library\Components\Table\Craft\Builder;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
+use App\Models\Admin\System\User;
 
 /**
  * Created on 12 Apr 2021
@@ -25,6 +26,7 @@ class Objects extends Builder {
 	public $records       = [];
 	public $columns       = [];
 	public $labels        = [];
+	public $relations     = [];
 	
 	private $params       = [];
 	private $setDatatable = true;
@@ -152,6 +154,35 @@ class Objects extends Builder {
 		}
 		
 		return $value;
+	}
+	
+	public $relational_data = [];
+	public function relations($model, $relation_function, $key_connect, $field_display, $label = null) {
+		if (!empty($model->with($relation_function)->get())) {
+			$relational_data = $model->with($relation_function)->get();
+			if (empty($label)) {
+				$label = ucwords(diy_clean_strings($field_display, ' '));
+			}
+			
+			foreach ($relational_data as $item) {
+				if (!empty($item->{$relation_function})) {
+					foreach ($item->{$relation_function} as $relation) {
+						$dataRelate = $relation->getAttributes();
+						if (!empty($dataRelate[$field_display])) {
+							$relateKEY = intval($dataRelate['id']);
+							
+							$this->relational_data[$relation_function]['field_target'][$field_display]['field_name']    = $field_display;
+							$this->relational_data[$relation_function]['field_target'][$field_display]['field_label']   = $label;
+							foreach ($relation->pivot->getAttributes() as $pivot_field => $pivot_data) {
+								$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY][$pivot_field] = $pivot_data;
+							}
+							$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY]['field_value']   = $dataRelate[$field_display];
+							$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY]['field_info']    = $dataRelate['group_info'];
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public function orderby($column, $order = 'asc') {
@@ -429,7 +460,8 @@ class Objects extends Builder {
 					$recola[$icol] = $cols;
 				}
 			}
-			$fields = $recola;
+			$fields          = $recola;
+			$original_fields = $fields;
 			
 			if (!empty($fields)) {
 				$fields = $this->check_column_exist($table_name, $fields);
@@ -437,6 +469,41 @@ class Objects extends Builder {
 				$fields = $this->check_column_exist($table_name, $this->variables['table_fields']);
 			} else {
 				$fields = diy_get_table_columns($table_name);
+			}
+			
+			$checkFieldSet = array_diff($original_fields, $fields);
+			if (!empty($checkFieldSet)) {
+				$field_relations = [];
+				if (!empty($this->relational_data)) {
+					foreach ($this->relational_data as $relData) {
+						foreach ($relData['field_target'] as $fr_name => $relation_fields) {
+							$field_relations[$fr_name] = $relation_fields;
+						}
+					}
+				}
+				
+				$relations = [];
+				if (!empty($field_relations)) {
+					foreach ($checkFieldSet as $index => $field_diff) {
+						if (!empty($field_relations[$field_diff])) {
+							$relational_data                                      = $field_relations[$field_diff];
+							$this->labels[$relational_data['field_name']]         = $relational_data['field_label'];
+							$relations[$index]                                    = $relational_data['field_name'];
+							$this->columns[$table_name]['relations'][$field_diff] = $relational_data;
+						}
+					}
+					
+					$refields = [];
+					if (!empty($relations)) {
+						foreach ($relations as $reid => $relation_name) {
+							$refields = diy_array_insert($fields, $reid, $relation_name);
+						}
+					}
+				}
+				
+				if (!empty($refields)) {
+					$fields = $refields;
+				}
 			}
 		}
 		

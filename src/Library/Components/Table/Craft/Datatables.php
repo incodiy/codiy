@@ -86,6 +86,13 @@ class Datatables {
 		$_action_lists      = [];
 		$removed_privileges = [];
 		
+		$data_relations = [];
+		if (!empty($data->datatables->relational_data)) {
+			foreach ($data->datatables->relational_data as $relation_name => $ralation_data) {
+				;
+			}
+		}
+		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
 			
 			if (true === $column_data[$table_name]['actions']) {
@@ -143,8 +150,6 @@ class Datatables {
 		$limit           = [];
 		$limit['start']  = 0;
 		$limit['length'] = 10;
-		
-//		$model           = $model_data->skip($limit['start'])->take($limit['length']);
 		
 		// Conditions [ Where ]
 		$model_condition  = [];
@@ -267,12 +272,29 @@ class Datatables {
 			
 			$this->imageViewColumn($rowModel, $datatables);
 			
+			// Data Relational
+			if (!empty($column_data[$table_name]['relations'])) {
+				foreach ($column_data[$table_name]['relations'] as $relField => $relData) {
+					$dataRelations = $relData['relation_data'];
+					$datatables->editColumn($relField, function($data) use ($dataRelations) {
+						$dataID = intval($data['id']);
+						if (!empty($dataRelations[$dataID]['field_info'])) {
+							return $dataRelations[$dataID]['field_info'];
+						} else {
+							return $dataRelations[$dataID]['field_value'];
+						}
+					});
+				}
+			}
+			
 			if (!empty($rowModel->flag_status))    $datatables->editColumn('flag_status',    function($model) {return diy_unescape_html(diy_form_internal_flag_status($model->flag_status));});
 			if (!empty($rowModel->active))         $datatables->editColumn('active',         function($model) {return diy_form_set_active_value($model->active);});
 			if (!empty($rowModel->update_status))  $datatables->editColumn('update_status',  function($model) {return diy_form_set_active_value($model->update_status);});
 			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});
 			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
 		}
+		
+		
 		
 		if (!empty($data->datatables->formula[$table_name])) {
 			$data_formula = $data->datatables->formula[$table_name];
@@ -287,6 +309,7 @@ class Datatables {
 			}
 		}
 		
+		// Data Formating
 		if (!empty($data->datatables->columns[$table_name]['format_data'])) {
 			$data_format = $data->datatables->columns[$table_name]['format_data'];
 			
