@@ -47,9 +47,10 @@ class UserController extends Controller {
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_info');
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name');
 		
+		$this->table->filterGroups('group_info', 'selectbox', true);
 		$this->table->filterGroups('username', 'selectbox', true);
 		$this->table->filterGroups('email', 'selectbox', true);
-		$this->table->filterGroups('group_info', 'selectbox', true);
+		$this->table->filterGroups('group_name', 'selectbox', true);
 		
 		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'active']);
 		

@@ -1,8 +1,7 @@
 <?php
 namespace App\Models\Admin\System;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Incodiy\Codiy\Models\Admin\System\Group as GroupModel;
 
 /**
  * Created on Jan 14, 2018
@@ -15,18 +14,4 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
-class Group extends Model {
-	use SoftDeletes;
-	protected $dates	= ['deleted_at'];
-	
-	protected $table	= 'base_group';
-	protected $guarded	= [];
-	
-	public $timestamps	= false;
-	
-	public function relation() {
-		if (true === is_multiplatform()) {
-		//	return $this->hasOne(Multiplatforms::class, 'id', get_config('settings.platform_key'));
-		}
-	}
-}
+class Group extends GroupModel {}

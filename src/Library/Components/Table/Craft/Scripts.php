@@ -1,8 +1,6 @@
 <?php
 namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
-use Incodiy\Codiy\Models\Admin\System\DynamicTables;
-
 /**
  * Created on 22 May 2021
  * Time Created	: 00:29:19
