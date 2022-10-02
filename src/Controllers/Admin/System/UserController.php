@@ -42,7 +42,7 @@ class UserController extends Controller {
 		
 		$this->table->searchable(['username', 'email', 'group_name']);
 		$this->table->clickable();
-		$this->table->sortable();
+		$this->table->sortable(['username', 'email', 'address', 'phone']);
 		
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_info');
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name');
