@@ -2,8 +2,6 @@
 namespace Incodiy\Codiy\Controllers\Core\Craft;
 
 use Illuminate\Http\Request;
-use Incodiy\Codiy\Library\Components\Table\Craft\Search;
-use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
 
 /**
  * Created on 24 Mar 2021
@@ -91,12 +89,6 @@ trait Action {
 	}
 	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		if (!empty($_GET['filterDataTables'])) {
-			if (!empty($_POST['_token'])) {
-				return $this->initFilterDatatables();
-			}
-		}
-		
 		if (!empty($_GET['renderDataTables'])) {
 			if (!empty($_POST)) {
 				unset($_POST['_token']);
@@ -139,12 +131,6 @@ trait Action {
 	}
 	
 	protected function store(Request $request) {
-		if (!empty($_GET['filterDataTables'])) {
-			if (!empty($_POST['_token'])) {
-				return $this->initFilterDatatables();
-			}
-		}
-		
 		$this->INSERT_DATA_PROCESSOR($request);
 		
 		if (true === $this->store_routeback) {
@@ -321,26 +307,6 @@ trait Action {
 	 */
 	protected function getModelTable($find = false) {
 		return $this->getModel($find)->getTable();
-	}
-	
-	private $datatables = [];
-	private function datatableClass() {
-		$this->datatables = new Datatables();
-	}
-	
-	public $filter_datatables = [];
-	protected function filterDataTable(Request $request) {
-		$this->datatableClass();
-		$this->filter_datatables = $this->datatables->filter_datatable($request);
-		
-		return $this;
-	}
-	
-	private function initFilterDatatables() {
-		if (!empty($_GET['filterDataTables'])) {
-			$this->datatableClass();
-			return $this->datatables->init_filter_datatables($_GET, $_POST);
-		}
 	}
 	
 	/**

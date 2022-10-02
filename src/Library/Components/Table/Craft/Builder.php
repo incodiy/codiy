@@ -525,6 +525,8 @@ class Builder {
 				$search_data['table_name']	= $name;
 				$search_data['searchable']	= $data['columns']['searchable'];
 				$search_data['columns']		= $data['columns']['filters'];
+				$search_data['relations']  = [];
+				if (!empty($data['columns']['relations'])) $search_data['relations'] = $data['columns']['relations'];
 				
 				if (!empty($data['columns']['filter_groups'])) {
 					$search_data['filter_groups'] = $data['columns']['filter_groups'];

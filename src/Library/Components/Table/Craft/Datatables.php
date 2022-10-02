@@ -86,13 +86,6 @@ class Datatables {
 		$_action_lists      = [];
 		$removed_privileges = [];
 		
-		$data_relations = [];
-		if (!empty($data->datatables->relational_data)) {
-			foreach ($data->datatables->relational_data as $relation_name => $ralation_data) {
-				;
-			}
-		}
-		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
 			
 			if (true === $column_data[$table_name]['actions']) {
@@ -278,11 +271,7 @@ class Datatables {
 					$dataRelations = $relData['relation_data'];
 					$datatables->editColumn($relField, function($data) use ($dataRelations) {
 						$dataID = intval($data['id']);
-						if (!empty($dataRelations[$dataID]['field_info'])) {
-							return $dataRelations[$dataID]['field_info'];
-						} else {
-							return $dataRelations[$dataID]['field_value'];
-						}
+						return $dataRelations[$dataID]['field_value'];
 					});
 				}
 			}

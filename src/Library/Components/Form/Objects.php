@@ -316,11 +316,9 @@ class Objects {
 		$syncs['selected'] = encrypt($selected);
 		$syncs['query']    = encrypt(trim(preg_replace('/\s\s+/', ' ', $query)));
 		$data              = json_encode($syncs);
+		$ajaxURL           = diy_get_ajax_urli();
 		
-		$ajaxURL = new AjaxController();
-		$ajaxURL::urli();
-		
-		$this->draw(diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL::$ajaxUrli}', '{$data}');"));
+		$this->draw(diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL}', '{$data}');"));
 	}
 	
 	private function getModelValue($field_name, $function_name) {

@@ -3,18 +3,16 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
 use Incodiy\Codiy\Library\Components\Form\Objects as Form;
 use Illuminate\Support\Facades\Request;
-
 /**
  * Created on 24 Apr 2021
- * Time Created	: 20:51:52
+ * Time Created : 20:51:52
  *
- * @filesource	Search.php
+ * @filesource Search.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
- 
 class Search {
 	
 	private $model;
@@ -25,7 +23,7 @@ class Search {
 	private $table;
 	
 	private $model_filters = [];
-	public function __construct($model = null, $filters = [], $sql = null) {		
+	public function __construct($model = null, $filters = [], $sql = null) {
 		if (!empty($model)) {
 			$model = new $model();
 		}
@@ -369,7 +367,8 @@ class Search {
 			";
 		}
 		
-		$uri         = url(diy_current_route()->uri) . '?filterDataTables=true';
+	//	$uri         = url(diy_current_route()->uri) . '?filterDataTables=true';
+		$uri         = diy_get_ajax_urli('filterDataTables');// . '?filterDataTables=true';
 		$token       = csrf_token();
 		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;

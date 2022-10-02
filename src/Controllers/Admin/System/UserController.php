@@ -12,14 +12,14 @@ use Incodiy\Codiy\Models\Admin\System\Timezone;
 
 /**
  * Created on Jul 26, 2017
- * Time Created	: 10:49:43 AM
- * Filename		: UserController.php
+ * Time Created : 10:49:43 AM
+ * Filename		 : UserController.php
  *
  * @filesource	UserController.php
  *
- * @author		wisnuwidi @Expresscode - 2017
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi @Expresscode - 2017
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
 class UserController extends Controller {
 	
@@ -40,12 +40,18 @@ class UserController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		$this->table->searchable(['username', 'group_name']);
+		$this->table->searchable(['username', 'email', 'group_name']);
 		$this->table->clickable();
 		$this->table->sortable();
 		
+		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_info');
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name');
-		$this->table->lists($this->model_table, ['username:User', 'email', 'group_name', 'address', 'phone', 'active']);
+		
+		$this->table->filterGroups('username', 'selectbox', true);
+		$this->table->filterGroups('email', 'selectbox', true);
+		$this->table->filterGroups('group_info', 'selectbox', true);
+		
+		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'active']);
 		
 		return $this->render();
 	}

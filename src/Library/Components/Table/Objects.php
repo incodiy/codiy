@@ -7,15 +7,15 @@ use App\Models\Admin\System\User;
 
 /**
  * Created on 12 Apr 2021
- * Time Created	: 19:24:03
+ * Time Created : 19:24:03
  * 
- * Marhaban Ya RAMADHAN
+ * Marhaban Yaa RAMADHAN
  *
- * @filesource	Objects.php
+ * @filesource Objects.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
  
 class Objects extends Builder {
@@ -157,6 +157,15 @@ class Objects extends Builder {
 	}
 	
 	public $relational_data = [];
+	/**
+	 * Set Relation Data Table
+	 * 
+	 * @param object $model
+	 * @param string $relation_function
+	 * @param string $key_connect
+	 * @param string $field_display
+	 * @param string $label
+	 */
 	public function relations($model, $relation_function, $key_connect, $field_display, $label = null) {
 		if (!empty($model->with($relation_function)->get())) {
 			$relational_data = $model->with($relation_function)->get();
@@ -177,7 +186,6 @@ class Objects extends Builder {
 								$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY][$pivot_field] = $pivot_data;
 							}
 							$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY]['field_value']   = $dataRelate[$field_display];
-							$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY]['field_info']    = $dataRelate['group_info'];
 						}
 					}
 				}

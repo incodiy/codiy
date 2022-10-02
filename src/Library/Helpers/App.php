@@ -9,6 +9,7 @@ use Incodiy\Codiy\Models\Admin\System\Modules;
 use Incodiy\Codiy\Models\Admin\System\Preference;
 use Incodiy\Codiy\Library\Components\MetaTags;
 use Incodiy\Codiy\Controllers\Admin\System\GroupController;
+use Incodiy\Codiy\Controllers\Admin\System\AjaxController;
 
 /**
  * Created on 10 Mar 2021
@@ -1340,6 +1341,16 @@ if (!function_exists('flag_status')) {
 	 */
 	function flag_status() {
 		return [null => ''] + ['Super Admin', 'Administrator', 'End User'];
+	}
+}
+
+if (!function_exists('diy_get_ajax_urli')) {
+	
+	function diy_get_ajax_urli($init_post = 'AjaxPosF') {
+		$ajaxURL = new AjaxController();
+		$ajaxURL::urli($init_post);
+		
+		return $ajaxURL::$ajaxUrli;
 	}
 }
 

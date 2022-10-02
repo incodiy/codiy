@@ -2,6 +2,8 @@
 namespace Incodiy\Codiy\Controllers\Admin\System;
 
 use Incodiy\Codiy\Controllers\Core\Controller;
+use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
+use Illuminate\Http\Request;
 
 /**
  * Created on Sep 23, 2022
@@ -20,14 +22,25 @@ class AjaxController extends Controller {
 	public function __construct() {}
 		
 	public static $ajaxUrli;
-	public static function urli($return_data = false) {
+	/**
+	 * Ajax Post URL Address
+	 * 
+	 * @param string $init_post
+	 * 	: Initialize Post Key
+	 * 	  ['AjaxPosF'         : by default]
+	 * 	  ['filterDataTables' : for datatables filtering]
+	 * @param boolean $return_data
+	 * @return string
+	 */
+	public static function urli($init_post = 'AjaxPosF', $return_data = false) {
 		$current_url  = route('ajax.post');
-		$urlset       = [
-			'AjaxPosF' => 'true'
-			,'_token'    => csrf_token()
-		];
+		if ('filterDataTables' === $init_post) {
+			$urlset = [$init_post => 'true'];
+		} else {
+			$urlset = [$init_post => 'true' ,'_token'  => csrf_token()];
+		}
 		
-		$uri      = [];
+		$uri = [];
 		foreach ($urlset as $fieldurl => $urlvalue) {
 			$uri[] = "{$fieldurl}={$urlvalue}";
 		}
@@ -41,49 +54,76 @@ class AjaxController extends Controller {
 	public function post() {
 		if (!empty($_GET)) {
 			if (!empty($_GET['AjaxPosF'])) {
-				unset($_GET['AjaxPosF']);
-				unset($_GET['_token']);
-				
-				$info             = [];
-				$info['label']    = null;
-				$info['value']    = null;
-				$info['selected'] = null;
-				$info['query']    = null;
-				
-				foreach ($_GET as $key => $data) {
-					if ('l' === $key) {
-						$info['label']    = decrypt($data);
-					} elseif ('v' === $key) {
-						$info['value']    = decrypt($data);
-					} elseif ('s' === $key) {
-						$info['selected'] = decrypt($data);
-					} else {
-						$info['query']    = decrypt($data);
-					}
-				}
-				
-				$postKEY   = array_keys($_POST)[0];
-				$postValue = array_values($_POST)[0];
-				
-				$queryData     = [];
-				if (!empty($info['query'])) {
-					$queryData = diy_query("{$info['query']} WHERE `{$postKEY}` = '{$postValue}' ORDER BY `{$postKEY}` DESC", 'SELECT');
-				}
-				
-				$result = [];
-				if (!empty($queryData)) {
-					foreach ($queryData as $rowData) {
-						$result['data'][$rowData->{$info['value']}] = $rowData->{$info['label']};
-					}
-				}
-				
-				if (!empty($info['selected'])) {
-					$result['selected'] = $info['selected'];
-				}
-				$results = $result;
-				
-				return json_encode($results);
+				return $this->post_filters();
+			} elseif (!empty($_GET['filterDataTables'])) {
+				$this->datatableClass();
+				return $this->datatables->init_filter_datatables($_GET, $_POST);
 			}
+		}
+	}
+	
+	private function post_filters() {
+		unset($_GET['AjaxPosF']);
+		unset($_GET['_token']);
+		
+		$info             = [];
+		$info['label']    = null;
+		$info['value']    = null;
+		$info['selected'] = null;
+		$info['query']    = null;
+		
+		foreach ($_GET as $key => $data) {
+			if ('l' === $key) {
+				$info['label']    = decrypt($data);
+			} elseif ('v' === $key) {
+				$info['value']    = decrypt($data);
+			} elseif ('s' === $key) {
+				$info['selected'] = decrypt($data);
+			} else {
+				$info['query']    = decrypt($data);
+			}
+		}
+		
+		$postKEY   = array_keys($_POST)[0];
+		$postValue = array_values($_POST)[0];
+		
+		$queryData     = [];
+		if (!empty($info['query'])) {
+			$queryData = diy_query("{$info['query']} WHERE `{$postKEY}` = '{$postValue}' ORDER BY `{$postKEY}` DESC", 'SELECT');
+		}
+		
+		$result = [];
+		if (!empty($queryData)) {
+			foreach ($queryData as $rowData) {
+				$result['data'][$rowData->{$info['value']}] = $rowData->{$info['label']};
+			}
+		}
+		
+		if (!empty($info['selected'])) {
+			$result['selected'] = $info['selected'];
+		}
+		$results = $result;
+		
+		return json_encode($results);
+	}
+	
+	private $datatables = [];
+	private function datatableClass() {
+		$this->datatables = new Datatables();
+	}
+	
+	public $filter_datatables = [];
+	protected function filterDataTable(Request $request) {
+		$this->datatableClass();
+		$this->filter_datatables = $this->datatables->filter_datatable($request);
+		
+		return $this;
+	}
+	
+	private function initFilterDatatables() {
+		if (!empty($_GET['filterDataTables'])) {
+			$this->datatableClass();
+			return $this->datatables->init_filter_datatables($_GET, $_POST);
 		}
 	}
 }
