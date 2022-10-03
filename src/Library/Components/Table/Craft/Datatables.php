@@ -237,6 +237,7 @@ class Datatables {
 		
 		$datatables = DataTable::of($model)
 			->setTotalRecords($limit['total'])
+			->setFilteredRecords($limit['total'])
 			->blacklist(['password', 'action', 'no'])
 			->orderColumn('id', 'id desc')
 			->smart(true);
