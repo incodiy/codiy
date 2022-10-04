@@ -246,7 +246,7 @@ class Datatables {
 			->setTotalRecords($limit['total'])
 			->setFilteredRecords($limit['total'])
 			->blacklist(['password', 'action', 'no'])
-			->orderColumn('id', 'id desc')
+			->orderColumn('id', "'{$table_name}.id DESC'")
 			->smart(true);
 			
 		$is_image = [];
