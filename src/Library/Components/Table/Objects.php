@@ -165,8 +165,12 @@ class Objects extends Builder {
 	 * @param string $key_connect
 	 * @param string $field_display
 	 * @param string $label
+	 * @param array  $filter_foreign_keys :[
+	 *			'base_user_group:user_id' => 'users:id',
+	 *			'base_group:id'           => 'base_user_group:group_id'
+	 *	]
 	 */
-	public function relations($model, $relation_function, $key_connect, $field_display, $label = null) {
+	public function relations($model, $relation_function, $key_connect, $field_display, $label = null, $filter_foreign_keys = []) {
 		if (!empty($model->with($relation_function)->get())) {
 			$relational_data = $model->with($relation_function)->get();
 			if (empty($label)) {
@@ -180,8 +184,8 @@ class Objects extends Builder {
 						if (!empty($dataRelate[$field_display])) {
 							$relateKEY = intval($dataRelate['id']);
 							
-							$this->relational_data[$relation_function]['field_target'][$field_display]['field_name']    = $field_display;
-							$this->relational_data[$relation_function]['field_target'][$field_display]['field_label']   = $label;
+							$this->relational_data[$relation_function]['field_target'][$field_display]['field_name']  = $field_display;
+							$this->relational_data[$relation_function]['field_target'][$field_display]['field_label'] = $label;
 							foreach ($relation->pivot->getAttributes() as $pivot_field => $pivot_data) {
 								$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY][$pivot_field] = $pivot_data;
 							}
@@ -189,6 +193,10 @@ class Objects extends Builder {
 						}
 					}
 				}
+			}
+			
+			if (!empty($filter_foreign_keys)) {
+				$this->relational_data[$relation_function]['foreign_keys'] = $filter_foreign_keys;
 			}
 		}
 	}
@@ -479,13 +487,18 @@ class Objects extends Builder {
 				$fields = diy_get_table_columns($table_name);
 			}
 			
+			// RELATIONAL PROCESS
 			$checkFieldSet = array_diff($original_fields, $fields);
 			if (!empty($checkFieldSet)) {
-				$field_relations = [];
+				$field_relations   = [];
 				if (!empty($this->relational_data)) {
 					foreach ($this->relational_data as $relData) {
 						foreach ($relData['field_target'] as $fr_name => $relation_fields) {
 							$field_relations[$fr_name] = $relation_fields;
+						}
+						
+						if (!empty($relData['foreign_keys'])) {
+							$this->columns[$table_name]['foreign_keys'] = $relData['foreign_keys'];
 						}
 					}
 				}
@@ -509,9 +522,7 @@ class Objects extends Builder {
 					}
 				}
 				
-				if (!empty($refields)) {
-					$fields = $refields;
-				}
+				if (!empty($refields)) $fields = $refields;
 			}
 		}
 		

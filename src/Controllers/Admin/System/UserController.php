@@ -37,15 +37,22 @@ class UserController extends Controller {
 		parent::__construct(User::class, 'system.accounts.user');
 	}
 	
+	private static function key_relations() {
+		return [
+			'base_user_group.user_id' => 'users.id',
+			'base_group.id'           => 'base_user_group.group_id'
+		];
+	}
+	
 	public function index() {
 		$this->setPage();
 		
-		$this->table->searchable(['username', 'email', 'group_name']);
+		$this->table->searchable(['group_info', 'username', 'email', 'group_name']);
 		$this->table->clickable();
 		$this->table->sortable(['username', 'email', 'address', 'phone']);
 		
-		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_info');
-		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name');
+		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_info', null, self::key_relations());
+		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name', null, self::key_relations());
 		
 		$this->table->filterGroups('group_info', 'selectbox', true);
 		$this->table->filterGroups('username', 'selectbox', true);
