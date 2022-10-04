@@ -5,15 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Created on 2 Jun 2021
- * Time Created	: 13:24:01
+ * Time Created : 13:24:01
  *
- * @filesource	DynamicTables.php
+ * @filesource DynamicTables.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author     wisnuwidi@gmail.com - 2021
+ * @copyright  wisnuwidi
+ * @email      wisnuwidi@gmail.com
  */
- 
 class DynamicTables extends Model {
 	
 	public function __construct($sql = null) {

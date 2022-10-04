@@ -1,21 +1,20 @@
 <?php
 namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
-use Yajra\DataTables\DataTables as DataTable;
 use Incodiy\Codiy\Models\Admin\System\DynamicTables;
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
+use Yajra\DataTables\DataTables as DataTable;
 
 /**
  * Created on 21 Apr 2021
- * Time Created	: 12:45:06
+ * Time Created : 12:45:06
  *
- * @filesource	Datatables.php
+ * @filesource Datatables.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author     wisnuwidi@gmail.com - 2021
+ * @copyright  wisnuwidi
+ * @email      wisnuwidi@gmail.com
  */
- 
 class Datatables {
 	use Privileges;
 	
@@ -139,6 +138,14 @@ class Datatables {
 			}
 		}
 		
+		// CHECK RELATIONSHIP DATATABLES	
+		if (!empty($column_data[$table_name]['foreign_keys'])) {
+			foreach ($column_data[$table_name]['foreign_keys'] as $fkey1 => $fkey2) {
+				$ftables    = explode('.', $fkey1);
+				$model_data = $model_data->join($ftables[0], $fkey1, '=', $fkey2);
+			}
+		}
+		
 		$limitTotal      = 0;
 		$limit           = [];
 		$limit['start']  = 0;
@@ -224,7 +231,7 @@ class Datatables {
 			}
 			$limitTotal = count($model->get());
 		} else {
-			$model      = $model_filters->where('id', '!=', null);
+			$model      = $model_filters->where("{$table_name}.id", '!=', null);
 			$limitTotal = count($model_filters->get());
 		}
 		
@@ -241,7 +248,7 @@ class Datatables {
 			->blacklist(['password', 'action', 'no'])
 			->orderColumn('id', 'id desc')
 			->smart(true);
-		
+			
 		$is_image = [];
 		if (!empty($this->form->imageTagFieldsDatatable)) {
 			$is_image = array_keys($this->form->imageTagFieldsDatatable);
@@ -283,8 +290,6 @@ class Datatables {
 			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});
 			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
 		}
-		
-		
 		
 		if (!empty($data->datatables->formula[$table_name])) {
 			$data_formula = $data->datatables->formula[$table_name];
@@ -422,11 +427,31 @@ class Datatables {
 			$table  = $fdata[1];
 			$target = $fdata[2];
 			$prev   = $fdata[3];
+			$fKeys  = [];
+			$fKeyQs = [];
+			if (!empty($post['_forKeys'])) {
+				$fKeys = json_decode($post['_forKeys']);
+				
+				foreach ($fKeys as $fqs => $fqt) {
+					$tqs = explode('.', $fqs);
+					$tqs = $tqs[0];
+					
+					$tqt = explode('.', $fqt);
+					$tqt = $tqt[0];
+					
+					$fKeyQ[] = "LEFT JOIN {$tqs} ON {$fqs} = {$fqt}";
+				}
+				
+				if (!empty($fKeyQ)) {
+					$fKeyQs = implode(' ', $fKeyQ);
+				}
+			}
 			
 			unset($post['filterDataTables']);
 			unset($post['_fita']);
 			unset($post['_token']);
 			unset($post['_n']);
+			if (!empty($post['_forKeys'])) unset($post['_forKeys']);
 			
 			$wheres = [];
 			foreach ($post as $key => $value) {
@@ -463,7 +488,12 @@ class Datatables {
 			}
 			
 			$wheres = implode(' AND ', $wheres);
-			$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
+			
+			if (!empty($fKeys)) {
+				$rows   = diy_query("SELECT DISTINCT `{$target}`FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}", "SELECT");
+			} else {
+				$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
+			}
 			
 			return $rows;
 		}

@@ -18,27 +18,29 @@ class Search {
 	private $model;
 	private $form;
 	private $filters;
+	private $input_relations;
 	private $relations;
+	private $foreign_keys;
 	private $sql;
 	private $table;
 	
 	private $model_filters = [];
 	public function __construct($model = null, $filters = [], $sql = null) {
-		if (!empty($model)) {
-			$model = new $model();
-		}
+		if (!empty($model)) $model = new $model();
 		
 		if (!empty($filters['filter_model'])) {
 			$this->model_filters = $filters['filter_model'];
-			$this->model = $model->where($this->model_filters);
+			$this->model     = $model->where($this->model_filters);
 		} else {
-			$this->model = $model;
+			$this->model     = $model;
 		}
 		
-		$this->form    = new Form();
-		$this->filters = $filters;
-		$this->table   = $filters['table_name'];
-		$this->sql     = $sql;
+		$this->form         = new Form();
+		$this->table        = $filters['table_name'];
+		$this->relations    = $filters['relations'];
+		$this->foreign_keys = $filters['foreign_keys'];
+		$this->filters      = $filters;
+		$this->sql          = $sql;
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
 	}
@@ -57,11 +59,11 @@ class Search {
 		return diy_query($sql, 'SELECT');
 	}
 	
-	private $data   = [];
+	private $data = [];
 	private function getFilterData($data) {
-		$all_columns = [];
-		$relists     = [];
-		$relations   = [];
+		$all_columns     = [];
+		$relists         = [];
+		$input_relations = [];
 		
 		foreach ($this->filters['columns'] as $col) {
 			$all_columns[$col] = $col;
@@ -90,20 +92,20 @@ class Search {
 		foreach ($relists as $relist) {
 			if (false !== $relist) {
 				foreach ($relist as $relation) {
-					$relations['lists'][] = $relation;
+					$input_relations['lists'][] = $relation;
 					if (!empty($data[$relation]['type'])) {
-						$relations['type'][$relation] = $data[$relation]['type'];
+						$input_relations['type'][$relation] = $data[$relation]['type'];
 					} else {
-						$relations['type'][$relation] = 'text';
+						$input_relations['type'][$relation] = 'text';
 					}
 				}
 			}
 		}
-		if (!empty($relations['lists'])) {
-		    $this->relations['lists'] = array_unique($relations['lists']);
+		if (!empty($input_relations['lists'])) {
+		    $this->input_relations['lists'] = array_unique($input_relations['lists']);
 		}
-		if (!empty($relations['type'])) {
-		    $this->relations['type']  = $relations['type'];
+		if (!empty($input_relations['type'])) {
+		    $this->input_relations['type']  = $input_relations['type'];
 		}
 	}
 	
@@ -111,48 +113,66 @@ class Search {
 	private function selections($table, $fields = [], $condition = null) {
 		$strfields = implode(',', $fields);
 		$where     = null;
-		if (!empty($condition)) {
-		    $where = "WHERE ID IS NOT NULL ";
-		}
 		
+		if (!empty($condition)) $where = "WHERE `{$table}`.id IS NOT NULL ";
 		if (!empty($this->model_filters)) {
 			$mf_where = [];
 			$n        = 0;
 			foreach ($this->model_filters as $mf_field => $mf_values) {
 				$n ++;
-				
 				$mf_cond = 'AND ';
-				if ($n <= 1) {
-					$mf_cond = 'WHERE ';
-				}
-				
-				
+				if ($n <= 1) $mf_cond = 'WHERE ';
 				if (!is_array($mf_values)) {
 					$mf_where[] = "{$mf_cond}{$mf_field} = '{$mf_values}'";
 				} else {
-					$mf_value = implode("', '", $mf_values);
-					$mf_value = " IN ('{$mf_value}')";
+					$mf_value   = implode("', '", $mf_values);
+					$mf_value   = " IN ('{$mf_value}')";
 					$mf_where[] = "{$mf_cond}{$mf_field}{$mf_value}";
 				}
 			}
+			
 			$where = implode(' ', $mf_where);
 		}
 		
-		$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};");
-		if (!empty($query)) {
-			$selections = [];
-			foreach ($query as $rows) {
-				foreach ($rows as $fieldname => $fieldvalue) {
-					$selections[$fieldname][$fieldvalue] = $fieldvalue;
+		if (!empty($this->relations)) {
+			if (!empty($this->relations[$strfields]['relation_data'])) {
+				foreach ($this->relations[$strfields]['relation_data'] as $relationData) {
+					$this->selections[$strfields][$relationData['field_value']] = $relationData['field_value'];
+				}
+				
+				return $this;
+			}
+		}
+		
+		if (!empty($strfields)) {
+			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};");
+			if (!empty($query)) {
+				$selections = [];
+				foreach ($query as $rows) {
+					foreach ($rows as $fieldname => $fieldvalue) {
+						$selections[$fieldname][$fieldvalue] = $fieldvalue;
+					}
+				}
+				
+				foreach ($fields as $field) {
+					$this->selections[$field] = array_unique($selections[$field]);
 				}
 			}
-			
-			foreach ($fields as $field) {
-				$this->selections[$field] = array_unique($selections[$field]);
-			}
-			
-			return $this;
 		}
+		
+		return $this;
+	}
+	
+	private function set_first_selectbox($name, $field_value, $field) {
+		$values[$field]              = null;
+		$field_value[$field] = $this->selections($name, [$field]);
+		if (!empty($field_value[$field]->selections[$field])) {
+			if (!empty($field_value[$field]->selections[$field])) {
+				$values[$field] = $field_value[$field]->selections[$field];
+			}
+		}
+		
+		return $values[$field];
 	}
 	
 	private $html = false;
@@ -161,31 +181,23 @@ class Search {
 		$this->form->hideFields    = ['id'];
 		
 		$script_elements = [];
-		if (!empty($this->relations['type'])) {
+		if (!empty($this->input_relations['type'])) {
 			$field_value  = [];
-			$values       = null;
 			$open_field   = null;
 			
-			if (!empty($this->relations['lists'][0])) {
-				$open_field = $this->relations['lists'][0];
+			if (!empty($this->input_relations['lists'][0])) {
+				$open_field = $this->input_relations['lists'][0];
 			}
 			
 			if (!empty($open_field)) {
-				foreach ($this->relations['type'] as $field => $type) {
+				foreach ($this->input_relations['type'] as $field => $type) {
+					$values[$field] = null;
+					
 					if ($open_field === $field) {
-						
-						$field_value[$field] = $this->selections($name, [$field]);
-						if (!empty($field_value[$field]->selections[$field])) {
-							if (!empty($field_value[$field]->selections[$field])) {
-								$values = $field_value[$field]->selections[$field];
-							}
-						}
-						
-					} else {
-						$values = null;
+						$values[$field] = $this->set_first_selectbox($name, $field_value, $field);
 					}
 					
-					if (!empty($values)) {
+					if (!empty($values[$field])) {
 						$attributes = ['id' => $field];
 					} else {
 						$attributes = ['disabled' => 'disabled'];
@@ -193,40 +205,41 @@ class Search {
 					
 					$field_label = ucwords(diy_clean_strings($field, ' '));
 					if ('selectbox' === $type) {
-						if (null === $values) {
-							$values[null] = 'No Data ' . $field_label . ' Found';
-							ksort($values);
+						if (null === $values[$field]) {
+							$values[$field][null] = 'No Data ' . $field_label . ' Found';
+							ksort($values[$field]);
 						} else {
-							$values[null] = 'Select ' . $field_label;
-							ksort($values);
+							$values[$field][null] = 'Select ' . $field_label;
+							ksort($values[$field]);
 						}
 					}
 					
 					if ('radiobox' === $type) {
-						if (null !== $values && count($values) > 1) $values[null] = 'Clear!';
+						if (null !== $values[$field] && count($values[$field]) > 1) $values[$field][null] = 'Clear!';
 					}
 					
 					switch ($type) {
 						case 'selectbox':
-							$this->form->selectbox($field, $values, false, $attributes, true, false);
+							$this->form->selectbox($field, $values[$field], false, $attributes, true, false);
 							break;
 						case 'checkbox':
-							if (!empty($values)) {
-								if (!in_array('', $values) || !in_array(null, $values)) {
-									$this->form->checkbox($field, $values);
+							if (!empty($values[$field])) {
+								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) {
+									$this->form->checkbox($field, $values[$field]);
 								}
 							}
 						break;
 						case 'radiobox':
-							if (!empty($values)) {
-								if (!in_array('', $values) || !in_array(null, $values)) {
-									$this->form->radiobox($field, $values);
+							if (!empty($values[$field])) {
+								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) {
+									$this->form->radiobox($field, $values[$field]);
 								}
 							}
 							break;
 						default:
-							if (!empty($values)) $this->form->text($field, $values, ['id' => $field]);
+							if (!empty($values[$field])) $this->form->text($field, $values[$field], ['id' => $field]);
 	        		}
+	        		
 	        		$script_elements[$field] = $type;
 				}
 			}
@@ -258,6 +271,7 @@ class Search {
 					default:
 						$this->form->text($field, null, ['id' => $field]);
 				}
+				
 				$script_elements[$field] = $type;
 			}
 		}
@@ -367,6 +381,12 @@ class Search {
 			";
 		}
 		
+		$forkey = [];
+		if (!empty($this->foreign_keys)) {
+			$forkey = $this->foreign_keys;
+		}
+		$forkeys = json_encode($forkey);
+		
 	//	$uri         = url(diy_current_route()->uri) . '?filterDataTables=true';
 		$uri         = diy_get_ajax_urli('filterDataTables');// . '?filterDataTables=true';
 		$token       = csrf_token();
@@ -380,7 +400,7 @@ class Search {
 				$.ajax ({
 					type       : 'POST',
 					url        : '{$uri}',
-					data       : {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}'},
+					data       : {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'},
 					dataType   : 'json',
 					beforeSend : function() {
 						$('#cdyInpLdr{$next_target}').show();
