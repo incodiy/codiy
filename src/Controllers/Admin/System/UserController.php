@@ -1,25 +1,24 @@
 <?php
 namespace Incodiy\Codiy\Controllers\Admin\System;
 
-use Illuminate\Http\Request;
-
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Models\Admin\System\User as User;
 use Incodiy\Codiy\Models\Admin\System\Group;
 use Incodiy\Codiy\Models\Admin\System\Usergroup;
 use Incodiy\Codiy\Models\Admin\System\Language;
 use Incodiy\Codiy\Models\Admin\System\Timezone;
-
+use Illuminate\Http\Request;
 /**
  * Created on Jul 26, 2017
+ * 
  * Time Created : 10:49:43 AM
- * Filename		 : UserController.php
+ * Filename     : UserController.php
  *
- * @filesource	UserController.php
+ * @filesource UserController.php
  *
- * @author    wisnuwidi @Expresscode - 2017
- * @copyright wisnuwidi
- * @email     wisnuwidi@gmail.com
+ * @author     wisnuwidi @Expresscode - 2017
+ * @copyright  wisnuwidi
+ * @email      wisnuwidi@gmail.com
  */
 class UserController extends Controller {
 	
@@ -47,9 +46,9 @@ class UserController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		$this->table->searchable(['group_info', 'username', 'email', 'group_name']);
+		$this->table->searchable();
 		$this->table->clickable();
-		$this->table->sortable(['username', 'email', 'address', 'phone']);
+		$this->table->sortable();
 		
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_info', null, self::key_relations());
 		$this->table->relations($this->model, 'relational_group', 'user_id', 'group_name', null, self::key_relations());
