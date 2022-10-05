@@ -139,7 +139,6 @@ class ModulesController extends Controller {
 	
 	public function create() {
 		$this->setPage();
-		
 		if (count($this->render_value_module_name()) >= 1) {
 			$disabled = [];
 		} else {
@@ -154,7 +153,7 @@ class ModulesController extends Controller {
 		$this->form->selectbox('icon', $this->input_icons());
 		
 		if (count($this->render_value_module_name()) >= 1) {
-			$this->form->selectbox('flag_status', flag_status(), 2, ['required']);
+			$this->form->selectbox('flag_status', flag_status($this->is_root), 2, ['required']);
 			$this->form->selectbox('active', active_box(), false, ['required']);
 			$this->form->close('Save Module', ['class' => 'btn btn-primary btn-slideright pull-right']);
 		}
@@ -183,7 +182,7 @@ class ModulesController extends Controller {
 		$this->form->text('module_name');
 		$this->form->textarea('module_info');
 		$this->form->selectbox('icon', $this->input_icons(), $model_data->icon);
-		$this->form->selectbox('flag_status', flag_status(), $model_data->flag_status, ['required']);
+		$this->form->selectbox('flag_status', flag_status($this->is_root), $model_data->flag_status, ['required']);
 		$this->form->selectbox('active', active_box(), $model_data->active, ['required']);
 		
 		$this->form->close('Save Module', ['class' => 'btn btn-primary btn-slideright pull-right']);

@@ -46,9 +46,7 @@ class UserController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		if ('root' !== $this->session['user_group']) {
-			$this->filterPage(['group_name' => 'root'], '!=');
-		}
+		if (!$this->is_root) $this->filterPage(['group_name' => 'root'], '!=');
 		
 		$this->table->searchable();
 		$this->table->clickable();
@@ -85,7 +83,7 @@ class UserController extends Controller {
 		$this->form->selectbox('language', $this->input_language(), 'id_ID', ['required']);
 		$this->form->selectbox('timezone', $this->input_timezone(), 218, ['required']);
 		
-		if ('root' === $this->session['user_group'] || diy_string_contained($this->session['user_group'], 'admin')) {
+		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
 			$this->form->openTab('User Group');
 			if (true === is_multiplatform()) {
 				$this->form->selectbox($this->platform_key, $this->input_platform(), false, ['required'], $this->platform_label);
@@ -107,7 +105,7 @@ class UserController extends Controller {
 	
 	public function store(Request $request) {
 		$this->get_session();
-		if ('root' === $this->session['user_group']) {
+		if ($this->is_root) {
 			if (true === is_multiplatform()) {
 				$this->validations[$this->platform_key] = 'required';
 			}
@@ -153,7 +151,7 @@ class UserController extends Controller {
 		$this->form->selectbox('language', $this->input_language(), 'id_ID');
 		$this->form->selectbox('timezone', $this->input_timezone(), 218);
 				
-		if ('root' === $this->session['user_group'] || diy_string_contained($this->session['user_group'], 'admin')) {
+		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
 			if (intval($this->model_data->id) !== intval($this->session['id'])) {
 				$this->form->openTab('User Group');
 			}
@@ -183,7 +181,7 @@ class UserController extends Controller {
 		$this->model_find($id);
 		$data = $request->all();
 		
-		if ('root' === $this->session['user_group']) {
+		if ($this->is_root) {
 			if (true === is_multiplatform()) {
 				$this->validations[$this->platform_key] = 'required';
 			}
@@ -211,7 +209,7 @@ class UserController extends Controller {
 	}
 	
 	private function input_group() {
-		if ('root' !== $this->session['user_group']) {
+		if (!$this->is_root) {
 			if (true === is_multiplatform()) {
 				$this->user_groups = Group::where('group_name', '!=', 'root')->where($this->platform_key, $this->session[$this->platform_key])->get();
 			} else {

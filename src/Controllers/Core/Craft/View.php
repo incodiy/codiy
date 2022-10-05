@@ -142,7 +142,7 @@ trait View {
 		}
 	}
 	
-	
+	public $is_root = false;	
 	public $filter_page = [];
 	/**
 	 * Set Page Attributes
@@ -154,7 +154,8 @@ trait View {
 	 * @param string $url
 	 */
 	protected function setPage($page = null, $path = false) {
-		$this->set_session();		
+		$this->set_session();
+		$this->is_root = str_contains($this->session['user_group'], 'root');
 		$this->routeInfo();
 		
 		if (!empty($this->session['id'])) {

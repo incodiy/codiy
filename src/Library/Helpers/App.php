@@ -1339,8 +1339,12 @@ if (!function_exists('flag_status')) {
 	 *
 	 * @return string[]
 	 */
-	function flag_status() {
-		return [null => ''] + ['Super Admin', 'Administrator', 'End User'];
+	function flag_status($as_root = false) {
+		if (true === $as_root) {
+			return [null => ''] + ['Super Admin', 'Administrator', 'End User'];
+		} else {
+			return [null => ''] + [1 => 'Administrator', 2 => 'End User'];
+		}
 	}
 }
 

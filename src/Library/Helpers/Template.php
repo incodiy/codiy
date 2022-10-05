@@ -241,8 +241,8 @@ if (!function_exists('diy_sidebar_content')) {
 			$mediaHeading		= false;
 			$mediaSubHeading	= false;
 			
-			if (false !== $media_heading)		$mediaHeading		= "<h4 class=\"media-heading\">{$media_heading}</h4>";
-			if (false !== $media_sub_heading)	$mediaSubHeading	= "<small>{$media_sub_heading}</small>";
+			if (false !== $media_heading)     $mediaHeading    = "<h4 class=\"media-heading\">{$media_heading}</h4>";
+			if (false !== $media_sub_heading) $mediaSubHeading = "<small>{$media_sub_heading}</small>";
 			
 			$o  = "<div class=\"sidebar-content\">";
 			$o .= "<div class=\"media\">";
@@ -306,9 +306,9 @@ if (!function_exists('diy_sidebar_menu')) {
 	 *
 	 * @example:
 	 *	$this->theme->set_menu_sidebar('Dashboard', [
-	 'Basic'			=> 'dashboard.html',
-	 'E-Commerce'	=> 'dashboard-ecommerce.html'
-	 ], 'home');
+	    'Basic'      => 'dashboard.html',
+	    'E-Commerce' => 'dashboard-ecommerce.html'
+	   ], 'home');
 	 */
 	function diy_sidebar_menu($label, $links, $icon = [], $selected = false) {
 		$o = '<li id="' . diy_clean_strings($label) . '" class="submenu">';
