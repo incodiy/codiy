@@ -153,7 +153,7 @@ class UserController extends Controller {
 		$this->form->selectbox('language', $this->input_language(), 'id_ID');
 		$this->form->selectbox('timezone', $this->input_timezone(), 218);
 				
-		if ('root' === $this->session['user_group']) {
+		if ('root' === $this->session['user_group'] || diy_string_contained($this->session['user_group'], 'admin')) {
 			if (intval($this->model_data->id) !== intval($this->session['id'])) {
 				$this->form->openTab('User Group');
 			}
