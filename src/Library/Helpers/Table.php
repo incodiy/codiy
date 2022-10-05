@@ -195,6 +195,7 @@ if (!function_exists('diy_table_action_button')) {
 		$add_path                = false;
 		$enabledAction           = [];
 		$enabledAction['read']   = true;
+		$enabledAction['insert'] = true;
 		$enabledAction['modify'] = true;
 		$enabledAction['delete'] = true;
 		
@@ -216,6 +217,8 @@ if (!function_exists('diy_table_action_button')) {
 				foreach ($removed_button as $remove) {
 					if (in_array($remove, ['show', 'view', 'index'])) {
 						$enabledAction['read']   = false;
+					} elseif (in_array($remove, ['insert'])) {
+						$enabledAction['insert'] = false;
 					} elseif (in_array($remove, ['edit', 'modify'])) {
 						$enabledAction['modify'] = false;
 					} elseif (in_array($remove, ['delete', 'destroy'])) {
