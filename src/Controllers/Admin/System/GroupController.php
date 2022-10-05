@@ -44,7 +44,10 @@ class GroupController extends Controller {
 	 */
 	public function index() {
 		$this->setPage();
-	//	$this->filterPage(['group_name' => 'admin']);
+		
+		if ('root' !== $this->session['user_group']) {
+			$this->filterPage(['group_name' => 'root'], '!=');
+		}
 		
 		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
 		

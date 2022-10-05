@@ -192,7 +192,7 @@ trait Action {
 	 * 		'field_name' => 'value'
 	 * 	  ]
 	 */
-	public function filterPage($filters = []) {
+	public function filterPage($filters = [], $operator = '=') {
 		if (!empty($filters)) {
 			$this->model_filters = $filters;
 		} else {
@@ -206,7 +206,7 @@ trait Action {
 		foreach ($this->model_filters as $fieldname => $fieldvalue) {
 			$this->table->conditions['where'][] = [
 				'field_name' => $fieldname,
-				'operator'   => '=',
+				'operator'   => $operator,
 				'value'      => $fieldvalue
 			];
 		}

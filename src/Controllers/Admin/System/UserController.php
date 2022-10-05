@@ -46,6 +46,10 @@ class UserController extends Controller {
 	public function index() {
 		$this->setPage();
 		
+		if ('root' !== $this->session['user_group']) {
+			$this->filterPage(['group_name' => 'root'], '!=');
+		}
+		
 		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
@@ -81,7 +85,7 @@ class UserController extends Controller {
 		$this->form->selectbox('language', $this->input_language(), 'id_ID', ['required']);
 		$this->form->selectbox('timezone', $this->input_timezone(), 218, ['required']);
 		
-		if ('root' === $this->session['user_group']) {
+		if ('root' === $this->session['user_group'] || diy_string_contained($this->session['user_group'], 'admin')) {
 			$this->form->openTab('User Group');
 			if (true === is_multiplatform()) {
 				$this->form->selectbox($this->platform_key, $this->input_platform(), false, ['required'], $this->platform_label);

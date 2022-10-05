@@ -26,7 +26,7 @@ trait Session {
 		$this->session          = $session_original;
 		$this->data['sessions'] = $this->session;
 		
-		$sessions = [];//Sessions::all();
+		$sessions = [];
 		if (!empty($session_original['id'])) {
 			$sessions['roles']['user_id']    = $session_original['id'];
 			$sessions['roles']['username']   = $session_original['username'];
