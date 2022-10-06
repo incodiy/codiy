@@ -349,8 +349,24 @@ class Search {
 		$nest     = null;
 		$nesCript = null;
 		if (!empty($nests['next'])) {
-			$nest     = implode('|', $nests['next']);
-			$nesCript = "dttb_selectbox_next_target('{$identity}', '{$next_target}', _nx{$next_target}, _reident{$next_target}, '{$nest}', _spldt{$identity}, _spl{$identity}, _reident{$identity});";
+			$nest      = implode('|', $nests['next']);
+			$nesCript  = "var _nx{$next_target}      = '{$next_target}';";
+			$nesCript .= "var _reident{$next_target} = _nx{$next_target}.replace('_', ' ');";
+			$nesCript .= "$('#{$next_target}').empty()";
+				$nesCript .= ".append('<option value=\"\">No Data ' + ucwords(_reident{$next_target}) + ' Found</option>')";
+				$nesCript .= ".prop('disabled', true).trigger('chosen:updated');";
+			$nesCript .= "if (null != '{$nest}' && '' != '{$nest}') {";
+				$nesCript .= "var _spldt{$identity} = '{$nest}';";
+				$nesCript .= "var _spl{$identity} = _spldt{$identity}.split('|');";
+				$nesCript .= "$.each(_spl{$identity}, function(i,obj) {";
+					$nesCript .= "if (null != obj && '{$identity}' != obj) {";
+						$nesCript .= "var _reident{$identity} = obj.replace('_', ' ');";
+						$nesCript .= "$('#' + obj).empty()";
+						$nesCript .= ".append('<option value=\"\">No Data ' + ucwords(_reident{$identity}) + ' Found</option>')";
+						$nesCript .= ".prop('disabled', true).trigger('chosen:updated');";
+					$nesCript .= "}";
+				$nesCript .= "});";
+			$nesCript .= "}";
 		}
 		
 		$forkey = [];
@@ -370,14 +386,14 @@ class Search {
 			$ajaxSuccess  = "var _next{$next_target}	= '{$target}';";
 			$ajaxSuccess .= "var _prefS{$identity}	= {$prevscript};";
 			$ajaxSuccess .= "$.ajax ({";
-				$ajaxSuccess .= "type       : 'POST',";
-				$ajaxSuccess .= "url        : '{$uri}',";
-				$ajaxSuccess .= "data       : {$ajax_data},";
-				$ajaxSuccess .= "dataType   : 'json',";
+				$ajaxSuccess .= "type : 'POST',";
+				$ajaxSuccess .= "url : '{$uri}',";
+				$ajaxSuccess .= "data : {$ajax_data},";
+				$ajaxSuccess .= "dataType : 'json',";
 				$ajaxSuccess .= "beforeSend : function() {";
 					$ajaxSuccess .= "$('#cdyInpLdr{$next_target}').show();";
 				$ajaxSuccess .= "},";
-				$ajaxSuccess .= "success    : function(data) {";
+				$ajaxSuccess .= "success : function(data) {";
 					$ajaxSuccess .= "if (data) {";
 						$ajaxSuccess .= "if ('' != '{$next_target}' && null != '{$next_target}') {";
 							$ajaxSuccess .= "$('#{$next_target}').removeAttr('disabled').trigger('chosen:updated');";
@@ -389,7 +405,7 @@ class Search {
 						$ajaxSuccess .= "}";
 					$ajaxSuccess .= "}";
 				$ajaxSuccess .= "},";
-				$ajaxSuccess .= "complete	: function() {";
+				$ajaxSuccess .= "complete : function() {";
 					$ajaxSuccess .= "$('#cdyInpLdr{$next_target}').hide();";
 				$ajaxSuccess .= "}";
 			$ajaxSuccess .= "});";
