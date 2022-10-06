@@ -155,7 +155,9 @@ trait View {
 	 */
 	protected function setPage($page = null, $path = false) {
 		$this->set_session();
-		$this->is_root = str_contains($this->session['user_group'], 'root');
+		if (!empty($this->session['user_group'])) {
+			$this->is_root = str_contains($this->session['user_group'], 'root');
+		}
 		$this->routeInfo();
 		
 		if (!empty($this->session['id'])) {
