@@ -257,7 +257,8 @@ trait Action {
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function firstRedirect() {
-		$group_id = intval($this->session_auth['group_id']);
+		$group_id = null;
+		if (!empty($this->session_auth['group_id'])) $group_id = intval($this->session_auth['group_id']);
 		if (1 === intval($group_id)) {
 			// root group as internal
 			return redirect()->intended($this->rootPage);

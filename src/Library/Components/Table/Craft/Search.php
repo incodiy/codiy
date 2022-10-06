@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Request;
  *
  * @filesource Search.php
  *
- * @author    wisnuwidi@gmail.com - 2021
- * @copyright wisnuwidi
- * @email     wisnuwidi@gmail.com
+ * @author     wisnuwidi@gmail.com - 2021
+ * @copyright  wisnuwidi
+ * @email      wisnuwidi@gmail.com
  */
 class Search {
 	
@@ -89,24 +89,27 @@ class Search {
 		}
 		$this->data = $data;
 		
-		foreach ($relists as $relist) {
-			if (false !== $relist) {
-				foreach ($relist as $relation) {
-					$input_relations['lists'][] = $relation;
-					if (!empty($data[$relation]['type'])) {
-						$input_relations['type'][$relation] = $data[$relation]['type'];
-					} else {
-						$input_relations['type'][$relation] = 'text';
+		if (count($data) >= 2) {
+			foreach ($relists as $relist) {
+				if (false !== $relist) {
+					foreach ($relist as $relation) {
+						$input_relations['lists'][] = $relation;
+						if (!empty($data[$relation]['type'])) {
+							$input_relations['type'][$relation] = $data[$relation]['type'];
+						} else {
+							$input_relations['type'][$relation] = 'text';
+						}
 					}
 				}
 			}
+		} else {
+			$the_only_data              = array_keys($data);
+			$input_relations['lists'][] = $the_only_data[0];
+			$input_relations['type']    = [$the_only_data[0] => 'selectbox'];
 		}
-		if (!empty($input_relations['lists'])) {
-		    $this->input_relations['lists'] = array_unique($input_relations['lists']);
-		}
-		if (!empty($input_relations['type'])) {
-		    $this->input_relations['type']  = $input_relations['type'];
-		}
+		
+		if (!empty($input_relations['lists'])) $this->input_relations['lists'] = array_unique($input_relations['lists']);
+		if (!empty($input_relations['type']))  $this->input_relations['type']  = $input_relations['type'];
 	}
 	
 	private $selections = [];
@@ -118,6 +121,7 @@ class Search {
 		if (!empty($this->model_filters)) {
 			$mf_where = [];
 			$n        = 0;
+			
 			foreach ($this->model_filters as $mf_field => $mf_values) {
 				$n ++;
 				$mf_cond = 'AND ';
@@ -139,7 +143,6 @@ class Search {
 				foreach ($this->relations[$strfields]['relation_data'] as $relationData) {
 					$this->selections[$strfields][$relationData['field_value']] = $relationData['field_value'];
 				}
-				
 				return $this;
 			}
 		}
@@ -164,8 +167,8 @@ class Search {
 	}
 	
 	private function set_first_selectbox($name, $field_value, $field) {
-		$values[$field]              = null;
-		$field_value[$field] = $this->selections($name, [$field]);
+		$values[$field]       = null;
+		$field_value[$field]  = $this->selections($name, [$field]);
 		if (!empty($field_value[$field]->selections[$field])) {
 			if (!empty($field_value[$field]->selections[$field])) {
 				$values[$field] = $field_value[$field]->selections[$field];
@@ -193,9 +196,7 @@ class Search {
 				foreach ($this->input_relations['type'] as $field => $type) {
 					$values[$field] = null;
 					
-					if ($open_field === $field) {
-						$values[$field] = $this->set_first_selectbox($name, $field_value, $field);
-					}
+					if ($open_field === $field) $values[$field] = $this->set_first_selectbox($name, $field_value, $field);
 					
 					if (!empty($values[$field])) {
 						$attributes = ['id' => $field];
@@ -224,16 +225,12 @@ class Search {
 							break;
 						case 'checkbox':
 							if (!empty($values[$field])) {
-								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) {
-									$this->form->checkbox($field, $values[$field]);
-								}
+								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) $this->form->checkbox($field, $values[$field]);
 							}
 						break;
 						case 'radiobox':
 							if (!empty($values[$field])) {
-								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) {
-									$this->form->radiobox($field, $values[$field]);
-								}
+								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) $this->form->radiobox($field, $values[$field]);
 							}
 							break;
 						default:
@@ -353,32 +350,7 @@ class Search {
 		$nesCript = null;
 		if (!empty($nests['next'])) {
 			$nest     = implode('|', $nests['next']);
-			$nesCript = "
-				var _nx{$next_target}      = '{$next_target}';
-				var _reident{$next_target} = _nx{$next_target}.replace('_', ' ');
-				
-				$('#{$next_target}')
-					.empty()
-					.append('<option value=\"\">No Data ' + ucwords(_reident{$next_target}) + ' Found</option>')
-					.prop('disabled', true)
-					.trigger('chosen:updated');
-				
-				if (null != '{$nest}' && '' != '{$nest}') {
-					var _spldt{$identity} = '{$nest}';
-					var _spl{$identity} = _spldt{$identity}.split('|');
-					
-					$.each(_spl{$identity}, function(i,obj) {
-						if (null != obj && '{$identity}' != obj) {
-							var _reident{$identity} = obj.replace('_', ' ');
-							$('#' + obj)
-								.empty()
-								.append('<option value=\"\">No Data ' + ucwords(_reident{$identity}) + ' Found</option>')
-								.prop('disabled', true)
-								.trigger('chosen:updated');
-						}
-					});
-				}
-			";
+			$nesCript = "dttb_selectbox_next_target('{$identity}', '{$next_target}', _nx{$next_target}, _reident{$next_target}, '{$nest}', _spldt{$identity}, _spl{$identity}, _reident{$identity});";
 		}
 		
 		$forkey = [];
@@ -387,52 +359,56 @@ class Search {
 		}
 		$forkeys = json_encode($forkey);
 		
-	//	$uri         = url(diy_current_route()->uri) . '?filterDataTables=true';
-		$uri         = diy_get_ajax_urli('filterDataTables');// . '?filterDataTables=true';
+		$uri         = diy_get_ajax_urli('filterDataTables');
 		$token       = csrf_token();
 		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;
+		
 		if (!empty($next_target)) {
-			$ajaxSuccess = "
-				var _next{$next_target}	= '{$target}';
-				var _prefS{$identity}	= {$prevscript};
-				
-				$.ajax ({
-					type       : 'POST',
-					url        : '{$uri}',
-					data       : {'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'},
-					dataType   : 'json',
-					beforeSend : function() {
-						$('#cdyInpLdr{$next_target}').show();
-					},
-					success    : function(data) {
-						if (data) {
-							if ('' != '{$next_target}' && null != '{$next_target}') {
-								$('#{$next_target}').removeAttr('disabled').trigger('chosen:updated');
-								$('#{$next_target}').empty();
-								$('#{$next_target}').append('<option value=\"\">Select ' + _next{$next_target} + '</option>').trigger('chosen:updated');
-								
-								$.each(data, function(key, value) {
-									$('#{$next_target}').append('<option value=\"'+ value.{$next_target} +'\">' + value.{$next_target} + '</option>').trigger('chosen:updated');
-								});
-							}
-						}
-					},
-					complete	: function() {
-						$('#cdyInpLdr{$next_target}').hide();
-					}
-				});
-			";
+			$ajax_data = "{'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'}";
+			
+			$ajaxSuccess  = "var _next{$next_target}	= '{$target}';";
+			$ajaxSuccess .= "var _prefS{$identity}	= {$prevscript};";
+			$ajaxSuccess .= "$.ajax ({";
+				$ajaxSuccess .= "type       : 'POST',";
+				$ajaxSuccess .= "url        : '{$uri}',";
+				$ajaxSuccess .= "data       : {$ajax_data},";
+				$ajaxSuccess .= "dataType   : 'json',";
+				$ajaxSuccess .= "beforeSend : function() {";
+					$ajaxSuccess .= "$('#cdyInpLdr{$next_target}').show();";
+				$ajaxSuccess .= "},";
+				$ajaxSuccess .= "success    : function(data) {";
+					$ajaxSuccess .= "if (data) {";
+						$ajaxSuccess .= "if ('' != '{$next_target}' && null != '{$next_target}') {";
+							$ajaxSuccess .= "$('#{$next_target}').removeAttr('disabled').trigger('chosen:updated');";
+							$ajaxSuccess .= "$('#{$next_target}').empty();";
+							$ajaxSuccess .= "$('#{$next_target}').append('<option value=\"\">Select ' + _next{$next_target} + '</option>').trigger('chosen:updated');";
+							$ajaxSuccess .= "$.each(data, function(key, value) {";
+								$ajaxSuccess .= "$('#{$next_target}').append('<option value=\"'+ value.{$next_target} +'\">' + value.{$next_target} + '</option>').trigger('chosen:updated');";
+							$ajaxSuccess .= "});";
+						$ajaxSuccess .= "}";
+					$ajaxSuccess .= "}";
+				$ajaxSuccess .= "},";
+				$ajaxSuccess .= "complete	: function() {";
+					$ajaxSuccess .= "$('#cdyInpLdr{$next_target}').hide();";
+				$ajaxSuccess .= "}";
+			$ajaxSuccess .= "});";
 		}
 		
-		$script = "
-			jQuery(function($) {
-				$('#{$identity}').change(function() {
-					var _val{$identity} = $(this).val();
-					if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') { {$ajaxSuccess} } else { {$nesCript} }
-				});
-			});
-		";
+		$script = null;
+		if (!empty($identity)) {
+			$script = "jQuery(function($) {";
+				$script .= "$('#{$identity}').change(function() {";
+					$script .= "var _val{$identity} = $(this).val();";
+					$script .= "if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') {";
+						$script .= "{$ajaxSuccess}";
+					$script .= "} else {";
+						$script .= "{$nesCript}";
+					$script .= "}";
+				$script .= "});";
+			$script .= "});";
+		}
+		
 		$this->add_scripts['js'][] = "{$this->scriptToHTML}{$script}";
 	}
 	

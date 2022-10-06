@@ -51,9 +51,12 @@ class GroupController extends Controller {
 		
 		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
 		
-		$this->table->searchable(['group_name', 'group_info']);
+		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
+		
+		$this->table->filterGroups('group_name', 'selectbox', true);
+		$this->table->filterGroups('group_info', 'selectbox', true);
 		
 		$this->table->columnCondition('group_name', 'row', '==', $this->session['user_group'], 'background-color', 'rgba(222, 249, 195, 0.51)');
 		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active']);
