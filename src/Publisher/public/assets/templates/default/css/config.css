@@ -101,6 +101,46 @@ table.mapping-table tr td.field-value-box {
 	background: url('../images/icon/loader.gif');
 }
 
+.bootstrap-maxlength.label {
+	margin: 0 0 5px 0;
+	padding: 4px 8px;
+	border: transparent solid 1px;
+	border-radius: 2px;
+	color: #ffffff;	
+}
+
+.label-success {
+	background-color: #5cb85c
+}
+
+.label-success[href]:hover, .label-success[href]:focus {
+	background-color: #449d44
+}
+
+.label-info {
+	background-color: #5bc0de
+}
+
+.label-info[href]:hover, .label-info[href]:focus {
+	background-color: #31b0d5
+}
+
+.label-warning {
+	background-color: #f0ad4e
+}
+
+.label-warning[href]:hover, .label-warning[href]:focus {
+	background-color: #ec971f
+}
+
+.label-danger {
+	background-color: #d9534f
+}
+
+.label-danger[href]:hover, .label-danger[href]:focus {
+	background-color: #c9302c
+}
+
 .spin-load1 {
 	background: url('../images/icon/spinload-1.gif');
 }

@@ -21,82 +21,77 @@ use Incodiy\Codiy\Models\Admin\System\Timezone;
  */
 class PreferenceController extends Controller {
 	public $data;
-	public $model;
-	public $model_table	= 'base_preference';
-	
-	private $name			= 'base_preference';
-	private $route_group	= 'system.config.preference';
-	
-	private $_set_tab		= [];
-	private $_tab_config	= [];
 	
 	public function __construct() {
-		parent::__construct();
+		parent::__construct(Preference::class, 'system.config.preference');
 		
-		$this->model		= Preference::all();
-		$this->base_route	= "{$this->route_group}.";
+	}
+	
+	private function getIndexModel($id) {
+		$this->getModel(1);
+		$this->model_find(1);
+		
+		$this->model_data = (object) $this->model_data->getAttributes();
 	}
 	
 	public function index() {
-		$this->hide_button_actions();
+		$this->setPage();
+		$this->getIndexModel(1);
+		
 		return $this->edit(1);
 	}
 	
 	private function input_language() {
-		return set_combobox_data(Language::all(), 'abbr', 'language');
+		return diy_selectbox(Language::all(), 'abbr', 'language');
 	}
 	
 	private function input_timezone() {
-		return set_combobox_data(Timezone::all(), 'id', 'timezone');
+		return diy_selectbox(Timezone::all(), 'id', 'timezone');
 	}
 	
 	public function edit($id) {
-		$this->hide_button_actions();
-		$model_data		= Preference::find($id);
-		
-		$this->set_page('Edit Preference', 'preference');
+		$this->setPage();
 	//	$this->form->alert_message('Sukses');
-		
-		$this->form->model($model_data, "{$this->route_group}.update", $model_data->id, true);
+	
+		$this->form->modelWithFile();
 		
 		$this->form->text('title');
 		$this->form->text('sub_title');
 		$this->form->file('logo', ['imagepreview']);
-		$this->render_input_js_imagepreview($model_data->logo);
 		
-		$this->form->textarea('header', $model_data->header);
-		$this->form->textarea('footer', $model_data->footer);
-		$this->form->selectbox('template', ['', 'Default'], $model_data->template);
-		$this->form->selectbox('language', $this->input_language(), $model_data->language);
-		$this->form->selectbox('timezone', $this->input_timezone(), $model_data->timezone);
+		$this->form->textarea('header', $this->model_data->header);
+		$this->form->textarea('footer', $this->model_data->footer);
+		$this->form->selectbox('template', ['', 'default' => 'Default'], $this->model_data->template);
+		$this->form->selectbox('language', $this->input_language(), $this->model_data->language);
+		$this->form->selectbox('timezone', $this->input_timezone(), $this->model_data->timezone);
 		
-		$this->form->open_tab('Session');
-		$this->form->text('session_name', $model_data->session_name);
-		$this->form->text('session_lifetime', $model_data->session_lifetime);
+		$this->form->openTab('Meta Tag');
+		$this->form->text('meta_author', $this->model_data->meta_author);
+		$this->form->tags('meta_title', $this->model_data->meta_title);
+		$this->form->tags('meta_keywords', $this->model_data->meta_keywords);
+		$this->form->textarea('meta_description|limit:500', $this->model_data->meta_description);
 		
-		$this->form->open_tab('Meta Tag');
-		$this->form->text('meta_author', $model_data->meta_author);
-		$this->form->tags('meta_title', $model_data->meta_title);
-		$this->form->tags('meta_keywords', $model_data->meta_keywords);
-		$this->form->textarea('meta_description|limit:500', $model_data->meta_description);
+		$this->form->openTab('Email Preference');
+		$this->form->text('email_person', $this->model_data->email_person);
+		$this->form->text('email_address', $this->model_data->email_address);
 		
-		$this->form->open_tab('Email Preference');
-		$this->form->text('email_person', $model_data->email_person);
-		$this->form->text('email_address', $model_data->email_address);
-		
-		$this->form->open_tab('SMTP Setting');
-		$this->form->text('smtp_host', $model_data->smtp_host);
-		$this->form->text('smtp_port', $model_data->smtp_port);
-		$this->form->text('smtp_secure', $model_data->smtp_secure);
-		$this->form->text('smtp_user', $model_data->smtp_user);
+		$this->form->openTab('SMTP Setting');
+		$this->form->text('smtp_host', $this->model_data->smtp_host);
+		$this->form->text('smtp_port', $this->model_data->smtp_port);
+		$this->form->text('smtp_secure', $this->model_data->smtp_secure);
+		$this->form->text('smtp_user', $this->model_data->smtp_user);
 		$this->form->password('smtp_password');
 		
-		$this->form->open_tab('Web Preference');
-		$this->form->text('login_attempts', $model_data->login_attempts);
-		$this->form->text('change_password', $model_data->change_password);
-		$this->form->selectbox('debug', ['No', 'Yes'], $model_data->debug);
-		$this->form->selectbox('maintenance', ['No', 'Yes'], $model_data->maintenance);
-		$this->form->close_tab();
+		$this->form->openTab('Session');
+		$this->form->text('session_name', $this->model_data->session_name);
+		$this->form->text('session_lifetime', $this->model_data->session_lifetime);
+		
+		$this->form->openTab('Web Preference');
+		$this->form->text('login_attempts', $this->model_data->login_attempts);
+		$this->form->text('change_password', $this->model_data->change_password);
+		$this->form->selectbox('debug', ['No', 'Yes'], $this->model_data->debug);
+		$this->form->selectbox('maintenance', ['No', 'Yes'], $this->model_data->maintenance);
+		$this->form->closeTab();
 		
 		$this->form->close('Submit', ['class' => 'btn btn-primary btn-slideright pull-right']);
 		

@@ -25,7 +25,7 @@ trait Select {
 	 * 		: if !false = [null => 'Select All'] or you can set the other array value
 	 */
 	public function selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => '']) {
-		$attributes   = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');		
+		$attributes   = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');
 		$optionValues = $set_first_value;
 		
 		if (isset($values[0]) && true === empty($values[0])) {
@@ -38,7 +38,7 @@ trait Select {
 			}
 			$values = $optionValues;
 		}
-//		if ('route_path' === $name) dd($values);
+		
 		$this->setParams('select', $name, $values, $attributes, $label, $selected);
 		$this->inputDraw('select', $name);
 	}

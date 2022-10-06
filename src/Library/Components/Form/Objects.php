@@ -49,7 +49,7 @@ class Objects {
 	protected function getCurrentRoute() {
 		$this->currentRoute      = current_route();
 		$this->currentRouteArray = explode('.', $this->currentRoute);
-		$this->currentRouteName  = last($this->currentRouteArray);//$this->currentRouteArray[array_key_last($this->currentRouteArray)];
+		$this->currentRouteName  = last($this->currentRouteArray);
 	}
 	
 	/**
@@ -363,22 +363,26 @@ class Objects {
 	private function setModelValueAndSelectedToParams($function_name, $name, $value, $selected) {
 		if ('select' === $function_name) {			
 			if ('create' === $this->currentRouteName) {
-				$value		= $value;
-				$selected	= $selected;
+				$value       = $value;
+				$selected    = $selected;
 			} elseif ('edit' === $this->currentRouteName) {
-				$value		= $value;
+				$value       = $value;
 				if (!empty($selected)) $selected	= $selected;
 			} else{
-				$value		= $value;
-				$selected	= $this->getModelValue($name, $function_name);
+				$value       = $value;
+				if (!empty($value)) {
+					$selected = $selected;
+				} else {
+					$selected = $this->getModelValue($name, $function_name);
+				}
 			}
 			
 		} elseif ('checkbox' === $function_name) {
-			$value		= $value;
-			$selected	= $this->getModelValue($name, $function_name);
+			$value       = $value;
+			$selected    = $this->getModelValue($name, $function_name);
 			if (!is_array($selected)) {
-				$selected	= explode(',', $selected);
-				$select		= [];
+				$selected = explode(',', $selected);
+				$select   = [];
 				foreach ($selected as $s) {
 					$select[intval($s)] = intval($s);
 				}
@@ -386,16 +390,16 @@ class Objects {
 			}
 			
 		} elseif ('radio' === $function_name) {
-			$value		= $value;
-			$selected	= $this->getModelValue($name, $function_name);
+			$value    = $value;
+			$selected = $this->getModelValue($name, $function_name);
 			
 		} else {
-			$value		= $this->getModelValue($name, $function_name);
-			$selected	= $selected;
+			$value    = $this->getModelValue($name, $function_name);
+			$selected = $selected;
 		}
 		
-		$this->paramValue[$function_name][$name]		= $value;
-		$this->paramSelected[$function_name][$name]	= $selected;
+		$this->paramValue[$function_name][$name]    = $value;
+		$this->paramSelected[$function_name][$name] = $selected;
 	}
 	
 	private $added_attributes = [];
@@ -414,13 +418,8 @@ class Objects {
 	 * @param boolean $selected
 	 */
 	private function setParams($function_name, $name, $value, $attributes, $label, $selected = false) {
-		if (true === $label) {
-			$label = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
-		}
-		
-		if (!empty($this->added_attributes)) {
-			$attributes = array_merge_recursive($attributes, $this->added_attributes);
-		}
+		if (true === $label)                 $label      = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
+		if (!empty($this->added_attributes)) $attributes = array_merge_recursive($attributes, $this->added_attributes);
 		
 		$this->setModelValueAndSelectedToParams($function_name, $name, $value, $selected);
 		$this->params[$function_name][$name] = [
@@ -434,25 +433,23 @@ class Objects {
 	}
 	
 	private function inputDraw($function_name, $name) {
-		if (in_array($name, $this->excludeFields)) {
-			return false;
-		}
+		if (in_array($name, $this->excludeFields)) return false;
 		
-		$inputTag	= '';
-		$labelTag	= '';
+		$inputTag   = '';
+		$labelTag   = '';
 		
 		$req_symbol = false;
-		$label		= false;
-		$value		= false;
+		$label      = false;
+		$value      = false;
 		$attributes = [];
-		$hideClass	= false;
+		$hideClass  = false;
 		
 		if (in_array($name, $this->hideFields)) {
 			$hideClass	= ' hide';
 			$attributes = diy_form_change_input_attribute($attributes, 'class', trim($hideClass));
 		}
 		
-		$paramData	= $this->params[$function_name][$name];
+		$paramData = $this->params[$function_name][$name];
 		if (!empty($paramData)) {
 			$label      = $paramData['label'];
 			if ('password' === $function_name) {
@@ -462,7 +459,7 @@ class Objects {
 			}
 			$attributes = $paramData['attributes'];
 		}
-		$attributes		= diy_form_change_input_attribute($attributes, 'class', 'form-control');
+		$attributes    = diy_form_change_input_attribute($attributes, 'class', 'form-control');
 		
 		if (true === in_array('required', $attributes) || true === in_array('required', array_keys($attributes))) {
 			$req_symbol = ' <font class="required" title="This Required Field cannot be Leave Empty!"><sup>(</sup>*<sup>)</sup></font>';
@@ -501,7 +498,7 @@ class Objects {
 			return '<div class="input-group col-sm-9">' . $this->drawRadioBox($name, $value, $selected, $attributes) . '</div>';
 		}
 		
-		if ('date' === $function_name || 'datetime' === $function_name || 'daterange' === $function_name || 'time' === $function_name) {
+		if ('date' === $function_name || 'datetime' === $function_name || 'daterange' === $function_name || 'time' === $function_name || 'tagsinput' === $function_name) {
 			$function_name = 'text';
 		}
 		

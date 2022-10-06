@@ -3,33 +3,33 @@ namespace Incodiy\Codiy\Library\Components\Form\Elements;
 
 /**
  * Created on 19 Mar 2021
- * Time Created	: 03:32:17
+ * 
+ * Time Created : 03:32:17
  *
- * @filesource	Tab.php
+ * @filesource Tab.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author     wisnuwidi@gmail.com - 2021
+ * @copyright  wisnuwidi
+ * @email      wisnuwidi@gmail.com
  */
- 
 trait Tab {
 	
 	/**
 	 * --[openTabHTMLForm]--
 	 */
-	private $opentabHTML		= '--[openTabHTMLForm]--';
+	private $opentabHTML     = '--[openTabHTMLForm]--';
 	/**
 	 * --[openNewTab]--
 	 */
-	private $openNewTab			= '--[openNewTab]--';
+	private $openNewTab      = '--[openNewTab]--';
 	/**
 	 * --[openNewTabClass]--
 	 */
-	private $openNewTabClass	= '--[openNewTabClass]--';
+	private $openNewTabClass = '--[openNewTabClass]--';
 	/**
 	 * --[closeTabHTMLForm]--
 	 */
-	private $closedtabHTML		= '--[closeTabHTMLForm]--';
+	private $closedtabHTML   = '--[closeTabHTMLForm]--';
 		
 	/**
 	 * Create Open Tab
@@ -66,15 +66,13 @@ trait Tab {
 	 * @author: wisnuwidi
 	 */
 	public function renderTab($object) {
-		if (true === is_array($object)) {
-			$object = implode('', $object);
-		}
+		if (true === is_array($object)) $object = implode('', $object);
 		
-		$openTab		= false;
-		$closeTab		= false;
-		$dataBeforeTab	= false;
-		$dataMiddleTab	= false;
-		$dataAfterTab	= false;
+		$openTab       = false;
+		$closeTab      = false;
+		$dataBeforeTab = false;
+		$dataMiddleTab = false;
+		$dataAfterTab  = false;
 		
 		// check if isset open tab string pointer
 		if (true === diy_string_contained($object, $this->opentabHTML)) {
@@ -98,15 +96,15 @@ trait Tab {
 				$openTabs[] = $openTab;
 			}
 			
-			$tabContainer		= [];
-			$tabHeaders			= [];
-			$tabContents		= [];
-			$tabContainerEnd	= [];
+			$tabContainer    = [];
+			$tabHeaders      = [];
+			$tabContents     = [];
+			$tabContainerEnd = [];
 			
 			foreach ($openTabs as $list => $tabs) {
-				$tabContainer[$list][]	= '<div class="tabbable">';
-				$tabHeaders[$list][]	= '<ul class="nav nav-tabs" role="tablist">';
-				$tabContents[$list][]	= '<div class="tab-content">';
+				$tabContainer[$list][] = '<div class="tabbable">';
+				$tabHeaders[$list][]   = '<ul class="nav nav-tabs" role="tablist">';
+				$tabContents[$list][]  = '<div class="tab-content">';
 				
 				foreach ($tabs as $index => $tab) {
 					if(isset($tab) && !empty($tab)) {
@@ -114,34 +112,34 @@ trait Tab {
 					}
 					
 					if (true === diy_string_contained($tab, $this->openNewTab)) {
-						$activeHeader	= false;
-						$activeContent	= false;
+						$activeHeader  = false;
+						$activeContent = false;
 						
 						// set active for 1st tab
 						if (1 === $index) {
-							$activeHeader	= 'active';
-							$activeContent	= 'in active';
+							$activeHeader  = 'active';
+							$activeContent = 'in active';
 						}
 						
 						// detect if isset label and class string in label block
-						$label		= trim($sliceTabs[0]);
+						$label      = trim($sliceTabs[0]);
 						$labelClass = false;
 						if (diy_string_contained($sliceTabs[0], $this->openNewTabClass)) {
 							$sliceLabel = explode($this->openNewTabClass, $label);
-							$label		= trim($sliceLabel[0]);
-							$labelClass	= trim($sliceLabel[1]);
+							$label      = trim($sliceLabel[0]);
+							$labelClass = trim($sliceLabel[1]);
 						}
 						
-						$tabHeaders[$list][]	= diy_form_create_header_tab($label, strtolower(diy_clean_strings($label)), $activeHeader, $labelClass);
-						$tabContents[$list][]	= diy_form_create_content_tab(trim($sliceTabs[1]), strtolower(diy_clean_strings($label)), $activeContent);
+						$tabHeaders[$list][]  = diy_form_create_header_tab($label, strtolower(diy_clean_strings($label)), $activeHeader, $labelClass);
+						$tabContents[$list][] = diy_form_create_content_tab(trim($sliceTabs[1]), strtolower(diy_clean_strings($label)), $activeContent);
 					} else {
-						$tabHeaders[$list][]	= $tab . '<hr />';
+						$tabHeaders[$list][]  = $tab . '<hr />';
 					}
 				}
 				
-				$tabContents[$list][]		= '</div>';
-				$tabHeaders[$list][]		= '</ul>';
-				$tabContainerEnd[$list][]	= '</div><br />';
+				$tabContents[$list][]     = '</div>';
+				$tabHeaders[$list][]      = '</ul>';
+				$tabContainerEnd[$list][] = '</div><br />';
 			}
 			
 			$tabsObject = [];
