@@ -2,7 +2,6 @@
 namespace Incodiy\Codiy\Models\Admin\System;
 
 use Illuminate\Database\Eloquent\Model;
-
 /**
  * Created on Jan 15, 2018
  * Time Created	: 2:53:49 PM
@@ -14,9 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
- 
 class Log extends Model {
-	protected $table	= 'log_activities';
+	protected $table	   = 'log_activities';
 	protected $guarded	= [];
 //	protected $fillable	= ['subject', 'url', 'method', 'ip', 'agent', 'user_id'];
 	

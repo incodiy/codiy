@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Controllers\Admin\System;
 
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Models\Admin\System\Log;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Created on Jan 16, 2018
@@ -16,35 +17,38 @@ use Incodiy\Codiy\Models\Admin\System\Log;
  * @email		wisnuwidi@gmail.com
  */
 class LogController extends Controller {
-	public $data;
 	
-	private $route_group	= 'system';
-	private $model_table	= 'log_activities';
-	
-	private $_hide_fields	= ['id'];
-	private $_set_tab		= [];
-	private $_tab_config	= [];
+	private $field_lists = [
+		'user_fullname',
+		'user_email',
+		'user_group_info',
+		'route_path',
+		'module_name',
+		'page_info',
+		'urli',
+		'method',
+		'ip_address',
+		'user_agent',
+		'created_at'
+	];
 	
 	public function __construct() {
-		parent::__construct();
-		
-		$this->base_route	= "{$this->route_group}.";
+		parent::__construct(Log::class, 'system.config.log');
 	}
 	
 	public function index() {
-		$this->set_page('Log Activity', 'Logs');
-		$this->hide_button_actions();
-		$this->model_query(Log::class, true);
+		$this->setPage();
 		
-		$this->form->set_relational_list_value('user_id', 'email', 'users', 'id', 'User');
-		$this->form->lists($this->model_table, ['info', 'uri', 'method', 'user_id', 'ip_address', 'created_at'], $this->model_data, false, true);
+		$this->table->searchable($this->field_lists);
+		$this->table->clickable(false);
+		$this->table->sortable();
 		
-		$this->searchInputElement('info', 'string');
-		$this->searchInputElement('uri', 'string');
-		$this->searchInputElement('method', 'string');
-		$this->searchInputElement('user_id', 'string');
+		$this->table->filterGroups('user_fullname', 'selectbox', true);
+		$this->table->filterGroups('user_group_info', 'selectbox', true);
+		$this->table->filterGroups('method', 'selectbox', true);
+		$this->table->filterGroups('module_name', 'selectbox', true);
 		
-		$this->searchDraw($this->model_table, ['id'], false);
+		$this->table->lists($this->model_table, $this->field_lists, false);
 		
 		return $this->render();
 	}

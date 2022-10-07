@@ -76,7 +76,10 @@ return [
 			],
 		    
 			'textarea'	=> [
-				'js'	=> ['vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js'],
+				'js'	=> [
+					'vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+					'js/textarea.js',					
+				],
 				'css'	=> ['']
 			],
 		    

@@ -131,6 +131,9 @@ class ModulesController extends Controller {
 		$this->table->clickable();
 		$this->table->sortable();
 		
+		$this->table->filterGroups('module_name', 'selectbox', true);
+		$this->table->filterGroups('route_path', 'selectbox', true);
+		
 		$this->table->lists($this->model_table, ['module_name', 'parent_name', 'route_path', 'flag_status', 'active']);
 		$this->table->clear();
 		

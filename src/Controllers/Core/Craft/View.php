@@ -186,6 +186,7 @@ trait View {
 		);
 		$this->configView($path);
 		$this->filterPage();
+		diy_log_activity();
 	}
 	
 	private function uriAdmin($uri = 'index') {

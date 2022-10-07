@@ -10,6 +10,7 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
 use Incodiy\Codiy\Library\Components\MetaTags;
 use Incodiy\Codiy\Controllers\Admin\System\GroupController;
 use Incodiy\Codiy\Controllers\Admin\System\AjaxController;
+use Incodiy\Codiy\Models\Admin\System\Log;
 
 /**
  * Created on 10 Mar 2021
@@ -681,6 +682,41 @@ if (!function_exists('diy_current_url')) {
 	 */
 	function diy_current_url() {
 		return url()->current();
+	}
+}
+
+if (!function_exists('diy_log_activity')) {
+	
+	function diy_log_activity() {
+		$sessions                = session()->all();
+		$routes                  = diy_current_route();
+		$requests                = Illuminate\Support\Facades\Request::class;
+		
+		$logs                    = [];
+		
+		$logs['user_id']         = $sessions['id'];
+		$logs['username']        = $sessions['username'];
+		$logs['user_fullname']   = $sessions['fullname'];
+		$logs['user_email']      = $sessions['email'];
+		
+		$logs['user_group_id']   = $sessions['group_id'];
+		$logs['user_group_name'] = $sessions['user_group'];
+		$logs['user_group_info'] = $sessions['group_info'];
+		
+		$logs['route_path']      = $routes->controller->data['route_info']->current_path;
+		$logs['module_name']     = $routes->controller->data['route_info']->module_name;
+		$logs['page_info']       = $routes->controller->data['route_info']->page_info;
+		$logs['urli']            = $requests::fullUrl();
+		$logs['method']          = $requests::method();
+		
+		$logs['ip_address']      = $requests::ip();
+		$logs['user_agent']      = $requests::header('user-agent');
+		$logs['sql_dump']        = NULL;
+		
+		$logs['created_at']      = date('Y-m-d h:i:s');
+		$logs['updated_at']      = NULL;
+		
+		Log::create($logs);
 	}
 }
 

@@ -194,16 +194,28 @@ class CreateBaseTable extends Migration {
 			$this->set_engine($table->engine, $this->engine);
 			
 			$table->bigIncrements('id')->unsigned();
-			$table->string('user_id', 10)->nullable();
-			$table->string('info');
-			$table->text('uri');
-			$table->string('method', 10);
+			
+			$table->integer('user_id');
+			$table->string('username')->nullable();
+			$table->string('user_fullname')->nullable();
+			$table->string('user_email')->nullable();
+			
+			$table->string('user_group_id');
+			$table->string('user_group_name')->nullable();
+			$table->string('user_group_info')->nullable();
+			
+			$table->string('route_path')->nullable();
+			$table->string('module_name')->nullable();
+			$table->string('page_info')->nullable();
+			$table->text('urli')->nullable();
+			$table->string('method', 8)->nullable();
+			
 			$table->string('ip_address', 30)->nullable();
 			$table->string('user_agent')->nullable();
 			$table->text('sql_dump')->nullable();
 			
 			$table->index('user_id');
-			$table->index('info');
+			$table->index('user_group_id');
 			
 			$table->timestamps();
 		});
