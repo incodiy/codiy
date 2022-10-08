@@ -66,7 +66,8 @@ return [
 					'vendor/node_modules/datatables/extentions/jszip.min.js',
 					'vendor/node_modules/datatables/extentions/pdfmake.min.js',
 					'vendor/node_modules/datatables/extentions/vfs_fonts.js',
-					'vendor/node_modules/datatables/extentions/buttons.flash.min.js'
+					'vendor/node_modules/datatables/extentions/buttons.flash.min.js',
+					'js/datatables/filter.js'
 				],
 				'css'	=> [
 					'vendor/node_modules/datatables/css/dataTables.bootstrap.css',
@@ -76,11 +77,8 @@ return [
 			],
 		    
 			'textarea'	=> [
-				'js'	=> [
-					'vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
-					'js/textarea.js',					
-				],
-				'css'	=> ['']
+				'js'	=> ['vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js'],
+				'css'	=> [null]
 			],
 		    
 			'tagsinput' => [

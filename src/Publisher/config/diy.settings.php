@@ -32,7 +32,7 @@ if (true === $multiPlatform) {
 }
 
 return [
-	'baseURL'             => 'http://localhost/incodiy/.dev/public',
+	'baseURL'             => 'http://localhost/eclipsync/incodiy/.dev/public',
 	'index_folder'        => 'public',
 	'template'            => 'default',
 	'base_template'       => 'assets/templates',
@@ -76,5 +76,15 @@ return [
 		'content'          => 'IE=edge,chrome=1'
 	],
 	
-	'relational_data_set' => 'relation'
+	'log_actifity'        => [
+		'run_status'       => 'unexceptions',
+		'exceptions'       => [
+			'controllers'   => [
+				App\Http\Controllers\Admin\System\LogController::class
+			],
+			'groups' => [
+				'admin'
+			]
+		]
+	]
 ];
