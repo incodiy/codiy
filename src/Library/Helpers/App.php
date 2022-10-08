@@ -145,6 +145,24 @@ if (!function_exists('diy_clean_strings')) {
 	}
 }
 
+if (!function_exists('diy_is_collection')) {
+	
+	/**
+	 * Check if object is instance of Illuminate\Support\Collection
+	 *
+	 * @param object $object
+	 *
+	 * @return boolean
+	 */
+	function diy_is_collection($object) {
+		if ($object instanceof Illuminate\Support\Collection) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
 if (!function_exists('diy_format')) {
 	
 	/**

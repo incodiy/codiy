@@ -157,20 +157,60 @@ class Objects extends Builder {
 	}
 	
 	public $relational_data = [];
+	private function relation_draw($relation, $relation_function, $fieldname, $label) {
+		if (!empty($relation->{$relation_function})) {
+			$dataRelate = $relation->{$relation_function}->getAttributes();
+			$relateKEY  = intval($relation['id']);
+		} else {
+			$dataRelate = $relation->getAttributes();
+			$relateKEY  = intval($dataRelate['id']);
+		}
+		
+		$fieldReplacement = null;
+		if (diy_string_contained($fieldname, '::')) {
+			$fieldsplit       = explode('::', $fieldname);
+			$fieldReplacement = $fieldsplit[0];
+			$fieldname        = $fieldsplit[1];
+			$data_relation    = $dataRelate[$fieldname];
+			$data_value       = $dataRelate[$fieldname];
+		} else {
+			$data_relation    = $dataRelate[$fieldname];
+			$data_value       = $dataRelate[$fieldname];
+		}
+		
+		if (!empty($data_relation)) {
+			$fieldset = $fieldname;
+			if (!is_empty($fieldReplacement)) $fieldset = $fieldReplacement;
+			
+			$this->relational_data[$relation_function]['field_target'][$fieldset]['field_name']  = $fieldset;
+			$this->relational_data[$relation_function]['field_target'][$fieldset]['field_label'] = $label;
+			
+			if (!empty($relation->pivot)) {
+				foreach ($relation->pivot->getAttributes() as $pivot_field => $pivot_data) {
+					$this->relational_data[$relation_function]['field_target'][$fieldset]['relation_data'][$relateKEY][$pivot_field] = $pivot_data;
+				}
+			}
+			
+			$this->relational_data[$relation_function]['field_target'][$fieldset]['relation_data'][$relateKEY]['field_value'] = $data_value;
+		}
+	}
+	
 	/**
 	 * Set Relation Data Table
 	 * 
 	 * @param object $model
 	 * @param string $relation_function
-	 * @param string $key_connect
 	 * @param string $field_display
-	 * @param string $label
 	 * @param array  $filter_foreign_keys :[
 	 *			'base_user_group:user_id' => 'users:id',
 	 *			'base_group:id'           => 'base_user_group:group_id'
 	 *	]
+	 * @param string $label
+	 * @param string $field_connect
+	 * 
+	 * @return array
 	 */
-	public function relations($model, $relation_function, $key_connect, $field_display, $label = null, $filter_foreign_keys = []) {
+	private function relationship($model, $relation_function, $field_display, $filter_foreign_keys = [], $label = null, $field_connect = null) {
 		if (!empty($model->with($relation_function)->get())) {
 			$relational_data = $model->with($relation_function)->get();
 			if (empty($label)) {
@@ -179,26 +219,51 @@ class Objects extends Builder {
 			
 			foreach ($relational_data as $item) {
 				if (!empty($item->{$relation_function})) {
-					foreach ($item->{$relation_function} as $relation) {
-						$dataRelate = $relation->getAttributes();
-						if (!empty($dataRelate[$field_display])) {
-							$relateKEY = intval($dataRelate['id']);
-							
-							$this->relational_data[$relation_function]['field_target'][$field_display]['field_name']  = $field_display;
-							$this->relational_data[$relation_function]['field_target'][$field_display]['field_label'] = $label;
-							foreach ($relation->pivot->getAttributes() as $pivot_field => $pivot_data) {
-								$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY][$pivot_field] = $pivot_data;
-							}
-							$this->relational_data[$relation_function]['field_target'][$field_display]['relation_data'][$relateKEY]['field_value']   = $dataRelate[$field_display];
+					if (diy_is_collection($item->{$relation_function})) {
+						foreach ($item->{$relation_function} as $relation) {
+							$this->relation_draw($relation, $relation_function, $field_display, $label);
 						}
+					} else {
+						$this->relation_draw($item, $relation_function, "{$field_connect}::{$field_display}", $label);
 					}
 				}
 			}
 			
-			if (!empty($filter_foreign_keys)) {
-				$this->relational_data[$relation_function]['foreign_keys'] = $filter_foreign_keys;
-			}
+			if (!empty($filter_foreign_keys)) $this->relational_data[$relation_function]['foreign_keys'] = $filter_foreign_keys;
 		}
+	}
+	
+	/**
+	 * Set Simple Relation Data Table
+	 * 
+	 * @param object $model
+	 * @param string $relation_function
+	 * @param string $field_display
+	 * @param array  $filter_foreign_keys :[
+	 *			'base_user_group:user_id' => 'users:id',
+	 *			'base_group:id'           => 'base_user_group:group_id'
+	 *	]
+	 * @param string $label
+	 * 
+	 * @return array
+	 */
+	public function relations($model, $relation_function, $field_display, $filter_foreign_keys = [], $label = null) {
+		return $this->relationship($model, $relation_function, $field_display, $filter_foreign_keys, $label, null);
+	}
+	
+	/**
+	 * Change Fieldname Value With Relational Data
+	 *
+	 * @param object $model
+	 * @param string $relation_function
+	 * @param string $field_display
+	 * @param string $label
+	 * @param string $field_connect
+	 *
+	 * @return array
+	 */
+	public function fieldReplacementValue($model, $relation_function, $field_display, $label = null, $field_connect = null) {
+		return $this->relationship($model, $relation_function, $field_display, [], $label, $field_connect);
 	}
 	
 	public function orderby($column, $order = 'asc') {
@@ -476,8 +541,8 @@ class Objects extends Builder {
 					$recola[$icol] = $cols;
 				}
 			}
-			$fields          = $recola;
-			$original_fields = $fields;
+			$fields         = $recola;
+			$fieldset_added = $fields;
 			
 			if (!empty($fields)) {
 				$fields = $this->check_column_exist($table_name, $fields);
@@ -487,24 +552,37 @@ class Objects extends Builder {
 				$fields = diy_get_table_columns($table_name);
 			}
 			
+			
 			// RELATIONAL PROCESS
-			$checkFieldSet = array_diff($original_fields, $fields);
-			if (!empty($checkFieldSet)) {
-				$field_relations   = [];
-				if (!empty($this->relational_data)) {
-					foreach ($this->relational_data as $relData) {
-						foreach ($relData['field_target'] as $fr_name => $relation_fields) {
-							$field_relations[$fr_name] = $relation_fields;
-						}
-						
-						if (!empty($relData['foreign_keys'])) {
-							$this->columns[$table_name]['foreign_keys'] = $relData['foreign_keys'];
+			$relations         = [];
+			$field_relations   = [];
+			$fieldset_changed  = [];
+			if (!empty($this->relational_data)) {
+				foreach ($this->relational_data as $relData) {
+					foreach ($relData['field_target'] as $fr_name => $relation_fields) {
+						$field_relations[$fr_name] = $relation_fields;
+						if (in_array($fr_name, $fields)) {
+							$fieldset_changed[$fr_name] = $fr_name;
 						}
 					}
+					if (!empty($relData['foreign_keys'])) $this->columns[$table_name]['foreign_keys'] = $relData['foreign_keys'];
+				}
+			}
+			
+			if (!empty($field_relations)) {
+				$checkFieldSet = array_diff($fieldset_added, $fields);
+				if (!empty($fieldset_changed)) {
+					$fieldsetChanged = [];
+					foreach ($fields as $fid => $fval) {
+						if (!empty($fieldset_changed[$fval])) {
+							$fieldsetChanged[$fid] = $fieldset_changed[$fval];
+							unset($fields[$fid]);
+						}
+					}
+					$checkFieldSet = array_merge_recursive_distinct($checkFieldSet, $fieldsetChanged);
 				}
 				
-				$relations = [];
-				if (!empty($field_relations)) {
+				if (!empty($checkFieldSet)) {
 					foreach ($checkFieldSet as $index => $field_diff) {
 						if (!empty($field_relations[$field_diff])) {
 							$relational_data                                      = $field_relations[$field_diff];
@@ -513,15 +591,14 @@ class Objects extends Builder {
 							$this->columns[$table_name]['relations'][$field_diff] = $relational_data;
 						}
 					}
-					
-					$refields = [];
-					if (!empty($relations)) {
-						foreach ($relations as $reid => $relation_name) {
-							$refields = diy_array_insert($fields, $reid, $relation_name);
-						}
-					}
 				}
 				
+				$refields = [];
+				if (!empty($relations)) {
+					foreach ($relations as $reid => $relation_name) {
+						$refields = diy_array_insert($fields, $reid, $relation_name);
+					}
+				}
 				if (!empty($refields)) $fields = $refields;
 			}
 		}
@@ -570,10 +647,10 @@ class Objects extends Builder {
 			$conditions       = $this->conditions;
 			$this->conditions = [];
 			if (!empty($conditions['formula'])) {
-				$this->formula[$table_name]           = $conditions['formula'];
+				$this->formula[$table_name]             = $conditions['formula'];
 			}
-			$this->params[$table_name]['conditions'] = $conditions;
-			$this->conditions[$table_name]           = $this->params[$table_name]['conditions'];
+			$this->params[$table_name]['conditions']   = $conditions;
+			$this->conditions[$table_name]             = $this->params[$table_name]['conditions'];
 		}
 		
 		if (!empty($this->filter_model)) {
