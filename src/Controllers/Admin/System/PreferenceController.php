@@ -24,7 +24,6 @@ class PreferenceController extends Controller {
 	
 	public function __construct() {
 		parent::__construct(Preference::class, 'system.config.preference');
-		
 	}
 	
 	private function getIndexModel($id) {
@@ -34,11 +33,17 @@ class PreferenceController extends Controller {
 		$this->model_data = (object) $this->model_data->getAttributes();
 	}
 	
+	private static function redirect($to) {
+		return redirect(url()->current() . $to);
+	}
+	
 	public function index() {
+		return self::redirect('/1/edit');
+		/* 
 		$this->setPage();
 		$this->getIndexModel(1);
-		
 		return $this->edit(1);
+		 */
 	}
 	
 	private function input_language() {
@@ -87,7 +92,7 @@ class PreferenceController extends Controller {
 		$this->form->text('session_lifetime', $this->model_data->session_lifetime);
 		
 		$this->form->openTab('Web Preference');
-		$this->form->text('login_attempts', $this->model_data->login_attempts);
+		$this->form->number('login_attempts', $this->model_data->login_attempts);
 		$this->form->text('change_password', $this->model_data->change_password);
 		$this->form->selectbox('debug', ['No', 'Yes'], $this->model_data->debug);
 		$this->form->selectbox('maintenance', ['No', 'Yes'], $this->model_data->maintenance);
@@ -99,17 +104,8 @@ class PreferenceController extends Controller {
 	}
 	
 	public function update(Request $request, $id) {
-		$filename	= 'logo';
-		$req			= $request->all();
+		$this->update_data($request, $id, false);
 		
-		if (isset($req[$filename])) {
-			$data	= $this->data_file_processor($this->name, $request, $filename, 'image|mimes:jpeg,png,jpg,gif,svg|max:2048');
-		} else {
-			// throw file request
-			$data	= array_merge_recursive ($request->except($filename));
-		}
-		
-		$urli = str_replace('/1', '', url()->current());
-		return update(Preference::find($id), $data, $urli);
+		return self::redirect('/edit');
 	}
 }

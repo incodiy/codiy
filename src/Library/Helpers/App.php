@@ -687,36 +687,57 @@ if (!function_exists('diy_current_url')) {
 
 if (!function_exists('diy_log_activity')) {
 	
+	/**
+	 * Create Data User Log Activity
+	 */
 	function diy_log_activity() {
-		$sessions                = session()->all();
-		$routes                  = diy_current_route();
-		$requests                = Illuminate\Support\Facades\Request::class;
-		
-		$logs                    = [];
-		
-		$logs['user_id']         = $sessions['id'];
-		$logs['username']        = $sessions['username'];
-		$logs['user_fullname']   = $sessions['fullname'];
-		$logs['user_email']      = $sessions['email'];
-		
-		$logs['user_group_id']   = $sessions['group_id'];
-		$logs['user_group_name'] = $sessions['user_group'];
-		$logs['user_group_info'] = $sessions['group_info'];
-		
-		$logs['route_path']      = $routes->controller->data['route_info']->current_path;
-		$logs['module_name']     = $routes->controller->data['route_info']->module_name;
-		$logs['page_info']       = $routes->controller->data['route_info']->page_info;
-		$logs['urli']            = $requests::fullUrl();
-		$logs['method']          = $requests::method();
-		
-		$logs['ip_address']      = $requests::ip();
-		$logs['user_agent']      = $requests::header('user-agent');
-		$logs['sql_dump']        = NULL;
-		
-		$logs['created_at']      = date('Y-m-d h:i:s');
-		$logs['updated_at']      = NULL;
-		
-		Log::create($logs);
+		$configuration              = diy_config('log_actifity');
+		if (in_array($configuration['run_status'], [true, 'unexceptions'])) {
+			$sessions                = session()->all();
+			if (!empty($sessions['user_group'])) {
+				$routes                  = diy_current_route();
+				$requests                = Illuminate\Support\Facades\Request::class;
+				$group_exceptions        = ['root'];
+				if (!empty($configuration['exceptions']['groups'])) {
+					$group_exceptions     = array_merge_recursive(['root'], $configuration['exceptions']['groups']);
+				}
+				if ('unexceptions' === $configuration['run_status']) {
+					$group_exceptions     = [];
+				}
+				
+				if (!in_array($sessions['user_group'], $group_exceptions)) {
+					$current_controller = explode('@', $routes->action['controller']);
+					
+					if (!in_array($current_controller[0], $configuration['exceptions']['controllers'])) {
+						$logs                    = [];
+						
+						$logs['user_id']         = $sessions['id'];
+						$logs['username']        = $sessions['username'];
+						$logs['user_fullname']   = $sessions['fullname'];
+						$logs['user_email']      = $sessions['email'];
+						
+						$logs['user_group_id']   = $sessions['group_id'];
+						$logs['user_group_name'] = $sessions['user_group'];
+						$logs['user_group_info'] = $sessions['group_info'];
+						
+						$logs['route_path']      = $routes->controller->data['route_info']->current_path;
+						$logs['module_name']     = $routes->controller->data['route_info']->module_name;
+						$logs['page_info']       = $routes->controller->data['route_info']->page_info;
+						$logs['urli']            = $requests::fullUrl();
+						$logs['method']          = $requests::method();
+						
+						$logs['ip_address']      = $requests::ip();
+						$logs['user_agent']      = $requests::header('user-agent');
+						$logs['sql_dump']        = NULL;
+						
+						$logs['created_at']      = date('Y-m-d h:i:s');
+						$logs['updated_at']      = NULL;
+						
+						Log::create($logs);
+					}
+				}
+			}
+		}
 	}
 }
 

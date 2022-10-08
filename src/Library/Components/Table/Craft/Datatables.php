@@ -235,6 +235,7 @@ class Datatables {
 			$limitTotal = count($model_filters->get());
 		}
 		
+		$model          = $model->orderBy("{$table_name}.id", 'DESC');
 		$limit['total'] = intval($limitTotal);
 		
 		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
@@ -331,7 +332,7 @@ class Datatables {
 		}
 		$datatables->setRowAttr($row_attributes);
 		
-		$action_data = [];
+		$action_data                   = [];
 		$action_data['model']          = $model;
 		$action_data['current_url']    = diy_current_url();
 		$action_data['action']['data'] = $action_list;

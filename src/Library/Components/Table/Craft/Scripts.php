@@ -383,7 +383,7 @@ trait Scripts {
 				}
 			}
 			
-			if (!empty($options[$button])) $option = implode(',', $options[$button]) . ',';
+			if (!empty($options[$button])) $option = implode(',', $options[$button]);// . ',';
 			$buttons[] = '{extend:"' . $button . '", ' . $option . '}';
 		}
 		

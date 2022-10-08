@@ -43,7 +43,7 @@ Route::group(['middleware' => ['web']], function() {
 				Route::resource('group',      'App\Http\Controllers\Admin\System\GroupController',      ['as' => 'system.config']);
 				
 			//	Route::resource('icon',       'App\Http\Controllers\Admin\System\IconController',       ['as' => 'system.config']);
-			//	Route::resource('log',        'App\Http\Controllers\Admin\System\LogController',        ['as' => 'system.config']);
+				Route::resource('log',        'App\Http\Controllers\Admin\System\LogController',        ['as' => 'system.config']);
 		    
 			});
 
