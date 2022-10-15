@@ -46,9 +46,7 @@ class Objects extends Builder {
 	private function draw($initial, $data = []) {
 		if ($data) {
 			$this->elements[$initial] = $data;
-			if (!empty($this->filter_object->add_scripts)) {
-				$this->filter_scripts = $this->filter_object->add_scripts;
-			}
+			if (!empty($this->filter_object->add_scripts)) $this->filter_scripts = $this->filter_object->add_scripts;
 		}
 	}
 	
@@ -66,9 +64,7 @@ class Objects extends Builder {
 	
 	public function setDatatableType($set = true) {
 		$this->setDatatable = $set;
-		if (true !== $this->setDatatable) {
-			$this->tableType = 'self::table';
-		}
+		if (true !== $this->setDatatable) $this->tableType = 'self::table';
 		$this->element_name['table'] = $this->tableType;
 	}
 	
@@ -551,7 +547,6 @@ class Objects extends Builder {
 			} else {
 				$fields = diy_get_table_columns($table_name);
 			}
-			
 			
 			// RELATIONAL PROCESS
 			$relations         = [];

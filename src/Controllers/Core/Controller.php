@@ -16,6 +16,7 @@ use Incodiy\Codiy\Controllers\Core\Craft\Components\MetaTags;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Template;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Form;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Table;
+use Incodiy\Codiy\Controllers\Core\Craft\Components\Chart;
 
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\FileUpload;
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
@@ -47,6 +48,7 @@ class Controller extends BaseController {
 	use Scripts, Action, View, Session;
 	use Form, FileUpload, RouteInfo;
 	use Table;
+	use Chart;
 	
 	public $data         = [];
 	public $session_auth = [];

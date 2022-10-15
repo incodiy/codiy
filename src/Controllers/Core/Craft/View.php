@@ -56,6 +56,12 @@ trait View {
 		if (!empty($this->data['components']->table->elements)) {
 			$tableElements = $this->table->render($this->data['components']->table->elements);
 		}
+		
+		$chartElements = [];
+		if (!empty($this->data['components']->chart->elements)) {
+			$chartElements = $this->chart->render($this->data['components']->chart->elements);
+		}
+		
 		$this->addScriptsFromElements();
 		
 		// RENDER DATATABLES!!!
@@ -105,11 +111,11 @@ trait View {
 						$merge_data    = array_merge($this->data['content_page'], $data_contents);
 					}
 				}
-				$dataContent = array_merge($merge_data, $formElements, $tableElements);
+				$dataContent = array_merge($merge_data, $formElements, $tableElements, $chartElements);
 				
 				$this->data['content_page'] = $dataContent;
 			} else {
-				$this->data['content_page'] = array_merge($formElements, $tableElements);
+				$this->data['content_page'] = array_merge($formElements, $tableElements, $chartElements);
 			}
 		} else {
 			$this->data['breadcrumbs'] = null;

@@ -11,7 +11,6 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
- 
 trait Scripts {
 	
 	private $scriptNode = 'diyScriptNode::';
@@ -22,36 +21,6 @@ trait Scripts {
 	
 	public function css($scripts, $position = 'top') {
 		return $this->template->css($scripts, $position);
-	}
-	
-	private function getScriptFromElements($object) {
-		$scripts = [];
-		
-		if (!empty($object)) {
-			$current_template = diy_template_config('admin.' . diy_current_template());
-			unset($current_template['position']);
-			
-			foreach (array_unique($object->element_name) as $_elements) {
-				foreach ($current_template as $element => $data) {
-					if ($element === $_elements) {
-						foreach ($data as $script_type => $script_paths) {
-							if ('js' === $script_type) {
-								foreach ($script_paths as $script_path) {
-									$scripts['js'][] = $script_path;
-								}
-							} else {
-								foreach ($script_paths as $script_path) {
-									$scripts['css'][] = $script_path;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		$this->setScriptUnique('js', $scripts);
-		$this->setScriptUnique('css', $scripts);
 	}
 	
 	private function addScriptsFromElements() {
@@ -82,10 +51,42 @@ trait Scripts {
 			$this->getScriptFromElements($this->table);
 		}
 		
+		if (!empty($this->chart->elements)) $this->getScriptFromElements($this->chart);
+		
 		$this->setScriptUnique('js',	$scripts);
 		$this->setScriptUnique('css',	$scripts);
 		
 		return false;
+	}
+	
+	private function getScriptFromElements($object) {
+		$scripts = [];
+		
+		if (!empty($object)) {
+			$current_template = diy_template_config('admin.' . diy_current_template());
+			unset($current_template['position']);
+			
+			foreach (array_unique($object->element_name) as $_elements) {
+				foreach ($current_template as $element => $data) {
+					if ($element === $_elements) {
+						foreach ($data as $script_type => $script_paths) {
+							if ('js' === $script_type) {
+								foreach ($script_paths as $script_path) {
+									$scripts['js'][]  = $script_path;
+								}
+							} else {
+								foreach ($script_paths as $script_path) {
+									$scripts['css'][] = $script_path;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		$this->setScriptUnique('js',  $scripts);
+		$this->setScriptUnique('css', $scripts);
 	}
 	
 	private function setScriptUnique($type, $scripts) {
@@ -94,10 +95,12 @@ trait Scripts {
 		
 		if (!empty($scripts[$type])) {
 			foreach (array_unique($scripts[$type]) as $script) {
-				if (str_contains($script, 'last:')) {
-					$scriptEnd[$type][] = str_replace('last:', '', $script);
-				} else {
-					$scriptLists[$type][] = $script;
+				if (!empty($script)) {
+					if (str_contains($script, 'last:')) {
+						$scriptEnd[$type][] = str_replace('last:', '', $script);
+					} else {
+						$scriptLists[$type][] = $script;
+					}
 				}
 			}
 			$scripts[$type] = array_merge($scriptLists[$type], $scriptEnd[$type]);

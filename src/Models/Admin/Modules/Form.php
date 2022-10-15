@@ -16,6 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  
 class Form extends Model {
 	
-	protected $table	= 'test_inputform';
-	protected $guarded	= [];
+	protected $table	 = 't_view_mantra_kpi_distributors';//'test_inputform';
+	protected $guarded = [];
 }
