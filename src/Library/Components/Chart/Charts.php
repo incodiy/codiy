@@ -15,7 +15,7 @@ namespace Incodiy\Codiy\Library\Components\Chart;
 class Charts {
 	
 	private $_attributes = [];
-	private function set_attributes($function_name, $value) {
+	protected function set_attributes($function_name, $value) {
 		$this->_attributes[$function_name] = $value;
 	}
 	

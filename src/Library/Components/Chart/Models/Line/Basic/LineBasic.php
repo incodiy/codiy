@@ -19,22 +19,47 @@ trait LineBasic {
 	 * Build Line Chart
 	 * 
 	 * @param string $source
-	 * @param array $fieldsets
+	 * 	: table source name
+	 * @param array  $fieldsets
+	 * 	: [fieldname1, fieldname2, fieldname3]
 	 * @param string $format
+	 * 	: name:fieldname|data:fieldname::[sum|count|avg,-etc]
+	 * @param string $category
+	 * 	: fieldname used for chart category
 	 * @param string $order
+	 * 	: fieldname::[DESC|ASC] order
+	 * @param string $group
+	 * 	: fieldname group
 	 */
 	public function line($source, $fieldsets = [], $format, $category = null, $order = null, $group = null) {
 		$this->setParams(__FUNCTION__, $source, $fieldsets, $format, $category, $order, $group);
 		$this->dataProcessing();
+		$this->build();
 	}
 	
 	private $modeling;
 	private function dataProcessing() {
 		$params = [];
 		if (!empty($this->params)) {
+			$setTitle = null;
 			foreach ($this->params as $chartType => $chartData) {
 				
 				foreach ($chartData as $sourceName => $sourceData) {
+					
+					if (empty($this->title)) {
+						if (diy_string_contained($sourceName, 't_view')) {
+							$setTitle = ucwords(str_replace('_', ' ', str_replace('t_view_', '', $sourceName)));
+						} else {
+							$setTitle = ucwords(str_replace('_', ' ', $sourceName));
+						}
+					} else {
+						$setTitle    = $this->title;
+					}
+					
+					if (!empty($setTitle)) {
+						$this->getTitle($chartType, $setTitle);
+					}
+					
 					$sourceGroup = [];
 					if (!empty($sourceData['group'])) {
 						if (diy_string_contained($sourceData['group'], ',')) {
@@ -43,6 +68,7 @@ trait LineBasic {
 							$sourceGroup = [$sourceData['group']];
 						}
 					}
+					
 					if (!empty($sourceData['order'])) {
 						if (diy_string_contained($sourceData['order'], ',')) {
 							$dataOrders  = explode(',', str_replace(' ', '', $sourceData['order']));
@@ -52,14 +78,10 @@ trait LineBasic {
 						
 						foreach ($dataOrders as $orderData) {
 							if (diy_string_contained($orderData, '::')) {
-								$splitOrder = explode('::', $orderData);dd($splitOrder);
-								foreach ($splitOrder as $orderField => $orderParam) {
-									$sourceOrder[] = "`{$orderField}` ";
-								}
+								$splitOrder = explode('::', $orderData);
+								$sourceOrder[$splitOrder[0]] = "`{$splitOrder[0]}` {$splitOrder[1]}";
 							}
 						}
-						dd($sourceOrder);
-						dd($sourceOrder);
 					}
 					
 					if (!empty($sourceData['format'])) {
@@ -123,60 +145,94 @@ trait LineBasic {
 								}
 							}
 							
+							if (!empty($sQueryData['un_group'][$fieldset])) unset($sQueryData['group'][$fieldset]);
+							
 							if (!empty($sourceOrder)) {
-								foreach ($sourceOrder as $order) {
-									if (!empty($fieldsets[$order])) {
-										$sQueryData['order'][$order] = $fieldsets[$order];
+								foreach ($sourceOrder as $field_order => $order) {
+									if (!diy_string_contained($order, '`')) {
+										$str_order = "`{$order}`";
 									} else {
-										$sQueryData['order'][$order] = "`{$group}`";
+										$str_order = $order;
 									}
+									
+									$sQueryData['order'][$field_order] = $str_order;
 								}
 							}
-							
-							$sQueryData['order'][$fieldset] = "{$fieldset} DESC";
-							if (!empty($sQueryData['un_group'][$fieldset])) {
-								unset($sQueryData['group'][$fieldset]);
-								unset($sQueryData['order'][$fieldset]);
-							}
 						}
-						dd($sourceOrder, $sQueryData['order']);
+						
 						$str_field = implode(', ', $fieldsets);
 						$str_group = '';
-						if (!empty($sourceGroup)) {
-							$str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
-						}
-						$str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']) . ", {$sourceData['order']}";
+						$str_order = '';
 						
-						$queryData = diy_query("SELECT {$str_field} FROM {$sourceName}{$str_group}{$str_order};", 'SELECT');
-						$sQueryData['data'] = $this->dataManipulations($queryData);
+						if (!empty($sourceGroup)) $str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
+						if (!empty($sourceOrder)) $str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']);
 						
-						unset($this->params[$chartType][$sourceName]);
+						$tableName  = $sourceName;
+						$sourceName = $tableName . '-' . diy_random_strings(50, false);
+						// DATA LINE HERE
+						$queryData          = diy_query("SELECT {$str_field} FROM {$tableName}{$str_group}{$str_order};", 'SELECT');
+						$sQueryData['data'] = $this->dataManipulations($queryData, $formatData['param_as'], $sourceData['category']);
+						unset($this->params[$chartType][$tableName]);
 						
-						$params[$chartType][$sourceName]['fieldsets'] = $fieldsets;
-						$params[$chartType][$sourceName]['group']     = $sQueryData['group'];
-						$params[$chartType][$sourceName]['order']     = $sourceData['order'];
+						$params[$chartType][$sourceName]['title']     = $this->title;
+						$params[$chartType][$sourceName]['category']  = $sourceData['category'];
 						$params[$chartType][$sourceName]['data']      = $sQueryData['data'];
-						$params[$chartType][$sourceName]['format']    = $formatData;
 						
 						$this->params[$chartType][$sourceName]        = $params[$chartType][$sourceName];
+						$this->category($params[$chartType][$sourceName]['data']['category']);
 					}
+					
 				}
 			}
 		}
-		dd($this->params);
 	}
 	
-	private function dataManipulations($source) {
-		foreach ($source as $data) {
-			dump($data);
+	private function dataManipulations($source, $parameters, $category) {
+		$paramCharts = [];
+		foreach ($parameters as $param_field => $param_chart) {
+			$paramCharts[$param_chart] = $param_field;
 		}
-		dd($source);
+		
+		$chartData             = [];
+		$chartData['data']     = [];
+		$chartData['category'] = [];
+		
+		foreach ($source as $data) {
+			if (!empty($data->{$paramCharts['name']})) {				
+				if (!empty($data->{$paramCharts['data']})) {
+					$chartData['data'][$data->{$paramCharts['name']}][] = $data->{$paramCharts['data']};
+				} else {
+					$chartData['data'][$data->{$paramCharts['name']}][null] = null;
+				}
+			}
+			
+			if (!empty($data->{$category})) $chartData['category'][$data->{$category}] = $data->{$category};
+		}
+		
+		$buffers             = [];
+		$buffers['series']   = [];
+		$buffers['category'] = [];
+		
+		foreach ($chartData['category'] as $category) {
+			$buffers['category'][] = $category;
+		}
+		
+		foreach ($chartData['data'] as $name => $data) {
+			$buffers['series'][] = [
+				'name' => $name,
+				'data' => $data
+			];
+		}
+		
+		$resultData             = [];
+		$resultData['category'] = $buffers['category'];//json_encode($buffers['category']);
+		$resultData['series']   = $buffers['series'];//json_encode($buffers['series']);
+		
+		return $resultData;
 	}
 	
-	public function linex($data, $title = null, $attributes = []) {
-		$this->getTitle(__FUNCTION__, $title);
-		
-		$identity = $this->identities[__FUNCTION__][$this->lineTitle];
+	private function build() {
+		$attributes = ['styles' => 'width: 100%; height: 400px; margin: 0 auto', 'id' => 'test_id'];
 		$_attr    = [];
 		if (!empty($attributes)) {
 			foreach ($attributes as $attr_name => $attr_value) {
@@ -186,8 +242,10 @@ trait LineBasic {
 		}
 		$attributes    = ' ' . implode(' ', $_attr);
 		
-		$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
-		$this->line_script($this->lineTitle, $identity, $data);
+		foreach ($this->params['line'] as $identity => $data) {
+			$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
+			$this->line_script($this->title, $identity, $data['data']['series']);
+		}
 		
 		$this->draw($this->elements);
 	}

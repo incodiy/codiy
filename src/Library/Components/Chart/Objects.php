@@ -62,14 +62,13 @@ class Objects extends Charts {
 		$this->identities[$function_name][$titleString] = $identity;
 	}
 	
-	private $lineTitle = null;
 	private function getTitle($function_name, $title) {
 		$this->setTitle($function_name, $title);
-		$this->lineTitle = $title;
+		$this->title = $title;
 		
 		if (!empty($this->identities[$function_name])) {
 			if (empty($title) && !empty($this->_attributes['title'])) {
-				$this->lineTitle = $this->_attributes['title'];
+				$this->title = $this->_attributes['title'];
 			}
 		}
 	}

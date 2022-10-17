@@ -39,7 +39,14 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		$this->chart->line('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:region|data:actual::sum', 'periode', 'actual::DESC, periode::DESC', 'region, periode');
+		$this->chart->title(['text' => 'Mantra KPI Distributors']);
+	//	$this->chart->subtitle(['text' => 'Chart Subtitle']);
+	//	$this->chart->legends(['layout' => 'vertical', 'align' => 'right', 'verticalAlign' => 'middle', 'borderWidth' => '0']);
+	//	$this->chart->tooltips(['valueSuffix' => 'C']);
+		$this->chart->line('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:region|data:actual::sum', 'periode', 'periode::DESC, actual::DESC', 'region, periode');
+		
+		$this->chart->title(['text' => 'Mantra KPI Distributors']);
+		$this->chart->line('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:periode|data:actual::sum', 'region', 'region::DESC, actual::DESC', 'region, periode');
 		
 		return $this->render();
 	}
