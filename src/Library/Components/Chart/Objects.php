@@ -18,18 +18,14 @@ use Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic\LineBasic;
 class Objects extends Charts {
 	use LineBasic;
 	
-	public $params     = [];
+	public  $elements   = [];
+	public  $params     = [];
 	
-	public $elements   = [];
-	public $identities = [];
-	
-	private $chartInfo = 'highcharts';
-	private $prefix_indentity;
+	private $identities = [];
+	private $chartInfo  = 'highcharts';
 	
 	public function __construct() {
 		$this->element_name['chart'] = $this->chartInfo;
-		$this->set_prefix();
-		
 		$this->charts = new Charts();
 	}
 	
@@ -37,43 +33,44 @@ class Objects extends Charts {
 		return $object;
 	}
 	
-	protected function setParams($function_name, $source, $fieldsets = [], $format, $category, $order = null, $group = null) {
-		$this->params[$function_name][$source]['fieldsets'] = $fieldsets;
-		$this->params[$function_name][$source]['format']    = $format;
-		$this->params[$function_name][$source]['category']  = $category;
-		$this->params[$function_name][$source]['group']     = $group;
-		$this->params[$function_name][$source]['order']     = $order;
-	}
-	
-	private function set_prefix($prefix = 'codiy-charts') {
-		$this->prefix_indentity = $prefix . '-' . $this->chartInfo . '-' . diy_random_strings(50, false);
-	}
-	
-	private function setTitle($function_name, $title = null) {
-		$titleString = null;
-		if (!empty($title)) $titleString = $title;
-		if (!empty($this->title)) {
-			if (!empty($this->_attributes['title'])) {
-				$titleString = $this->_attributes['title'];
-			}
-		}
-		
-		$identity = diy_clean_strings("{$this->prefix_indentity}-{$titleString}");
-		$this->identities[$function_name][$titleString] = $identity;
-	}
-	
-	private function getTitle($function_name, $title) {
-		$this->setTitle($function_name, $title);
-		$this->title = $title;
-		
-		if (!empty($this->identities[$function_name])) {
-			if (empty($title) && !empty($this->_attributes['title'])) {
-				$this->title = $this->_attributes['title'];
-			}
-		}
-	}
-	
 	private function draw($initial, $data = []) {
 		if ($data) $this->elements[$initial] = $data;
+	}
+	
+	private function setPrefix($function_name, $source) {
+		$prefix = 'codiy-charts';
+		$random = $prefix . '-' . $this->chartInfo . '-' . diy_random_strings(50, false);
+		
+		$this->identities['prefix'][$function_name][$source] = $random;
+	}
+	
+	protected function setParams($function_name, $source, $fieldsets = [], $format, $category, $order = null, $group = null) {
+		$this->setPrefix($function_name, $source);
+		$identify = $this->identities['prefix'][$function_name][$source];
+		
+		$this->params[$function_name][$identify]['construct']['source']    = $source;
+		$this->params[$function_name][$identify]['construct']['fieldsets'] = $fieldsets;
+		$this->params[$function_name][$identify]['construct']['format']    = $format;
+		$this->params[$function_name][$identify]['construct']['category']  = $category;
+		$this->params[$function_name][$identify]['construct']['group']     = $group;
+		$this->params[$function_name][$identify]['construct']['order']     = $order;
+		
+		$this->setTitle($function_name, $identify, $source);
+	}
+	
+	protected function addParams($function_name, $identify, $param_name, $data) {
+		$this->params[$function_name][$identify][$param_name] = $data;
+	}
+	
+	private function setTitle($function_name, $identify, $title = null) {
+		if (diy_string_contained($title, 't_view')) {
+			$setTitle = ucwords(str_replace('_', ' ', str_replace('t_view_', '', $title)));
+		} else {
+			$setTitle = ucwords(str_replace('_', ' ', $title));
+		}
+		$data = ['title' => $setTitle];
+		
+		$this->params[$function_name][$identify]['attributes']          = $data;
+		$this->params[$function_name][$identify]['chart_data']['title'] = json_encode($data);
 	}
 }

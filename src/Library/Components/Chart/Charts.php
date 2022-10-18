@@ -14,45 +14,29 @@ namespace Incodiy\Codiy\Library\Components\Chart;
  */
 class Charts {
 	
-	private $_attributes = [];
-	protected function set_attributes($function_name, $value) {
-		$this->_attributes[$function_name] = $value;
+	public $attributes = [];
+	
+	private function setAttributes($function_name, $value) {
+		$this->attributes[$function_name] = $value;
 	}
 	
-	protected $title;
-	public function title($title = []) {
-		$_title = null;
-		if (!empty($title)) {
-			if (!empty($title['text'])) $_title = $title['text'];
-		}
-		
-		$this->set_attributes(__FUNCTION__, $_title);
-		$this->title = 'title:' . json_encode($title) . ',';
+	public function title($title) {
+		$this->setAttributes(__FUNCTION__, $title);
 	}
 	
-	protected $subtitle;
-	public function subtitle($subtitle = []) {
-		$this->set_attributes(__FUNCTION__, $subtitle);
-		$this->subtitle = 'subtitle:' . json_encode($subtitle) . ',';
+	public function subtitle($subtitle) {
+		$this->setAttributes(__FUNCTION__, $subtitle);
 	}
 	
-	protected $legends;
-	public function legends($legends = []) {
-		$this->set_attributes(__FUNCTION__, $legends);
-		$this->legends = 'legend:' . json_encode($legends) . ',';
+	public function legends($legends) {
+		$this->setAttributes(__FUNCTION__, $legends);
 	}
 	
-	protected $tooltips;
-	public function tooltips($tooltips = []) {
-		$this->set_attributes(__FUNCTION__, $tooltips);
-		$this->tooltips = 'tooltip:' . json_encode($tooltips) . ',';
+	public function tooltips($tooltips) {
+		$this->setAttributes(__FUNCTION__, $tooltips);
 	}
 	
-	protected $categories;
-	public function category($category = [], $axis = 'x') {
-		$this->set_attributes(__FUNCTION__, $category);
-		$this->categories['data'] = 'categories:' . json_encode($category) . ',';
-		$this->categories['axis'] = $axis;
+	public function category($category, $axis = 'x') {
+		$this->set_attributes(__FUNCTION__, ['data' => $category, 'axis' => $axis]);
 	}
-	
 }

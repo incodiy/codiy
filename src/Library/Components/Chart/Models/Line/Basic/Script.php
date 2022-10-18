@@ -14,31 +14,35 @@ namespace Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic;
  */
 trait Script {
 	
-	private function line_script($title, $identity, $data = []) {
-		$series = null;
-		if (!empty($data)) {
-			$data_series = json_encode($data);
-			$series = "series:{$data_series}";
+	private function line_script($identity, $data = []) {
+		$chartData = $data['data'];
+		
+		$series    = null;
+		if (!empty($chartData['series'])) {
+			$data_series = json_encode($chartData['series']);
+			$series      = "series:{$data_series}";
 		}
 		
-		$title    = null;
-		if (!empty($this->title))    $title    = $this->title;
+		if (!empty($chartData['category'])) {
+			$category      = [];
+			$category['x'] = null;
+			$category['y'] = null;
+			
+			$data_category = json_encode($chartData['category']);
+			$category['x'] = "categories:{$data_category}";
+		}
+		
+		$title = null;
+		if (!empty($chartData['title'])) $title = 'title:' . json_encode(['text' => $chartData['title']]) . ',';
 		
 		$subtitle = null;
-		if (!empty($this->subtitle)) $subtitle = $this->subtitle;
+	//	if (!empty($this->subtitle)) $subtitle = $this->subtitle;
 		
 		$legends  = null;
-		if (!empty($this->legends))  $legends  = $this->legends;
+	//	if (!empty($this->legends))  $legends  = $this->legends;
 		
 		$tooltips = null;
-		if (!empty($this->tooltips)) $tooltips = $this->tooltips;
-		
-		$category      = [];
-		$category['x'] = null;
-		$category['y'] = null;
-		if (!empty($this->categories)) {
-			$category[$this->categories['axis']] = $this->categories['data'];
-		}
+	//	if (!empty($this->tooltips)) $tooltips = $this->tooltips;
 		
 		$script = "<script type=\"text/javascript\">
 $(function () {

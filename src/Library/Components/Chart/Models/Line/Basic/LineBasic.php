@@ -33,32 +33,14 @@ trait LineBasic {
 	 */
 	public function line($source, $fieldsets = [], $format, $category = null, $order = null, $group = null) {
 		$this->setParams(__FUNCTION__, $source, $fieldsets, $format, $category, $order, $group);
-		$this->dataProcessing();
-		$this->build();
+		$this->craft();
 	}
 	
-	private $modeling;
-	private function dataProcessing() {
-		$params = [];
+	private function craft() {
 		if (!empty($this->params)) {
-			$setTitle = null;
 			foreach ($this->params as $chartType => $chartData) {
-				
-				foreach ($chartData as $sourceName => $sourceData) {
-					
-					if (empty($this->title)) {
-						if (diy_string_contained($sourceName, 't_view')) {
-							$setTitle = ucwords(str_replace('_', ' ', str_replace('t_view_', '', $sourceName)));
-						} else {
-							$setTitle = ucwords(str_replace('_', ' ', $sourceName));
-						}
-					} else {
-						$setTitle    = $this->title;
-					}
-					
-					if (!empty($setTitle)) {
-						$this->getTitle($chartType, $setTitle);
-					}
+				foreach ($chartData as $identifier => $sourceConstruct) {
+					$sourceData = $sourceConstruct['construct'];
 					
 					$sourceGroup = [];
 					if (!empty($sourceData['group'])) {
@@ -167,27 +149,22 @@ trait LineBasic {
 						if (!empty($sourceGroup)) $str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
 						if (!empty($sourceOrder)) $str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']);
 						
-						$tableName  = $sourceName;
-						$sourceName = $tableName . '-' . diy_random_strings(50, false);
 						// DATA LINE HERE
-						$queryData          = diy_query("SELECT {$str_field} FROM {$tableName}{$str_group}{$str_order};", 'SELECT');
-						$sQueryData['data'] = $this->dataManipulations($queryData, $formatData['param_as'], $sourceData['category']);
-						unset($this->params[$chartType][$tableName]);
+						$queryData          = diy_query("SELECT {$str_field} FROM {$sourceData['source']}{$str_group}{$str_order};", 'SELECT');
+						$sQueryData['data'] = self::manipulate($queryData, $formatData['param_as'], $sourceData['category']);
 						
-						$params[$chartType][$sourceName]['title']     = $this->title;
-						$params[$chartType][$sourceName]['category']  = $sourceData['category'];
-						$params[$chartType][$sourceName]['data']      = $sQueryData['data'];
+						$buffers            = [];
+						$buffers['data']    = array_merge_recursive($sQueryData['data'], $this->params[$chartType][$identifier]['attributes']);
 						
-						$this->params[$chartType][$sourceName]        = $params[$chartType][$sourceName];
-						$this->category($params[$chartType][$sourceName]['data']['category']);
+						$this->addParams($chartType, $identifier, 'buffers', $buffers);
+						$this->build($identifier, $buffers);
 					}
-					
 				}
 			}
 		}
 	}
-	
-	private function dataManipulations($source, $parameters, $category) {
+		
+	private static function manipulate($source, $parameters, $category) {
 		$paramCharts = [];
 		foreach ($parameters as $param_field => $param_chart) {
 			$paramCharts[$param_chart] = $param_field;
@@ -225,13 +202,13 @@ trait LineBasic {
 		}
 		
 		$resultData             = [];
-		$resultData['category'] = $buffers['category'];//json_encode($buffers['category']);
-		$resultData['series']   = $buffers['series'];//json_encode($buffers['series']);
+		$resultData['category'] = $buffers['category'];
+		$resultData['series']   = $buffers['series'];
 		
 		return $resultData;
 	}
 	
-	private function build() {
+	private function build($identity, $data) {
 		$attributes = ['styles' => 'width: 100%; height: 400px; margin: 0 auto', 'id' => 'test_id'];
 		$_attr    = [];
 		if (!empty($attributes)) {
@@ -242,10 +219,8 @@ trait LineBasic {
 		}
 		$attributes    = ' ' . implode(' ', $_attr);
 		
-		foreach ($this->params['line'] as $identity => $data) {
-			$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
-			$this->line_script($this->title, $identity, $data['data']['series']);
-		}
+		$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
+		$this->line_script($identity, $data);
 		
 		$this->draw($this->elements);
 	}
