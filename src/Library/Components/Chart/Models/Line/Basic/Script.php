@@ -22,7 +22,7 @@ trait Script {
 	}
 	
 	private static function scriptChart($identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
-		return "<script type=\"text/javascript\">$(function () { $('#{$identity}').highcharts({ {$title}{$subtitle}{$xAxis}{$yAxis}{$tooltips}{$legends}{$series} }); });</script>";
+		return diy_script_chart($identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 	
 	private static function axisData($position = 'x', $data = []) {

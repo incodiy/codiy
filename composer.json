@@ -28,7 +28,8 @@
 			"src/Library/Helpers/Scripts.php",
 			"src/Library/Helpers/Template.php",
 			"src/Library/Helpers/FormObject.php",
-			"src/Library/Helpers/Table.php"
+			"src/Library/Helpers/Table.php",
+			"src/Library/Helpers/Chart.php"
 		]
 	},
 	"extra"	: {

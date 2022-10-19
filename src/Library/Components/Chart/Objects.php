@@ -2,6 +2,7 @@
 namespace Incodiy\Codiy\Library\Components\Chart;
 
 use Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic\LineBasic;
+use Incodiy\Codiy\Library\Components\Chart\Includes\DataConstructions;
 
 /**
  * Created on Oct 10, 2022
@@ -16,6 +17,7 @@ use Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic\LineBasic;
  */
 
 class Objects extends Charts {
+	use DataConstructions;
 	use LineBasic;
 	
 	public  $elements   = [];
@@ -78,5 +80,23 @@ class Objects extends Charts {
 		}
 		
 		$this->params[$function_name][$identify]['attributes'] = ['title' => ['text' => $setTitle]];
+	}
+	
+	private function build($identity, $data) {
+		$canvas = [];
+		if (!empty($data['data']['canvas'])) $canvas = $data['data']['canvas'];
+		
+		$attributes = [];
+		if (!empty($canvas)) {
+			foreach ($canvas as $attr_name => $attr_value) {
+				$attributes[] = "{$attr_name}=\"{$attr_value}\"";
+			}
+		}
+		$attributes = ' ' . implode(' ', $attributes);
+		
+		$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
+		$this->line_script($identity, $data);
+		
+		$this->draw($this->elements);
 	}
 }
