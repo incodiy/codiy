@@ -209,15 +209,16 @@ trait LineBasic {
 	}
 	
 	private function build($identity, $data) {
-		$attributes = ['styles' => 'width: 100%; height: 400px; margin: 0 auto', 'id' => 'test_id'];
-		$_attr    = [];
-		if (!empty($attributes)) {
-			foreach ($attributes as $attr_name => $attr_value) {
-				$_attr[] = "{$attr_name}=\"{$attr_value}\"";
+		$canvas = [];
+		if (!empty($data['data']['canvas'])) $canvas = $data['data']['canvas'];
+		
+		$attributes = [];
+		if (!empty($canvas)) {
+			foreach ($canvas as $attr_name => $attr_value) {
+				$attributes[] = "{$attr_name}=\"{$attr_value}\"";
 			}
-			$attributes = [];
 		}
-		$attributes    = ' ' . implode(' ', $_attr);
+		$attributes = ' ' . implode(' ', $attributes);
 		
 		$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
 		$this->line_script($identity, $data);

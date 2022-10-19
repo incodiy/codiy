@@ -44,6 +44,13 @@ class Objects extends Charts {
 		$this->identities['prefix'][$function_name][$source] = $random;
 	}
 	
+	private function addAttributes($function_name, $identify) {
+		if (!empty($this->attributes)) {
+			$this->addParams($function_name, $identify, 'attributes', $this->attributes);
+			unset($this->attributes);
+		}
+	}
+	
 	protected function setParams($function_name, $source, $fieldsets = [], $format, $category, $order = null, $group = null) {
 		$this->setPrefix($function_name, $source);
 		$identify = $this->identities['prefix'][$function_name][$source];
@@ -56,6 +63,7 @@ class Objects extends Charts {
 		$this->params[$function_name][$identify]['construct']['order']     = $order;
 		
 		$this->setTitle($function_name, $identify, $source);
+		$this->addAttributes($function_name, $identify);
 	}
 	
 	protected function addParams($function_name, $identify, $param_name, $data) {
@@ -68,9 +76,7 @@ class Objects extends Charts {
 		} else {
 			$setTitle = ucwords(str_replace('_', ' ', $title));
 		}
-		$data = ['title' => $setTitle];
 		
-		$this->params[$function_name][$identify]['attributes']          = $data;
-		$this->params[$function_name][$identify]['chart_data']['title'] = json_encode($data);
+		$this->params[$function_name][$identify]['attributes'] = ['title' => ['text' => $setTitle]];
 	}
 }

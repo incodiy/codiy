@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Controllers\Admin\Modules;
 
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Models\Admin\Modules\Form;
+use SebastianBergmann\Type\TrueType;
 
 /**
  * Created on 23 Mar 2021
@@ -39,14 +40,26 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		$this->chart->title(['text' => 'TITLE Mantra KPI Distributors']);
-	//	$this->chart->subtitle(['text' => 'Chart Subtitle']);
-	//	$this->chart->legends(['layout' => 'vertical', 'align' => 'right', 'verticalAlign' => 'middle', 'borderWidth' => '0']);
-	//	$this->chart->tooltips(['valueSuffix' => 'C']);
+		$this->chart->title('Report: Mantra KPI Distributors', ['x' => -20]);
+		$this->chart->subtitle('Chart Subtitle');
+		$this->chart->tooltips(['valueSuffix' => 'C']);
+		$this->chart->legends(['layout' => 'vertical', 'align' => 'right', 'verticalAlign' => 'middle', 'borderWidth' => '0']);
+	//	$this->chart->canvas(['styles' => 'width: 100%; height: 900px; margin: 0 auto', 'id' => 'test_id']);
+	//	$this->chart->xAxis([], true);
+		$this->chart->yAxis([
+			'title'     => ['text' => 'Actual (SUM)'], 
+			'plotLines' => [
+				[
+					'value' => 0,
+					'width' => 1,
+					'color' => '#808080'
+				]
+			]
+		]);
 		$this->chart->line('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:region|data:actual::sum', 'periode', 'periode::DESC, actual::DESC', 'region, periode');
 		
-	//	$this->chart->title(['text' => 'Mantra KPI Distributors']);
-	//	$this->chart->line('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:periode|data:actual::sum', 'region', 'region::DESC, actual::DESC', 'region, periode');
+		$this->chart->title('Mantra KPI Distributors');
+		$this->chart->line('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:periode|data:actual::sum', 'region', 'region::DESC, actual::DESC', 'region, periode');
 		
 		return $this->render();
 	}

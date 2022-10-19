@@ -14,60 +14,79 @@ namespace Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic;
  */
 trait Script {
 	
-	private function line_script($identity, $data = []) {
-		$chartData = $data['data'];
+	private static function drawJSON($name, $chartData, $setLabel = null) {
+		$label = $name;
+		if (!empty($setLabel)) $label = $setLabel;
 		
-		$series    = null;
-		if (!empty($chartData['series'])) {
-			$data_series = json_encode($chartData['series']);
-			$series      = "series:{$data_series}";
+		return "{$label}:" . json_encode($chartData[$name]) . ',';
+	}
+	
+	private static function scriptChart($identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
+		return "<script type=\"text/javascript\">$(function () { $('#{$identity}').highcharts({ {$title}{$subtitle}{$xAxis}{$yAxis}{$tooltips}{$legends}{$series} }); });</script>";
+	}
+	
+	private static function axisData($position = 'x', $data = []) {
+		$axisPos      = "{$position}Axis";
+		$axisCategory = false;
+		$axis         = null;
+		
+		if (!empty($data[$axisPos])) {
+			if (!empty($data[$axisPos]['category'])) {
+				$axisCategory = true;
+				unset($data[$axisPos]['category']);
+				$data[$axisPos]['categories'] = $data['category'];
+			}
+			
+			$axis = static::drawJSON($axisPos, $data);
 		}
 		
-		if (!empty($chartData['category'])) {
-			$category      = [];
-			$category['x'] = null;
-			$category['y'] = null;
-			
-			$data_category = json_encode($chartData['category']);
-			$category['x'] = "categories:{$data_category}";
+		return ['data' => $axis, 'category' => $axisCategory];
+	}
+	
+	private function line_script($identity, $data = []) {
+		$chartData = $data['data'];
+				
+		$series = null;
+		if (!empty($chartData['series'])) {
+			$series = static::drawJSON('series', $chartData);
 		}
 		
 		$title = null;
-		if (!empty($chartData['title'])) $title = 'title:' . json_encode(['text' => $chartData['title']]) . ',';
+		if (!empty($chartData['title'])) {
+			$title = static::drawJSON('title', $chartData);
+		}
 		
 		$subtitle = null;
-	//	if (!empty($this->subtitle)) $subtitle = $this->subtitle;
+		if (!empty($chartData['subtitle'])) {
+			$subtitle = static::drawJSON('subtitle', $chartData);
+		}
 		
 		$legends  = null;
-	//	if (!empty($this->legends))  $legends  = $this->legends;
+		if (!empty($chartData['legend'])) {
+			$legends = static::drawJSON('legend', $chartData);
+		}
 		
 		$tooltips = null;
-	//	if (!empty($this->tooltips)) $tooltips = $this->tooltips;
+		if (!empty($chartData['tooltip'])) {
+			$tooltips = static::drawJSON('tooltip', $chartData);
+		}
 		
-		$script = "<script type=\"text/javascript\">
-$(function () {
-    $('#{$identity}').highcharts({
-        {$title}
-        {$subtitle}
-        xAxis: {
-            {$category['x']}
-        },
-        yAxis: {
-            title: {
-                text: 'Temperature (C)'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        {$tooltips}
-        {$legends}
-        {$series}
-    });
-});
-        </script>";
-        $this->elements[$identity] .= $script;
+		$axisCat      = [];
+		
+		$xAxisData    = self::axisData('x', $chartData);
+		$xAxis        = $xAxisData['data'];
+		$axisCat['x'] = $xAxisData['category'];
+		
+		$yAxisData    = self::axisData('y', $chartData);
+		$yAxis        = $yAxisData['data'];
+		$axisCat['y'] = $yAxisData['category'];
+		
+		$axisCategory = in_array(true, $axisCat);
+		if (false === $axisCategory) {
+			$chartData['xAxis']['categories'] = $chartData['category'];
+			$xAxis = static::drawJSON('xAxis', $chartData);
+		}
+		
+		$this->elements[$identity] .= self::scriptChart($identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 }
