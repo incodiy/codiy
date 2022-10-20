@@ -163,7 +163,9 @@ class Datatables {
 				}
 			}
 			
-			$model_condition = $model_data->where($where_conditions['o']);
+			if (!empty($where_conditions['o'])) $model_condition = $model_data->where($where_conditions['o']);
+			if (empty($model_condition))        $model_condition = $model_data;
+			
 			if (!empty($where_conditions['i'])) {
 				foreach ($where_conditions['i'] as $if => $iv) {
 					$model_condition = $model_condition->whereIn($if, $iv);
