@@ -280,7 +280,11 @@ class Datatables {
 					$dataRelations = $relData['relation_data'];
 					$datatables->editColumn($relField, function($data) use ($dataRelations) {
 						$dataID = intval($data['id']);
-						return $dataRelations[$dataID]['field_value'];
+						if (!empty($dataRelations[$dataID]['field_value'])) {
+							return $dataRelations[$dataID]['field_value'];
+						} else {
+							return null;
+						}
 					});
 				}
 			}
