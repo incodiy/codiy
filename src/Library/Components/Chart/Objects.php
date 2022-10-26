@@ -1,8 +1,11 @@
 <?php
 namespace Incodiy\Codiy\Library\Components\Chart;
 
-use Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic\LineBasic;
 use Incodiy\Codiy\Library\Components\Chart\Includes\DataConstructions;
+use Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic as Line;
+use Incodiy\Codiy\Library\Components\Chart\Models\Column\Basic as Column;
+use Incodiy\Codiy\Library\Components\Chart\Models\Combinations\DualAxesLineAndColumn as DualAxes;
+use Incodiy\Codiy\Library\Components\Chart\Includes\Scripts;
 
 /**
  * Created on Oct 10, 2022
@@ -17,8 +20,10 @@ use Incodiy\Codiy\Library\Components\Chart\Includes\DataConstructions;
  */
 
 class Objects extends Charts {
-	use DataConstructions;
-	use LineBasic;
+	use DataConstructions, Scripts;
+	
+	use Line, Column;
+	use DualAxes;
 	
 	public  $elements   = [];
 	public  $params     = [];
@@ -82,7 +87,7 @@ class Objects extends Charts {
 		$this->params[$function_name][$identify]['attributes'] = ['title' => ['text' => $setTitle]];
 	}
 	
-	private function build($identity, $data) {
+	private function build($type, $identity, $data) {
 		$canvas = [];
 		if (!empty($data['data']['canvas'])) $canvas = $data['data']['canvas'];
 		
@@ -94,8 +99,9 @@ class Objects extends Charts {
 		}
 		$attributes = ' ' . implode(' ', $attributes);
 		
+		$scriptName = "{$type}_script";
 		$this->elements[$identity] = '<div id="' . $identity . '"' . $attributes . '></div>';
-		$this->line_script($identity, $data);
+		$this->{$scriptName}($identity, $data);
 		
 		$this->draw($this->elements);
 	}

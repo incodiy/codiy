@@ -121,53 +121,84 @@ trait DataConstructions {
 							}
 						}
 						
-						$str_field = implode(', ', $fieldsets);
-						$str_group = '';
-						$str_order = '';
+						$str_field   = implode(', ', $fieldsets);
+						$str_filters = '';
+						$str_group   = '';
+						$str_order   = '';
 						
 						if (!empty($sourceGroup)) $str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
 						if (!empty($sourceOrder)) $str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']);
-						
+						/* 
+						$sourceFilters = ['region' => 'SOUTH CENTRAL JAVA'];
+						if (!empty($sourceFilters)) $str_filters = ' WHERE ' . array_keys($sourceFilters)[0] . '=' . "'" . array_values($sourceFilters)[0] . "'";
+						 */
 						// DATA LINE HERE
-						$queryData          = diy_query("SELECT {$str_field} FROM {$sourceData['source']}{$str_group}{$str_order};", 'SELECT');
-						$sQueryData['data'] = self::manipulate($queryData, $formatData['param_as'], $sourceData['category']);
+						$queryData          = diy_query("SELECT {$str_field} FROM {$sourceData['source']}{$str_filters}{$str_group}{$str_order};", 'SELECT');
+						$sQueryData['data'] = self::manipulate($chartType, $queryData, $formatData['param_as'], $sourceData['category']);
 						
 						$buffers            = [];
 						$buffers['data']    = array_merge_recursive($sQueryData['data'], $this->params[$chartType][$identifier]['attributes']);
 						
 						$this->addParams($chartType, $identifier, 'buffers', $buffers);
-						$this->build($identifier, $buffers);
+						$this->build($chartType, $identifier, $buffers);
 					}
 				}
 			}
 		}
 	}
 	
-	private static function manipulate($source, $parameters, $category) {
-		$paramCharts = [];
+	private static function manipulate($type = 'line', $source, $parameters, $category) {
+		$combinedType = ['dualAxesLineAndColumn'];
+		$typeBasic    = $type;
+		$typeCombined = null;
+		$dashCombined = [null, 'Dash', 'ShortDash', 'Dot', 'ShortDot', 'ShortDashDot', 'LongDash', 'LongDashDot'];
+		
+		if (in_array($type, $combinedType)) {
+			$typeBasic    = 'column';
+			$typeCombined = 'spline';
+		}
+		
+		$paramCharts            = [];
+		$paramCharts['combine'] = [];
+		$paramCharts['legend']  = false;
 		foreach ($parameters as $param_field => $param_chart) {
 			$paramCharts[$param_chart] = $param_field;
+		}
+		
+		if (!empty($paramCharts['legend']) && 'true' == $paramCharts['legend']) {
+			$paramCharts['legend']  = true;
+		} else {
+			$paramCharts['legend']  = false;
 		}
 		
 		$chartData             = [];
 		$chartData['data']     = [];
 		$chartData['category'] = [];
+		$chartData['combined'] = [];
 		
 		foreach ($source as $data) {
+			if (!empty($data->{$category})) $chartData['category'][$data->{$category}] = $data->{$category};
 			if (!empty($data->{$paramCharts['name']})) {
 				if (!empty($data->{$paramCharts['data']})) {
-					$chartData['data'][$data->{$paramCharts['name']}][] = $data->{$paramCharts['data']};
+					$chartData['data'][$data->{$paramCharts['name']}][]     = intval($data->{$paramCharts['data']});
 				} else {
 					$chartData['data'][$data->{$paramCharts['name']}][null] = null;
 				}
 			}
 			
-			if (!empty($data->{$category})) $chartData['category'][$data->{$category}] = $data->{$category};
+			if (!empty($paramCharts['combine']) && !empty($data->{$paramCharts['combine']})) {
+				if (!empty($data->{$paramCharts['combine']})) {
+					$chartData['combined'][$data->{$paramCharts['name']}][]     = intval($data->{$paramCharts['combine']});
+				} else {
+					$chartData['combined'][$data->{$paramCharts['name']}][null] = null;
+				}
+			}
 		}
 		
 		$buffers             = [];
 		$buffers['series']   = [];
 		$buffers['category'] = [];
+		$buffers['combined'] = [];
 		
 		foreach ($chartData['category'] as $category) {
 			$buffers['category'][] = $category;
@@ -175,14 +206,28 @@ trait DataConstructions {
 		
 		foreach ($chartData['data'] as $name => $data) {
 			$buffers['series'][] = [
-				'name' => $name,
-				'data' => $data
+				'name'  => $name,
+				'data'  => $data,
+				'type'  => $typeBasic
 			];
+		}
+		
+		if (!empty($chartData['combined'])) {
+			foreach ($chartData['combined'] as $name => $data) {
+				$buffers['combined']['series'][] = [
+					'name'         => $name,
+					'data'         => $data,
+					'type'         => $typeCombined,
+					'dashStyle'    => $dashCombined[array_rand($dashCombined)],
+					'showInLegend' => $paramCharts['legend']
+				];
+			}
 		}
 		
 		$resultData             = [];
 		$resultData['category'] = $buffers['category'];
 		$resultData['series']   = $buffers['series'];
+		if (!empty($buffers['combined'])) $resultData['combined'] = $buffers['combined']['series'];
 		
 		return $resultData;
 	}

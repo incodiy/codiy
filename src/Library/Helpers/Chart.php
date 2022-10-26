@@ -13,7 +13,8 @@
 
 if (!function_exists('diy_script_chart')) {
 	
-	function diy_script_chart($identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
-		return "<script type=\"text/javascript\">$(function () { $('#{$identity}').highcharts({ {$title}{$subtitle}{$xAxis}{$yAxis}{$tooltips}{$legends}{$series} }); });</script>";
+	function diy_script_chart($type = 'line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
+		$chartType = "chart: {type: '{$type}'},";
+		return "<script type=\"text/javascript\">$(function () { $('#{$identity}').highcharts({ {$chartType}{$title}{$subtitle}{$xAxis}{$yAxis}{$tooltips}{$legends}{$series} }); });</script>";
 	}
 }

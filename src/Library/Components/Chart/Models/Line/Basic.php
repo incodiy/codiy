@@ -1,18 +1,18 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic;
+namespace Incodiy\Codiy\Library\Components\Chart\Models\Line;
 
 /**
  * Created on Oct 11, 2022
  * 
  * Time Created : 10:12:27 AM
  *
- * @filesource	LineBasic.php
+ * @filesource	Basic.php
  *
  * @author     wisnuwidi@gmail.com - 2022
  * @copyright  wisnuwidi
  * @email      wisnuwidi@gmail.com
  */
-trait LineBasic {
+trait Basic {
 	use Script;
 	
 	/**

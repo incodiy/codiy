@@ -40,6 +40,43 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 		
+	//	$this->chart->column('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:region|data:actual::sum', 'periode', 'periode::DESC, actual::DESC', 'region, periode');
+		
+		$this->chart->dualAxesLineAndColumn('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual', 'target'], 'name:region|data:actual::sum|combine:target::sum::legend:true', 'periode', 'periode::DESC, actual::DESC', 'region, periode');
+		
+		return $this->render();
+	}
+	
+	public function indexColumn() {
+		$this->setPage();
+		
+		$this->chart->title('Report: Mantra KPI Distributors', ['x' => -20]);
+		$this->chart->subtitle('Chart Subtitle');
+		$this->chart->tooltips([
+			'headerFormat' => '<span style="font-size:10px">{point.key}</span><table>',
+			'pointFormat'  => '<tr><td style="color:{series.color};padding:0">{series.name}: </td><td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+			'footerFormat' => '</table>',
+			'shared'       => true,
+			'useHTML'      => true
+		]);
+		
+		$this->chart->column('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:region|data:actual::sum', 'periode', 'periode::DESC, actual::DESC', 'region, periode');
+		
+		$this->chart->tooltips([
+			'headerFormat' => '<span style="font-size:10px">{point.key}</span><table>',
+			'pointFormat'  => '<tr><td style="color:{series.color};padding:0">{series.name}: </td><td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+			'footerFormat' => '</table>',
+			'shared'       => true,
+			'useHTML'      => true
+		]);
+		$this->chart->column('t_view_mantra_kpi_distributors', ['periode', 'region', 'actual'], 'name:periode|data:actual::sum', 'region', 'region::DESC, actual::DESC', 'region, periode');
+		
+		return $this->render();
+	}
+	
+	public function indexLine() {
+		$this->setPage();
+		
 		$this->chart->title('Report: Mantra KPI Distributors', ['x' => -20]);
 		$this->chart->subtitle('Chart Subtitle');
 		$this->chart->tooltips(['valueSuffix' => 'C']);
