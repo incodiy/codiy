@@ -13,7 +13,7 @@
 			
 			<!-- FOOTER OPEN  -->
 			<footer>
-				<div class="footer-area">
+				<div class="footer-area blury">
 					<span class="pull-right">
 						<span id="copyright"></span>&nbsp;
 						<font title="{{ diy_config('email') }}">&copy;</font>&nbsp;

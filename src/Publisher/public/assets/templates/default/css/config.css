@@ -878,6 +878,15 @@ label {
 .body .expresscode-search-box {
 	width: 100%;
 }
+.blury {
+    transition: background-color 0.5s cubic-bezier(0.28, 0.11, 0.32, 1) !important;
+	backdrop-filter: saturate(180%) blur(20px) !important;
+	background-color: rgba(255, 255, 255, 0.70) !important;
+}
+.blury-blue {
+	/* background-color: rgb(225, 234, 255) !important; */
+	background-color: rgba(0, 95, 255, 0.72) !important;
+}
 .header-area {
 	background-color: #2979FF;
 	border-bottom: none !important;
@@ -1319,7 +1328,7 @@ a.btn-sets {
 	background: #fff !important;
 }
 .light {
-	background-color: #f5f8fa;
+	background-color: rgba(67, 138, 255, 0.08);/* #f5f8fa; */
 }
 .light-2 {
 	background: #f6fafd;
@@ -1470,8 +1479,8 @@ nav>.main-menu .sidebar-category span.pull-right {
 	height: 30px;
 }
 nav>.main-menu .sidebar-category i.fa-bookmark {
-	color: #2979FF;
-	text-shadow: #2a2a2a 0px 0px 0px;
+	color: rgba(67, 138, 255, 0.08);/* #2979FF; */
+	text-shadow: rgba(67, 138, 255, 0.70) 0px 0px 0px;/* #2a2a2a 0px 0px 0px; */
 	position: absolute;
 	top: -4%;
 	right: 15px;
@@ -1715,12 +1724,9 @@ nav>.main-menu .submenu>ul li a::before {
 	padding: 1.25rem 1rem;
 }
 footer {
-	background-color: #ffffff;
-	/* 	padding: 8px 11px; */
+	background-color: transparent;
 	font-size: 12px;
 	border-top: 1px solid #E1E8EE;
-	/* 
-	border-bottom: 1px solid #DDD; */
 	color: #999;
 	height: 48px;
 	position: fixed;
@@ -1730,7 +1736,6 @@ footer {
 	z-index: 50;
 }
 .footer-area {
-	background-color: #ffffff !important;
 	height: 48px;
 	position: relative;
 	padding: 8px 10px;

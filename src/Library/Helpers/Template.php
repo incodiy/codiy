@@ -185,7 +185,7 @@ if (!function_exists('diy_breadcrumb')) {
             $o .= "</div>";
         } else {
             
-            $o  = "<div class=\"page-title-area shadow\">";
+            $o  = "<div class=\"page-title-area shadow blury blury-blue\">";
             $o .= "<div class=\"row align-items-center\">";
             $o .= "<div class=\"col-sm-12\">";
             $o .= "<div class=\"breadcrumbs-area clearfix\">";

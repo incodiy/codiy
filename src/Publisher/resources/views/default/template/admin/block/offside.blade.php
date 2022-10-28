@@ -18,7 +18,7 @@
 				<li><a class="active" data-toggle="tab" href="#activity">Activity</a></li>
 				<li><a data-toggle="tab" href="#settings">Settings</a></li>
 			</ul>
-			<div class="offset-content tab-content">
+			<div class="offset-content tab-content blury">
 				<div id="activity" class="tab-pane fade in show active">
 					<div class="recent-activity">
 						<div class="timeline-task">

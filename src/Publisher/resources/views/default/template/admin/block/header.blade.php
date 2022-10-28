@@ -17,7 +17,7 @@ $assetURL = "{$baseUrl}/{$baseTemplate}/{$template}";
 			
 				<!-- HEADER BLOCK OPEN  -->
 				<div class="shadow">
-					<div class="header-area">
+					<div class="header-area blury blury-blue">
 						<div class="row align-items-center">
 							<!-- nav and search button -->
 							<div class="col-md-6 col-sm-8 clearfix">
