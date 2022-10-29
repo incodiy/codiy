@@ -16,5 +16,6 @@ return [
 		'Template',
 		'Form',
 		'Table',
+		'Chart'
 	]
 ];
