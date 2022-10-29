@@ -133,7 +133,15 @@ return [
 				//	'vendor/plugins/prettify/prettify.js'
 				],
 				'css'	=> ['vendor/plugins/bootstrap-timepicker/css/timepicker.css']
-			]
+			],
+			
+			'highcharts' => [
+				'js'  => [
+					'vendor/plugins/highcharts/js/highcharts.js',
+					'vendor/plugins/highcharts/js/modules/exporting.js'
+				],
+				'css' => [null]
+			],
 		]
 	]
 ];

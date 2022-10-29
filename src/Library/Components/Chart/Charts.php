@@ -1,8 +1,6 @@
 <?php
 namespace Incodiy\Codiy\Library\Components\Chart;
 
-use Incodiy\Codiy\Library\Components\Chart\Includes\Scripts;
-
 /**
  * Created on Oct 10, 2022
  * 
@@ -15,7 +13,6 @@ use Incodiy\Codiy\Library\Components\Chart\Includes\Scripts;
  * @email      wisnuwidi@gmail.com
  */
 class Charts {
-	use Scripts;
 	
 	public $attributes = [];
 	
