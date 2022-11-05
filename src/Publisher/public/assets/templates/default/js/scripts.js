@@ -29,17 +29,18 @@
 	$(window).ready(e), $(window).on("resize", e);
 	
 	$('#menu').metisMenu();
+	var slimScrollHeight = 98;
 	$('.menu-inner').slimScroll({
-		height : $(window).height() - 198,
+		height : $(window).height() - slimScrollHeight,
 		maxHeight : '460px !important'
 	});
-	$('.menu-inner').css("height", $(window).height() - 198);
+	$('.menu-inner').css("height", $(window).height() - slimScrollHeight);
 	$(window).resize(function() {
-		$('.menu-inner').css("height", $(window).height() - 198);
+		$('.menu-inner').css("height", $(window).height() - slimScrollHeight);
 	});
-	$('.slimScrollDiv').css("height", $(window).height() - 198);
+	$('.slimScrollDiv').css("height", $(window).height() - slimScrollHeight);
 	$(window).resize(function() {
-		$('.slimScrollDiv').css("height", $(window).height() - 198);
+		$('.slimScrollDiv').css("height", $(window).height() - slimScrollHeight);
 	});
 	$('.slimScrollBar').css({
 		'right' : 'unset !important',

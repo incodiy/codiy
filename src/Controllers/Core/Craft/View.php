@@ -122,7 +122,23 @@ trait View {
 			$this->data['route_info']  = null;
 		}
 		
+		if (empty($this->session['id'])) {
+			$this->data['content_page'] = $this->loginPage();
+		}
+		
 		return view($this->pageView, $this->data, $this->dataOptions);
+	}
+	
+	private function loginPage() {
+		$page = new Preference();
+		$obj  = $page->first()->getAttributes();
+		
+		$data = [];
+		$data['login_page']['logo']       = $obj['logo'];
+		$data['login_page']['title']      = $obj['login_title'];
+		$data['login_page']['background'] = $obj['login_background'];
+		
+		return $data;
 	}
 	
 	private function initRenderDatatables($filters = [], $model_filters = []) {

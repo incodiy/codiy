@@ -91,9 +91,13 @@ class PreferenceController extends Controller {
 		$this->form->text('session_name', $this->model_data->session_name);
 		$this->form->text('session_lifetime', $this->model_data->session_lifetime);
 		
-		$this->form->openTab('Web Preference');
+		$this->form->openTab('Login Preference');
+		$this->form->text('login_title', $this->model_data->login_title);
+		$this->form->file('login_background', ['imagepreview']);
 		$this->form->number('login_attempts', $this->model_data->login_attempts);
 		$this->form->text('change_password', $this->model_data->change_password);
+		
+		$this->form->openTab('Web Preference');
 		$this->form->selectbox('debug', ['No', 'Yes'], $this->model_data->debug);
 		$this->form->selectbox('maintenance', ['No', 'Yes'], $this->model_data->maintenance);
 		$this->form->closeTab();

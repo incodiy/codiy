@@ -76,9 +76,14 @@ class CreateBaseTable extends Migration {
 			$table->string('smtp_user', 255)->nullable();
 			$table->string('smtp_password', 255)->nullable();
 			
-			// MAINTENANCE
+			// LOGIN PREFERENCES
+			$table->string('login_title', 50)->nullable();
+			$table->text('login_background')->nullable();
+			$table->text('login_background_thumb')->nullable();
 			$table->integer('login_attempts')->nullable();
 			$table->smallInteger('change_password')->nullable();
+			
+			// MAINTENANCE
 			$table->smallInteger('debug')->nullable();
 			$table->smallInteger('maintenance')->nullable();
 		});

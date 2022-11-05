@@ -10,19 +10,36 @@
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
+$config               = [];
+$config['title']      = __('ADMIN LOGIN');
+$config['logo']       = asset('assets/templates/default') . '/images/logo-almasjid.png';
+$config['background'] = null;
+if (!empty($content_page['login_page'])) {
+	if (!empty($content_page['login_page']['title']))      $config['title']      = $content_page['login_page']['title'];
+	if (!empty($content_page['login_page']['logo']))       $config['logo']       = $content_page['login_page']['logo'];
+	if (!empty($content_page['login_page']['background'])) $config['background'] = $content_page['login_page']['background'];
+}
+
+$background = ' class="login-area login-bg"';
+$formStyle  = null;
+if (!empty($config['background'])) {
+	$background = ' class="login-area login-bg" style="background: url(' . $config['background'] . ') center/cover no-repeat !important;z-index:none !important"';
+	$formStyle  = 'left:-35% !important;position:relative;margin:auto 15% !important;';
+}
+$formStyle  = null;
 ?>
 
 @extends('default.template.admin.index')
 
 @section('content')
 
-		<div class="login-area login-bg">
+		<div{!! $background !!}>
 			<div class="container">
 				<div class="login-box ptb--40">
-					{!! Form::open(['route' => 'login_processor', 'class' => 'sign-in form-horizontal shadow rounded no-overflow']) !!}
+					{!! Form::open(['route' => 'login_processor', 'class' => 'sign-in form-horizontal shadow rounded no-overflow', 'style' => $formStyle]) !!}
 						<div class="login-form-head">
-							<div class="logo"><img src="{{ asset('assets/templates/default') }}/images/logo-almasjid.png" /></div>
-							<h4>{{ __('ADMIN LOGIN') }}</h4>
+							<div class="logo"><img src="{{ $config['logo'] }}" /></div>
+							<h4>{{ $config['title'] }}</h4>
 						</div>
 						<div class="login-form-body">
 							<div class="form-gp">

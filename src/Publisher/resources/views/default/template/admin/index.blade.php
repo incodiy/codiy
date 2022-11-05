@@ -16,8 +16,9 @@
 		@include('default.template.admin.block.meta')
 	</head>
 		
-	<body class="page-sound">
+	<body class="page-sound background-content">
 		<!--[if lt IE 8]><p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p><![endif]-->
+		<img class="background-img" src="{{ asset('assets/templates/default/images/bg/bg-content-001.jpg') }}" />
 		<div id="preloader"><div class="loader"></div></div>
 		
 		@if (Auth::check())

@@ -37,6 +37,21 @@ body {
 	position: relative !important;
 }
 
+.background-content > .background-img {
+	position: fixed;
+	width: 100%;
+	height: auto;
+    margin-top: -10px;
+    opacity: 0.03;
+}
+
+.background-content .main-content-inner .content-box,
+.background-content .main-content-inner .content-box .header{
+	background-color: rgba(255, 255, 255, 0.5);
+	transition: background-color 0.5s cubic-bezier(0.28, 0.11, 0.32, 1);
+/* 	backdrop-filter: saturate(180%) blur(20px); */
+}
+
 table.mapping-table .chosen-choices {
 	height: auto !important;
 }
