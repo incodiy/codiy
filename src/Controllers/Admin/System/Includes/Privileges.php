@@ -362,20 +362,20 @@ trait Privileges {
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:15pt;color:green', 'colspan' => 9])];
+					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:12pt;color:green', 'colspan' => 9])];
 					foreach ($data_module as $module_name => $module_data) {
 						
 						if (!empty($module_data->id)) {
 							$module_title = ucwords(str_replace('_', ' ', $module_name));
 							if (!empty($module_data->name)) $module_title = $module_data->name;
 							
-							$row_table[] = $this->_checkboxes($module_title, $module_data, $icon, 'text-indent:25pt');
+							$row_table[] = $this->_checkboxes($module_title, $module_data, $icon, 'text-indent:19pt');
 						} else {
 							
 							$module_title = ucwords(str_replace('_', ' ', $module_name));
 							if (!empty($module_data->name)) $module_title = $module_data->name;
 							
-							$row_table[] = [diy_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:25pt', 'colspan' => 9])];
+							$row_table[] = [diy_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:19pt', 'colspan' => 9])];
 							foreach ($module_data as $third_name => $third_data) {
 								$third_title = ucwords(str_replace('_', ' ', $third_name));
 								if (!empty($third_data->name)) $third_title = $third_data->name;
@@ -389,7 +389,7 @@ trait Privileges {
 					$child_title = ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					$row_table[] = $this->_checkboxes($child_title, $data_module, $icon, 'text-indent:15pt');
+					$row_table[] = $this->_checkboxes($child_title, $data_module, $icon, 'text-indent:12pt');
 				}
 			}
 		}

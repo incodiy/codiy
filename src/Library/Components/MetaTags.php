@@ -1,6 +1,8 @@
 <?php
 namespace Incodiy\Codiy\Library\Components;
 
+use Incodiy\Codiy\Models\Admin\System\Preference;
+
 /**
  * Meta Tags Class
  *
@@ -21,6 +23,19 @@ class MetaTags {
 	public $preference;
 	
 	public function __construct() {
+		if (!empty(route('system.config.preference.index'))) {
+			$preference = new Preference();
+			$prefData   = $preference->first()->getAttributes();
+			
+			$this->preference['app_name']         = $prefData['title'];
+			$this->preference['meta_title']       = $prefData['meta_title'];
+			$this->preference['meta_keywords']    = $prefData['meta_keywords'];
+			$this->preference['meta_description'] = $prefData['meta_description'];
+			$this->preference['meta_author']      = $prefData['meta_author'];
+			$this->preference['email_person']     = $prefData['email_person'];
+			$this->preference['email_address']    = $prefData['email_address'];
+		}
+		
 		$this->load_meta();
 	}
 	
@@ -66,11 +81,36 @@ class MetaTags {
 	 * created @Aug 21, 2018
 	 * author: wisnuwidi
 	 */
-	private function renderString($string, $setting_name) {
-		if (empty($string)) {
-			$str = $this->config($setting_name);
+	private function renderString($string, $setting_name, $meta_preference_name = false) {
+		$str  = null;
+		$_str = null;
+		
+		if (true === $meta_preference_name) {
+			if (empty($string)) {
+				if (!empty($this->preference[$setting_name])) {
+					$str = $this->preference[$setting_name];
+				} else {
+					$str = $this->config($setting_name);
+				}
+			} else {
+				if (!empty($this->preference[$setting_name])) {
+					$_str = $this->preference[$setting_name];
+				} else {
+					$_str = $this->config($setting_name);
+				}
+				
+				if ('meta_title' === $setting_name) {
+					$str = $string . ' | ' . $_str;
+				} else {
+					$str = $_str;
+				}
+			}
 		} else {
-			$str = $string;
+			if (empty($string)) {
+				$str = $this->config($setting_name);
+			} else {
+				$str = $string;
+			}
 		}
 		
 		return $str;
@@ -121,7 +161,7 @@ class MetaTags {
 	 * @param string $string
 	 */
 	public function app_name($string = null) {
-		$str = $this->renderString($string, 'app_name');
+		$str = $this->renderString($string, 'app_name', true);
 		$this->app_name = $str;
 
 		$this->content['text']['app_name'] = $this->app_name;
@@ -155,20 +195,8 @@ class MetaTags {
 	}
 	
 	public function title($string = null) {
-		if (empty($string)) {
-			if (!empty($this->preference['meta_title'])) {
-				$str = $this->preference['meta_title'];
-			} else {
-				$str = $this->config('meta_title');
-			}
-		} else {
-			if (!empty($this->preference['meta_title'])) {
-				$str = $string . ' | ' . $this->preference['meta_title'];
-			} else {
-				$str = $string . ' | ' . $this->config('meta_title');
-			}
-		}
-
+		$str = $this->renderString($string, 'meta_title', true);
+		
 		$this->content['text']['title'] = $str;
 		$this->content['html']['title'] = "<title>{$str}</title>";
 	}
@@ -193,7 +221,7 @@ class MetaTags {
 	 * @param string $html
 	 */
 	public function keywords($string = null, $html = true) {
-		$str = $this->renderString($string, 'meta_keywords');
+		$str = $this->renderString($string, 'meta_keywords', true);
 
 		$this->content['text']['meta_keywords'] = $str;
 		$this->content['html']['meta_keywords'] = '<meta name="' . __FUNCTION__ . '" content="' . $str . '" />';
@@ -206,7 +234,7 @@ class MetaTags {
 	 * @param string $html
 	 */
 	public function description($string = null, $html = true) {
-		$str = $this->renderString($string, 'meta_description');
+		$str = $this->renderString($string, 'meta_description', true);
 
 		$this->content['text']['meta_description'] = $str;
 		$this->content['html']['meta_description'] = '<meta name="' . __FUNCTION__ . '" content="' . $str . '" />';

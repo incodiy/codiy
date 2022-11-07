@@ -167,7 +167,7 @@ trait MappingPage {
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:15pt;color:green', 'colspan' => 5])];
+					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:12pt;color:green', 'colspan' => 5])];
 					foreach ($data_module as $module_name => $module_data) {
 						if (!empty($this->model_class_info[$module_data->route])) {
 							$roleData = $this->model_class_info[$module_data->route];
@@ -181,7 +181,7 @@ trait MappingPage {
 							$module_title = ucwords(str_replace('_', ' ', $module_name));
 							if (!empty($module_data->name)) $module_title = $module_data->name;
 							 
-							$row_table[] = [diy_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:25pt', 'colspan' => 4])];
+							$row_table[] = [diy_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:19pt', 'colspan' => 4])];
 							foreach ($module_data as $third_name => $third_data) {
 							if (!empty($this->model_class_info[$third_data->route])) {
 								$roleData = $this->model_class_info[$third_data->route];
@@ -360,7 +360,7 @@ trait MappingPage {
 			$mergeBox          = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns, $buffers, $fieldbuff);
 			
 			$resultBox         = [];
-			$resultBox['head'] = [diy_table_row_attr($icon . $module_name_label . $roleColumns['identifier'], ['style' => 'text-indent:25pt', 'id' => strtolower($module_name) . '-row'])];
+			$resultBox['head'] = [diy_table_row_attr($icon . $module_name_label . $roleColumns['identifier'], ['style' => 'text-indent:19pt', 'id' => strtolower($module_name) . '-row'])];
 			$resultBox['body'] = [
 				diy_table_row_attr($roleColumns['table_name'] , ['align' => 'left', 'id' => strtolower($module_name) . '-row']),
 				diy_table_row_attr($mergeBox , $opt),

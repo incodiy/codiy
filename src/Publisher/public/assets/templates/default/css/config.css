@@ -940,7 +940,7 @@ label {
 	padding-bottom: 100px;
 }
 .sidebar-header {
-	height: 60px;
+	height: 46px;
 }
 .sbar_collapsed .main-content .header-area {
 	width: calc(100%);
@@ -2715,7 +2715,7 @@ input.form-control:hover {
 }
 .bootstrap-tagsinput .tag {
 	margin-right: 2px;
-	color: #9e9898;
+	color: #ffffff;/* #9e9898; */
 	border: 1px solid #03a9f4;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
 	font-size: 11px;

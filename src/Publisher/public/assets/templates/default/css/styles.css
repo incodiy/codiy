@@ -154,7 +154,7 @@
    display: inline-block;
    max-width: 77px !important;
    position: relative;
-   top: 8px;
+   top: 0;
 }
 
 .main-menu > li > a {
