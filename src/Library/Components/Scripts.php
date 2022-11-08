@@ -13,6 +13,7 @@ namespace Incodiy\Codiy\Library\Components;
  */
  
 class Scripts {
+	
 	public $baseURL;
 	public $assetPath;
 	public $currentURL;
@@ -71,15 +72,15 @@ class Scripts {
 	}
 	private function check_js_strings($string, $as_script_code = false) {
 		$containedType = 'type="text/javascript"';
-		$containedTag = '<script';
-		$containedSrc = 'src=';
+		$containedTag  = '<script';
+		$containedSrc  = 'src=';
 		
 		$scriptsText = [ ];
 		$scriptsHTML = [ ];
 		
 		if (true === $as_script_code) {
 			return diy_array_to_object_recursive([
-				'url' => false,
+				'url'  => false,
 				'html' => '<script type="text/javascript">' . $string . '</script>'
 			]);
 		}
@@ -103,15 +104,15 @@ class Scripts {
 	}
 	private function check_css_strings($string, $as_script_code = false) {
 		$containedType = 'rel="stylesheet"';
-		$containedTag = '<link';
-		$containedSrc = 'href=';
+		$containedTag  = '<link';
+		$containedSrc  = 'href=';
 		
-		$scriptsText = [ ];
-		$scriptsHTML = [ ];
+		$scriptsText   = [];
+		$scriptsHTML   = [];
 		
 		if (true === $as_script_code) {
 			return diy_array_to_object_recursive([
-				'url' => false,
+				'url'  => false,
 				'html' => '<style>' . $string . '</style>'
 			]);
 		}
@@ -127,7 +128,7 @@ class Scripts {
 		}
 		
 		return diy_array_to_object_recursive([
-			'url' => $scriptsText,
+			'url'  => $scriptsText,
 			'html' => $scriptsHTML
 		]);
 	}

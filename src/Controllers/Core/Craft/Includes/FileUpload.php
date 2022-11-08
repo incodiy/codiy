@@ -80,7 +80,7 @@ trait FileUpload {
 				$thumbName = $thumb;
 			}
 		} else {
-			$thumbName = "{$filename}_thumb";
+			$thumbName    = "{$filename}_thumb";
 		}
 		
 		if (!empty($thumbName)) {
@@ -182,9 +182,9 @@ trait FileUpload {
 						];
 					} else {
 						// insert image file with thumbnail
-						$dataFile[$file_name] = [
-							$file_name				=> $file_data['file'],
-							"{$file_name}_thumb"	=> $file_data['thumbnail']
+						$dataFile[$file_name]   = [
+							$file_name           => $file_data['file'],
+							"{$file_name}_thumb" => $file_data['thumbnail']
 						];
 					}
 				} else {

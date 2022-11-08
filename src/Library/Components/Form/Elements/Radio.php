@@ -22,13 +22,13 @@ trait Radio {
 	
 	private function drawRadioBox($name, $value, $selected, $attributes = []) {
 		$hideAttribute = '';
+		$radiobox      = '';
+		$radio_type    = ' col-sm-3 rdio-primary';
 		
-		$radiobox	= '';
-		$radio_type	= ' col-sm-3 rdio-primary';
 		foreach ($value as $radio_key => $radio_label) {
-			$attr_id			= ['id' => "diy{$radio_key}:rdo" . diy_random_strings(8, false)];
-			$radio_attr			= array_merge_recursive($attr_id, $attributes);
-			$_selected_radio	= false;
+			$attr_id         = ['id' => "diy{$radio_key}:rdo" . diy_random_strings(8, false)];
+			$radio_attr      = array_merge_recursive($attr_id, $attributes);
+			$_selected_radio = false;
 			if (false !== $selected) {
 				if ($radio_key === $selected) {
 					$_selected_radio = true;

@@ -350,6 +350,7 @@ class Search {
 		$nesCript = null;
 		if (!empty($nests['next'])) {
 			$nest      = implode('|', $nests['next']);
+			
 			$nesCript  = "var _nx{$next_target}      = '{$next_target}';";
 			$nesCript .= "var _reident{$next_target} = _nx{$next_target}.replace('_', ' ');";
 			$nesCript .= "$('#{$next_target}').empty()";

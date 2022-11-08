@@ -104,13 +104,13 @@ class Datatables {
 								
 								$routename = routelists_info($roles)['last_info'];
 								if (in_array($routename, ['index', 'show'])) {
-									$actions[routelists_info()['base_info']]['view'] = 'view';
+									$actions[routelists_info()['base_info']]['view']   = 'view';
 									
 								} elseif (in_array($routename, ['create', 'insert'])) {
 									$actions[routelists_info()['base_info']]['insert'] = 'insert';
 									
 								} elseif (in_array($routename, ['edit', 'modify', 'update'])) {
-									$actions[routelists_info()['base_info']]['edit'] = 'edit';
+									$actions[routelists_info()['base_info']]['edit']   = 'edit';
 									
 								} elseif (in_array($routename, ['destroy', 'delete'])) {
 									$actions[routelists_info()['base_info']]['delete'] = 'delete';
@@ -497,7 +497,7 @@ class Datatables {
 			$wheres = implode(' AND ', $wheres);
 			
 			if (!empty($fKeys)) {
-				$rows   = diy_query("SELECT DISTINCT `{$target}`FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}", "SELECT");
+				$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}", "SELECT");
 			} else {
 				$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
 			}

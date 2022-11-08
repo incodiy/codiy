@@ -317,10 +317,8 @@ trait Scripts {
 				
 			$js .= "});";
 			
-		$js .= "});
-
-		";
-								
+		$js .= "});";
+		
 		return $js;
 	}
 	
@@ -352,17 +350,19 @@ trait Scripts {
 	}
 
 	/** 
-	$buttonset = '[
-		{
-			extend:"collection",
-			exportOptions:{columns:":visible:not(:last-child)"},
-			text:"<i class=\"fa fa-external-link\" aria-hidden=\"true\"></i> <u>E</u>xport",
-			buttons:[{text:"Excel",buttons:"excel"}, "csv", "pdf"],
-			key:{key:"e",altKey:true}
-		},
-		"copy",
-		"print"
-	]';
+	 * Set Buttons
+	 * @return
+		$buttonset = '[
+			{
+				extend:"collection",
+				exportOptions:{columns:":visible:not(:last-child)"},
+				text:"<i class=\"fa fa-external-link\" aria-hidden=\"true\"></i> <u>E</u>xport",
+				buttons:[{text:"Excel",buttons:"excel"}, "csv", "pdf"],
+				key:{key:"e",altKey:true}
+			},
+			"copy",
+			"print"
+		]';
 	 */
 	private function setButtons($id, $button_sets = []) {
 		$buttons = [];
@@ -383,7 +383,7 @@ trait Scripts {
 				}
 			}
 			
-			if (!empty($options[$button])) $option = implode(',', $options[$button]);// . ',';
+			if (!empty($options[$button])) $option = implode(',', $options[$button]);
 			$buttons[] = '{extend:"' . $button . '", ' . $option . '}';
 		}
 		

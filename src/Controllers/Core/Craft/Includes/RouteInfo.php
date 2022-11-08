@@ -51,12 +51,12 @@ trait RouteInfo {
 		$controller_path      = $action_route->controller;
 		
 		if (!diy_string_contained($controller_path, 'Controllers@')) {
-			$slice_controller     = explode('Controllers', $controller_path);
-			$slice_controller     = explode('Controller', $slice_controller[1]);
-			$this->pageInfo       = str_replace('@', '', $slice_controller[1]);
+			$slice_controller  = explode('Controllers', $controller_path);
+			$slice_controller  = explode('Controller', $slice_controller[1]);
+			$this->pageInfo    = str_replace('@', '', $slice_controller[1]);
 		} else {
-			$slice_controller     = explode('@', $controller_path);
-			$this->pageInfo       = $slice_controller[1];
+			$slice_controller  = explode('@', $controller_path);
+			$this->pageInfo    = $slice_controller[1];
 		}
 		
 		$slice_controller     = explode('\\', $slice_controller[0]);
@@ -148,8 +148,8 @@ trait RouteInfo {
 		if ('destroy' !== $to) {
 			return route($routeUri);
 		} else {
-			$routeURI	= $routeUri;
-			$routeUri	= explode('/', diy_current_url());
+			$routeURI = $routeUri;
+			$routeUri = explode('/', diy_current_url());
 			unset($routeUri[array_key_last($routeUri)]);
 			
 			return $routeURI . '::' . (int) last($routeUri);
