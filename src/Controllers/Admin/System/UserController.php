@@ -24,7 +24,7 @@ class UserController extends Controller {
 	
 	private $group_id;
 	private $user_groups;
-	private $validations	= [
+	public $validations	= [
 		'username' => 'required',
 		'fullname' => 'required',
 		'email'    => 'required',

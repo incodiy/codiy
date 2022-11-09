@@ -293,20 +293,20 @@ if (!function_exists('diy_form_alert_message')) {
 		if (is_array($message)) {
 			$content_message = '<ul class="alert-info-content">';
 			foreach ($message as $mfield => $mData) {
-				$content_message .= '<li class="title">';
-				$content_message .= ucwords(str_replace('_', ' ', $mfield));
+				$content_message .= '<li class="title"><div>';
+				$content_message .= '<label for="' . $mfield . '" class="control-label">' . ucwords(str_replace('_', ' ', $mfield)) . '</label>';
 				if (is_array($mData)) {
 					$content_message .= '<ul class="content">';
 					foreach ($mData as $imData) {
 						$content_message .= '<li>';
-						$content_message .= $imData;
+						$content_message .= '<label for="' . $mfield . '" class="control-label">' . $imData . '</label>';
 						$content_message .= '</li>';
 					}
 					$content_message .= '</ul>';
 				} else {
 					$content_message .= $imData;
 				}
-				$content_message .= '</li>';
+				$content_message .= '</div></li>';
 			}
 			$content_message .= '</ul>';
 		} else {
@@ -314,13 +314,17 @@ if (!function_exists('diy_form_alert_message')) {
 		}
 		
 		$prefix_tag = false;
-		if (false !== $prefix) $prefix_tag = "<strong><i class=\"fa {$prefix}\"></i> {$title}</strong>";
+		if (false !== $prefix) $prefix_tag = "<strong><i class=\"fa {$prefix}\"></i> &nbsp;{$title}</strong>";
 		
-		$o  = "<div class=\"alert alert-block alert-{$type} animated fadeInDown alert-dismissable\">";
+		$o  = "<div class=\"alert alert-block alert-{$type} animated fadeInDown alert-dismissable\" role=\"alert\">";
 		$o .= "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">";
 		$o .= "<i class=\"fa fa-times\"></i>";
 		$o .= "</button>";
-		$o .= "<p>{$prefix_tag} {$content_message}</p>";
+		if (!is_array($message)) {
+			$o .= "<p>{$prefix_tag} {$content_message}</p>";
+		} else {
+			$o .= "<p>{$prefix_tag}</p>{$content_message}";
+		}
 		$o .= $extra;
 		$o .= "</div>";
 		

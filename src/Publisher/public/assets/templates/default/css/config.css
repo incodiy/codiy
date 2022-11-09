@@ -42,12 +42,89 @@ body {
 	width: 100%;
 	height: auto;
     margin-top: -10px;
-    opacity: 0.03;
+    opacity: 0.08;
+}
+
+.alert > p > strong {
+	font-size: 10pt;
+	font-weight: bolder;
+}
+
+.alert > button.close {
+	font-size: .8rem !important;
+}
+
+.alert-info {
+	border-color: #bee5eb;
+	color: #0c5460;
+}
+
+.alert-warning {
+	border-color: #ffeeba;
+	color: #856404;
+}
+
+.alert-danger {
+	border-color: #f5c6cb;
+	color: #721c24;
+}
+
+.alert-primary {
+	border-color: #b8daff;
+	color: #004085;
+}
+
+.alert-secondary {
+	border-color: #d6d8db;
+	color: #383d41;
+}
+
+.alert-dark {
+	border-color: #c6c8ca;
+	color: #1b1e21;
+}
+
+.alert-info-content {
+	margin-bottom: 8px !important;
+}
+
+.alert-info-content > li.title {
+	margin-bottom: 0 !important;
+}
+
+ul.alert-info-content > li.title > div {
+	margin-top: 8px !important;
+	padding: 10px 20px;
+	border-bottom: white dashed 1px;
+	background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: saturate(180%) blur(20px);
+}
+
+ul.alert-info-content > li.title > div > label {
+	font-size: 9pt !important;
+	font-weight: bolder !important;
+}
+
+ul.alert-info-content label {
+	width: 100%;
+	cursor: hand;
+	cursor: pointer;
+}
+
+ul.alert-info-content div > ul.content {
+	font-size: 10pt;
+	font-weight: lighter;
+	text-indent: 4pt;
+	list-style-type: disclosure-closed;
+}
+
+ul.alert-info-content > li.title > div > ul.content > li{
+	margin-left: 20pt;
 }
 
 .background-content .main-content-inner .content-box,
-.background-content .main-content-inner .content-box .header{
-	background-color: rgba(255, 255, 255, 0.5);
+.background-content .main-content-inner .content-box .header {
+	background-color: rgba(255, 255, 255, 0.8);
 	transition: background-color 0.5s cubic-bezier(0.28, 0.11, 0.32, 1);
 /* 	backdrop-filter: saturate(180%) blur(20px); */
 }
@@ -940,7 +1017,7 @@ label {
 	padding-bottom: 100px;
 }
 .sidebar-header {
-	height: 46px;
+	height: 60px;
 }
 .sbar_collapsed .main-content .header-area {
 	width: calc(100%);
@@ -2715,7 +2792,7 @@ input.form-control:hover {
 }
 .bootstrap-tagsinput .tag {
 	margin-right: 2px;
-	color: #ffffff;/* #9e9898; */
+	color: #9e9898;
 	border: 1px solid #03a9f4;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
 	font-size: 11px;

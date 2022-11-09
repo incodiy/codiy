@@ -539,7 +539,7 @@ class Objects {
 		$status            = [];
 		$status['message'] = 'Success';
 		$status['type']    = 'success';
-		$status['prefix']  = 'fa-check';
+		$status['prefix']  = 'fa-exclamation-triangle';
 		if (!empty($session_messages['message'])) $status['message'] = $session_messages['message'];
 		if (!empty($session_status) || 'failed' !== $session_status) $status['type'] = 'warning';
 		$status['label']   = ucwords($status['type']);

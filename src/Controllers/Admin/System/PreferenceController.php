@@ -39,7 +39,7 @@ class PreferenceController extends Controller {
 	}
 	
 	public function index() {
-		return self::redirect('/1/edit');
+		return self::redirect('1/edit');
 	}
 	
 	private function input_language() {
