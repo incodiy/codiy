@@ -2,6 +2,7 @@
 namespace Incodiy\Codiy\Controllers\Core\Craft;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Created on 24 Mar 2021
@@ -26,7 +27,7 @@ trait Action {
 	public $softDeletedModel         = false;
 	public $is_softdeleted           = false;
 	
-	public $validation	            = [];
+	public $validations	            = [];
 	public $uploadTrack;
 	
 	public $stored_id;
@@ -48,6 +49,10 @@ trait Action {
 	
 	public function create() {
 		return $this->render();
+	}
+	
+	public function setValidations($data = []) {
+		$this->validations = $data;
 	}
 	
 	private function RENDER_DEFAULT_SHOW($id) {
@@ -119,7 +124,7 @@ trait Action {
 				$this->filterDataTable($request);
 			}
 		} else {
-			$request->validate($this->validation);
+			$request->validate($this->validations);
 			
 			if (empty($model))                        $model = $this->getModel();
 			if ('Builder' === class_basename($model)) $model = $this->model_path;
@@ -141,11 +146,34 @@ trait Action {
 	}
 	
 	public function update_data(Request $request, $id, $routeback = true) {
+		$this->validates($request, 'edit');
 		return $this->UPDATE_DATA_PROCESSOR($request, $id, $routeback);
 	}
 	
+	private static $validation_messages = [];
+	public function validates(Request $request, $current_page = null) {
+		$validator = Validator::make($request->all(), $this->validations);
+		if (true === $validator->fails()) {
+			self::$validation_messages['status']   = 'failed';
+			self::$validation_messages['messages'] = $validator->getMessageBag()->messages();
+			
+			return self::redirect($current_page, self::$validation_messages['messages'], self::$validation_messages['status']);
+		}
+	}
+	
+	public static function redirect($to, $message_data = [], $status_info = true) {
+		$message = $message_data;
+		if (!empty($status_info)) {
+			if (!in_array($status_info, ['success', true]) || 'failed' === $status_info) {
+				$status     = 'failed';
+			} else $status = 'success';
+		} else $status    = $status_info;
+		
+		return diy_redirect($to, compact('message'), compact('status'));
+	}
+	
 	private function UPDATE_DATA_PROCESSOR(Request $request, $id, $routeback = true) {
-		$request->validate($this->validation);
+		$request->validate($this->validations);
 		$model = $this->getModel($id);
 		
 		// check if any input file type submited

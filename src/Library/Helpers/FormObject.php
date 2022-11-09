@@ -289,6 +289,30 @@ if (!function_exists('diy_form_selectbox')) {
 if (!function_exists('diy_form_alert_message')) {
 	
 	function diy_form_alert_message($message = 'Success', $type = 'success', $title = 'Success', $prefix = 'fa-check', $extra = false) {
+		
+		if (is_array($message)) {
+			$content_message = '<ul class="alert-info-content">';
+			foreach ($message as $mfield => $mData) {
+				$content_message .= '<li class="title">';
+				$content_message .= ucwords(str_replace('_', ' ', $mfield));
+				if (is_array($mData)) {
+					$content_message .= '<ul class="content">';
+					foreach ($mData as $imData) {
+						$content_message .= '<li>';
+						$content_message .= $imData;
+						$content_message .= '</li>';
+					}
+					$content_message .= '</ul>';
+				} else {
+					$content_message .= $imData;
+				}
+				$content_message .= '</li>';
+			}
+			$content_message .= '</ul>';
+		} else {
+			$content_message = $message;
+		}
+		
 		$prefix_tag = false;
 		if (false !== $prefix) $prefix_tag = "<strong><i class=\"fa {$prefix}\"></i> {$title}</strong>";
 		
@@ -296,7 +320,7 @@ if (!function_exists('diy_form_alert_message')) {
 		$o .= "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">";
 		$o .= "<i class=\"fa fa-times\"></i>";
 		$o .= "</button>";
-		$o .= "<p>{$prefix_tag} {$message}</p>";
+		$o .= "<p>{$prefix_tag} {$content_message}</p>";
 		$o .= $extra;
 		$o .= "</div>";
 		

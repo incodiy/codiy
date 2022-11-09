@@ -14,7 +14,7 @@ use Incodiy\Codiy\Models\Admin\System\Log;
 
 /**
  * Created on 10 Mar 2021
- * Time Created	: 13:28:50
+ * Time Created : 13:28:50
  *
  * @filesource	App.php
  * @author		wisnuwidi@gmail.com - 2021
@@ -70,16 +70,49 @@ if (!function_exists('is_multiplatform')) {
 
 if (!function_exists('diy_sessions')) {
 	/**
-	 * Get all Sessions
+	 * Get Sessions
 	 *
 	 * author: wisnuwidi
 	 *
 	 * @return Illuminate\Support\Facades\Session
 	 *
 	 * created @Dec 14, 2018
+	 * 
+	 * @param string $param
+	 * @param array $data
+	 * 
+	 * @return Session
 	 */
-	function diy_sessions() {
-		return Session::all();
+	function diy_sessions($param = 'all', $data = []) {
+		if (!empty($data)) {
+			return Session::{$param}($data);
+		} else {
+			return Session::{$param}();
+		}
+	}
+}
+
+if (!function_exists('diy_redirect')) {
+	
+	/**
+	 * Set Re-Direction Path With Some Data Info
+	 *
+	 * created @Nov 09, 2022
+	 * author: wisnuwidi
+	 * 
+	 * @param string $to
+	 * @param mixed|string|array $message
+	 * @param mixed|string|boolean $status
+	 * 
+	 * @return \Illuminate\Http\RedirectResponse
+	 */
+	function diy_redirect($to, $message = null, $status = false) {
+		$redirect = Illuminate\Support\Facades\Redirect::to(url()->current() . '/' . $to);
+		
+		if (!empty($message)) $redirect = $redirect->with('message', $message);
+		if (!empty($status))  $redirect = $redirect->with($status, true);
+		
+		return $redirect;
 	}
 }
 

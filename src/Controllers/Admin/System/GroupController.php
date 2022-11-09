@@ -23,12 +23,12 @@ class GroupController extends Controller {
 	use Privileges, MappingPage;
 	
 	public $data;
+	public $validations   = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
 	
 	private $id           = false;
 	private $_set_tab     = [];
 	private $_tab_config  = [];
 	private $_hide_fields = ['id'];
-	private $validations  = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
 	
 	public function __construct() {
 		parent::__construct(Group::class, 'system.config');

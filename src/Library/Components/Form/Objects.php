@@ -520,7 +520,32 @@ class Objects {
 	 *
 	 * @author: wisnuwidi
 	 */
-	public function alert_message($message = 'Success', $type = 'success', $title = 'Success', $prefix = 'fa-check', $extra = false) {
-		$this->draw(diy_form_alert_message($message, $type, $title, $prefix, $extra));
+	public function alert_message($data = []) {
+		$current_data     = [];
+		if (!empty($data)) $current_data = ['current_data' => $data->getAttributes()];
+		$session_messages = [];
+		if (!is_empty(diy_sessions('get', 'message'))) $session_messages = diy_sessions('get', 'message');		
+		$session_status   = null;
+		if (!is_empty(diy_sessions('get', 'status')))  $session_status   = diy_sessions('get', 'status');
+		
+		$param_method     = null;
+		if (!empty($current_data)) {
+			if (!empty($session_messages['message']['_method'])) {
+				$param_method = $session_messages['message']['_method'];
+				diy_sessions($param_method, $current_data);
+			}
+		}
+		
+		$status            = [];
+		$status['message'] = 'Success';
+		$status['type']    = 'success';
+		$status['prefix']  = 'fa-check';
+		if (!empty($session_messages['message'])) $status['message'] = $session_messages['message'];
+		if (!empty($session_status) || 'failed' !== $session_status) $status['type'] = 'warning';
+		$status['label']   = ucwords($status['type']);
+		
+		if (!empty($session_messages)) {
+			$this->draw(diy_form_alert_message($status['message'], $status['type'], $status['label'], $status['prefix'], false));
+		}
 	}
 }

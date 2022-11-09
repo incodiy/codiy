@@ -24,6 +24,11 @@ class PreferenceController extends Controller {
 	
 	public function __construct() {
 		parent::__construct(Preference::class, 'system.config.preference');
+		
+		$this->setValidations([
+			'title'     => 'required|min:100|max:130',
+			'sub_title' => 'required|min:100|max:130'
+		]);
 	}
 	
 	private function getIndexModel($id) {
@@ -33,17 +38,8 @@ class PreferenceController extends Controller {
 		$this->model_data = (object) $this->model_data->getAttributes();
 	}
 	
-	private static function redirect($to) {
-		return redirect(url()->current() . $to);
-	}
-	
 	public function index() {
 		return self::redirect('/1/edit');
-		/* 
-		$this->setPage();
-		$this->getIndexModel(1);
-		return $this->edit(1);
-		 */
 	}
 	
 	private function input_language() {
@@ -56,7 +52,8 @@ class PreferenceController extends Controller {
 	
 	public function edit($id) {
 		$this->setPage();
-	//	$this->form->alert_message('Sukses');
+		
+		$this->form->alert_message();
 	
 		$this->form->modelWithFile();
 		
@@ -71,7 +68,7 @@ class PreferenceController extends Controller {
 		$this->form->selectbox('timezone', $this->input_timezone(), $this->model_data->timezone);
 		
 		$this->form->openTab('Meta Tag');
-		$this->form->text('meta_author', $this->model_data->meta_author);
+		$this->form->text('meta_author', $this->model_data->meta_author, ['required']);
 		$this->form->tags('meta_title', $this->model_data->meta_title);
 		$this->form->tags('meta_keywords', $this->model_data->meta_keywords);
 		$this->form->textarea('meta_description|limit:500', $this->model_data->meta_description);
@@ -109,7 +106,8 @@ class PreferenceController extends Controller {
 	
 	public function update(Request $request, $id) {
 		$this->update_data($request, $id, false);
+		$requests = $request->all();
 		
-		return self::redirect('/edit');
+		return self::redirect('edit', $requests);
 	}
 }
