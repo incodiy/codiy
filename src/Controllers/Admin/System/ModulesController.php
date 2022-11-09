@@ -20,18 +20,21 @@ use Incodiy\Codiy\Models\Admin\System\Icon;
  */
 class ModulesController extends Controller {
 	public $data;
-		
-	private $_hide_fields = ['id'];
-	private $_set_tab     = [];
-	private $_tab_config  = [];
-	private $validations  = [
+	public $validations  = [
 		'route_path'  => 'required|not_in:0',
 		'flag_status' => 'required',
 		'active'      => 'required',
+		'module_info' => 'required|min:100|max:130',
 	];
+	
+	private $_hide_fields = ['id'];
+	private $_set_tab     = [];
+	private $_tab_config  = [];
 	
 	public function __construct() {
 		parent::__construct(Modules::class, 'system.config');
+		
+	//	$this->setValidations($this->validations);
 	}
 
 	/**
@@ -177,6 +180,7 @@ class ModulesController extends Controller {
 	public function edit($id) {
 		$this->setPage();
 		
+		$this->form->alert_message();
 		$model_data = $this->model->find($id);
 		
 		$this->form->model();
@@ -194,7 +198,8 @@ class ModulesController extends Controller {
 	}
 	
 	public function update(Request $request, $id) {
-		$request->validate($this->validations);
+	//	$request->validate($this->validations);
+		$this->validates($request, 'edit');
 		$this->set_data_before_insert($request);
 		
 		diy_update($this->model->find($id), $request, true);
