@@ -49,6 +49,7 @@ trait View {
 		
 		$formElements = [];
 		if (!empty($this->data['components']->form->elements)) {
+			$this->form->setValidations($this->validations);
 			$formElements = $this->form->render($this->data['components']->form->elements);
 		}
 		

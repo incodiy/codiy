@@ -20,12 +20,6 @@ use Incodiy\Codiy\Models\Admin\System\Icon;
  */
 class ModulesController extends Controller {
 	public $data;
-	public $validations  = [
-		'route_path'  => 'required|not_in:0',
-		'flag_status' => 'required',
-		'active'      => 'required',
-		'module_info' => 'required|min:100|max:130',
-	];
 	
 	private $_hide_fields = ['id'];
 	private $_set_tab     = [];
@@ -34,7 +28,12 @@ class ModulesController extends Controller {
 	public function __construct() {
 		parent::__construct(Modules::class, 'system.config');
 		
-	//	$this->setValidations($this->validations);
+		$this->setValidations([
+			'module_info' => 'required|min:5|max:150',
+			'route_path'  => 'required|not_in:0',
+			'flag_status' => 'required',
+			'active'      => 'required'
+		]);
 	}
 
 	/**
@@ -180,7 +179,6 @@ class ModulesController extends Controller {
 	public function edit($id) {
 		$this->setPage();
 		
-		$this->form->alert_message();
 		$model_data = $this->model->find($id);
 		
 		$this->form->model();
@@ -198,13 +196,9 @@ class ModulesController extends Controller {
 	}
 	
 	public function update(Request $request, $id) {
-	//	$request->validate($this->validations);
-		$this->validates($request, 'edit');
 		$this->set_data_before_insert($request);
+		$this->update_data($request, $id);
 		
-		diy_update($this->model->find($id), $request, true);
-		$route_group = str_replace('.', '/', $this->route_page);
-		
-		return redirect("/{$route_group}/module/{$id}/edit");
+		return self::redirect('edit', $request);
 	}
 }

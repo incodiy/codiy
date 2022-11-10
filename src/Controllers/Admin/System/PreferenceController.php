@@ -26,8 +26,12 @@ class PreferenceController extends Controller {
 		parent::__construct(Preference::class, 'system.config.preference');
 		
 		$this->setValidations([
-			'title'     => 'required|min:100|max:130',
-			'sub_title' => 'required|min:100|max:130'
+			/* 
+			'title'       => 'required|min:5|max:150',
+			'sub_title'   => 'required|min:5|max:150',
+			 */
+			'template'    => 'required',
+			'meta_author' => 'required'
 		]);
 	}
 	
@@ -52,8 +56,6 @@ class PreferenceController extends Controller {
 	
 	public function edit($id) {
 		$this->setPage();
-		
-		$this->form->alert_message();
 	
 		$this->form->modelWithFile();
 		

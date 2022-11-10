@@ -289,8 +289,8 @@ if (!function_exists('diy_form_selectbox')) {
 if (!function_exists('diy_form_alert_message')) {
 	
 	function diy_form_alert_message($message = 'Success', $type = 'success', $title = 'Success', $prefix = 'fa-check', $extra = false) {
-		
-		if (is_array($message)) {
+		$content_message = null;
+		if (is_array($message) && 'success' !== $type) {
 			$content_message = '<ul class="alert-info-content">';
 			foreach ($message as $mfield => $mData) {
 				$content_message .= '<li class="title"><div>';
@@ -304,13 +304,11 @@ if (!function_exists('diy_form_alert_message')) {
 					}
 					$content_message .= '</ul>';
 				} else {
-					$content_message .= $imData;
+					$content_message .= '<ul class="content"><li><label for="' . $mfield . '" class="control-label">' . $mData . '</label></li></ul>';
 				}
 				$content_message .= '</div></li>';
 			}
 			$content_message .= '</ul>';
-		} else {
-			$content_message = $message;
 		}
 		
 		$prefix_tag = false;

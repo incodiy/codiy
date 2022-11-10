@@ -32,6 +32,7 @@ class Objects {
 	public $element_name    = [];
 	public $element_plugins = [];
 	public $params          = [];
+	public $validations     = [];
 	
 	/**
 	 * --[openTabHTMLForm]--
@@ -44,6 +45,10 @@ class Objects {
 	
 	public function __construct() {
 		$this->getCurrentRoute();
+	}
+	
+	public function setValidations($data = []) {
+		$this->validations = $data;
 	}
 	
 	protected function getCurrentRoute() {
@@ -158,7 +163,8 @@ class Objects {
 	 *
 	 * @author: wisnuwidi
 	 */
-	public function model($model = null, $row_selected = false, $path = false, $file = false, $type = false) {		
+	public function model($model = null, $row_selected = false, $path = false, $file = false, $type = false) {
+		$this->alert_message();
 		if ('show' !== $this->currentRouteName) {
 			if (str_contains(current_route(), 'edit')) {
 				$sliceURL		= explode('/', diy_current_url());
@@ -520,7 +526,7 @@ class Objects {
 	 *
 	 * @author: wisnuwidi
 	 */
-	public function alert_message($data = []) {
+	private function alert_message($data = []) {
 		$current_data     = [];
 		if (!empty($data)) $current_data = ['current_data' => $data->getAttributes()];
 		$session_messages = [];
@@ -541,7 +547,7 @@ class Objects {
 		$status['type']    = 'success';
 		$status['prefix']  = 'fa-exclamation-triangle';
 		if (!empty($session_messages['message'])) $status['message'] = $session_messages['message'];
-		if (!empty($session_status) || 'failed' !== $session_status) $status['type'] = 'warning';
+		if (!empty($session_status) && 'failed' === $session_status) $status['type'] = 'warning';
 		$status['label']   = ucwords($status['type']);
 		
 		if (!empty($session_messages)) {

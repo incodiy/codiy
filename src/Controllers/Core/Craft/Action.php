@@ -51,10 +51,6 @@ trait Action {
 		return $this->render();
 	}
 	
-	public function setValidations($data = []) {
-		$this->validations = $data;
-	}
-	
 	private function RENDER_DEFAULT_SHOW($id) {
 		$model_data = $this->model->find($id);
 		
@@ -146,13 +142,20 @@ trait Action {
 	}
 	
 	public function update_data(Request $request, $id, $routeback = true) {
-		$this->validates($request, 'edit');
+		$this->validation($request, 'edit');
 		return $this->UPDATE_DATA_PROCESSOR($request, $id, $routeback);
 	}
 	
+	public function setValidations($data = []) {
+		$this->validations = $data;
+		$this->form->setValidations($this->validations);
+	}
+	
 	private static $validation_messages = [];
-	public function validates(Request $request, $current_page = null) {
+	private static $validation_rules    = [];
+	protected function validation(Request $request, $current_page = null) {
 		$validator = Validator::make($request->all(), $this->validations);
+		self::$validation_rules = $validator->getRules();
 		if (true === $validator->fails()) {
 			self::$validation_messages['status']   = 'failed';
 			self::$validation_messages['messages'] = $validator->getMessageBag()->messages();
@@ -162,14 +165,30 @@ trait Action {
 	}
 	
 	public static function redirect($to, $message_data = [], $status_info = true) {
-		$message = $message_data;
+		$message = null;
+		if (!empty($message_data)) {
+			if (is_object($message_data) && 'Request' === class_basename($message_data)) {
+				$message = $message_data->all();
+			} else {				
+				$message = $message_data;
+			}
+		}
+		
+		$status = false;
 		if (!empty($status_info)) {
 			if (!in_array($status_info, ['success', true]) || 'failed' === $status_info) {
 				$status     = 'failed';
 			} else $status = 'success';
 		} else $status    = $status_info;
 		
-		return diy_redirect($to, compact('message'), compact('status'));
+		$compact            = [];
+		$compact['message'] = null;
+		$compact['status']  = false;
+		
+		if (!empty($message)) $compact['message'] = compact('message');
+		if (!empty($status))  $compact['status']  = compact('status');
+		
+		return diy_redirect($to, $compact['message'], $compact['status']);
 	}
 	
 	private function UPDATE_DATA_PROCESSOR(Request $request, $id, $routeback = true) {
