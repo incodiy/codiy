@@ -31,7 +31,7 @@ class ModulesController extends Controller {
 		$this->setValidations([
 			'module_info' => 'required|min:5|max:150',
 			'route_path'  => 'required|not_in:0',
-			'flag_status' => 'required',
+			'flag_status' => 'required|not_in:0',
 			'active'      => 'required'
 		]);
 	}
@@ -182,13 +182,13 @@ class ModulesController extends Controller {
 		$model_data = $this->model->find($id);
 		
 		$this->form->model();
-		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['required', 'readonly']);
+		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['readonly']);
 		$this->form->text('parent_name', null, ['disabled' => 'disabled']);
 		$this->form->text('module_name');
 		$this->form->textarea('module_info');
 		$this->form->selectbox('icon', $this->input_icons(), $model_data->icon);
-		$this->form->selectbox('flag_status', flag_status($this->is_root), $model_data->flag_status, ['required']);
-		$this->form->selectbox('active', active_box(), $model_data->active, ['required']);
+		$this->form->selectbox('flag_status', flag_status($this->is_root), $model_data->flag_status);
+		$this->form->selectbox('active', active_box(), $model_data->active);
 		
 		$this->form->close('Save Module', ['class' => 'btn btn-primary btn-slideright pull-right']);
 		

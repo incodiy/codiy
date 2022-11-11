@@ -118,8 +118,18 @@ ul.alert-info-content div > ul.content {
 	list-style-type: disclosure-closed;
 }
 
-ul.alert-info-content > li.title > div > ul.content > li{
+ul.alert-info-content > li.title > div > ul.content > li {
 	margin-left: 20pt;
+}
+
+.required {
+	color: #ff3000 !important;
+}
+
+.required > strong {
+	font-weight: bolder !important;
+	position: relative;
+	top: -1.5px;
 }
 
 .background-content .main-content-inner .content-box,

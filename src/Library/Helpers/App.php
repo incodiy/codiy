@@ -411,6 +411,36 @@ if (!function_exists('diy_url')) {
     }
 }
 
+if (!function_exists('diy_array_contained_string')) {
+	
+	/**
+	 * Check Array Contained With String
+	 *
+	 * @param array  $array
+	 * @param string $string
+	 *
+	 * @return boolean
+	 */
+	function diy_array_contained_string($array, $string, $return_data = false) {
+		$result           = [];
+		$result['status'] = false;
+		$result['data']   = [];
+		
+		foreach($array as $info => $data) {
+			if (diy_string_contained($data, $string)) {
+				$result['status']      = true;
+				$result['data'][$info] = $string;
+			}
+		}
+		
+		if (false !== $return_data) {
+			return $result['data'];
+		} else {
+			return $result['status'];
+		}
+	}
+}
+
 if (!function_exists('diy_array_to_object_recursive')) {
     
     /**

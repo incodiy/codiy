@@ -414,6 +414,22 @@ class Objects {
 	}
 	
 	/**
+	 * Check If Any Validation Attributes Found
+	 *
+	 * @param string $field_name
+	 * @param array  $current_attributes
+	 *
+	 * @return array
+	 */
+	protected static function checkValidationAttributes($field_name, $current_attributes = []) {
+		if (!empty(self::$validation_attributes[$field_name])) {
+			return array_unique(array_merge_recursive([self::$validation_attributes[$field_name]], $current_attributes));
+		} else {
+			return $current_attributes;
+		}
+	}
+	
+	/**
 	 * Set Input Form Parameters
 	 * 
 	 * @param string $function_name
@@ -426,13 +442,14 @@ class Objects {
 	private function setParams($function_name, $name, $value, $attributes, $label, $selected = false) {
 		if (true === $label)                 $label      = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
 		if (!empty($this->added_attributes)) $attributes = array_merge_recursive($attributes, $this->added_attributes);
+		$attributes = self::checkValidationAttributes($name, $attributes);
 		
 		$this->setModelValueAndSelectedToParams($function_name, $name, $value, $selected);
 		$this->params[$function_name][$name] = [
-			'label'			=> $label,
-			'value'			=> $this->paramValue[$function_name][$name],
-			'selected'		=> $this->paramSelected[$function_name][$name],
-			'attributes'	=> $attributes
+			'label'      => $label,
+			'value'      => $this->paramValue[$function_name][$name],
+			'selected'   => $this->paramSelected[$function_name][$name],
+			'attributes' => $attributes
 		];
 		
 		$this->element_name[$name] = $function_name;
@@ -468,7 +485,7 @@ class Objects {
 		$attributes    = diy_form_change_input_attribute($attributes, 'class', 'form-control');
 		
 		if (true === in_array('required', $attributes) || true === in_array('required', array_keys($attributes))) {
-			$req_symbol = ' <font class="required" title="This Required Field cannot be Leave Empty!"><sup>(</sup>*<sup>)</sup></font>';
+			$req_symbol = ' <font class="required" title="This Required Field cannot be Leave Empty!"><sup>(</sup><strong>*</strong><sup>)</sup></font>';
 		}
 		$labelValue = $label . $req_symbol;
 		
@@ -515,6 +532,7 @@ class Objects {
 		return '<div class="input-group col-sm-9">' . Form::{$function_name}($name, $value, $attributes) . '</div>';
 	}
 	
+	protected static $validation_attributes = [];
 	/**
 	 * Create Simple Alert Message
 	 *
@@ -527,6 +545,13 @@ class Objects {
 	 * @author: wisnuwidi
 	 */
 	private function alert_message($data = []) {
+		if (!empty($this->validations)) {
+			$checkRequired = diy_array_contained_string($this->validations, 'required', true);
+			if (!empty($checkRequired)) {
+				self::$validation_attributes = $checkRequired;
+			}
+		}
+		
 		$current_data     = [];
 		if (!empty($data)) $current_data = ['current_data' => $data->getAttributes()];
 		$session_messages = [];

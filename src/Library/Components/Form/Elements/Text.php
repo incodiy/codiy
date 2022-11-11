@@ -37,10 +37,8 @@ trait Text {
 	 * @param boolean $label
 	 */
 	public function textarea($name, $value = null, $attributes = [], $label = true) {
-		if (diy_form_check_str_attr($attributes, 'ckeditor')) {
-			$this->element_plugins[$name] = 'ckeditor';
-		}
 		
+		if (diy_form_check_str_attr($attributes, 'ckeditor')) $this->element_plugins[$name] = 'ckeditor';
 		if (true === str_contains($name, '|')) {
 			$_name = explode('|', $name);
 			$_attr = [];
@@ -50,8 +48,8 @@ trait Text {
 				$_attr    = array_merge($attributes, ['class' => 'form-control bootstrap-maxlength character-limit', 'maxlength' => $_limiter[1], 'placeholder' => "{$_limiter[1]} character limit"]);
 			}
 			
-			$name       = $_name[0];
-			$attributes = array_merge($_attr, $attributes);
+			$name        = $_name[0];
+			$attributes  = array_merge($_attr, $attributes);
 		}
 		
 		$this->setParams(__FUNCTION__, $name, $value, $attributes, $label);
