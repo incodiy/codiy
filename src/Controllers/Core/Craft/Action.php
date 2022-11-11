@@ -28,6 +28,7 @@ trait Action {
 	public $is_softdeleted           = false;
 	
 	public $validations	            = [];
+	public $exclude_validations      = [];
 	public $uploadTrack;
 	
 	public $stored_id;
@@ -146,8 +147,29 @@ trait Action {
 		return $this->UPDATE_DATA_PROCESSOR($request, $id, $routeback);
 	}
 	
-	public function setValidations($data = []) {
+	/**
+	 * Set Validation Data
+	 * 
+	 * @param array $data
+	 * @param array $exclude
+	 * 	: format :['condition page name' => 'fieldname'] 
+	 * 	: example:['update' => 'password']
+	 */
+	public function setValidations($data = [], $exclude = []) {
 		$this->validations = $data;
+		if (!empty($exclude)) {
+			foreach ($exclude as $pagename => $fieldset) {
+				$pageset = null;
+				
+				if ('insert' === $pagename) $pageset = 'create';
+				if ('update' === $pagename) $pageset = 'edit';
+				
+				if (diy_string_contained(current_route(), $pageset)) {
+					unset($this->validations[$fieldset]);
+					$this->exclude_validations[$fieldset] = $fieldset;
+				}
+			}
+		}
 		$this->form->setValidations($this->validations);
 	}
 	

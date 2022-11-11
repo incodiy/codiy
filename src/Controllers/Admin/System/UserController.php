@@ -24,16 +24,18 @@ class UserController extends Controller {
 	
 	private $group_id;
 	private $user_groups;
-	public $validations	= [
-		'username' => 'required',
-		'fullname' => 'required',
-		'email'    => 'required',
-		'password' => 'required',
-		'group_id' => 'required_if:base_group,0|not_in:0'
-	];
+	public $validations	= [];
 	
 	public function __construct() {
 		parent::__construct(User::class, 'system.accounts.user');
+		
+		$this->setValidations([
+			'username' => 'required',
+			'fullname' => 'required|min:10',
+			'email'    => 'required',
+			'password' => 'required',
+			'group_id' => 'required_if:base_group,0|not_in:0'
+		], ['update' => 'password']);
 	}
 	
 	private static function key_relations() {
@@ -174,8 +176,20 @@ class UserController extends Controller {
 		
 		return $this->render();
 	}
-	
+		
 	public function update(Request $request, $id) {
+		$this->get_session();
+		
+		$this->model_find($id);
+		
+		$this->set_data_before_post($request, __FUNCTION__);
+		$this->update_data($request, $id, false);
+		$this->set_data_after_post($this->group_id, $id);
+		
+		return self::redirect('edit', $request);
+	}
+	
+	public function updateX(Request $request, $id) {
 		$this->get_session();
 		
 		$this->model_find($id);

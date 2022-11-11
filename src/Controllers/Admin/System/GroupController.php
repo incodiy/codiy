@@ -23,7 +23,6 @@ class GroupController extends Controller {
 	use Privileges, MappingPage;
 	
 	public $data;
-	public $validations   = ['group_name' => 'required', 'group_info' => 'required', 'active' => 'required'];
 	
 	private $id           = false;
 	private $_set_tab     = [];
@@ -32,6 +31,12 @@ class GroupController extends Controller {
 	
 	public function __construct() {
 		parent::__construct(Group::class, 'system.config');
+		
+		$this->setValidations([
+			'group_name' => 'required', 
+			'group_info' => 'required', 
+			'active'     => 'required'
+		]);
 	}
 	
 	/**
@@ -249,11 +254,10 @@ class GroupController extends Controller {
 		}
 		
 		$this->set_data_before_insert($request, $id);
-		diy_update($this->model->find($id), $request, true);
+		$this->update_data($request, $id);
 		$this->set_data_after_insert($this->roles);
-		$route_back = url()->current();
 		
-		return redirect("{$route_back}/edit");
+		return self::redirect('edit', $request);
 	}
 	
 	private function set_data_before_insert($request, $model_id = false) {

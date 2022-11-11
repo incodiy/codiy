@@ -26,10 +26,10 @@ class PreferenceController extends Controller {
 		parent::__construct(Preference::class, 'system.config.preference');
 		
 		$this->setValidations([
-			
+			/* 
 			'title'       => 'required|min:5|max:150',
 			'sub_title'   => 'required|min:5|max:150',
-			
+			 */
 			'template'    => 'required',
 			'meta_author' => 'required'
 		]);
@@ -108,8 +108,7 @@ class PreferenceController extends Controller {
 	
 	public function update(Request $request, $id) {
 		$this->update_data($request, $id, false);
-		$requests = $request->all();
 		
-		return self::redirect('edit', $requests);
+		return self::redirect('edit', $request);
 	}
 }
