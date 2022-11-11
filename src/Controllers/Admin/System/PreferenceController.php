@@ -27,7 +27,7 @@ class PreferenceController extends Controller {
 		
 		$this->setValidations([
 			
-			'title'       => 'required|min:50|max:150',
+			'title'       => 'required|min:5|max:150',
 			'sub_title'   => 'required|min:5|max:150',
 			
 			'template'    => 'required',

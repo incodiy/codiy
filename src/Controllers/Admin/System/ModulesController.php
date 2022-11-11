@@ -29,7 +29,7 @@ class ModulesController extends Controller {
 		parent::__construct(Modules::class, 'system.config');
 		
 		$this->setValidations([
-			'module_info' => 'required|min:5|max:150',
+			'module_info' => 'min:5|max:150',
 			'route_path'  => 'required|not_in:0',
 			'flag_status' => 'required|not_in:0',
 			'active'      => 'required'
