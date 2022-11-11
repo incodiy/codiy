@@ -32,11 +32,17 @@ class GroupController extends Controller {
 	public function __construct() {
 		parent::__construct(Group::class, 'system.config');
 		
-		$this->setValidations([
-			'group_name' => 'required', 
-			'group_info' => 'required', 
-			'active'     => 'required'
-		]);
+		$this->setValidations(
+			[
+				'group_name' => 'required|unique:base_group',
+				'group_info' => 'required|unique:base_group',
+				'active'     => 'required'
+			],[
+				'group_name' => 'required',
+				'group_info' => 'required',
+				'active'     => 'required'
+			]
+		);
 	}
 	
 	/**
@@ -129,27 +135,10 @@ class GroupController extends Controller {
 	 */
 	public function store(Request $request) {
 		$this->get_session();
-		if ('root' !== $this->session['user_group']) {
-			if (true === is_multiplatform()) {
-				$request->merge([$this->platform_key => $this->session[$this->platform_key]]);
-			}
-		}
 		
 		if (!empty($_GET['rolemapage'])) {
 			return $this->rolepage($_POST, $_GET['usein']);
 		}
-		
-		$this->validations['group_name'] = 'required|unique:base_group';
-		$request->validate($this->validations);
-		$this->validate(request(), [
-			'group_name'   => [function ($attribute, $value, $fail) {
-				$groupname  = ucwords(str_replace('_', ' ', $attribute));
-				$check      = $this->validation_groups(request());
-				if ($check >= 1) {
-					$fail(":{$groupname} dengan nama '{$value}' sudah terdaftar. Tolong pilih nama lainnya!");
-				}
-			}]
-		]);
 		
 		$requests = $request->all();                                       // collect all requests
 		if (isset($requests['modules'])) {
@@ -165,19 +154,17 @@ class GroupController extends Controller {
 				$request->offsetUnset('rolePages');
 			}
 			
-			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
-			$requestCollections = array_merge($modules, $rolepages);
-			$callbackRequest    = $request->merge($requestCollections);     // callback the all requests
+			$this->insert_data($request, false);
+			$callbackRequest    = $request->merge(array_merge($modules, $rolepages));     // callback the all requests
 		} else {
-			$model_id           = diy_insert($this->model, $request, true); // get group id after request (get last id)
+			$this->insert_data($request, false);
 			$callbackRequest    = $request;
 		}
 		
-		$this->set_data_before_insert($callbackRequest, $model_id);
+		$this->set_data_before_insert($callbackRequest, $this->stored_id);
 		$this->set_data_after_insert($this->roles);
-		$route_group = str_replace('.', '/', $this->route_page);
 		
-		return redirect("/{$route_group}/group/{$model_id}/edit"); 
+		return self::redirect("{$this->stored_id}/edit", $request);
 	}
 	
 	/**
@@ -228,31 +215,6 @@ class GroupController extends Controller {
 	}
 	
 	public function update(Request $request, $id) {
-		$this->get_session();
-		
-		if ('root' !== $this->session['user_group']) {
-			if (true === is_multiplatform()) {
-				$request->merge([$this->platform_key => $this->session[$this->platform_key]]);
-			}
-		}
-		$request->validate($this->validations);
-		
-		// get current group name
-		$posts			= $request->all();
-		$post_name		= strtolower($posts['group_name']);
-		$current_group	= $this->get_current_group($id);
-		$current_name	= strtolower($current_group->group_name);
-		
-		if ($current_name != $post_name) {
-			$this->validate(request(), [
-				'group_name'   => [function ($attribute, $value, $fail) {
-					$groupname  = ucwords(str_replace('_', ' ', $attribute));
-					$check      = $this->validation_groups(request());
-					if ($check >= 1) $fail("{$groupname} dengan nama '{$value}' sudah terdaftar. Tolong pilih nama lainnya!");
-				}]
-			]);
-		}
-		
 		$this->set_data_before_insert($request, $id);
 		$this->update_data($request, $id);
 		$this->set_data_after_insert($this->roles);

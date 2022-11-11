@@ -28,7 +28,6 @@ trait Action {
 	public $is_softdeleted           = false;
 	
 	public $validations	            = [];
-	public $exclude_validations      = [];
 	public $uploadTrack;
 	
 	public $stored_id;
@@ -106,6 +105,7 @@ trait Action {
 	}
 	
 	public function insert_data(Request $request, $routeback = true) {
+		$this->validation($request, 'edit');
 		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
 	}
 	
@@ -150,25 +150,14 @@ trait Action {
 	/**
 	 * Set Validation Data
 	 * 
-	 * @param array $data
-	 * @param array $exclude
-	 * 	: format :['condition page name' => 'fieldname'] 
-	 * 	: example:['update' => 'password']
+	 * @param array $roles
+	 * @param array $on_update
 	 */
-	public function setValidations($data = [], $exclude = []) {
-		$this->validations = $data;
-		if (!empty($exclude)) {
-			foreach ($exclude as $pagename => $fieldset) {
-				$pageset = null;
-				
-				if ('insert' === $pagename) $pageset = 'create';
-				if ('update' === $pagename) $pageset = 'edit';
-				
-				if (diy_string_contained(current_route(), $pageset)) {
-					unset($this->validations[$fieldset]);
-					$this->exclude_validations[$fieldset] = $fieldset;
-				}
-			}
+	public function setValidations($roles = [], $on_update = []) {
+		$this->validations = $roles;
+		if (!empty($on_update) && diy_array_contained_string(['edit', 'update'], explode('.', current_route()))) {
+			unset($this->validations);
+			$this->validations = $on_update;
 		}
 		$this->form->setValidations($this->validations);
 	}

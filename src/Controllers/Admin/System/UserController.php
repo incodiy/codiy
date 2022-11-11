@@ -29,13 +29,20 @@ class UserController extends Controller {
 	public function __construct() {
 		parent::__construct(User::class, 'system.accounts.user');
 		
-		$this->setValidations([
-			'username' => 'required',
-			'fullname' => 'required|min:10',
-			'email'    => 'required',
-			'password' => 'required',
-			'group_id' => 'required_if:base_group,0|not_in:0'
-		], ['update' => 'password']);
+		$this->setValidations (
+			[
+				'username' => 'required|unique:users',
+				'fullname' => 'required|min:10',
+				'email'    => 'required|unique:users',
+				'password' => 'required',
+				'group_id' => 'required_if:base_group,0|not_in:0'
+			], [
+				'username' => 'required',
+				'fullname' => 'required|min:10',
+				'email'    => 'required',
+				'group_id' => 'required_if:base_group,0|not_in:0'
+			]
+		);
 	}
 	
 	private static function key_relations() {
@@ -72,32 +79,32 @@ class UserController extends Controller {
 		
 		$this->form->modelWithFile();
 		
-		$this->form->text('username', null, ['required']);
-		$this->form->text('fullname', null, ['required']);
-		$this->form->text('email', null, ['required']);
-		$this->form->password('password', ['required']);
-		$this->form->selectbox('active', active_box(), false, ['required']);
+		$this->form->text('username', null);
+		$this->form->text('fullname', null);
+		$this->form->text('email', null);
+		$this->form->password('password');
+		$this->form->selectbox('active', active_box(), false);
+		
+		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
+			$this->form->openTab('User Group');
+			if (true === is_multiplatform()) {
+				$this->form->selectbox($this->platform_key, $this->input_platform(), false, [], $this->platform_label);
+			}
+			$this->form->selectbox('group_id', $this->input_group(), false, [], 'User Group');
+			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
+			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute());
+		}
 		
 		$this->form->openTab('User Info');
 		$this->form->file('photo', ['imagepreview']);
 		$this->form->textarea('address', null, ['class' => 'form-control ckeditor']);
 		$this->form->text('phone');
-		$this->form->selectbox('language', $this->input_language(), 'id_ID', ['required']);
-		$this->form->selectbox('timezone', $this->input_timezone(), 218, ['required']);
-		
-		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
-			$this->form->openTab('User Group');
-			if (true === is_multiplatform()) {
-				$this->form->selectbox($this->platform_key, $this->input_platform(), false, ['required'], $this->platform_label);
-			}
-			$this->form->selectbox('group_id', $this->input_group(), false, ['required'], 'User Group');
-			$this->form->selectbox('first_route', [], false, ['required'], 'First Redirect');
-			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute());
-		}
+		$this->form->selectbox('language', $this->input_language(), 'id_ID');
+		$this->form->selectbox('timezone', $this->input_timezone(), 218);
 		
 		$this->form->openTab('User Status');
 		$this->form->date('expire_date');
-		$this->form->selectbox('change_password', active_box(), false, ['required']);
+		$this->form->selectbox('change_password', active_box(), false, []);
 		$this->form->closeTab();
 		
 		$this->form->close('Submit');
@@ -107,6 +114,7 @@ class UserController extends Controller {
 	
 	public function store(Request $request) {
 		$this->get_session();
+		/* 
 		if ($this->is_root) {
 			if (true === is_multiplatform()) {
 				$this->validations[$this->platform_key] = 'required';
@@ -118,12 +126,12 @@ class UserController extends Controller {
 		if (true === is_multiplatform()) {
 			$request->offsetUnset($this->platform_key);
 		}
+		 */
 		$this->set_data_before_post($request);
 		$this->insert_data($request, false);
 		$this->set_data_after_post($this->group_id);
 		
-		$route_back = str_replace('.', '/', $this->route_page);
-		return redirect("{$route_back}/{$this->stored_id}/edit");
+		return self::redirect("{$this->stored_id}/edit", $request);
 	}
 	
 	public function edit($id) {

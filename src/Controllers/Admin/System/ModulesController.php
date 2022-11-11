@@ -28,11 +28,16 @@ class ModulesController extends Controller {
 	public function __construct() {
 		parent::__construct(Modules::class, 'system.config');
 		
-		$this->setValidations([
-			'route_path'  => 'required|not_in:0',
-			'flag_status' => 'required|not_in:0',
-			'active'      => 'required'
-		]);
+		$this->setValidations(
+			[
+				'route_path'  => 'required|unique:base_module|not_in:0',
+				'flag_status' => 'required|not_in:0',
+				'active'      => 'required'
+			], [
+				'flag_status' => 'required|not_in:0',
+				'active'      => 'required'
+			]
+		);
 	}
 
 	/**
@@ -151,7 +156,7 @@ class ModulesController extends Controller {
 		
 		$this->form->model();
 		
-		$this->form->selectbox('route_path', $this->render_value_module_name(), false, ['required']);
+		$this->form->selectbox('route_path', $this->render_value_module_name(), false);
 		$this->form->text('module_name', null, $disabled);
 		$this->form->textarea('module_info', null, $disabled);
 		$this->form->selectbox('icon', $this->input_icons());
@@ -166,13 +171,10 @@ class ModulesController extends Controller {
 	}
 	
 	public function store(Request $request, $req = true) {
-		$request->validate($this->validations);		
 		$this->set_data_before_insert($request);
 		
-		$model       = diy_insert($this->model, $request, true);
-		$route_group = str_replace('.', '/', $this->route_page);
-		
-		return redirect("/{$route_group}/module/{$model}/edit");
+		$this->insert_data($request, false);
+		return self::redirect("{$this->stored_id}/edit", $request);
 	}
 	
 	public function edit($id) {
@@ -181,9 +183,9 @@ class ModulesController extends Controller {
 		$model_data = $this->model->find($id);
 		
 		$this->form->model();
-		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['readonly']);
-		$this->form->text('parent_name', null, ['disabled' => 'disabled']);
-		$this->form->text('module_name');
+		$this->form->selectbox('route_path', $this->render_value_module_name($model_data->route_path), $model_data->route_path, ['readonly', 'disabled']);
+		$this->form->text('parent_name', $model_data->parent_name, ['readonly']);
+		$this->form->text('module_name', $model_data->module_name);
 		$this->form->textarea('module_info');
 		$this->form->selectbox('icon', $this->input_icons(), $model_data->icon);
 		$this->form->selectbox('flag_status', flag_status($this->is_root), $model_data->flag_status);
