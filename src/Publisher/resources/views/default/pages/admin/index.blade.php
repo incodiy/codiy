@@ -16,7 +16,9 @@
 @section('content')
 	
     @foreach($content_page as $content)
+    	@if (!is_array($content))
     	{!! $content !!}
+    	@endif
     @endforeach
     
 @endsection

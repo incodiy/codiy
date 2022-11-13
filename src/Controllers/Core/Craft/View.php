@@ -133,11 +133,13 @@ trait View {
 	private function loginPage() {
 		$page = new Preference();
 		$obj  = $page->first()->getAttributes();
-		
 		$data = [];
-		$data['login_page']['logo']       = $obj['logo'];
-		$data['login_page']['title']      = $obj['login_title'];
-		$data['login_page']['background'] = $obj['login_background'];
+		
+		if (!empty($obj)) {
+			if (!empty($obj['logo']))             $data['login_page']['logo']       = $obj['logo'];
+			if (!empty($obj['login_title']))      $data['login_page']['title']      = $obj['login_title'];
+			if (!empty($obj['login_background'])) $data['login_page']['background'] = $obj['login_background'];
+		}
 		
 		return $data;
 	}

@@ -37,6 +37,10 @@ body {
 	position: relative !important;
 }
 
+.modal-open .modal {
+	backdrop-filter: blur(3px);
+}
+
 .background-content > .background-img {
 	position: fixed;
 	width: 100%;

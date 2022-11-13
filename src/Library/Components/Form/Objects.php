@@ -440,9 +440,9 @@ class Objects {
 	 * @param boolean $selected
 	 */
 	private function setParams($function_name, $name, $value, $attributes, $label, $selected = false) {
-		if (true === $label)                 $label      = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
-		if (!empty($this->added_attributes)) $attributes = array_merge_recursive($attributes, $this->added_attributes);
-		$attributes = self::checkValidationAttributes($name, $attributes);
+		if (true === $label)                                $label      = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
+		if (!empty($this->added_attributes))                $attributes = array_merge_recursive($attributes, $this->added_attributes);
+		if (!diy_string_contained(current_route(), 'show')) $attributes = self::checkValidationAttributes($name, $attributes);
 		
 		$this->setModelValueAndSelectedToParams($function_name, $name, $value, $selected);
 		$this->params[$function_name][$name] = [
