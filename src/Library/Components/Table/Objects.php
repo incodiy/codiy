@@ -651,14 +651,19 @@ class Objects extends Builder {
 			$this->params[$table_name]['filter_model'] = $this->filter_model;
 		}
 		
+		$label = null;
+		if (!empty($this->variables['table_name'])) {
+			$label = $this->variables['table_name'];
+		}
+		
 		if ('datatable' === $this->tableType) {
-			$this->renderDatatable($table_name, $this->columns, $this->params);
+			$this->renderDatatable($table_name, $this->columns, $this->params, $label);
 		} else {
 			$this->renderGeneralTable($table_name, $this->columns, $this->params);
 		}
 	}
 	
-	private function renderDatatable($name, $columns = [], $attributes = []) {
+	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
 		if (!empty($this->variables['table_data_model'])) {
 			$attributes[$name]['model'] = $this->variables['table_data_model'];
 			asort($attributes[$name]);
@@ -669,7 +674,7 @@ class Objects extends Builder {
 			$columns[$name]['filters'] = $this->search_columns;
 		}
 		
-		return $this->draw($this->tableID[$name], $this->table($name, $columns, $attributes));
+		return $this->draw($this->tableID[$name], $this->table($name, $columns, $attributes, $label));
 	}
 	
 	private function renderGeneralTable($name, $columns = [], $attributes = []) {

@@ -169,6 +169,7 @@ trait View {
 	
 	public $is_root = false;	
 	public $filter_page = [];
+	public $page_name = null;
 	/**
 	 * Set Page Attributes
 	 *
@@ -179,17 +180,13 @@ trait View {
 	 * @param string $url
 	 */
 	protected function setPage($page = null, $path = false) {
+		$this->page_name = $page;
 		$this->set_session();
-		if (!empty($this->session['user_group'])) {
-			$this->is_root = str_contains($this->session['user_group'], 'root');
-		}
+		if (!empty($this->session['user_group'])) $this->is_root = str_contains($this->session['user_group'], 'root');
 		$this->routeInfo();
 		
-		if (!empty($this->session['id'])) {
-			$this->filter_page = diy_mapping_page(intval($this->session['id']));
-		}
-		
-		if (!empty($this->model_class)) $this->model($this->model_class);
+		if (!empty($this->session['id'])) $this->filter_page = diy_mapping_page(intval($this->session['id']));
+		if (!empty($this->model_class))   $this->model($this->model_class);
 		if (is_empty($page)) {
 			$currentPage = last(explode('.', current_route()));
 			if (str_contains(strtolower($currentPage), 'index')) {

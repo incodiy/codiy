@@ -19,7 +19,7 @@ class Builder {
 	
 	public $model;
 	
-	protected function table($name, $columns = [], $attributes = []) {
+	protected function table($name, $columns = [], $attributes = [], $label = null) {
 		$data = [];
 		
 		if (!empty($attributes[$name]['model'])) {
@@ -65,7 +65,11 @@ class Builder {
 		
 		// RENDER DATA TABLE
 		if (false !== $name) {
-			$titleText  = ucwords(str_replace('_', ' ', $name)) . ' List(s)';
+			if (empty($label)) {
+				$titleText  = ucwords(str_replace('_', ' ', $name)) . ' List(s)';
+			} else {
+				$titleText  = ucwords(str_replace('_', ' ', $label)) . ' List(s)';
+			}
 			$tableTitle = '<div class="panel-heading"><div class="pull-left"><h3 class="panel-title">' . $titleText . '</h3></div><div class="clearfix"></div></div>';
 		}
 		/* 

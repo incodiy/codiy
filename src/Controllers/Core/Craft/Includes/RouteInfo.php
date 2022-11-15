@@ -98,36 +98,39 @@ trait RouteInfo {
 			}
 			
 			if (count($this->actionButton) >= 1) {
+				$buttonLabel = $this->controllerName;
+				if (!empty($this->page_name)) $buttonLabel = $this->page_name;
+				
 				if ('index' === $this->pageInfo && true === $action_role['create']) {
-					$action_page['action_page'] = ["warning|add {$this->controllerName}" => $this->routeReplaceURL('index', 'create')];
+					$action_page['action_page'] = ["warning|add {$buttonLabel}" => $this->routeReplaceURL('index', 'create')];
 					
 				} elseif ('create' === $this->pageInfo && true === $action_role['create']) {
-					$action_page['action_page'] = ["info|back to {$this->controllerName} lists" => $this->routeReplaceURL('create', 'index')];
+					$action_page['action_page'] = ["info|back to {$buttonLabel} lists" => $this->routeReplaceURL('create', 'index')];
 					
 				} elseif ('edit' === $this->pageInfo) {
 					
 					if (true === $action_role['delete']) {
 						if (true === $this->is_softdeleted) {
-							$actionPage['delete'] = ["secondary|restore {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
+							$actionPage['delete'] = ["secondary|restore {$buttonLabel}" => $this->routeReplaceURL('edit', 'destroy')];
 						} else {
-							$actionPage['delete'] = ["danger|delete {$this->controllerName}" => $this->routeReplaceURL('edit', 'destroy')];
+							$actionPage['delete'] = ["danger|delete {$buttonLabel}" => $this->routeReplaceURL('edit', 'destroy')];
 						}
 					}
 					if (true === $action_role['create']) {
-						$actionPage['create'] = ["warning|add {$this->controllerName}" => $this->routeReplaceURL('edit', 'create')];
+						$actionPage['create'] = ["warning|add {$buttonLabel}" => $this->routeReplaceURL('edit', 'create')];
 					}
 					if (true === $action_role['show']) {
-						$actionPage['edit'] = ["success|view this {$this->controllerName}"  => str_replace('/edit', '', url()->current())];
-						$actionPage['show'] = ["info|back to {$this->controllerName} lists" => $this->routeReplaceURL('edit', 'index')];
+						$actionPage['edit'] = ["success|view this {$buttonLabel}"  => str_replace('/edit', '', url()->current())];
+						$actionPage['show'] = ["info|back to {$buttonLabel} lists" => $this->routeReplaceURL('edit', 'index')];
 					}
 					
 					$action_page['action_page'] = array_merge_recursive($actionPage['delete'], $actionPage['create'], $actionPage['edit'], $actionPage['show']);
 					
 				} elseif ('show' === $this->pageInfo && true === $action_role['show']) {
 					$action_page['action_page'] = [
-						"warning|add {$this->controllerName}"        => $this->routeReplaceURL('show', 'create'),
-						"success|edit this {$this->controllerName}"  => url()->current() . '/edit',
-						"info|back to {$this->controllerName} lists" => $this->routeReplaceURL('show', 'index')
+						"warning|add {$buttonLabel}"        => $this->routeReplaceURL('show', 'create'),
+						"success|edit this {$buttonLabel}"  => url()->current() . '/edit',
+						"info|back to {$buttonLabel} lists" => $this->routeReplaceURL('show', 'index')
 					];
 				}
 			}
