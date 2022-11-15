@@ -59,7 +59,6 @@ class Objects extends Builder {
 		} else {
 			return $object;
 		}
-		
 	}
 	
 	public function setDatatableType($set = true) {
