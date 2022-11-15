@@ -191,7 +191,7 @@ trait File {
 				$elements = $fileData;
 				
 				if ($request->hasfile($inputname)) {
-					//	$this->validationFile($request, $inputname, $elements['file_validation']);
+					if (!empty($elements['file_validation'])) $this->validationFile($request, $inputname, $elements['file_validation']);
 					
 					diy_make_dir($filePath, 0777, true, true);
 					if (is_array($request->file($inputname))) {

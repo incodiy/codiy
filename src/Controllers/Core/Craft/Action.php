@@ -158,7 +158,7 @@ trait Action {
 		if (!empty($on_update) && diy_array_contained_string(['edit', 'update'], explode('.', current_route()))) {
 			unset($this->validations);
 			$this->validations = $on_update;
-		}
+		}//dd($this->validations);
 		$this->form->setValidations($this->validations);
 	}
 	
@@ -176,10 +176,20 @@ trait Action {
 	}
 	
 	public static function redirect($to, $message_data = [], $status_info = true) {
-		$message = null;
+		$message  = null;
 		if (!empty($message_data)) {
 			if (is_object($message_data) && 'Request' === class_basename($message_data)) {
-				$message = $message_data->all();
+				if ($message_data->allFiles()) {
+					$message = $message_data->all();
+					$files     = [];
+					foreach ($message_data->allFiles() as $filename => $filedata) {
+						$files[$filename] = $filedata;
+						unset($message[$filename]);
+					}
+					// Files Need Re-Check Again!!!
+				} else {
+					$message = $message_data->all();
+				}
 			} else {				
 				$message = $message_data;
 			}

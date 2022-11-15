@@ -30,8 +30,10 @@ class PreferenceController extends Controller {
 			'title'       => 'required|min:5|max:150',
 			'sub_title'   => 'required|min:5|max:150',
 			 */
-			'template'    => 'required',
-			'meta_author' => 'required'
+			'template'         => 'required',
+			'meta_author'      => 'required',
+			'logo'             => diy_image_validations(800),
+			'login_background' => diy_image_validations(2000)
 		]);
 	}
 	

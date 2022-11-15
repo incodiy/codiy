@@ -35,12 +35,14 @@ class UserController extends Controller {
 				'fullname' => 'required|min:10',
 				'email'    => 'required|unique:users',
 				'password' => 'required',
-				'group_id' => 'required_if:base_group,0|not_in:0'
+				'group_id' => 'required_if:base_group,0|not_in:0',
+				'photo'    => diy_image_validations(2000)
 			], [
 				'username' => 'required',
 				'fullname' => 'required|min:10',
 				'email'    => 'required',
-				'group_id' => 'required_if:base_group,0|not_in:0'
+				'group_id' => 'required_if:base_group,0|not_in:0',
+				'photo'    => diy_image_validations(2000)
 			]
 		);
 	}
