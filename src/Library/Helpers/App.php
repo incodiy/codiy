@@ -772,7 +772,7 @@ if (!function_exists('diy_log_activity')) {
 	 * Create Data User Log Activity
 	 */
 	function diy_log_activity() {
-		$configuration              = diy_config('log_actifity');
+		$configuration              = diy_config('log_activity');
 		if (in_array($configuration['run_status'], [true, 'unexceptions'])) {
 			$sessions                = session()->all();
 			if (!empty($sessions['user_group'])) {

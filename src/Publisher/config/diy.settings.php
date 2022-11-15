@@ -76,7 +76,7 @@ return [
 		'content'          => 'IE=edge,chrome=1'
 	],
 	
-	'log_actifity'        => [
+	'log_activity'        => [
 		'run_status'       => 'unexceptions',
 		'exceptions'       => [
 			'controllers'   => [
