@@ -18,7 +18,7 @@ use Yajra\DataTables\DataTables as DataTable;
 class Datatables {
 	use Privileges;
 	
-	public $filter_model   = [];
+	public  $filter_model  = [];
 	private $image_checker = ['jpg', 'jpeg', 'png', 'gif'];
 	
 	private function setAssetPath($file_path, $http = false, $public_path = 'public') {
@@ -84,6 +84,13 @@ class Datatables {
 		$action_list        = false;
 		$_action_lists      = [];
 		$removed_privileges = [];
+		
+		$firstField = 'id';
+		$blacklists = ['password', 'action', 'no'];
+		if (!in_array('id', $data->datatables->columns[$table_name]['lists'])) {
+			$firstField = $data->datatables->columns[$table_name]['lists'][0];
+			$blacklists = ['password', 'action', 'no', 'id'];
+		}
 		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
 			
@@ -233,11 +240,11 @@ class Datatables {
 			}
 			$limitTotal = count($model->get());
 		} else {
-			$model      = $model_filters->where("{$table_name}.id", '!=', null);
+			$model      = $model_filters->where("{$table_name}.{$firstField}", '!=', null);
 			$limitTotal = count($model_filters->get());
 		}
 		
-		$model          = $model->orderBy("{$table_name}.id", 'DESC');
+		$model          = $model->orderBy("{$table_name}.{$firstField}", 'DESC');
 		$limit['total'] = intval($limitTotal);
 		
 		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
@@ -248,8 +255,8 @@ class Datatables {
 		$datatables = DataTable::of($model)
 			->setTotalRecords($limit['total'])
 			->setFilteredRecords($limit['total'])
-			->blacklist(['password', 'action', 'no'])
-			->orderColumn('id', "'{$table_name}.id DESC'")
+			->blacklist($blacklists)
+			->orderColumn($firstField, "'{$table_name}.{$firstField} DESC'")
 			->smart(true);
 			
 		$is_image = [];

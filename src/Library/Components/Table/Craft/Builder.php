@@ -429,7 +429,7 @@ class Builder {
 		$jsonData	= [];
 		
 		$column_id  = [];
-		if (false !== $server_side) {
+		if (false !== $server_side && in_array('id', $columns)) {
 			$column_id['data'] = 'id';
 			$column_id['name'] = 'id';
 		}
