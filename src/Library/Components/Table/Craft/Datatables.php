@@ -244,7 +244,7 @@ class Datatables {
 			$limitTotal = count($model_filters->get());
 		}
 		
-		$model          = $model->orderBy("{$table_name}.{$firstField}", 'DESC');
+	//	$model          = $model->orderBy("{$table_name}.{$firstField}", 'DESC');
 		$limit['total'] = intval($limitTotal);
 		
 		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
@@ -256,7 +256,7 @@ class Datatables {
 			->setTotalRecords($limit['total'])
 			->setFilteredRecords($limit['total'])
 			->blacklist($blacklists)
-			->orderColumn($firstField, "'{$table_name}.{$firstField} DESC'")
+		//	->orderColumn($firstField, "'{$table_name}.{$firstField} DESC'")
 			->smart(true);
 			
 		$is_image = [];

@@ -429,9 +429,12 @@ class Builder {
 		$jsonData	= [];
 		
 		$column_id  = [];
-		if (false !== $server_side && in_array('id', $columns)) {
-			$column_id['data'] = 'id';
-			$column_id['name'] = 'id';
+		if (false !== $server_side) {
+			$firstField = 'id';
+			if (!in_array('id', $columns)) $firstField = $columns[1];
+			
+			$column_id['data'] = $firstField;
+			$column_id['name'] = $firstField;
 		}
 		
 		$formula_fields = [];
@@ -510,13 +513,13 @@ class Builder {
 			}
 		}
 		
-		$dt_info                = [];
-		$dt_info['searchable']	= [];
-		$dt_info['name']			= $name;
+		$dt_info               = [];
+		$dt_info['searchable'] = [];
+		$dt_info['name']       = $name;
 		if (!empty($data['columns']['sortable'])) $dt_info['sortable'] = $data['columns']['sortable'];
 		if (!empty($data['attributes']['conditions'])) {
-			$dt_info['conditions']	= $data['attributes']['conditions'];
-			$dt_info['columns']		= $new_data_columns;
+			$dt_info['conditions'] = $data['attributes']['conditions'];
+			$dt_info['columns']    = $new_data_columns;
 		}
 		
 		$filter = false;
@@ -525,10 +528,10 @@ class Builder {
 			$dt_info['searchable'] = $data['columns']['searchable'];
 			
 			if (!empty($data['columns']['filters'])) {
-				$search_data					      = [];
-				$search_data['table_name']	      = $name;
-				$search_data['searchable']	      = $data['columns']['searchable'];
-				$search_data['columns']		      = $data['columns']['filters'];
+				$search_data                     = [];
+				$search_data['table_name']       = $name;
+				$search_data['searchable']       = $data['columns']['searchable'];
+				$search_data['columns']          = $data['columns']['filters'];
 				
 				$search_data['relations']        = [];
 				if (!empty($data['columns']['relations'])) {

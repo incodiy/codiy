@@ -81,7 +81,7 @@ trait Scripts {
 			
 			$scriptURI    = "{$current_url}?{$link_url}";
 			$colDefs      = ",columnDefs:[{targets:[1],visible:true,searchable:false,className:'control hidden-column'}";
-			$orderColumn  = ",order:[[1, 'asc']]{$colDefs}]";
+			$orderColumn  = ",order:[[1, 'desc']]{$colDefs}]";
 			$columns      = ",columns:{$columns}{$orderColumn}";
 			$url_path     = url(diy_current_route()->uri);
 			$hash         = hash_code_id();
