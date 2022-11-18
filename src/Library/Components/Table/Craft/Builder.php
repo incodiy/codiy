@@ -559,13 +559,15 @@ class Builder {
 					$data_sql   = null;
 				}
 				
-				$search_object         = new Search($data_model, $search_data, $data_sql);
+				$searchInfo            = ['id' => $tableID];
+				$searchInfoAttribute   = "{$searchInfo['id']}_cdyFILTER";
+				$search_object         = new Search("{$searchInfo['id']}_cdyFILTER", $data_model, $search_data, $data_sql);
 				$this->filter_object   = $search_object;
 				
-				$dt_info['id']         = $tableID;
+				$dt_info['id']         = $searchInfo['id'];
 				$dt_info['class']      = 'dt-button buttons-filter';
 				$dt_info['attributes'] = [
-					'id'                => "{$tableID}_cdyFILTER",
+					'id'                => $searchInfoAttribute,
 					'class'             => "modal fade {$tableID}",
 					'role'              => 'dialog',
 					'tabindex'          => '-1',
@@ -578,7 +580,7 @@ class Builder {
 				$dt_info['button_label']          = '<i class="fa fa-filter"></i> Filter';
 				$dt_info['action_button_removed'] = $data['attributes']['buttons_removed'];
 				$dt_info['modal_title']           = '<i class="fa fa-filter"></i> &nbsp; Filter';
-				$dt_info['modal_content']         = $search_object->render($dt_info['name'], $data['columns']['filters']);
+				$dt_info['modal_content']         = $search_object->render($searchInfoAttribute, $dt_info['name'], $data['columns']['filters']);
 			}
 		}
 		$datatables[$name]['columns']    = $dt_columns;

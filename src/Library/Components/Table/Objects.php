@@ -262,6 +262,7 @@ class Objects extends Builder {
 	}
 	
 	public function orderby($column, $order = 'asc') {
+		$this->variables['orderby_column'] = [];
 		$this->variables['orderby_column'] = ['column' => $column, 'order' => $order];
 	}
 	
@@ -271,6 +272,7 @@ class Objects extends Builder {
 	 * @param string|array $columns
 	 */
 	public function sortable($columns = null) {
+		$this->variables['sortable_columns'] = [];
 		$this->variables['sortable_columns'] = $this->checkColumnSet($columns);
 	}
 	
@@ -280,6 +282,7 @@ class Objects extends Builder {
 	 * @param string|array $columns
 	 */
 	public function clickable($columns = null) {
+		$this->variables['clickable_columns'] = [];
 		$this->variables['clickable_columns'] = $this->checkColumnSet($columns);
 	}
 	
@@ -290,6 +293,7 @@ class Objects extends Builder {
 	 * @param string|array $columns
 	 */
 	public function searchable($columns = null) {
+		$this->variables['searchable_columns'] = [];
 		$this->variables['searchable_columns'] = $this->checkColumnSet($columns);
 		if (empty($columns)) {
 			if (false === $columns) {
@@ -376,6 +380,7 @@ class Objects extends Builder {
 	
 	public $conditions = [];
 	public function where($field_name, $logic_operator = false, $value = false) {
+		$this->conditions['where'] = [];
 		if (is_array($field_name)) {
 			foreach ($field_name as $fieldname => $fieldvalue) {
 				$this->conditions['where'][] = [
@@ -434,8 +439,8 @@ class Objects extends Builder {
 	 * @param bool $node_after_node_location
 	 */
 	public function formula(string $name, string $label = null, array $field_lists, string $logic, string $node_location = null, bool $node_after_node_location = true) {
-		$this->labels[$name]             = $label;
-		$this->conditions['formula'][]	= [
+		$this->labels[$name]           = $label;
+		$this->conditions['formula'][] = [
 			'name'          => $name,
 			'label'         => $label,
 			'field_lists'   => $field_lists,

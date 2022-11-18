@@ -23,9 +23,11 @@ class Search {
 	private $foreign_keys;
 	private $sql;
 	private $table;
+	private $info;
 	
 	private $model_filters = [];
-	public function __construct($model = null, $filters = [], $sql = null) {
+	public function __construct($info, $model = null, $filters = [], $sql = null) {
+		$this->info = $info;
 		if (!empty($model)) $model = new $model();
 		
 		if (!empty($filters['filter_model'])) {
@@ -45,14 +47,16 @@ class Search {
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
 	}
 	
-	public function render(string $table, array $fields) {
-		$this->search_box($table, $this->getColumnInfo($table, $fields), $this->model);
-		
-		$data         = [];
-		$data['name'] = ucwords(str_replace('-', ' ', diy_clean_strings($table)));
-		$data['html'] = $this->html;
-		
-		return $data;
+	public function render($info, string $table, array $fields) {
+		if ($this->info === $info) {
+			$this->search_box($info, $table, $this->getColumnInfo($table, $fields), $this->model);
+			
+			$data         = [];
+			$data['name'] = ucwords(str_replace('-', ' ', diy_clean_strings($table)));
+			$data['html'] = $this->html;
+			
+			return $data;
+		}
 	}
 	
 	private function select($sql) {
@@ -179,7 +183,7 @@ class Search {
 	}
 	
 	private $html = false;
-	private function search_box($name, $data, $model) {
+	private function search_box($info, $name, $data, $model) {
 		$this->form->excludeFields = ['password_field'];
 		$this->form->hideFields    = ['id'];
 		
@@ -372,9 +376,9 @@ class Search {
 		
 		$forkey = [];
 		if (!empty($this->foreign_keys)) {
-			$forkey = $this->foreign_keys;
+			$forkey   = $this->foreign_keys;
 		}
-		$forkeys = json_encode($forkey);
+		$forkeys     = json_encode($forkey);
 		
 		$uri         = diy_get_ajax_urli('filterDataTables');
 		$token       = csrf_token();
