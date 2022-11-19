@@ -46,7 +46,32 @@ class Objects extends Builder {
 	private function draw($initial, $data = []) {
 		if ($data) {
 			$this->elements[$initial] = $data;
-			if (!empty($this->filter_object->add_scripts)) $this->filter_scripts = $this->filter_object->add_scripts;
+			
+			if (!empty($this->filter_object->add_scripts)) {
+				if (true === array_key_exists('add_js', $this->filter_object->add_scripts)) {
+					$scriptCss  = $this->filter_object->add_scripts['css'];
+					unset($this->filter_object->add_scripts['css']);
+					$scriptJs  = $this->filter_object->add_scripts['js'];
+					unset($this->filter_object->add_scripts['js']);
+					$scriptAdd = $this->filter_object->add_scripts['add_js'];
+					unset($this->filter_object->add_scripts['add_js']);
+					
+					$this->filter_scripts['css'] = $scriptCss;
+					
+					$JSScripts = [];
+					$JSScripts = $scriptJs;
+					foreach ($scriptAdd as $addScripts) {
+						$JSScripts[] = $addScripts;
+					}
+					
+					foreach ($JSScripts as $js) {
+						$this->filter_scripts['js'][] = $js;
+					}
+					
+				} else {
+					$this->filter_scripts = $this->filter_object->add_scripts;
+				}
+			}
 		}
 	}
 	

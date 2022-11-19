@@ -278,7 +278,7 @@ class Search {
 		}
 	    
 		$boxTitle   = ucwords(str_replace('-', ' ', diy_clean_strings($tablename)));
-		$boxName    = $info . 'modalBOX';//diy_clean_strings($name);
+		$boxName    = $info . 'modalBOX';
 		$this->addScriptsTemplate($script_elements, $tablename, $boxName);
 		$this->html = diy_modal_content_html($boxName, $boxTitle, $this->form->elements);
 	}
@@ -293,7 +293,7 @@ class Search {
 		$scriptElements   = array_keys($element_scripts[$nodElm]);
 		$fields['others'] = $scriptElements;
 		
-		$this->script_config($scriptElements);
+		$this->script_config($node, $scriptElements);
 		foreach ($scriptElements as $index => $field) {
 			unset($scriptElements[$index]);
 			
@@ -421,10 +421,10 @@ class Search {
 		if (!empty($identity)) {
 			$script = "jQuery(function($) {";
 			
-				$script .= "$('#{$node}').children('div.form-group').each(function (x, y) {";
+				$script .= "$('#{$node}').children('div.form-group').each(function () {";
 					$script .= "var iterate{$this->cleardash($node)} = $(this).find('select#{$identity}');";
 					
-					$script .= "iterate{$this->cleardash($node)}.change(function (i, x) {";
+					$script .= "iterate{$this->cleardash($node)}.change(function () {";
 						$script .= "var _val{$identity} = $(this).val();";
 						$script .= "if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') {";
 							$script .= "{$ajaxSuccess}";
@@ -438,14 +438,14 @@ class Search {
 			$script .= "});";
 		}
 		
-		$this->add_scripts['js'][] = "{$this->scriptToHTML}{$script}";
+		$this->add_scripts['add_js'][] = "{$this->scriptToHTML}{$script}";
 	}
 	
 	private function cleardash($string) {
 		return str_replace('-', '_', $string);
 	}
 	
-	private function script_config($fields) {
+	private function script_config($node, $fields) {
 		$FieldSets = [];
 		if (!empty($fields)) {
 			foreach ($fields as $index => $field) {
@@ -454,7 +454,7 @@ class Search {
 		}
 		$fieldScripts = implode('', $FieldSets);
 				
-		$this->add_scripts['js'][] = "{$this->scriptToHTML}{$fieldScripts}";
+		$this->add_scripts['add_js'][] = "{$this->scriptToHTML}{$fieldScripts}";
 	}
 	
 	private function getColumnInfo(string $table, array $fields) {
