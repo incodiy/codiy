@@ -183,7 +183,7 @@ class Search {
 	}
 	
 	private $html = false;
-	private function search_box($info, $name, $data, $model) {
+	private function search_box($info, $tablename, $data, $model) {
 		$this->form->excludeFields = ['password_field'];
 		$this->form->hideFields    = ['id'];
 		
@@ -200,7 +200,7 @@ class Search {
 				foreach ($this->input_relations['type'] as $field => $type) {
 					$values[$field] = null;
 					
-					if ($open_field === $field) $values[$field] = $this->set_first_selectbox($name, $field_value, $field);
+					if ($open_field === $field) $values[$field] = $this->set_first_selectbox($tablename, $field_value, $field);
 					
 					if (!empty($values[$field])) {
 						$attributes = ['id' => $field];
@@ -241,7 +241,7 @@ class Search {
 							if (!empty($values[$field])) $this->form->text($field, $values[$field], ['id' => $field]);
 	        		}
 	        		
-	        		$script_elements[$field] = $type;
+	        		$script_elements[$info][$field] = $type;
 				}
 			}
 		} else {
@@ -273,23 +273,24 @@ class Search {
 						$this->form->text($field, null, ['id' => $field]);
 				}
 				
-				$script_elements[$field] = $type;
+				$script_elements[$info][$field] = $type;
 			}
 		}
 	    
-		$this->addScriptsTemplate($script_elements, $name);
-		$title      = ucwords(str_replace('-', ' ', diy_clean_strings($name)));
-		$name       = diy_clean_strings($name);
-		$this->html = diy_modal_content_html($name, $title, $this->form->elements);
+		$boxTitle   = ucwords(str_replace('-', ' ', diy_clean_strings($tablename)));
+		$boxName    = $info . 'modalBOX';//diy_clean_strings($name);
+		$this->addScriptsTemplate($script_elements, $tablename, $boxName);
+		$this->html = diy_modal_content_html($boxName, $boxTitle, $this->form->elements);
 	}
 	
 	public $add_scripts  = [];
-	private function addScriptsTemplate(array $element_scripts, string $table) {
+	private function addScriptsTemplate(array $element_scripts, string $table, $node) {
 		$current_template = diy_template_config('admin.' . diy_current_template());
 		unset($current_template['position']);
 		
+		$nodElm           = str_replace('modalBOX', '', $node);
 		$fields           = [];
-		$scriptElements   = array_keys($element_scripts);
+		$scriptElements   = array_keys($element_scripts[$nodElm]);
 		$fields['others'] = $scriptElements;
 		
 		$this->script_config($scriptElements);
@@ -298,10 +299,10 @@ class Search {
 			
 			$fields['current'] = [$index => $field];
 			
-			$this->script_next_data($field, $fields, $table);
+			$this->script_next_data($node, $field, $fields, $table);
 		}
 		
-		foreach ($element_scripts as $type) {
+		foreach ($element_scripts[$nodElm] as $type) {
 			if ('selectbox' === $type) $type = 'select';
 			
 			foreach ($current_template as $element => $data) {
@@ -323,7 +324,7 @@ class Search {
 	}
 	
 	private $scriptToHTML = 'diyScriptNode::';
-	private function script_next_data($identity, $fields, $table) {;
+	private function script_next_data($node, $identity, $fields, $table) {
 		$currKey     = key($fields['current']);
 		$next_target = null;
 		
@@ -419,18 +420,29 @@ class Search {
 		$script = null;
 		if (!empty($identity)) {
 			$script = "jQuery(function($) {";
-				$script .= "$('#{$identity}').change(function() {";
-					$script .= "var _val{$identity} = $(this).val();";
-					$script .= "if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') {";
-						$script .= "{$ajaxSuccess}";
-					$script .= "} else {";
-						$script .= "{$nesCript}";
-					$script .= "}";
+			
+				$script .= "$('#{$node}').children('div.form-group').each(function (x, y) {";
+					$script .= "var iterate{$this->cleardash($node)} = $(this).find('select#{$identity}');";
+					
+					$script .= "iterate{$this->cleardash($node)}.change(function (i, x) {";
+						$script .= "var _val{$identity} = $(this).val();";
+						$script .= "if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') {";
+							$script .= "{$ajaxSuccess}";
+						$script .= "} else {";
+							$script .= "{$nesCript}";
+						$script .= "}";
+					$script .= "});";
+					
 				$script .= "});";
+				
 			$script .= "});";
 		}
 		
 		$this->add_scripts['js'][] = "{$this->scriptToHTML}{$script}";
+	}
+	
+	private function cleardash($string) {
+		return str_replace('-', '_', $string);
 	}
 	
 	private function script_config($fields) {
