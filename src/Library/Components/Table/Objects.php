@@ -424,6 +424,20 @@ class Objects extends Builder {
 	}
 	
 	/**
+	 * Filter Table
+	 * 
+	 * @param array $filters
+	 * 		: $this->model_filters
+	 * @return array
+	 */
+	public function filterConditions($filters = []) {
+		if (empty($filters)) {
+			$filters = $this->model_filters;
+		}
+		return $this->where($filters);
+	}
+	
+	/**
 	 * Set Data Condition By Column
 	 * 
 	 * @param string $field_name
@@ -666,16 +680,6 @@ class Objects extends Builder {
 		if (!empty($this->variables['add_table_attributes'])) {
 			$this->params[$table_name]['attributes']['add_attributes'] = $this->variables['add_table_attributes'];
 		}
-		/* 
-		if (!empty($this->conditions)) {
-			$conditions       = $this->conditions;
-			$this->conditions = [];
-			if (!empty($conditions['formula'])) {
-				$this->formula[$table_name]             = $conditions['formula'];
-			}
-			$this->params[$table_name]['conditions']   = $conditions;
-			$this->conditions[$table_name]             = $this->params[$table_name]['conditions'];
-		} */
 		
 		if (!empty($this->conditions)) {
 			$this->params[$table_name]['conditions']     = $this->conditions;

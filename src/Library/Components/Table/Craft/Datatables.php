@@ -204,7 +204,7 @@ class Datatables {
 			
 			$model = $model_condition;
 		}
-	//	dd($data->datatables->conditions);
+		
 		// Filter
 		$fstrings	= [];
 		$_ajax_url	= 'renderDataTables';
