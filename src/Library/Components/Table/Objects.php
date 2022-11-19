@@ -666,7 +666,7 @@ class Objects extends Builder {
 		if (!empty($this->variables['add_table_attributes'])) {
 			$this->params[$table_name]['attributes']['add_attributes'] = $this->variables['add_table_attributes'];
 		}
-		
+		/* 
 		if (!empty($this->conditions)) {
 			$conditions       = $this->conditions;
 			$this->conditions = [];
@@ -675,10 +675,29 @@ class Objects extends Builder {
 			}
 			$this->params[$table_name]['conditions']   = $conditions;
 			$this->conditions[$table_name]             = $this->params[$table_name]['conditions'];
+		} */
+		
+		if (!empty($this->conditions)) {
+			$this->params[$table_name]['conditions']     = $this->conditions;
+			if (!empty($this->conditions['formula'])) {
+				$this->formula[$table_name]               = $this->conditions['formula'];
+				unset($this->conditions['formula']);
+				$this->conditions[$table_name]['formula'] = $this->formula[$table_name];
+			}
+			if (!empty($this->conditions['where'])) {
+				$whereCond = $this->conditions['where'];
+				unset($this->conditions['where']);
+				$this->conditions[$table_name]['where']   = $whereCond;
+			}
+			if (!empty($this->conditions['columns'])) {
+				$columnCond = $this->conditions['columns'];
+				unset($this->conditions['columns']);
+				$this->conditions[$table_name]['columns'] = $columnCond;
+			}
 		}
 		
 		if (!empty($this->filter_model)) {
-			$this->params[$table_name]['filter_model'] = $this->filter_model;
+			$this->params[$table_name]['filter_model']   = $this->filter_model;
 		}
 		
 		$label = null;

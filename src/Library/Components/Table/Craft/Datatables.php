@@ -57,6 +57,29 @@ class Datatables {
 	}
 	
 	public function process($data, $filters = [], $filter_page = []) {
+		/* 
+		if (empty($filters)) {
+			$filters = $filter_page;
+		} else {
+			$originalFilters = $filters;
+			unset($filters['renderDataTables']);
+			unset($filters['difta']);
+			unset($filters['filters']);
+			unset($filters['_token']);
+			
+			foreach ($filter_page as $fname => $fvalues) {
+				if (isset($filters[$fname]) &&!is_empty($filters[$fname])) {
+					unset($originalFilters[$fname]);
+					$originalFilters[$fname] = $filters[$fname];
+				} else {
+					unset($originalFilters[$fname]);
+					$originalFilters[$fname] = $fvalues;
+				}
+			}
+			
+			$filters = $originalFilters;
+		}
+		 */
 		if (!empty($data->datatables->model[$_GET['difta']['name']])) {
 			
 			$model_type   = $data->datatables->model[$_GET['difta']['name']]['type'];
@@ -181,7 +204,7 @@ class Datatables {
 			
 			$model = $model_condition;
 		}
-		
+	//	dd($data->datatables->conditions);
 		// Filter
 		$fstrings	= [];
 		$_ajax_url	= 'renderDataTables';
@@ -244,7 +267,6 @@ class Datatables {
 			$limitTotal = count($model_filters->get());
 		}
 		
-	//	$model          = $model->orderBy("{$table_name}.{$firstField}", 'DESC');
 		$limit['total'] = intval($limitTotal);
 		
 		if (!empty(request()->get('start')))  $limit['start']  = request()->get('start');
@@ -256,7 +278,6 @@ class Datatables {
 			->setTotalRecords($limit['total'])
 			->setFilteredRecords($limit['total'])
 			->blacklist($blacklists)
-		//	->orderColumn($firstField, "'{$table_name}.{$firstField} DESC'")
 			->smart(true);
 			
 		$is_image = [];
