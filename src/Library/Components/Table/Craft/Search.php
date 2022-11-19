@@ -203,9 +203,9 @@ class Search {
 					if ($open_field === $field) $values[$field] = $this->set_first_selectbox($tablename, $field_value, $field);
 					
 					if (!empty($values[$field])) {
-						$attributes = ['id' => $field];
+						$attributes = ['id' => $field, 'class' => $field . '_' . $this->cleardash($info) . 'Field'];
 					} else {
-						$attributes = ['disabled' => 'disabled'];
+						$attributes = ['id' => $field, 'class' => $field . '_' . $this->cleardash($info) . 'Field', 'disabled' => 'disabled'];
 					}
 					
 					$field_label = ucwords(diy_clean_strings($field, ' '));
@@ -337,15 +337,15 @@ class Search {
 		
 		foreach ($fields['others'] as $idx => $value) {
 			if ($idx < $currKey) {
-				$nests['pref'][$idx] = $value;
+				$nests['prev'][$idx] = $value;
 			} else {
 				if ($idx !== $currKey+1) $nests['next'][$idx] = $value;
 			}
 		}
 		
-		if (!empty($nests['pref'])) {
-			$prev = implode('|', $nests['pref']);
-			foreach ($nests['pref'] as $preval) {
+		if (!empty($nests['prev'])) {
+			$prev = implode('|', $nests['prev']);
+			foreach ($nests['prev'] as $preval) {
 				$prevscripts[] = "$('#{$preval}').val()";
 			}
 			$prevscript = implode("+'|'+", $prevscripts);
@@ -383,14 +383,17 @@ class Search {
 		
 		$uri         = diy_get_ajax_urli('filterDataTables');
 		$token       = csrf_token();
+		$fNode       = $this->cleardash(str_replace('modalBOX', 'Field', $node));
 		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;
 		
 		if (!empty($next_target)) {
-			$ajax_data = "{'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prefS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'}";
+			$nextNode  = "{$next_target}_{$fNode}";
+			$ajax_data = "{'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'}";
 			
 			$ajaxSuccess  = "var _next{$next_target}	= '{$target}';";
-			$ajaxSuccess .= "var _prefS{$identity}	= {$prevscript};";
+			$ajaxSuccess .= "var _prevS{$identity}	   = {$prevscript};";
+					
 			$ajaxSuccess .= "$.ajax ({";
 				$ajaxSuccess .= "type : 'POST',";
 				$ajaxSuccess .= "url : '{$uri}',";
@@ -401,14 +404,16 @@ class Search {
 				$ajaxSuccess .= "},";
 				$ajaxSuccess .= "success : function(data) {";
 					$ajaxSuccess .= "if (data) {";
+					
 						$ajaxSuccess .= "if ('' != '{$next_target}' && null != '{$next_target}') {";
-							$ajaxSuccess .= "$('#{$next_target}').removeAttr('disabled').trigger('chosen:updated');";
-							$ajaxSuccess .= "$('#{$next_target}').empty();";
-							$ajaxSuccess .= "$('#{$next_target}').append('<option value=\"\">Select ' + _next{$next_target} + '</option>').trigger('chosen:updated');";
+							$ajaxSuccess .= "$('select.{$nextNode}').removeAttr('disabled').trigger('chosen:updated');";
+							$ajaxSuccess .= "$('select.{$nextNode}').empty();";
+							$ajaxSuccess .= "$('select.{$nextNode}').append('<option value=\"\">Select ' + _next{$next_target} + '</option>').trigger('chosen:updated');";
 							$ajaxSuccess .= "$.each(data, function(key, value) {";
-								$ajaxSuccess .= "$('#{$next_target}').append('<option value=\"'+ value.{$next_target} +'\">' + value.{$next_target} + '</option>').trigger('chosen:updated');";
+								$ajaxSuccess .= "$('select.{$nextNode}').append('<option value=\"'+ value.{$next_target} +'\">' + value.{$next_target} + '</option>').trigger('chosen:updated');";
 							$ajaxSuccess .= "});";
 						$ajaxSuccess .= "}";
+						
 					$ajaxSuccess .= "}";
 				$ajaxSuccess .= "},";
 				$ajaxSuccess .= "complete : function() {";
@@ -420,11 +425,9 @@ class Search {
 		$script = null;
 		if (!empty($identity)) {
 			$script = "jQuery(function($) {";
-			
 				$script .= "$('#{$node}').children('div.form-group').each(function () {";
-					$script .= "var iterate{$this->cleardash($node)} = $(this).find('select#{$identity}');";
 					
-					$script .= "iterate{$this->cleardash($node)}.change(function () {";
+					$script .= "$(this).find('select#{$identity}').change(function () {";
 						$script .= "var _val{$identity} = $(this).val();";
 						$script .= "if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') {";
 							$script .= "{$ajaxSuccess}";
@@ -434,7 +437,6 @@ class Search {
 					$script .= "});";
 					
 				$script .= "});";
-				
 			$script .= "});";
 		}
 		
