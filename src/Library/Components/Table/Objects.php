@@ -3,7 +3,6 @@ namespace Incodiy\Codiy\Library\Components\Table;
 
 use Incodiy\Codiy\Library\Components\Table\Craft\Builder;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
-use App\Models\Admin\System\User;
 
 /**
  * Created on 12 Apr 2021
@@ -72,6 +71,8 @@ class Objects extends Builder {
 					$this->filter_scripts = $this->filter_object->add_scripts;
 				}
 			}
+		} else {
+			$this->elements[] = $initial;
 		}
 	}
 	
