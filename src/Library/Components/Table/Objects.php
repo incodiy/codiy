@@ -439,9 +439,7 @@ class Objects extends Builder {
 	 * @return array
 	 */
 	public function filterConditions($filters = []) {
-		if (empty($filters)) {
-			$filters = $this->model_filters;
-		}
+	//	if (empty($filters)) $filters = $this->model_filters;
 		return $this->where($filters);
 	}
 	
