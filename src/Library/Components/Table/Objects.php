@@ -48,10 +48,17 @@ class Objects extends Builder {
 			
 			if (!empty($this->filter_object->add_scripts)) {
 				if (true === array_key_exists('add_js', $this->filter_object->add_scripts)) {
-					$scriptCss  = $this->filter_object->add_scripts['css'];
-					unset($this->filter_object->add_scripts['css']);
-					$scriptJs  = $this->filter_object->add_scripts['js'];
-					unset($this->filter_object->add_scripts['js']);
+					$scriptCss = [];
+					if (isset($this->filter_object->add_scripts['css'])) {
+						$scriptCss  = $this->filter_object->add_scripts['css'];
+						unset($this->filter_object->add_scripts['css']);
+					}
+					
+					$scriptJs = [];
+					if (isset($this->filter_object->add_scripts['js'])) {
+						$scriptJs  = $this->filter_object->add_scripts['js'];
+						unset($this->filter_object->add_scripts['js']);
+					}
 					$scriptAdd = $this->filter_object->add_scripts['add_js'];
 					unset($this->filter_object->add_scripts['add_js']);
 					
