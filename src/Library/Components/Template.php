@@ -134,16 +134,6 @@ class Template extends Scripts {
     		}
     		
     		if (count($routeObj) > 1) {
-    			/* 
-    			$routeObjects = [];
-    			foreach ($routeObj as $i => $iroutes) {
-    				if ('index' !== $iroutes) {
-    					$routeObjects[$i] = $menu_label;
-    				} else {
-    					$routeObjects[$i] = $iroutes;
-    				}
-    			} */
-    			
     			if (in_array('index', $routeObj)) {
     				$route_cat	= count($routeObj);
     				
