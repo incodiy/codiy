@@ -32,10 +32,8 @@ class Search {
 		
 		if (!empty($filters['filter_model'])) {
 			$this->model_filters = $filters['filter_model'];
-			$this->model     = $model->where($this->model_filters);
-		} else {
-			$this->model     = $model;
-		}
+			$this->model         = $model->where($this->model_filters);
+		} else $this->model     = $model;
 		
 		$this->form         = new Form();
 		$this->table        = $filters['table_name'];
@@ -147,6 +145,7 @@ class Search {
 				foreach ($this->relations[$strfields]['relation_data'] as $relationData) {
 					$this->selections[$strfields][$relationData['field_value']] = $relationData['field_value'];
 				}
+				
 				return $this;
 			}
 		}
@@ -182,15 +181,30 @@ class Search {
 		return $values[$field];
 	}
 	
-	private $html = false;
+	private $html         = false;
+	private $searchFields = [];
 	private function search_box($info, $tablename, $data, $model) {
 		$this->form->excludeFields = ['password_field'];
 		$this->form->hideFields    = ['id'];
 		
+		foreach (array_keys($this->data) as $dataFields) {
+			$this->searchFields[$dataFields] = $dataFields;
+		}
+		
 		$script_elements = [];
+		
 		if (!empty($this->input_relations['type'])) {
-			$field_value  = [];
-			$open_field   = null;
+			$field_value    = [];
+			$open_field     = null;
+			$inputRelations = [];
+			
+			foreach ($this->input_relations['type'] as $inputFields => $inputType) {
+				if (!empty($this->searchFields[$inputFields])) {
+					$inputRelations[$this->searchFields[$inputFields]] = $inputType;
+				}
+			}
+			$this->input_relations['type'] = [];
+			$this->input_relations['type'] = $inputRelations;
 			
 			if (!empty($this->input_relations['lists'][0])) {
 				$open_field = $this->input_relations['lists'][0];
@@ -276,7 +290,7 @@ class Search {
 				$script_elements[$info][$field] = $type;
 			}
 		}
-	    
+		
 		$boxTitle   = ucwords(str_replace('-', ' ', diy_clean_strings($tablename)));
 		$boxName    = $info . 'modalBOX';
 		$this->addScriptsTemplate($script_elements, $tablename, $boxName);
@@ -326,9 +340,16 @@ class Search {
 	private $scriptToHTML = 'diyScriptNode::';
 	private function script_next_data($node, $identity, $fields, $table) {
 		$currKey     = key($fields['current']);
+		$iNode       = $this->cleardash(str_replace('modalBOX', $identity, $node));
+		$fNode       = $this->cleardash(str_replace('modalBOX', 'Field', $node));
+		$firstNode   = "{$identity}_{$fNode}";
 		$next_target = null;
+		$nextNode    = null;
 		
-		if (!empty($fields['others'][$currKey+1])) $next_target = $fields['others'][key($fields['current'])+1];
+		if (!empty($fields['others'][$currKey+1])) {
+			$next_target = $fields['others'][key($fields['current'])+1];
+			$nextNode    = "{$next_target}_{$fNode}";
+		}
 		
 		$nests       = [];		
 		$prev        = null;
@@ -346,7 +367,8 @@ class Search {
 		if (!empty($nests['prev'])) {
 			$prev = implode('|', $nests['prev']);
 			foreach ($nests['prev'] as $preval) {
-				$prevscripts[] = "$('#{$preval}').val()";
+				$prevNode      = "{$preval}_{$fNode}";
+				$prevscripts[] = "$('select#{$preval}.{$prevNode}').val()";
 			}
 			$prevscript = implode("+'|'+", $prevscripts);
 		}
@@ -356,19 +378,20 @@ class Search {
 		if (!empty($nests['next'])) {
 			$nest      = implode('|', $nests['next']);
 			
-			$nesCript  = "var _nx{$next_target}      = '{$next_target}';";
-			$nesCript .= "var _reident{$next_target} = _nx{$next_target}.replace('_', ' ');";
-			$nesCript .= "$('#{$next_target}').empty()";
-				$nesCript .= ".append('<option value=\"\">No Data ' + ucwords(_reident{$next_target}) + ' Found</option>')";
+			$nesCript  = "var _nx{$nextNode}      = '{$next_target}';";
+			$nesCript .= "var _reident{$nextNode} = _nx{$nextNode}.replace('_', ' ');";
+
+			$nesCript .= "$('select#{$next_target}.{$nextNode}').empty()";
+				$nesCript .= ".append('<option value=\"\">No Data ' + ucwords(_reident{$nextNode}) + ' Found</option>')";
 				$nesCript .= ".prop('disabled', true).trigger('chosen:updated');";
 			$nesCript .= "if (null != '{$nest}' && '' != '{$nest}') {";
-				$nesCript .= "var _spldt{$identity} = '{$nest}';";
-				$nesCript .= "var _spl{$identity} = _spldt{$identity}.split('|');";
-				$nesCript .= "$.each(_spl{$identity}, function(i,obj) {";
+				$nesCript .= "var _spldt{$iNode} = '{$nest}';";
+				$nesCript .= "var _spl{$iNode} = _spldt{$iNode}.split('|');";
+				$nesCript .= "$.each(_spl{$iNode}, function(i, obj) {";
 					$nesCript .= "if (null != obj && '{$identity}' != obj) {";
-						$nesCript .= "var _reident{$identity} = obj.replace('_', ' ');";
+						$nesCript .= "var _reident{$iNode} = obj.replace('_', ' ');";
 						$nesCript .= "$('#' + obj).empty()";
-						$nesCript .= ".append('<option value=\"\">No Data ' + ucwords(_reident{$identity}) + ' Found</option>')";
+						$nesCript .= ".append('<option value=\"\">No Data ' + ucwords(_reident{$iNode}) + ' Found</option>')";
 						$nesCript .= ".prop('disabled', true).trigger('chosen:updated');";
 					$nesCript .= "}";
 				$nesCript .= "});";
@@ -376,23 +399,19 @@ class Search {
 		}
 		
 		$forkey = [];
-		if (!empty($this->foreign_keys)) {
-			$forkey   = $this->foreign_keys;
-		}
+		if (!empty($this->foreign_keys)) $forkey = $this->foreign_keys;
 		$forkeys     = json_encode($forkey);
 		
 		$uri         = diy_get_ajax_urli('filterDataTables');
 		$token       = csrf_token();
-		$fNode       = $this->cleardash(str_replace('modalBOX', 'Field', $node));
 		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;
 		
 		if (!empty($next_target)) {
-			$nextNode  = "{$next_target}_{$fNode}";
-			$ajax_data = "{'{$identity}':_val{$identity},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$identity} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'}";
+			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'}";
 			
-			$ajaxSuccess  = "var _next{$next_target}	= '{$target}';";
-			$ajaxSuccess .= "var _prevS{$identity}	   = {$prevscript};";
+			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
+			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
 					
 			$ajaxSuccess .= "$.ajax ({";
 				$ajaxSuccess .= "type : 'POST',";
@@ -406,11 +425,11 @@ class Search {
 					$ajaxSuccess .= "if (data) {";
 					
 						$ajaxSuccess .= "if ('' != '{$next_target}' && null != '{$next_target}') {";
-							$ajaxSuccess .= "$('select.{$nextNode}').removeAttr('disabled').trigger('chosen:updated');";
-							$ajaxSuccess .= "$('select.{$nextNode}').empty();";
-							$ajaxSuccess .= "$('select.{$nextNode}').append('<option value=\"\">Select ' + _next{$next_target} + '</option>').trigger('chosen:updated');";
+							$ajaxSuccess .= "$('select#{$next_target}.{$nextNode}').removeAttr('disabled').trigger('chosen:updated');";
+							$ajaxSuccess .= "$('select#{$next_target}.{$nextNode}').empty();";
+							$ajaxSuccess .= "$('select#{$next_target}.{$nextNode}').append('<option value=\"\">Select ' + _next{$next_target} + '</option>').trigger('chosen:updated');";
 							$ajaxSuccess .= "$.each(data, function(key, value) {";
-								$ajaxSuccess .= "$('select.{$nextNode}').append('<option value=\"'+ value.{$next_target} +'\">' + value.{$next_target} + '</option>').trigger('chosen:updated');";
+								$ajaxSuccess .= "$('select#{$next_target}.{$nextNode}').append('<option value=\"'+ value.{$next_target} +'\">' + value.{$next_target} + '</option>').trigger('chosen:updated');";
 							$ajaxSuccess .= "});";
 						$ajaxSuccess .= "}";
 						
@@ -426,10 +445,10 @@ class Search {
 		if (!empty($identity)) {
 			$script = "jQuery(function($) {";
 				$script .= "$('#{$node}').children('div.form-group').each(function () {";
-					
-					$script .= "$(this).find('select#{$identity}').change(function () {";
-						$script .= "var _val{$identity} = $(this).val();";
-						$script .= "if (_val{$identity} != '0' && _val{$identity} != null && _val{$identity} != '') {";
+				
+					$script .= "$(this).find('select#{$identity}.{$firstNode}').change(function () {";
+						$script .= "var _val{$iNode} = $(this).val();";
+						$script .= "if (_val{$iNode} != '0' && _val{$iNode} != null && _val{$iNode} != '') {";
 							$script .= "{$ajaxSuccess}";
 						$script .= "} else {";
 							$script .= "{$nesCript}";

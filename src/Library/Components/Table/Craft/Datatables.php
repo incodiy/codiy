@@ -464,6 +464,7 @@ class Datatables {
 			$prev   = $fdata[3];
 			$fKeys  = [];
 			$fKeyQs = [];
+			
 			if (!empty($post['_forKeys'])) {
 				$fKeys = json_decode($post['_forKeys']);
 				
@@ -525,12 +526,12 @@ class Datatables {
 			$wheres = implode(' AND ', $wheres);
 			
 			if (!empty($fKeys)) {
-				$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}", "SELECT");
+				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}";
 			} else {
-				$rows   = diy_query("SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}", "SELECT");
+				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}";
 			}
 			
-			return $rows;
+			return diy_query($sql, "SELECT");
 		}
 	}
 }
