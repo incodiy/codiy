@@ -161,7 +161,7 @@ class MappingPage extends Model {
 	}
 	
 	private static function queryFieldValues($requests, $tablename, $node = null) {
-		$query    = [];
+		$sql      = [];
 		$fieldset = [];
 		
 		if (is_array($requests)) {
@@ -177,7 +177,7 @@ class MappingPage extends Model {
 				$rows['field_name'] = $fieldNameValue;
 				
 				$fieldset = $rows['field_name'];
-				$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
+				$sql      = "SELECT `{$rows['field_name']}` FROM {$rows['table_name']} WHERE `{$rows['field_name']}` IS NOT NULL GROUP BY `{$rows['field_name']}`;";
 			}
 		} else {
 			$explode = explode('::', $requests);
@@ -186,11 +186,11 @@ class MappingPage extends Model {
 			$rows['field_name'] = $explode[1];
 			
 			$fieldset = $rows['field_name'];
-			$query    = diy_query("SELECT `{$rows['field_name']}` FROM {$rows['table_name']} GROUP BY `{$rows['field_name']}`;", 'SELECT');
+			$sql      = "SELECT `{$rows['field_name']}` FROM {$rows['table_name']} WHERE `{$rows['field_name']}` IS NOT NULL GROUP BY `{$rows['field_name']}`;";
 		}
 		
 		$data             = [];
-		$data['data']     = $query;
+		$data['data']     = diy_query($sql, 'SELECT');
 		$data['fieldset'] = $fieldset;
 		
 		return $data;		

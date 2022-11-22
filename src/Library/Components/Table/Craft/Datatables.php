@@ -112,7 +112,7 @@ class Datatables {
 		$blacklists = ['password', 'action', 'no'];
 		if (!in_array('id', $data->datatables->columns[$table_name]['lists'])) {
 			$firstField = $data->datatables->columns[$table_name]['lists'][0];
-			$blacklists = ['password', 'action', 'no', 'id'];
+			$blacklists = ['total_all_revenue','password', 'action', 'no', 'id'];
 		}
 		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {

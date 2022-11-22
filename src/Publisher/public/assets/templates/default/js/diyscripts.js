@@ -37,12 +37,16 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 				if (item != '') {
 					var optValue = null;
 					
-					if (~item.indexOf('_')) {
-						optValue = ucwords(item.replaceAll('_', ' '));
-					} else if (~item.indexOf('.')) {
-						optValue = ucwords(item.replaceAll('.', ' '));
+					if (typeof myVar == 'string') {
+						if (~item.indexOf('_')) {
+							optValue = ucwords(item.replaceAll('_', ' '));
+						} else if (~item.indexOf('.')) {
+							optValue = ucwords(item.replaceAll('.', ' '));
+						} else {
+							optValue = ucwords(item);
+						}
 					} else {
-						optValue = ucwords(item);
+						optValue = item;
 					}
 					
 					$('select#' + target_id).append('<option value=\"' + item + '\">' + optValue + '</option>');
