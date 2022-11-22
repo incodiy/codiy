@@ -51,4 +51,12 @@ trait Session {
 		
 		if (true === $return_data) return $this->session;
 	}
+	
+	public function group_check($group_name) {
+		if ($group_name === $this->session['user_group']) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

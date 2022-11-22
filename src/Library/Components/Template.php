@@ -101,6 +101,7 @@ class Template extends Scripts {
     public function render_sidebar_menu($module = []) {
     	$menu_data	= [];
     	$menu_lists	= [];
+    	$menu_label	= [];
     	$icon_lists	= [];
     	$routes		= [];
     	$routelists = [];
@@ -109,8 +110,17 @@ class Template extends Scripts {
     	
     	foreach ($module as $menu_list) {
     		$menu_lists[$menu_list['route_path']] = "{$menu_list['route_path']}.index";
+    		$menu_label[$menu_list['route_path']] = $menu_list['module_name'];
     		if (null !== $menu_list['icon']) {
     			$icon_lists[$menu_list['route_path'] . '.index'] = "{$menu_list['route_path']}.<i class=\"{$menu_list['icon']}\"></i>";
+    		}
+    	}
+    	
+    	$labelData = [];
+    	foreach ($menu_label as $label_path => $label_menu) {
+    		$label_paths = explode('.', $label_path);
+    		foreach ($label_paths as $labelPath) {
+    			$labelData[$labelPath] = $label_menu;
     		}
     	}
     	
@@ -124,6 +134,16 @@ class Template extends Scripts {
     		}
     		
     		if (count($routeObj) > 1) {
+    			/* 
+    			$routeObjects = [];
+    			foreach ($routeObj as $i => $iroutes) {
+    				if ('index' !== $iroutes) {
+    					$routeObjects[$i] = $menu_label;
+    				} else {
+    					$routeObjects[$i] = $iroutes;
+    				}
+    			} */
+    			
     			if (in_array('index', $routeObj)) {
     				$route_cat	= count($routeObj);
     				
@@ -159,23 +179,23 @@ class Template extends Scripts {
     				foreach ($route_data as $model => $index) {
     					if (is_array($index)) {
     						foreach ($index as $thid_key => $third_value) {
-    							$routes[$parent][$child][$model][$thid_key][$child_menu]	= $thid_key;
-    							$links[$parent][$child][$model][$thid_key]['icon']			= $routeURL[$parent][$child][$model][$thid_key];
+    							$routes[$parent][$child][$model][$thid_key][$child_menu] = $thid_key;
+    							$links[$parent][$child][$model][$thid_key]['icon']       = $routeURL[$parent][$child][$model][$thid_key];
     						}
     					} else {
     						if ($index !== $model) {
-    							$routes[$parent][$child][$model][$child_menu]	= $model;
-    							$links[$parent][$child][$model]['icon']			= $routeURL[$parent][$child][$model];
+    							$routes[$parent][$child][$model][$child_menu] = $model;
+    							$links[$parent][$child][$model]['icon']       = $routeURL[$parent][$child][$model];
     						} else {
-    							$routes[$parent][$child][$child_menu]	= $model;
-    							$links[$parent][$child]['icon']			= $routeURL[$parent][$child][$model];
+    							$routes[$parent][$child][$child_menu] = $model;
+    							$links[$parent][$child]['icon']       = $routeURL[$parent][$child][$model];
     						}
     					}
     					
     				}
     			} else {
-    				$routes[$parent][$child_menu]	= $child;
-    				$links[$parent]['icon']			= $routeURL[$parent][$child];
+    				$routes[$parent][$child_menu] = $child;
+    				$links[$parent]['icon']       = $routeURL[$parent][$child];
     			}
     		}
     	}
@@ -183,23 +203,35 @@ class Template extends Scripts {
     	$data_icon = [];
     	foreach ($routes as $base_group => $base_model) {
     		foreach ($base_model as $model_name => $data_model) {
+    			$modelNameLabel = $model_name;
+    			if (!empty($labelData[$model_name])){
+    				$modelNameLabel = $labelData[$model_name];
+    			}
+    			
+    			
     			if ($child_menu !== $model_name) {
     				foreach ($data_model as $model => $value) {
+    					$modelLabel = $model;
+    					if (!empty($labelData[$model_name])){
+    						$modelLabel = $labelData[$model];
+    					}
+    					
     					if ($child_menu === $model) {
-    						$menu_data[$base_group][$child_menu][$model_name]	= route("{$base_group}.{$model_name}.{$value}");
-    						$data_icon[$base_group][$model_name]['icon']		= $links[$base_group][$model_name]['icon'];
+    						$menu_data[$base_group][$child_menu][$model_name] = route("{$base_group}.{$model_name}.{$value}");
+    						$data_icon[$base_group][$modelNameLabel]['icon']      = $links[$base_group][$model_name]['icon'];
     					} else {
     						//	foreach ($value as $next_model => $next_val) {
     						foreach ($value as $next_val) {
+    							$next_label = $labelData[$next_val];
     							if (is_array($next_val)) {
     								//	foreach ($next_val as $thirdkey => $thirdval) {
     								foreach ($next_val as $thirdval) {
-    									$menu_data[$base_group][$child_menu][$model_name][$model][$thirdval] = route("{$base_group}.{$model_name}.{$model}.{$thirdval}.index");
-    									$data_icons[$base_group][$model_name][$model][$thirdval]['icon'][]   = $links[$base_group][$model_name][$model][$thirdval]['icon'];
+    									$menu_data[$base_group][$child_menu][$modelNameLabel][$modelLabel][$thirdval] = route("{$base_group}.{$model_name}.{$model}.{$thirdval}.index");
+    									$data_icons[$base_group][$modelNameLabel][$modelLabel][$thirdval]['icon'][]   = $links[$base_group][$model_name][$model][$thirdval]['icon'];
     								}
     							} else {
-    								$menu_data[$base_group][$child_menu][$model_name][$model] = route("{$base_group}.{$model_name}.{$next_val}.index");
-    								$data_icons[$base_group][$model_name]['icon'][]           = $links[$base_group][$model_name][$model]['icon'];
+    								$menu_data[$base_group][$child_menu][$modelNameLabel][$modelLabel] = route("{$base_group}.{$model_name}.{$next_val}.index");
+    								$data_icons[$base_group][$modelNameLabel]['icon'][]           = $links[$base_group][$model_name][$model]['icon'];
     							}
     						}
     					}
