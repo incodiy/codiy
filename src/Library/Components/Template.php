@@ -105,6 +105,7 @@ class Template extends Scripts {
     	$icon_lists	= [];
     	$routes		= [];
     	$routelists = [];
+    	$routelabel = [];
     	$data_icons	= [];
     	$routeURL	= [];
     	
@@ -124,35 +125,39 @@ class Template extends Scripts {
     		}
     	}
     	
-    	foreach ($menu_lists as $list) {
+    	foreach ($menu_lists as $i => $list) {
     		$route_name = $list;
     		$routeObj   = explode('.', $route_name);
     		$icons      = false;
     		$iconset    = false;
     		if (isset($icon_lists[$list])) {
     			$icons   = explode('.', $icon_lists[$list]);
-    		}
+    		}//dump($routeObj, $menu_label[$i]);
     		
     		if (count($routeObj) > 1) {
     			if (in_array('index', $routeObj)) {
     				$route_cat	= count($routeObj);
     				
     				if (5 === $route_cat) {
+    					$routelabel[$routeObj[0]][$routeObj[1]][$routeObj[2]][$routeObj[3]] = $menu_label[$i];
     					$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]][$routeObj[3]] = $routeObj[4];
     					if (isset($icons[1])) $iconset                                      = $icons[4];
     					$routeURL[$routeObj[0]][$routeObj[1]][$routeObj[2]][$routeObj[3]]   = $iconset;
     				}
     				if (4 === $route_cat) {
+    					$routelabel[$routeObj[0]][$routeObj[1]][$routeObj[2]] = $menu_label[$i];
     					$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]] = $routeObj[3];
     					if (isset($icons[1])) $iconset                        = $icons[3];
     					$routeURL[$routeObj[0]][$routeObj[1]][$routeObj[2]]   = $iconset;
     				}
     				if (3 === $route_cat) {
+    					$routelabel[$routeObj[0]][$routeObj[1]][$routeObj[2]] = $menu_label[$i];
     					$routelists[$routeObj[0]][$routeObj[1]][$routeObj[2]] = $routeObj[2];
     					if (isset($icons[1])) $iconset                        = $icons[2];
     					$routeURL[$routeObj[0]][$routeObj[1]][$routeObj[2]]   = $iconset;
     				}
     				if (2 === $route_cat) {
+    					$routelabel[$routeObj[0]][$routeObj[1]] = $menu_label[$i];
     					$routelists[$routeObj[0]][$routeObj[1]] = $routeObj[1];
     					if (isset($icons[1])) $iconset          = $icons[1];
     					$routeURL[$routeObj[0]][$routeObj[1]]   = $iconset;
@@ -194,34 +199,29 @@ class Template extends Scripts {
     	foreach ($routes as $base_group => $base_model) {
     		foreach ($base_model as $model_name => $data_model) {
     			$modelNameLabel = $model_name;
-    			if (!empty($labelData[$model_name])){
-    				$modelNameLabel = $labelData[$model_name];
-    			}
-    			
     			
     			if ($child_menu !== $model_name) {
     				foreach ($data_model as $model => $value) {
-    					$modelLabel = $model;
-    					if (!empty($labelData[$model_name])){
-    						$modelLabel = $labelData[$model];
+    					$labelModel = $model_name;
+    					if ('child' !== $model_name && !empty($routelabel[$base_group][$model_name])){
+    						$labelModel = $routelabel[$base_group][$model_name][$model];
     					}
     					
     					if ($child_menu === $model) {
-    						$menu_data[$base_group][$child_menu][$model_name] = route("{$base_group}.{$model_name}.{$value}");
-    						$data_icon[$base_group][$modelNameLabel]['icon']      = $links[$base_group][$model_name]['icon'];
+    						$menu_data[$base_group][$child_menu][$modelNameLabel] = route("{$base_group}.{$model_name}.{$value}");
+    						$data_icon[$base_group][$modelNameLabel]['icon']  = $links[$base_group][$model_name]['icon'];
     					} else {
     						//	foreach ($value as $next_model => $next_val) {
     						foreach ($value as $next_val) {
-    							$next_label = $labelData[$next_val];
     							if (is_array($next_val)) {
     								//	foreach ($next_val as $thirdkey => $thirdval) {
     								foreach ($next_val as $thirdval) {
-    									$menu_data[$base_group][$child_menu][$modelNameLabel][$modelLabel][$thirdval] = route("{$base_group}.{$model_name}.{$model}.{$thirdval}.index");
-    									$data_icons[$base_group][$modelNameLabel][$modelLabel][$thirdval]['icon'][]   = $links[$base_group][$model_name][$model][$thirdval]['icon'];
+    									$menu_data[$base_group][$child_menu][$modelNameLabel][$labelModel][$thirdval] = route("{$base_group}.{$model_name}.{$model}.{$thirdval}.index");
+    									$data_icons[$base_group][$modelNameLabel][$labelModel][$thirdval]['icon'][]   = $links[$base_group][$model_name][$model][$thirdval]['icon'];
     								}
     							} else {
-    								$menu_data[$base_group][$child_menu][$modelNameLabel][$modelLabel] = route("{$base_group}.{$model_name}.{$next_val}.index");
-    								$data_icons[$base_group][$modelNameLabel]['icon'][]           = $links[$base_group][$model_name][$model]['icon'];
+    								$menu_data[$base_group][$child_menu][$modelNameLabel][$labelModel] = route("{$base_group}.{$model_name}.{$next_val}.index");
+    								$data_icons[$base_group][$modelNameLabel]['icon'][]                = $links[$base_group][$model_name][$model]['icon'];
     							}
     						}
     					}
