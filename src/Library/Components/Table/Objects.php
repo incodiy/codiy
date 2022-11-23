@@ -26,6 +26,7 @@ class Objects extends Builder {
 	public $columns       = [];
 	public $labels        = [];
 	public $relations     = [];
+	public $connection;
 	
 	private $params       = [];
 	private $setDatatable = true;
@@ -542,6 +543,10 @@ class Objects extends Builder {
 		}
 	}
 	
+	public function connection($db_connection) {
+		$this->connection = $db_connection;
+	}
+	
 	public $tableName	= [];
 	private $tableID	= [];
 	/**
@@ -594,7 +599,7 @@ class Objects extends Builder {
 			} elseif (!empty($this->variables['table_fields'])) {
 				$fields = $this->check_column_exist($table_name, $this->variables['table_fields']);
 			} else {
-				$fields = diy_get_table_columns($table_name);
+				$fields = diy_get_table_columns($table_name, $this->connection);
 			}
 			
 			// RELATIONAL PROCESS

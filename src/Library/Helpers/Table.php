@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Support\Facades\DB;
+
 /**
  * Created on 13 Apr 2021
  * Time Created : 04:05:22
@@ -50,8 +52,13 @@ if (!function_exists('diy_get_table_columns')) {
 	 *
 	 * @return array
 	 */
-	function diy_get_table_columns($table_name) {
-		return Illuminate\Support\Facades\Schema::getColumnListing($table_name);
+	function diy_get_table_columns($table_name, $db_connection = 'mysql') {
+		$connection = DB::connection($db_connection);
+		$fieldLists = $connection->getSchemaBuilder()->getColumnListing($table_name);
+		
+		return $fieldLists;
+		
+	//	return Illuminate\Support\Facades\Schema::getColumnListing($table_name);
 	}
 }
 

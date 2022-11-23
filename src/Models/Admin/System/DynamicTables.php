@@ -14,8 +14,9 @@ use Illuminate\Database\Eloquent\Model;
  * @email      wisnuwidi@gmail.com
  */
 class DynamicTables extends Model {
-	
-	public function __construct($sql = null) {
+	protected $connection = 'mysql';
+	public function __construct($sql = null, $connection = 'mysql') {
+		if (!empty($connection)) $this->connection = $connection;
 		if (!empty($sql)) {
 			$data = diy_query($sql);
 			

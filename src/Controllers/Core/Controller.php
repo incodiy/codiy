@@ -55,6 +55,7 @@ class Controller extends BaseController {
 	public $getLogin     = true;
 	public $rootPage     = 'home';
 	public $adminPage    = 'dashboard';
+	public $connection;
 	
 	private $plugins     = [];
 	private $model_class = null;
@@ -69,9 +70,8 @@ class Controller extends BaseController {
 	public function __construct($model = false, $route_page = false) {
 		diy_memory(false);
 		
-		$this->dataCollections();
 		$this->init_model($model);
-		
+		$this->dataCollections();
 		
 		if (false !== $route_page) $this->set_route_page($route_page);
 	}
@@ -83,6 +83,8 @@ class Controller extends BaseController {
 			
 			if (in_array($currentPage, $routelists)) {
 				$this->model_class = $model;
+				$modelClass        = new $model();
+				$this->connection  = $modelClass->getConnectionName();
 			} else {
 				$this->model($model);
 			}

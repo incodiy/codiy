@@ -31,7 +31,7 @@ class Builder {
 				$data[$name]['model'] = $attributes[$name]['model'];
 			}
 		} else {
-			$model = new DynamicTables();
+			$model = new DynamicTables(null, $this->connection);
 			$model->setTable($name);
 			$data[$name]['model']       = get_class($model);
 			$attributes[$name]['model'] = get_class($model);

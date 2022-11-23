@@ -158,7 +158,7 @@ trait Action {
 		if (!empty($on_update) && diy_array_contained_string(['edit', 'update'], explode('.', current_route()))) {
 			unset($this->validations);
 			$this->validations = $on_update;
-		}//dd($this->validations);
+		}
 		$this->form->setValidations($this->validations);
 	}
 	
@@ -307,13 +307,12 @@ trait Action {
 		$this->model_original   = $this->model;
 		
 		if (!empty(diy_get_current_route_id())) {
-			$this->model_id = diy_get_current_route_id();
+			$this->model_id   = diy_get_current_route_id();
 			$this->model_find($this->model_id);
+		//	$this->connection = $this->model->getConnectionName();
 		}
 		
-		if (!empty($this->form)) {
-			$this->form->model = $this->model;
-		}
+		if (!empty($this->form)) $this->form->model = $this->model;
 	}
 	
 	/**
