@@ -137,18 +137,21 @@ trait View {
 			$add    = null;
 			$view   = null;
 			$delete = null;
+			$back   = null;
 			
 			foreach ($this->removeButtons as $action) {
 				if (diy_string_contained($action, 'add'))    $add    = $action;
 				if (diy_string_contained($action, 'view'))   $view   = $action;
 				if (diy_string_contained($action, 'delete')) $delete = $action;
+				if (diy_string_contained($action, 'back'))   $back   = $action;
 			}
-		}
-		
-		foreach (array_keys($this->data['route_info']->action_page) as $key) {
-			if (!empty($add))    unset($this->data['route_info']->action_page[$key]);
-			if (!empty($view))   unset($this->data['route_info']->action_page[$key]);
-			if (!empty($delete)) unset($this->data['route_info']->action_page[$key]);
+			
+			foreach (array_keys($this->data['route_info']->action_page) as $key) {
+				if (!empty($add)    && diy_string_contained($key, $add))    unset($this->data['route_info']->action_page[$key]);
+				if (!empty($view)   && diy_string_contained($key, $view))   unset($this->data['route_info']->action_page[$key]);
+				if (!empty($delete) && diy_string_contained($key, $delete)) unset($this->data['route_info']->action_page[$key]);
+				if (!empty($back)   && diy_string_contained($key, $back))   unset($this->data['route_info']->action_page[$key]);
+			}
 		}
 	}
 	

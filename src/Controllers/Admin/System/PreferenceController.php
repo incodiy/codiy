@@ -58,6 +58,7 @@ class PreferenceController extends Controller {
 	
 	public function edit($id) {
 		$this->setPage();
+		$this->removeActionButtons(['add', 'view', 'delete', 'back']);
 	
 		$this->form->modelWithFile();
 		
