@@ -64,6 +64,17 @@ trait Privileges {
 		}
 	}
 	
+	public $removeButtons   = [];
+	/**
+	 * Remove Action Button in a Page
+	 *
+	 * @param array $buttons
+	 * 		['add', 'view', 'delete']
+	 */
+	public function removeActionButtons($buttons = []) {
+		$this->removeButtons = $buttons;
+	}
+	
 	public function set_module_privileges($role_group = null) {
 		$this->role_group = $role_group;
 		$this->module_privileges();

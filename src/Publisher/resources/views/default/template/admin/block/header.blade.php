@@ -9,10 +9,10 @@
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
-$baseUrl = diy_config('baseURL');
+$baseUrl      = diy_config('baseURL');
 $baseTemplate = diy_config('base_template');
-$template = diy_config('template');
-$assetURL = "{$baseUrl}/{$baseTemplate}/{$template}";
+$template     = diy_config('template');
+$assetURL     = "{$baseUrl}/{$baseTemplate}/{$template}";
 ?>
 			
 				<!-- HEADER BLOCK OPEN  -->

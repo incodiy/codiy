@@ -127,7 +127,29 @@ trait View {
 			$this->data['content_page'] = $this->loginPage();
 		}
 		
+		$this->checkIfAnyButtonRemoved();
+		
 		return view($this->pageView, $this->data, $this->dataOptions);
+	}
+	
+	private function checkIfAnyButtonRemoved() {
+		if (!empty($this->removeButtons)) {
+			$add    = null;
+			$view   = null;
+			$delete = null;
+			
+			foreach ($this->removeButtons as $action) {
+				if (diy_string_contained($action, 'add'))    $add    = $action;
+				if (diy_string_contained($action, 'view'))   $view   = $action;
+				if (diy_string_contained($action, 'delete')) $delete = $action;
+			}
+		}
+		
+		foreach (array_keys($this->data['route_info']->action_page) as $key) {
+			if (!empty($add))    unset($this->data['route_info']->action_page[$key]);
+			if (!empty($view))   unset($this->data['route_info']->action_page[$key]);
+			if (!empty($delete)) unset($this->data['route_info']->action_page[$key]);
+		}
 	}
 	
 	private function loginPage() {
