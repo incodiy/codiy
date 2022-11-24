@@ -19,7 +19,12 @@ use Illuminate\Http\Request;
 
 class AjaxController extends Controller {
 	
-	public function __construct() {}
+	private $ajaxConnection = null;
+	
+	public function __construct($connection = null) {
+	//	if (!empty($_POST)) dd($_POST, $connection);
+		if (!empty($connection)) $this->ajaxConnection = $connection;
+	}
 		
 	public static $ajaxUrli;
 	/**
@@ -89,7 +94,7 @@ class AjaxController extends Controller {
 		$queryData     = [];
 		if (!empty($info['query'])) {
 			$sql       = "{$info['query']} WHERE `{$postKEY}` = '{$postValue}' ORDER BY `{$postKEY}` DESC";
-			$queryData = diy_query($sql, 'SELECT');
+			$queryData = diy_query($sql, 'SELECT', $this->ajaxConnection);
 		}
 		
 		$result = [];
@@ -123,7 +128,7 @@ class AjaxController extends Controller {
 	private function initFilterDatatables() {
 		if (!empty($_GET['filterDataTables'])) {
 			$this->datatableClass();
-			return $this->datatables->init_filter_datatables($_GET, $_POST);
+			return $this->datatables->init_filter_datatables($_GET, $_POST, $this->ajaxConnection);
 		}
 	}
 }

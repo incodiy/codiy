@@ -547,6 +547,10 @@ class Objects extends Builder {
 		$this->connection = $db_connection;
 	}
 	
+	public function resetConnection() {
+		$this->connection = null;
+	}
+	
 	public $tableName	= [];
 	private $tableID	= [];
 	/**

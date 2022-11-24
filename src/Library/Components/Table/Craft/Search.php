@@ -24,9 +24,12 @@ class Search {
 	private $sql;
 	private $table;
 	private $info;
+	private $searchConnection;
 	
 	private $model_filters = [];
-	public function __construct($info, $model = null, $filters = [], $sql = null) {
+	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null) {
+		if (!empty($connection)) $this->searchConnection = $connection;
+		
 		$this->info = $info;
 		if (!empty($model)) $model = new $model();
 		
@@ -57,8 +60,8 @@ class Search {
 		}
 	}
 	
-	private function select($sql) {
-		return diy_query($sql, 'SELECT');
+	private function select($sql, $connection = null) {
+		return diy_query($sql, 'SELECT', $connection);
 	}
 	
 	private $data = [];
@@ -151,7 +154,7 @@ class Search {
 		}
 		
 		if (!empty($strfields)) {
-			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};");
+			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};", $this->searchConnection);
 			if (!empty($query)) {
 				$selections = [];
 				foreach ($query as $rows) {
@@ -402,16 +405,20 @@ class Search {
 		if (!empty($this->foreign_keys)) $forkey = $this->foreign_keys;
 		$forkeys     = json_encode($forkey);
 		
-		$uri         = diy_get_ajax_urli('filterDataTables');
+		$uri         = diy_get_ajax_urli('filterDataTables', $this->searchConnection);
 		$token       = csrf_token();
 		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;
 		
 		if (!empty($next_target)) {
-			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'}";
+			$ajaxConnection = '';
+			if (!empty($this->searchConnection)) {
+				$ajaxConnection = ",'grabCoDIYC':'{$this->searchConnection}'";
+			}
+			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}}";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
-			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
+			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};console.log('{$uri}');";
 					
 			$ajaxSuccess .= "$.ajax ({";
 				$ajaxSuccess .= "type : 'POST',";
@@ -495,10 +502,16 @@ class Search {
 	}
 	
 	private function getColumns($table) {
-		return diy_get_table_columns($table);
+		$connection = 'mysql';
+		if (!empty($this->searchConnection)) $connection = $this->searchConnection;
+		
+		return diy_get_table_columns($table, $connection);
 	}
 	
 	private function getColumnType($table, $column) {
-		return diy_get_table_column_type($table, $column);
+		$connection = 'mysql';
+		if (!empty($this->searchConnection)) $connection = $this->searchConnection;
+		
+		return diy_get_table_column_type($table, $column, $connection);
 	}
 }

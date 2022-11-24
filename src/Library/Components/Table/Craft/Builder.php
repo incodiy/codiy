@@ -72,16 +72,7 @@ class Builder {
 			}
 			$tableTitle = '<div class="panel-heading"><div class="pull-left"><h3 class="panel-title">' . $titleText . '</h3></div><div class="clearfix"></div></div>';
 		}
-		/* 
-		$foot  = '<tfoot><tr>';
-		$foot .= '<th></th>';
-		$foot .= '<th></th>';
-		foreach ($data[$name]['columns']['lists'] as $columnLists) {
-			$foot .= "<th>{$columnLists}</th>";
-		}
-		$foot .= '<th></th>';
-		$foot .= '</tr></tfoot>';
-		 */
+		
 		$baseTableAttributes = ['id' => $tableID, 'class' => $tableClass];
 		$tableAttributes     = $baseTableAttributes;
 		if (!empty($attributes[$name]['attributes']['add_attributes'])) {
@@ -91,8 +82,6 @@ class Builder {
 		$table  = '<div class="panel-body no-padding">';
 		$table .= '<table' . $this->setAttributes($tableAttributes) . '>';
 		$table .= $this->header($data[$name]);
-		$table .= null;
-		//	$table .= $foot;
 		$table .= '</table>';
 		$table .= '</div>';
 		// RENDER DATA TABLE
@@ -561,7 +550,7 @@ class Builder {
 				
 				$searchInfo            = ['id' => $tableID];
 				$searchInfoAttribute   = "{$searchInfo['id']}_cdyFILTER";
-				$search_object         = new Search("{$searchInfo['id']}_cdyFILTER", $data_model, $search_data, $data_sql);
+				$search_object         = new Search("{$searchInfo['id']}_cdyFILTER", $data_model, $search_data, $data_sql, $this->connection);
 				$this->filter_object   = $search_object;
 				
 				$dt_info['id']         = $searchInfo['id'];

@@ -262,8 +262,14 @@ if (!function_exists('diy_query')) {
 	 * 
 	 * @return array|object
 	 */
-	function diy_query($sql, $type = 'TABLE') {
-		return Illuminate\Support\Facades\DB::{$type}($sql);
+	function diy_query($sql, $type = 'TABLE', $connection = null) {
+		if (!empty($connection)) {
+			$query = Illuminate\Support\Facades\DB::connection($connection)->{$type}($sql);
+		} else {
+			$query = Illuminate\Support\Facades\DB::{$type}($sql);
+		}
+		
+		return $query;
 	}
 }
 
@@ -1488,8 +1494,8 @@ if (!function_exists('flag_status')) {
 
 if (!function_exists('diy_get_ajax_urli')) {
 	
-	function diy_get_ajax_urli($init_post = 'AjaxPosF') {
-		$ajaxURL = new AjaxController();
+	function diy_get_ajax_urli($init_post = 'AjaxPosF', $connection = null) {
+		$ajaxURL = new AjaxController($connection);
 		$ajaxURL::urli($init_post);
 		
 		return $ajaxURL::$ajaxUrli;

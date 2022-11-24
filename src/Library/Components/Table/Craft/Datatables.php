@@ -21,6 +21,10 @@ class Datatables {
 	public  $filter_model  = [];
 	private $image_checker = ['jpg', 'jpeg', 'png', 'gif'];
 	
+	public function __construct() {
+		//dd($this);
+	}
+	
 	private function setAssetPath($file_path, $http = false, $public_path = 'public') {
 		if (true === $http) {
 			$assetsURL = explode('/', url()->asset('assets'));
@@ -57,29 +61,7 @@ class Datatables {
 	}
 	
 	public function process($data, $filters = [], $filter_page = []) {
-		/* 
-		if (empty($filters)) {
-			$filters = $filter_page;
-		} else {
-			$originalFilters = $filters;
-			unset($filters['renderDataTables']);
-			unset($filters['difta']);
-			unset($filters['filters']);
-			unset($filters['_token']);
-			
-			foreach ($filter_page as $fname => $fvalues) {
-				if (isset($filters[$fname]) &&!is_empty($filters[$fname])) {
-					unset($originalFilters[$fname]);
-					$originalFilters[$fname] = $filters[$fname];
-				} else {
-					unset($originalFilters[$fname]);
-					$originalFilters[$fname] = $fvalues;
-				}
-			}
-			
-			$filters = $originalFilters;
-		}
-		 */
+		
 		if (!empty($data->datatables->model[$_GET['difta']['name']])) {
 			
 			$model_type   = $data->datatables->model[$_GET['difta']['name']]['type'];
@@ -455,9 +437,15 @@ class Datatables {
 		$this->filter_datatables = $request->all();
 	}
 	
-	public function init_filter_datatables($get = [], $post = []) {
+	public function init_filter_datatables($get = [], $post = [], $connection = null) {
 		
 		if (!empty($get['filterDataTables'])) {
+			
+			if (!empty($post['grabCoDIYC'])) {
+				$connection = $post['grabCoDIYC'];
+				unset($post['grabCoDIYC']);
+			}
+			
 			$fdata  = explode('::', $post['_fita']);
 			$table  = $fdata[1];
 			$target = $fdata[2];
@@ -487,6 +475,7 @@ class Datatables {
 			unset($post['_fita']);
 			unset($post['_token']);
 			unset($post['_n']);
+			
 			if (!empty($post['_forKeys'])) unset($post['_forKeys']);
 			
 			$wheres = [];
@@ -531,7 +520,7 @@ class Datatables {
 				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}";
 			}
 			
-			return diy_query($sql, "SELECT");
+			return diy_query($sql, 'SELECT', $connection);
 		}
 	}
 }

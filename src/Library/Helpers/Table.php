@@ -54,11 +54,7 @@ if (!function_exists('diy_get_table_columns')) {
 	 */
 	function diy_get_table_columns($table_name, $db_connection = 'mysql') {
 		$connection = DB::connection($db_connection);
-		$fieldLists = $connection->getSchemaBuilder()->getColumnListing($table_name);
-		
-		return $fieldLists;
-		
-	//	return Illuminate\Support\Facades\Schema::getColumnListing($table_name);
+		return $connection->getSchemaBuilder()->getColumnListing($table_name);
 	}
 }
 
@@ -72,8 +68,9 @@ if (!function_exists('diy_get_table_column_type')) {
 	 *
 	 * @return string
 	 */
-	function diy_get_table_column_type($table_name, $field_name) {
-		return Illuminate\Support\Facades\Schema::getColumnType($table_name, $field_name);
+	function diy_get_table_column_type($table_name, $field_name, $db_connection = 'mysql') {
+		$connection = DB::connection($db_connection);
+		return $connection->getSchemaBuilder()->getColumnType($table_name, $field_name);
 	}
 }
 
