@@ -135,12 +135,23 @@ trait File {
 	private function setAssetPath($path, $folder) {
 		$baseIndexFolder = diy_config('index_folder');
 		$basePathURL     = explode($baseIndexFolder, str_replace('\\', '/', $path));
-		
+		/* 
 		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
 			$baseIndexFolder = null;
 			$basePathURLi    = explode('/', $basePathURL[1]);
 			unset($basePathURLi[0]);
 			$basePathURL[1]  = implode('/', $basePathURLi);
+		}
+		 */
+		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
+			$baseIndexFolder = null;
+			if (!empty($basePathURL[2])) {
+				$basePathURL[1]  = str_replace('/assets/', 'assets/', $basePathURL[2]);
+			} else {
+				$basePathURLi    = explode('/', $basePathURL[1]);
+				unset($basePathURLi[0]);
+				$basePathURL[1]  = implode('/', $basePathURLi);
+			}
 		}
 		
 		return "{$baseIndexFolder}{$basePathURL[1]}/{$folder}";
@@ -174,6 +185,7 @@ trait File {
 			$datePath = date('Y') . '/' . date('m') . '/' . date('d');
 			$filePath = $this->setUploadPath($upload_path . '/' . $datePath);
 		}
+		
 		$this->filePath = $filePath;
 		
 		if (!empty($request->files)) {

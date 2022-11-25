@@ -192,6 +192,12 @@ class UserController extends Controller {
 		
 		$this->model_find($id);
 		
+		if (null === $request->password) {
+			unset($this->validations['password']);
+			$request->offsetUnset('password');
+		}
+		$request->validate($this->validations);
+		
 		$this->set_data_before_post($request, __FUNCTION__);
 		$this->update_data($request, $id, false);
 		$this->set_data_after_post($this->group_id, $id);
