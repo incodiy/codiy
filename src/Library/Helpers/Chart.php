@@ -13,7 +13,7 @@
 
 if (!function_exists('diy_script_chart')) {
 	
-	function diy_script_chart($type = 'line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series = null) {
+	function diy_script_chart($type = 'line', $identity = null, $title = null, $subtitle = null, $xAxis = null, $yAxis = null, $tooltips = null, $legends = null, $series = null) {
 		$chartType = "chart: {type: '{$type}'},";
 		return "<script type=\"text/javascript\">$(function () { $('#{$identity}').highcharts({ {$chartType}{$title}{$subtitle}{$xAxis}{$yAxis}{$tooltips}{$legends}{$series} }); });</script>";
 	}
