@@ -15,7 +15,6 @@ return [
 		'MetaTags',
 		'Template',
 		'Form',
-		'Table',
-		'Chart'
+		'Table'
 	]
 ];
