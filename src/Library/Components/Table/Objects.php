@@ -369,6 +369,10 @@ class Objects extends Builder {
 		$this->variables['filter_groups'][] = $filters;
 	}
 	
+	public function export($to, $separator = '|') {
+		
+	}
+	
 	protected $filter_model = [];
 	public function filterModel(array $data = []) {
 		$this->filter_model = $data;
