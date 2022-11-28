@@ -47,7 +47,7 @@ return [
 							'js/scripts.js',
 							'js/diyscripts.js'
 						],
-						'css'	=> []
+						'css'	=> ['css/app.css']
 					]
 				]
 			],
