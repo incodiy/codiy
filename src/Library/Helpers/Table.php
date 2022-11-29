@@ -38,8 +38,9 @@ if (!function_exists('diy_check_table_columns')) {
 	 *
 	 * @return array
 	 */
-	function diy_check_table_columns($table_name, $field_name) {
-		return Illuminate\Support\Facades\Schema::hasColumn($table_name, $field_name);
+	function diy_check_table_columns($table_name, $field_name, $db_connection = 'mysql') {
+		$connection = DB::connection($db_connection);
+		return $connection->getSchemaBuilder()->hasColumn($table_name, $field_name);
 	}
 }
 

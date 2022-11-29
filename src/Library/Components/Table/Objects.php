@@ -378,13 +378,14 @@ class Objects extends Builder {
 		$this->filter_model = $data;
 	}
 	
-	private function check_column_exist($table_name, $fields) {
+	private function check_column_exist($table_name, $fields, $connection = 'mysql') {
 		$fieldset = [];
 		foreach ($fields as $field) {
-			if (diy_check_table_columns($table_name, $field)) {
+			if (diy_check_table_columns($table_name, $field, $connection)) {
 				$fieldset[] = $field;
 			}
 		}
+		
 		return $fieldset;
 	}
 	
@@ -603,7 +604,7 @@ class Objects extends Builder {
 			$fieldset_added = $fields;
 			
 			if (!empty($fields)) {
-				$fields = $this->check_column_exist($table_name, $fields);
+				$fields = $this->check_column_exist($table_name, $fields, $this->connection);
 			} elseif (!empty($this->variables['table_fields'])) {
 				$fields = $this->check_column_exist($table_name, $this->variables['table_fields']);
 			} else {
