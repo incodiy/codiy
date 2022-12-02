@@ -55,3 +55,6 @@ This package used for simplifying some code with Laravel framework, hopefully ca
 --------------------------------------------------------------------------------
 	username: admin@gmail.com
 	password: @admin
+	
+--------------------------------------------------------------------------------
+Visit the demo site at [demo.incodiy.com](demo.incodiy.com)
