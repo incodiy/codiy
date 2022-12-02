@@ -1,9 +1,12 @@
 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+-----------------------------
 
-In the name of ALLAH SWT, 
+In the name of ALLAH SWT,
+-----------------------------
 
-Alhamdulillah because of Allah SWT, this code successfully created piece by piece start from Mar 29, 2017
-This package used for simplifying some code with Laravel framework. This code inspired by Muntilan-CMS code developed by .::bit.
+Alhamdulillah because of Allah SWT, this code successfully created piece by piece start from Mar 29, 2017.
+
+This package used for simplifying some code with Laravel framework, hopefully can help us all to build web-app. This code inspired by Muntilan-CMS code developed by .::bit, by the way.
 
 
 1). INSTALL LARAVEL
