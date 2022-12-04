@@ -155,6 +155,7 @@ if (!function_exists('diy_modal_content_html')) {
 				$html .= '<button id="submitFilterButton" class="btn btn-primary btn-slideright pull-right" type="submit">';
 					$html .= '<i class="fa fa-filter"></i> &nbsp; Filter Data ' . $title;
 				$html .= '</button>';
+				$html .= '<button type="button" id="' . $name . '-export-to-csv" class="btn btn-info btn-slideright pull-right btn-export-csv" data-dismiss="modal">Export to CSV</button>';
 			$html .= '</div>';
 		$html .= '</div>';
 		
