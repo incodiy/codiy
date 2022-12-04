@@ -297,10 +297,10 @@ trait Scripts {
 							$js .= "'____-__-__ __:__:__' != value";
 						$js .= ") {";
 							$js .= "if ('string' === typeof(value)) {";
-								$js .= "{$varTableID}_filterURI.push(index + '=' + value);";
+								$js .= "{$varTableID}_filterURI.push(index + '=' + encodeURIComponent(value));";
 							$js .= "} else if ('object' === typeof(value)) {";
 								$js .= "$.each(value, function(idx, _val) {";
-									$js .= "{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + _val);";
+									$js .= "{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + encodeURIComponent(_val));";
 								$js .= "});";
 							$js .= "}";
 						$js .= "}";
