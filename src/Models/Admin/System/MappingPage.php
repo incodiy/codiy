@@ -143,16 +143,32 @@ class MappingPage extends Model {
 		}
 	}
 	
+	private static $diycon = '--diycon--';
 	public static function getTableFields($data) {
-		$fields = [];
+		$delicon = '--diycon--';
+		$fields  = [];
 		if (is_array($data)) {
 			foreach ($data as $tableName) {
-				foreach (diy_get_table_columns($tableName) as $fieldname) {
+				$connection = null;
+				if (diy_string_contained($tableName, self::$diycon)) {
+					$split      = explode(self::$diycon, $tableName);
+					$tableName  = $split[0];
+					$connection = $split[1];
+				}
+				
+				foreach (diy_get_table_columns($tableName, $connection) as $fieldname) {
 					$fields[$fieldname] = $fieldname;
 				}
 			}
 		} else {
-			foreach (diy_get_table_columns($data) as $fieldname) {
+			$connection = null;
+			if (diy_string_contained($data, self::$diycon)) {
+				$split      = explode(self::$diycon, $data);
+				$tableName  = $split[0];
+				$connection = $split[1];
+			}
+			
+			foreach (diy_get_table_columns($data, $connection) as $fieldname) {
 				$fields[$fieldname]    = $fieldname;
 			}
 		}
@@ -163,6 +179,13 @@ class MappingPage extends Model {
 	private static function queryFieldValues($requests, $tablename, $node = null) {
 		$sql      = [];
 		$fieldset = [];
+		
+		$connection = null;
+		if (diy_string_contained($tablename, self::$diycon)) {
+			$split      = explode(self::$diycon, $tablename);
+			$tablename  = $split[0];
+			$connection = $split[1];
+		}
 		
 		if (is_array($requests)) {
 			foreach ($requests as $request) {
@@ -190,7 +213,7 @@ class MappingPage extends Model {
 		}
 		
 		$data             = [];
-		$data['data']     = diy_query($sql, 'SELECT');
+		$data['data']     = diy_query($sql, 'SELECT', $connection);
 		$data['fieldset'] = $fieldset;
 		
 		return $data;		

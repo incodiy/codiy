@@ -1234,11 +1234,15 @@ if (!function_exists('diy_get_model_controllers_info')) {
 								$modelclass = new $model();
 								$baseRoute = str_replace('.index', '', $route_name);
 								
+								$modelConnection = null;
+								if (!empty($modelclass->getConnectionName())) $modelConnection = $modelclass->getConnectionName();
+								
 								$models[$baseRoute]['controller']['route_base']  = str_replace('.index', '', $route_name);
 								$models[$baseRoute]['controller']['route_index'] = $route_name;
 								$models[$baseRoute]['controller']['path']        = $controllerPath;
 								$models[$baseRoute]['controller']['name']        = $controllerName;
 								$models[$baseRoute]['model']['name']             = class_basename($modelclass);
+								$models[$baseRoute]['model']['connection']       = $modelConnection;
 								$models[$baseRoute]['model']['path']             = get_class($modelclass);
 								$models[$baseRoute]['model']['table']            = $modelclass->getTable();
 								// use if any new table set for replace current table used in model

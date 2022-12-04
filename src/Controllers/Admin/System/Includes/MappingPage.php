@@ -249,7 +249,11 @@ trait MappingPage {
 	private function buildRoleBox($roleData, $module_name, $module_data, $icon, $indent = false) {
 		if ($roleData) {
 			
+			$connection                     = $roleData['model']['connection'];
 			$identifier                     = $roleData['model']['table_map'];
+			if (!empty($connection)) {
+				$identifier                  = $roleData['model']['table_map'] . '--diycon--' . $connection;
+			}
 			$routeName                      = strtolower($module_data->route);
 			$routeNameAttribute             = str_replace('.', '-', $module_data->route);
 			$routeToAttribute               = 'role__' . $routeNameAttribute . '__' . $roleData['model']['table_map'];
@@ -262,6 +266,7 @@ trait MappingPage {
 			$roleValues                     = [];
 			$roleValues['table_checked']    = false;
 			$roleValues['table_map']        = $identifier;
+			$roleValues['table_connection'] = $roleData['model']['connection'];
 			$roleValues['field_name']       = [];
 			$roleValues['field_value']      = [];
 			
