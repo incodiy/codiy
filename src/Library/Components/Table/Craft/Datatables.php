@@ -21,9 +21,7 @@ class Datatables {
 	public  $filter_model  = [];
 	private $image_checker = ['jpg', 'jpeg', 'png', 'gif'];
 	
-	public function __construct() {
-		//dd($this);
-	}
+	public function __construct() {}
 	
 	private function setAssetPath($file_path, $http = false, $public_path = 'public') {
 		if (true === $http) {

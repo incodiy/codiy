@@ -280,8 +280,8 @@ $('#exportFilterButton{$modalID}').on('click', function(event) {
 		inputData[y.name] = y.value;
 	});
 
-	var postData = Object.assign({}, inputData);console.log(postData);
-//	postData = {'_token': '{$token}', 'data1': 'datavalue01', 'data2': 'datavalue02'};console.log(postData);
+	var postData = Object.assign({}, inputData);
+	console.log(postData);
 	$.ajax ({
 		type: 'POST',
 		data: postData,

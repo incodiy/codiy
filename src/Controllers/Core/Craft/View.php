@@ -64,7 +64,7 @@ trait View {
 		}
 		
 		$this->addScriptsFromElements();
-		
+				
 		// RENDER DATATABLES!!!
 		if (!empty($_GET['renderDataTables'])) {
 			$filter_datatables = [];
@@ -73,10 +73,6 @@ trait View {
 			}
 			
 			return $this->initRenderDatatables([], $filter_datatables);
-		}
-		
-		if (!empty($_GET['exportDataTables'])) {
-			dd(json_decode($_GET));
 		}
 		
 		if (!empty($_GET['ajaxfproc'])) {

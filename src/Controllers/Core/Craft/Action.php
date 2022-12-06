@@ -3,6 +3,8 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Incodiy\Codiy\Models\Admin\System\DynamicTables;
+use Illuminate\Support\Facades\Response;
 
 /**
  * Created on 24 Mar 2021
@@ -90,9 +92,8 @@ trait Action {
 	}
 	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		if (!empty($_GET['renderDataexportDataTables'])) {
-			dd($_GET);
-		}
+		$this->exportDatatables();
+		
 		if (!empty($_GET['renderDataTables'])) {
 			if (!empty($_POST)) {
 				unset($_POST['_token']);
@@ -110,6 +111,83 @@ trait Action {
 	public function insert_data(Request $request, $routeback = true) {
 		$this->validation($request, 'edit');
 		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
+	}
+	
+	private function exportDatatables() {
+		$data = [];
+		if (!empty($_GET['exportDataTables'])) {
+			if (true == $_GET['exportDataTables']) {
+				$table_source = $_GET['difta']['name'];
+				$model_source = $_GET['difta']['source'];
+				$token = $_POST['_token'];
+				unset($_POST['_token']);
+				
+				if ('dynamics' === $model_source) {
+					$model = new DynamicTables(null, $this->connection);
+					$model->setTable($table_source);
+					$data[$table_source]['model'] = get_class($model);
+					
+					foreach ($model->get() as $i => $mod) {
+						foreach ($mod->getAttributes() as $fieldname => $fieldvalue) {
+							$data[$table_source]['export']['head'][$fieldname]     = $fieldname;
+							$data[$table_source]['export']['values'][$i][$fieldname] = $fieldvalue;
+						}
+					}
+					
+					if (!empty($data)) {
+						$this->exportCSV($data[$table_source]['export']);
+					}
+				}
+			}
+		}
+	}
+	
+	public function exportCSV($data) {
+		$path = storage_path('app/uploads');
+		$filename = 'parts' . date('YmdHis') . '.csv';
+		
+		$columns = $data['head'];
+		$values  = $data['values'];
+		$rows = [];
+		foreach ($values as $i => $valueData) {
+			foreach ($valueData as $fieldname => $value) {
+				$rows[$i][$fieldname] = $value;
+			}
+		}
+		
+		$columns = $data['head'];
+		$values  = $data['values'];
+		$rows = [];
+		foreach ($values as $i => $valueData) {
+			foreach ($valueData as $fieldname => $value) {
+				$rows[$i][$fieldname] = $value;
+			}
+		}
+		
+		$file = fopen($path . '/' . $filename, "w");
+		
+		fputcsv($file, $columns);
+		foreach ($rows as $row) {
+			fputcsv($file, $row);
+		}
+		
+		fclose($file);
+		
+		Response::download (
+			$path . '/' . $filename,
+			$filename,
+			[
+				'Content-Type: text/csv',
+				'Content-Type: application/octet-stream',
+				'Content-Disposition" => "attachment; filename=' . $filename,
+				"Pragma" => "no-cache",
+				"Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+				"Expires" => "0"
+			]
+		);
+		$filePath = str_replace('/public/', '/', url()->asset("storage/app/uploads/{$filename}"));
+		echo redirect($filePath);//redirect($path . '/' . $filename);
+		exit;
 	}
 	
 	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
