@@ -219,10 +219,11 @@ class Search {
 					
 					if ($open_field === $field) $values[$field] = $this->set_first_selectbox($tablename, $field_value, $field);
 					
+					$classFieldInfo = "{$this->cleardash($info)}Field";
 					if (!empty($values[$field])) {
-						$attributes = ['id' => $field, 'class' => $field . '_' . $this->cleardash($info) . 'Field'];
+						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}"];//'_' . $this->cleardash($info) . 'Field'];
 					} else {
-						$attributes = ['id' => $field, 'class' => $field . '_' . $this->cleardash($info) . 'Field', 'disabled' => 'disabled'];
+						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}", 'disabled' => 'disabled'];//'_' . $this->cleardash($info) . 'Field', 'disabled' => 'disabled'];
 					}
 					
 					$field_label = ucwords(diy_clean_strings($field, ' '));

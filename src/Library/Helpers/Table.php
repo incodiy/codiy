@@ -151,11 +151,11 @@ if (!function_exists('diy_modal_content_html')) {
 		$html .= '</div>';
 		$html .= '<div class="modal-footer">';
 			$html .= '<div class="diy-action-box">';
-				$html .= '<button type="button" id="' . $name . '-cancel" class="btn btn-danger btn-slideright pull-right" data-dismiss="modal">Cancel</button>';
+				$html .= '<button type="reset" id="' . $name . '-cancel" class="btn btn-danger btn-slideright pull-right" data-dismiss="modal">Cancel</button>';
 				$html .= '<button id="submitFilterButton" class="btn btn-primary btn-slideright pull-right" type="submit">';
 					$html .= '<i class="fa fa-filter"></i> &nbsp; Filter Data ' . $title;
 				$html .= '</button>';
-				$html .= '<button type="button" id="' . $name . '-export-to-csv" class="btn btn-info btn-slideright pull-right btn-export-csv" data-dismiss="modal">Export to CSV</button>';
+				$html .= '<button id="exportFilterButton' . $name . '" class="btn btn-info btn-slideright pull-right btn-export-csv" type="button">Export to CSV</button>';
 			$html .= '</div>';
 		$html .= '</div>';
 		

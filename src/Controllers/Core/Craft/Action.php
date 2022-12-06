@@ -90,6 +90,9 @@ trait Action {
 	}
 	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
+		if (!empty($_GET['renderDataexportDataTables'])) {
+			dd($_GET);
+		}
 		if (!empty($_GET['renderDataTables'])) {
 			if (!empty($_POST)) {
 				unset($_POST['_token']);

@@ -92,6 +92,8 @@ trait Scripts {
 				if (is_array($filters) && empty($filters)) $filters = null;
 				$filter_button = "$('div#{$attr_id}_wrapper>.dt-buttons').append('<span class=\"cody_{$attr_id}_diy-dt-filter-box\"></span>')";
 				$filter_js     = $this->filter($attr_id, $scriptURI);
+				$exportURI     = "{$current_url}?exportDataTables=true{$diftaURI}";
+				$filter_js    .= $this->export($attr_id, $exportURI);
 			}
 			
 			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js} });";
@@ -261,6 +263,38 @@ trait Scripts {
 			}
 		}
 		
+	}
+	
+	private function export($id, $url, $type = 'csv', $delimeter = '|') {
+		$varTableID	= explode('-', $id);
+		$varTableID	= implode('', $varTableID);
+		$modalID    = "{$id}_cdyFILTERmodalBOX";
+		$exportID   = 'export_' . str_replace('-', '_', $id) . '_cdyFILTERField';
+		$token      = csrf_token();
+		$script = "
+$('#exportFilterButton{$modalID}').on('click', function(event) {
+	var inputFilters    = $('#{$modalID} > .form-group.row > .input-group.col-sm-9 > select.{$exportID}');
+	var inputData       = [];
+	inputData['_token'] = '{$token}';
+	inputFilters.each(function(x, y) {
+		inputData[y.name] = y.value;
+	});
+
+	var postData = Object.assign({}, inputData);console.log(postData);
+//	postData = {'_token': '{$token}', 'data1': 'datavalue01', 'data2': 'datavalue02'};console.log(postData);
+	$.ajax ({
+		type: 'POST',
+		data: postData,
+		dataType: 'JSON',
+		url: '{$url}',
+		success : function(data) {
+			console.log(data);
+		}
+	});
+});
+		";
+		
+		return $script;
 	}
 	
 	private function filter($id, $url) {

@@ -75,6 +75,10 @@ trait View {
 			return $this->initRenderDatatables([], $filter_datatables);
 		}
 		
+		if (!empty($_GET['exportDataTables'])) {
+			dd(json_decode($_GET));
+		}
+		
 		if (!empty($_GET['ajaxfproc'])) {
 			return $this->form->ajaxProcessing();
 		}
