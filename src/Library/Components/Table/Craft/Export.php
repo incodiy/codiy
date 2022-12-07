@@ -85,9 +85,9 @@ class Export {
 		}
 		
 		$handle   = fopen($filepath, 'w');
-		fputcsv($handle, array_values($columns));
+		fputcsv($handle, array_values($columns), '|');
 		foreach ($rows as $row) {
-			fputcsv($handle, $row);
+			fputcsv($handle, str_replace(';', ' ', $row), '|');
 		}
 		fclose($handle);
 		
