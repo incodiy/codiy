@@ -97,3 +97,30 @@ function diy_random(length = 8) {
 	}
 	return result;
 }
+
+function exportFromModal(modalID, exportID, filterID, token, url) {
+	$('#exportFilterButton' + modalID).on('click', function(event) {
+		var inputFilters        = $('#' + modalID + ' > .form-group.row > .input-group.col-sm-9 > select.' + exportID);
+		var inputData           = [];
+		inputData['exportData'] = true;
+		inputData['_token']     = '' + token +'';
+		inputFilters.each(function(x, y) {
+			inputData[y.name]    = y.value;
+		});
+	
+		var postData = Object.assign({}, inputData);
+		
+		$.ajax ({
+			type: 'POST',
+			data: postData,
+			dataType: 'JSON',
+			url: '' + url + '',
+			success : function(n) {
+				window.location.href = n.diyExportStreamPath;
+			},
+			complete : function() {
+				$('#' + filterID).modal('hide');
+			}
+		});
+	});
+}
