@@ -134,7 +134,7 @@ class AjaxController extends Controller {
 		}
 	}
 	
-	public function export($name = null, $path = 'app/uploads') {
+	public function export($name = null, $path = 'export') {
 		$data = [];
 		if (!empty($_GET['exportDataTables'])) {
 			if (true == $_GET['exportDataTables']) {
@@ -156,7 +156,11 @@ class AjaxController extends Controller {
 					}
 					
 					if (!empty($data)) {
-						return $this->exportCSV($data[$table_source]['export'], $path);
+						$user = auth()->user()->username;
+						$time = date('Ymd');
+						$path = "{$path}/{$user}/{$token}/{$time}/{$table_source}";
+						
+						return $this->exportCSV($data[$table_source]['export'], $path, "{$user}-$table_source");
 					}
 				}
 			}
