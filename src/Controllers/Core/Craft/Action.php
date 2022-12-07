@@ -4,17 +4,16 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Incodiy\Codiy\Models\Admin\System\DynamicTables;
-use Illuminate\Support\Facades\Response;
 
 /**
  * Created on 24 Mar 2021
  * Time Created : 17:56:08
  *
- * @filesource	Action.php
+ * @filesource Action.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
  
 trait Action {
@@ -113,13 +112,12 @@ trait Action {
 	}
 	
 	private function exportDatatables() {
-		$data = [];
 		if (!empty($_GET['exportDataTables'])) {
 			if (true == $_GET['exportDataTables']) {
+				$data         = [];
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
 				$token        = $_POST['_token'];
-				
 				unset($_POST['_token']);
 				
 				if ('dynamics' === $model_source) {
@@ -129,7 +127,7 @@ trait Action {
 					
 					foreach ($model->get() as $i => $mod) {
 						foreach ($mod->getAttributes() as $fieldname => $fieldvalue) {
-							$data[$table_source]['export']['head'][$fieldname]     = $fieldname;
+							$data[$table_source]['export']['head'][$fieldname]       = $fieldname;
 							$data[$table_source]['export']['values'][$i][$fieldname] = $fieldvalue;
 						}
 					}
@@ -214,7 +212,7 @@ trait Action {
 			if (is_object($message_data) && 'Request' === class_basename($message_data)) {
 				if ($message_data->allFiles()) {
 					$message = $message_data->all();
-					$files     = [];
+					$files   = [];
 					foreach ($message_data->allFiles() as $filename => $filedata) {
 						$files[$filename] = $filedata;
 						unset($message[$filename]);
@@ -306,9 +304,9 @@ trait Action {
 		
 		foreach ($this->model_filters as $fieldname => $fieldvalue) {
 			$this->table->conditions['where'][] = [
-					'field_name' => $fieldname,
-					'operator'   => $operator,
-					'value'      => $fieldvalue
+				'field_name' => $fieldname,
+				'operator'   => $operator,
+				'value'      => $fieldvalue
 			];
 		}
 	}
