@@ -36,6 +36,7 @@ class LogController extends Controller {
 	
 	public function index() {
 		$this->setPage();
+		$this->removeActionButtons(['add']);
 		
 		$this->table->searchable(['user_fullname', 'user_group_info', 'method', 'module_name']);
 		$this->table->clickable();

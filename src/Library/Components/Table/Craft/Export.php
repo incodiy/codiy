@@ -24,15 +24,21 @@ class Export {
 		if (!empty($_GET['exportDataTables'])) {
 			if (true == $_GET['exportDataTables']) {
 				if (!empty($_POST['lurExp'])) $link = diy_decrypt($_POST['lurExp']);
+				unset($_POST['lurExp']);
+				unset($_POST['exportData']);
 				
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
 				$token        = $_POST['_token'];
 				unset($_POST['_token']);
+				$filters  = $_POST;
 				
 				if ('dynamics' === $model_source) {
 					$model = new DynamicTables(null, $link);
 					$model->setTable($table_source);
+					if (!empty(array_filter($filters))) {
+						$model  = $model->where($filters);
+					}
 					$data[$table_source]['model'] = get_class($model);
 					
 					foreach ($model->get() as $i => $mod) {
