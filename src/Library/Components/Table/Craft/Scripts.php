@@ -92,7 +92,8 @@ trait Scripts {
 				if (is_array($filters) && empty($filters)) $filters = null;
 				$filter_button = "$('div#{$attr_id}_wrapper>.dt-buttons').append('<span class=\"cody_{$attr_id}_diy-dt-filter-box\"></span>')";
 				$filter_js     = $this->filter($attr_id, $scriptURI);
-				$exportURI     = "{$current_url}?exportDataTables=true{$diftaURI}";
+			//	$exportURI     = "{$current_url}?exportDataTables=true{$diftaURI}";
+				$exportURI     = route('ajax.export') . "?exportDataTables=true{$diftaURI}";
 				$filter_js    .= $this->export($attr_id, $exportURI);
 			}
 			
@@ -269,26 +270,31 @@ trait Scripts {
 		$varTableID	= explode('-', $id);
 		$varTableID	= implode('', $varTableID);
 		$modalID    = "{$id}_cdyFILTERmodalBOX";
+		$filterID   = "{$id}_cdyFILTER";
 		$exportID   = 'export_' . str_replace('-', '_', $id) . '_cdyFILTERField';
 		$token      = csrf_token();
-		$script = "
+		$script     = "
 $('#exportFilterButton{$modalID}').on('click', function(event) {
-	var inputFilters    = $('#{$modalID} > .form-group.row > .input-group.col-sm-9 > select.{$exportID}');
-	var inputData       = [];
-	inputData['_token'] = '{$token}';
+	var inputFilters        = $('#{$modalID} > .form-group.row > .input-group.col-sm-9 > select.{$exportID}');
+	var inputData           = [];
+	inputData['exportData'] = true;
+	inputData['_token']     = '{$token}';
 	inputFilters.each(function(x, y) {
-		inputData[y.name] = y.value;
+		inputData[y.name]    = y.value;
 	});
 
 	var postData = Object.assign({}, inputData);
-	console.log(postData);
+	
 	$.ajax ({
 		type: 'POST',
 		data: postData,
 		dataType: 'JSON',
 		url: '{$url}',
-		success : function(data) {
-			console.log(data);
+		success : function(n) {
+			window.location.href = n.diyExportStreamPath;
+		},
+		complete : function() {
+			$('#{$filterID}').modal('hide');
 		}
 	});
 });

@@ -4,6 +4,8 @@ namespace Incodiy\Codiy\Controllers\Admin\System;
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
 use Illuminate\Http\Request;
+use Incodiy\Codiy\Models\Admin\System\DynamicTables;
+use Illuminate\Support\Facades\Response;
 
 /**
  * Created on Sep 23, 2022
@@ -130,5 +132,78 @@ class AjaxController extends Controller {
 			$this->datatableClass();
 			return $this->datatables->init_filter_datatables($_GET, $_POST, $this->ajaxConnection);
 		}
+	}
+	
+	public function export($name = null, $path = 'app/uploads') {
+		$data = [];
+		if (!empty($_GET['exportDataTables'])) {
+			if (true == $_GET['exportDataTables']) {
+				$table_source = $_GET['difta']['name'];
+				$model_source = $_GET['difta']['source'];
+				$token        = $_POST['_token'];
+				unset($_POST['_token']);
+				
+				if ('dynamics' === $model_source) {
+					$model = new DynamicTables(null, $this->connection);
+					$model->setTable($table_source);
+					$data[$table_source]['model'] = get_class($model);
+					
+					foreach ($model->get() as $i => $mod) {
+						foreach ($mod->getAttributes() as $fieldname => $fieldvalue) {
+							$data[$table_source]['export']['head'][$fieldname]       = $fieldname;
+							$data[$table_source]['export']['values'][$i][$fieldname] = $fieldvalue;
+						}
+					}
+					
+					if (!empty($data)) {
+						return $this->exportCSV($data[$table_source]['export'], $path);
+					}
+				}
+			}
+		}
+	}
+	
+	public $exportRedirection = null;
+	
+	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
+		if (!file_exists(public_path()."/{$path}")) {
+			diy_make_dir(public_path() . "/{$path}", 0777, true, true);
+		}
+		
+		$filepath = public_path("{$path}/{$filename}.csv");
+		$headers  = [
+			'Content-Type'        => 'text/csv',
+			'Content-Type'        => 'application/octet-stream',
+			'Content-Disposition' => 'attachment; filename=' . $filepath,
+			"Pragma"              => "no-cache",
+			"Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+			"Expires"             => "0"
+		];
+		
+		$columns  = $data['head'];
+		$values   = $data['values'];
+		
+		$rows     = [];
+		foreach ($values as $i => $valueData) {
+			foreach ($valueData as $fieldname => $value) {
+				$rows[$i][$fieldname] = $value;
+			}
+		}
+		
+		$handle   = fopen($filepath, 'w');
+		fputcsv($handle, array_values($columns));
+		foreach ($rows as $row) {
+			fputcsv($handle, $row);
+		}
+		fclose($handle);
+		
+		//	$filepath = explode('public', $filepath);
+		$this->exportRedirection = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
+		
+		Response::streamDownload($this->exportRedirection, "{$filename}.csv", $headers);
+		
+		$jsonData = json_encode(['diyExportStreamPath' => $this->exportRedirection]);
+		
+		return $jsonData;
 	}
 }

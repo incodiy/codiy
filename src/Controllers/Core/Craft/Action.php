@@ -92,7 +92,6 @@ trait Action {
 	}
 	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		$this->exportDatatables();
 		
 		if (!empty($_GET['renderDataTables'])) {
 			if (!empty($_POST)) {
@@ -119,7 +118,8 @@ trait Action {
 			if (true == $_GET['exportDataTables']) {
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
-				$token = $_POST['_token'];
+				$token        = $_POST['_token'];
+				
 				unset($_POST['_token']);
 				
 				if ('dynamics' === $model_source) {
@@ -133,65 +133,17 @@ trait Action {
 							$data[$table_source]['export']['values'][$i][$fieldname] = $fieldvalue;
 						}
 					}
-					
-					if (!empty($data)) {
-						$this->exportCSV($data[$table_source]['export']);
-					}
 				}
 			}
 		}
 	}
 	
-	public function exportCSV($data) {
-		$path = storage_path('app/uploads');
-		$filename = 'parts' . date('YmdHis') . '.csv';
-		
-		$columns = $data['head'];
-		$values  = $data['values'];
-		$rows = [];
-		foreach ($values as $i => $valueData) {
-			foreach ($valueData as $fieldname => $value) {
-				$rows[$i][$fieldname] = $value;
-			}
-		}
-		
-		$columns = $data['head'];
-		$values  = $data['values'];
-		$rows = [];
-		foreach ($values as $i => $valueData) {
-			foreach ($valueData as $fieldname => $value) {
-				$rows[$i][$fieldname] = $value;
-			}
-		}
-		
-		$file = fopen($path . '/' . $filename, "w");
-		
-		fputcsv($file, $columns);
-		foreach ($rows as $row) {
-			fputcsv($file, $row);
-		}
-		
-		fclose($file);
-		
-		Response::download (
-			$path . '/' . $filename,
-			$filename,
-			[
-				'Content-Type: text/csv',
-				'Content-Type: application/octet-stream',
-				'Content-Disposition" => "attachment; filename=' . $filename,
-				"Pragma" => "no-cache",
-				"Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-				"Expires" => "0"
-			]
-		);
-		$filePath = str_replace('/public/', '/', url()->asset("storage/app/uploads/{$filename}"));
-		echo redirect($filePath);//redirect($path . '/' . $filename);
-		exit;
-	}
-	
 	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
 		$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
+		if (!empty($this->exportRedirection) && true == $_POST['exportData']) {
+			echo redirect($this->exportRedirection);
+			exit;
+		}
 		
 		$model = null;
 		$this->store_routeback = $routeback;
@@ -213,7 +165,7 @@ trait Action {
 		}
 	}
 	
-	protected function store(Request $request) {
+	protected function store(Request $request) {		
 		$this->INSERT_DATA_PROCESSOR($request);
 		
 		if (true === $this->store_routeback) {
