@@ -6,6 +6,7 @@ use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
 use Illuminate\Http\Request;
 use Incodiy\Codiy\Models\Admin\System\DynamicTables;
 use Illuminate\Support\Facades\Response;
+use Incodiy\Codiy\Library\Components\Table\Craft\Export;
 
 /**
  * Created on Sep 23, 2022
@@ -24,7 +25,6 @@ class AjaxController extends Controller {
 	private $ajaxConnection = null;
 	
 	public function __construct($connection = null) {
-	//	if (!empty($_POST)) dd($_POST, $connection);
 		if (!empty($connection)) $this->ajaxConnection = $connection;
 	}
 		
@@ -134,80 +134,8 @@ class AjaxController extends Controller {
 		}
 	}
 	
-	public function export($name = null, $path = 'export') {
-		$data = [];
-		if (!empty($_GET['exportDataTables'])) {
-			if (true == $_GET['exportDataTables']) {
-				$table_source = $_GET['difta']['name'];
-				$model_source = $_GET['difta']['source'];
-				$token        = $_POST['_token'];
-				unset($_POST['_token']);
-				
-				if ('dynamics' === $model_source) {
-					$model = new DynamicTables(null, $this->connection);
-					$model->setTable($table_source);
-					$data[$table_source]['model'] = get_class($model);
-					
-					foreach ($model->get() as $i => $mod) {
-						foreach ($mod->getAttributes() as $fieldname => $fieldvalue) {
-							$data[$table_source]['export']['head'][$fieldname]       = $fieldname;
-							$data[$table_source]['export']['values'][$i][$fieldname] = $fieldvalue;
-						}
-					}
-					
-					if (!empty($data)) {
-						$user = auth()->user()->username;
-						$time = date('Ymd');
-						$path = "{$path}/{$user}/{$token}/{$time}/{$table_source}";
-						
-						return $this->exportCSV($data[$table_source]['export'], $path, "{$user}-$table_source");
-					}
-				}
-			}
-		}
-	}
-	
-	public $exportRedirection = null;
-	
-	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
-		if (!file_exists(public_path()."/{$path}")) {
-			diy_make_dir(public_path() . "/{$path}", 0777, true, true);
-		}
-		
-		$filepath = public_path("{$path}/{$filename}.csv");
-		$headers  = [
-			'Content-Type'        => 'text/csv',
-			'Content-Type'        => 'application/octet-stream',
-			'Content-Disposition' => 'attachment; filename=' . $filepath,
-			"Pragma"              => "no-cache",
-			"Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-			"Expires"             => "0"
-		];
-		
-		$columns  = $data['head'];
-		$values   = $data['values'];
-		
-		$rows     = [];
-		foreach ($values as $i => $valueData) {
-			foreach ($valueData as $fieldname => $value) {
-				$rows[$i][$fieldname] = $value;
-			}
-		}
-		
-		$handle   = fopen($filepath, 'w');
-		fputcsv($handle, array_values($columns));
-		foreach ($rows as $row) {
-			fputcsv($handle, $row);
-		}
-		fclose($handle);
-		
-		//	$filepath = explode('public', $filepath);
-		$this->exportRedirection = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
-		
-		Response::streamDownload($this->exportRedirection, "{$filename}.csv", $headers);
-		
-		$jsonData = json_encode(['diyExportStreamPath' => $this->exportRedirection]);
-		
-		return $jsonData;
+	public function export($name = null, $path = 'export', $get = [], $post = []) {
+		$export = new Export();
+		return $export->run($name, $path = 'export');
 	}
 }
