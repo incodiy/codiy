@@ -182,7 +182,7 @@ trait Action {
 	
 	/**
 	 * Set Validation Data
-	 * 
+	 *
 	 * @param array $roles
 	 * @param array $on_update
 	 */
@@ -223,7 +223,7 @@ trait Action {
 				} else {
 					$message = $message_data->all();
 				}
-			} else {				
+			} else {
 				$message = $message_data;
 			}
 		}
@@ -286,10 +286,10 @@ trait Action {
 	public $model_filters = [];
 	/**
 	 * Filter Page
-	 * 
+	 *
 	 * @param array $filters
 	 * 	: [
-	 * 		'field_name' => 'value', 
+	 * 		'field_name' => 'value',
 	 * 		'field_name' => 'value'
 	 * 	  ]
 	 */
@@ -306,9 +306,9 @@ trait Action {
 		
 		foreach ($this->model_filters as $fieldname => $fieldvalue) {
 			$this->table->conditions['where'][] = [
-				'field_name' => $fieldname,
-				'operator'   => $operator,
-				'value'      => $fieldvalue
+					'field_name' => $fieldname,
+					'operator'   => $operator,
+					'value'      => $fieldvalue
 			];
 		}
 	}
@@ -342,7 +342,7 @@ trait Action {
 		if (!empty(diy_get_current_route_id())) {
 			$this->model_id   = diy_get_current_route_id();
 			$this->model_find($this->model_id);
-		//	$this->connection = $this->model->getConnectionName();
+			//	$this->connection = $this->model->getConnectionName();
 		}
 		
 		if (!empty($this->form)) $this->form->model = $this->model;
@@ -370,9 +370,9 @@ trait Action {
 	
 	/**
 	 * Get Model
-	 * 
+	 *
 	 * @param boolean $find
-	 * 
+	 *
 	 * @return object
 	 */
 	protected function getModel($find = false) {
@@ -401,9 +401,9 @@ trait Action {
 	
 	/**
 	 * Get Table Name By Model
-	 * 
+	 *
 	 * @param boolean $find
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function getModelTable($find = false) {
@@ -412,7 +412,7 @@ trait Action {
 	
 	/**
 	 * Redirect Back After Sumbit Data Process
-	 * 
+	 *
 	 * @param string $function_name
 	 * @param integer $id
 	 * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
@@ -429,7 +429,7 @@ trait Action {
 	
 	/**
 	 * Set Upload Path URL
-	 * 
+	 *
 	 * @return mixed
 	 */
 	private function setUploadURL() {
@@ -442,7 +442,7 @@ trait Action {
 	
 	/**
 	 * Check If any input type file submited or not
-	 * 
+	 *
 	 * @param Request $request
 	 * @return object|\Illuminate\Http\Request
 	 */
