@@ -56,12 +56,20 @@ Route::group(['middleware' => ['web']], function() {
 		Route::group(['prefix' => 'modules'], function() {
 			Route::resource('form', 'App\Http\Controllers\Admin\Modules\FormController', ['as' => 'modules']);
 			Route::group(['prefix' => 'mantra'], function() {
-				Route::resource('kpi_distributors', 'App\Http\Controllers\Admin\Modules\Mantra\KpiDistributorControllers', ['as' => 'modules.mantra']);
+				Route::resource('kpidistributor', 'App\Http\Controllers\Admin\Modules\Mantra\KpiDistributorControllers', ['as' => 'modules.mantra']);
+			});
+			Route::group(['prefix' => 'programs'], function() {
+				Route::resource('program_keren',           'App\Http\Controllers\Admin\Modules\Programs\ProgramKerenControllers',          ['as' => 'modules.programs']);
+				Route::resource('program_merapi',          'App\Http\Controllers\Admin\Modules\Programs\ProgramMerapiControllers',         ['as' => 'modules.programs']);
+				Route::resource('program_low_denom',       'App\Http\Controllers\Admin\Modules\Programs\ProgramLowDenomControllers',       ['as' => 'modules.programs']);
+				#	Route::resource('program_natuna_anambas',  'App\Http\Controllers\Admin\Modules\Programs\ProgramNatunaAnambasControllers',  ['as' => 'modules.programs']);
+				#	Route::resource('program_trikom_wireless', 'App\Http\Controllers\Admin\Modules\Programs\ProgramTrikomWirelessControllers', ['as' => 'modules.programs']);
 			});
 		});
 
 		Route::group(['prefix' => 'ajax'], function() {
-			Route::post('post', ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@post', 'as' => 'ajax.post']);
+			Route::post('post',   ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@post', 'as' => 'ajax.post']);			
+			Route::post('export', ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@export', 'as' => 'ajax.export']);
 		});
 	});
 });

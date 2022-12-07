@@ -273,7 +273,7 @@ trait Scripts {
 		$filterID   = "{$id}_cdyFILTER";
 		$exportID   = 'export_' . str_replace('-', '_', $id) . '_cdyFILTERField';
 		$token      = csrf_token();
-		$script     = "
+		$scriptx     = "
 $('#exportFilterButton{$modalID}').on('click', function(event) {
 	var inputFilters        = $('#{$modalID} > .form-group.row > .input-group.col-sm-9 > select.{$exportID}');
 	var inputData           = [];
@@ -299,6 +299,7 @@ $('#exportFilterButton{$modalID}').on('click', function(event) {
 	});
 });
 		";
+		$script = "exportFromModal('{$modalID}', '{$exportID}', '{$filterID}', '{$token}', '{$url}')";
 		
 		return $script;
 	}
