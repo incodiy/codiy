@@ -72,6 +72,7 @@ function updateSelectChosen(target, reset = true, optstring = 'Select an Option'
 	} else {
 		chosenTarget.trigger('chosen:updated');
 	}
+	
 }
 
 function loader(target_id, view = 'hide') {
@@ -97,28 +98,26 @@ function diy_random(length = 8) {
 	return result;
 }
 
-function exportFromModal(modalID, exportID, filterID, token, url, link = null) {
+function exportFromModal(modalID, exportID, filterID, token, url) {
 	$('#exportFilterButton' + modalID).on('click', function(event) {
 		var inputFilters        = $('#' + modalID + ' > .form-group.row > .input-group.col-sm-9 > select.' + exportID);
 		var inputData           = [];
 		inputData['exportData'] = true;
 		inputData['_token']     = '' + token +'';
 		inputFilters.each(function(x, y) {
-			inputData[y.name]   = y.value;
+			inputData[y.name]    = y.value;
 		});
-		if (null != link) {
-			inputData['lurExp'] = link;
-		}
-	
+		
 		var postData = Object.assign({}, inputData);
 		
 		$.ajax ({
 			type: 'POST',
 			data: postData,
 			dataType: 'JSON',
-			url: '' + url + '',
+			url: url,
 			success : function(n) {
-				window.location.href = n.diyExportStreamPath;
+			//	window.location.href = n.diyExportStreamPath;
+				window.open(n.diyExportStreamPath, '_blank');
 			},
 			complete : function() {
 				$('#' + filterID).modal('hide');

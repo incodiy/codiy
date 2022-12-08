@@ -61,11 +61,14 @@ class Export {
 	}
 	
 	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
-		$pathFile = public_path();
-		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
-			$pathFile = str_replace('public', '', $pathFile);
+		/* 
+		$pathFile = public_path();		
+		$realPath = str_replace('//', '/', "{$pathFile}/{$path}");
+		if (!file_exists($realPath)) {
+			diy_make_dir($realPath, 0777, true, true);
 		}
-		
+		 */
+		$pathFile = public_path();		
 		if (!file_exists($pathFile."/{$path}")) {
 			diy_make_dir($pathFile . "/{$path}", 0777, true, true);
 		}
@@ -73,8 +76,7 @@ class Export {
 		$filepath = str_replace('\/', '/', $pathFile . "/{$path}/{$filename}.csv");
 		$headers  = [
 			'Content-Type'        => 'text/csv',
-			'Content-Type'        => 'application/octet-stream',
-			'Content-Disposition' => 'attachment; filename=' . $filepath,
+			'Content-Disposition' => 'attachment; filename=' . $filename . '.csv',
 			"Pragma"              => "no-cache",
 			"Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
 			"Expires"             => "0"
