@@ -116,8 +116,8 @@ function exportFromModal(modalID, exportID, filterID, token, url) {
 			dataType: 'JSON',
 			url: url,
 			success : function(n) {
-			//	window.location.href = n.diyExportStreamPath;
-				window.open(n.diyExportStreamPath, '_blank');
+				window.location.href = n.diyExportStreamPath;
+			//	window.open(n.diyExportStreamPath, '_blank');
 			},
 			complete : function() {
 				$('#' + filterID).modal('hide');
