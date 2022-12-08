@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Response;
  
 class Export {
 	
-	public function run($name = null, $path = 'export', $link = null) {
+	public function run($path = 'assets/resources/exports', $link = null) {
 		$data = [];
 		if (!empty($_GET['exportDataTables'])) {
 			if (true == $_GET['exportDataTables']) {
@@ -61,11 +61,16 @@ class Export {
 	}
 	
 	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
-		if (!file_exists(public_path()."/{$path}")) {
-			diy_make_dir(public_path() . "/{$path}", 0777, true, true);
+		$pathFile = public_path();
+		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
+			$pathFile = str_replace('public', '', $pathFile);
 		}
 		
-		$filepath = public_path("{$path}/{$filename}.csv");
+		if (!file_exists($pathFile."/{$path}")) {
+			diy_make_dir($pathFile . "/{$path}", 0777, true, true);
+		}
+		
+		$filepath = str_replace('\/', '/', $pathFile . "/{$path}/{$filename}.csv");
 		$headers  = [
 			'Content-Type'        => 'text/csv',
 			'Content-Type'        => 'application/octet-stream',
@@ -91,7 +96,11 @@ class Export {
 		}
 		fclose($handle);
 		
-		$uri = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
+		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
+			$uri = url()->asset($filepath);
+		} else {
+			$uri = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
+		}
 		
 		Response::streamDownload($uri, "{$filename}.csv", $headers);
 		

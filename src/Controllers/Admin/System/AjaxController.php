@@ -134,8 +134,8 @@ class AjaxController extends Controller {
 		}
 	}
 	
-	public function export($name = null, $path = 'export', $get = [], $post = []) {
+	public function export() {
 		$export = new Export();
-		return $export->run($name, $path = 'export');
+		return $export->run('assets/resources/exports');
 	}
 }
