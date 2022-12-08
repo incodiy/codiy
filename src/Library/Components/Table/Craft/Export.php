@@ -97,7 +97,7 @@ class Export {
 		fclose($handle);
 		
 		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
-			$uri = url()->asset($filepath);
+			$uri = url(diy_config('baseURL') . '/' . $path . '/' . $filename . '.csv');
 		} else {
 			$uri = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
 		}
