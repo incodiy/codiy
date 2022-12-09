@@ -98,30 +98,40 @@ function diy_random(length = 8) {
 	return result;
 }
 
+function diy_array_to_object(array) {
+	return Object.assign({}, array);
+}
+
 function exportFromModal(modalID, exportID, filterID, token, url, link) {
 	$('#exportFilterButton' + modalID).on('click', function(event) {
+		$(this).css({
+			'position': 'relative',
+			'width': '138px',
+			'text-align': 'left'
+		}).append('<span id="loader_'+ modalID +'" class="inputloader loader" style="right:8px;width:20px;height:20px;top:7px;background-size:20px"></span>');
+		
 		var inputFilters        = $('#' + modalID + ' > .form-group.row > .input-group.col-sm-9 > select.' + exportID);
 		var inputData           = [];
 		inputData['exportData'] = true;
-		inputData['_token']     = '' + token +'';
+		inputData['_token']     = token;
 		inputFilters.each(function(x, y) {
-			inputData[y.name]    = y.value;
+			inputData[y.name]   = y.value;
 		});
 		if (null != link) {
 			inputData['lurExp'] = link;
 		}
 		
-		var postData = Object.assign({}, inputData);
-		
 		$.ajax ({
 			type    : 'POST',
-			data    : postData,
+			data    : diy_array_to_object(inputData),
 			dataType: 'JSON',
 			url     : url,
 			success : function(n) {
 				window.location.href = n.diyExportStreamPath;
 			},
 			complete : function() {
+				$('#exportFilterButton' + modalID).removeAttr('style');
+				$('#loader_'+ modalID).remove();
 				$('#' + filterID).modal('hide');
 			}
 		});
