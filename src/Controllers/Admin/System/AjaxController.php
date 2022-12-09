@@ -136,6 +136,6 @@ class AjaxController extends Controller {
 	
 	public function export() {
 		$export = new Export();
-		return $export->run('assets/resources/exports');
+		return $export->csv('assets/resources/exports');
 	}
 }

@@ -98,7 +98,7 @@ function diy_random(length = 8) {
 	return result;
 }
 
-function exportFromModal(modalID, exportID, filterID, token, url) {
+function exportFromModal(modalID, exportID, filterID, token, url, link) {
 	$('#exportFilterButton' + modalID).on('click', function(event) {
 		var inputFilters        = $('#' + modalID + ' > .form-group.row > .input-group.col-sm-9 > select.' + exportID);
 		var inputData           = [];
@@ -107,17 +107,19 @@ function exportFromModal(modalID, exportID, filterID, token, url) {
 		inputFilters.each(function(x, y) {
 			inputData[y.name]    = y.value;
 		});
+		if (null != link) {
+			inputData['lurExp'] = link;
+		}
 		
 		var postData = Object.assign({}, inputData);
 		
 		$.ajax ({
-			type: 'POST',
-			data: postData,
+			type    : 'POST',
+			data    : postData,
 			dataType: 'JSON',
-			url: url,
+			url     : url,
 			success : function(n) {
 				window.location.href = n.diyExportStreamPath;
-			//	window.open(n.diyExportStreamPath, '_blank');
 			},
 			complete : function() {
 				$('#' + filterID).modal('hide');

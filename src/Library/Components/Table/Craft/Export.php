@@ -19,7 +19,20 @@ use Illuminate\Support\Facades\Response;
  
 class Export {
 	
-	public function run($path = 'assets/resources/exports', $link = null) {
+	public  $delimeter   = '|';
+	private $export_path = 'assets/resources/exports';
+	
+	public function csv($path = null, $link = null) {
+		return $this->process('csv', $path, $link);
+	}
+	
+	private function process($type = 'csv', $path = null, $link = null) {
+		if (empty($path)) {
+			$path = $this->export_path;
+		} else {
+			$this->export_path = $path;
+		}
+		
 		$data = [];
 		if (!empty($_GET['exportDataTables'])) {
 			if (true == $_GET['exportDataTables']) {
@@ -31,13 +44,19 @@ class Export {
 				$model_source = $_GET['difta']['source'];
 				$token        = $_POST['_token'];
 				unset($_POST['_token']);
-				$filters  = $_POST;
+				$filters      = $_POST;
 				
 				if ('dynamics' === $model_source) {
 					$model = new DynamicTables(null, $link);
 					$model->setTable($table_source);
 					if (!empty(array_filter($filters))) {
-						$model  = $model->where($filters);
+						$filterData = [];
+						foreach ($filters as $field_name => $field_value) {
+							if (!empty($field_value)) {
+								$filterData[$field_name] = $field_value;
+							}
+						}
+						$model = $model->where($filterData);
 					}
 					$data[$table_source]['model'] = get_class($model);
 					
@@ -53,30 +72,26 @@ class Export {
 						$time = date('Ymd');
 						$path = "{$path}/{$user}/{$token}/{$time}/{$table_source}";
 						
-						return $this->exportCSV($data[$table_source]['export'], $path, "{$user}-$table_source");
+						if ('csv' === $type) {
+							return $this->exportCSV($data[$table_source]['export'], $path, "{$user}-$table_source");
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
-		/* 
-		$pathFile = public_path();		
-		$realPath = str_replace('//', '/', "{$pathFile}/{$path}");
-		if (!file_exists($realPath)) {
-			diy_make_dir($realPath, 0777, true, true);
-		}
-		 */
-		$pathFile = public_path();		
+	private function generate($type = 'csv', $data = [], $path = null, $filename = 'diyExportData') {
+		
+		$pathFile = public_path();
 		if (!file_exists($pathFile."/{$path}")) {
 			diy_make_dir($pathFile . "/{$path}", 0777, true, true);
 		}
 		
-		$filepath = str_replace('\/', '/', $pathFile . "/{$path}/{$filename}.csv");
+		$filepath = str_replace('\/', '/', $pathFile . "/{$path}/{$filename}.{$type}");
 		$headers  = [
-			'Content-Type'        => 'text/csv',
-			'Content-Disposition' => 'attachment; filename=' . $filename . '.csv',
+			'Content-Type'        => 'text/' . $type,
+			'Content-Disposition' => 'attachment; filename=' . $filename . '.' . $type,
 			"Pragma"              => "no-cache",
 			"Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
 			"Expires"             => "0"
@@ -91,21 +106,37 @@ class Export {
 			}
 		}
 		
+		if ('csv' === $type) self::createFileCSV($filepath, $columns, $rows);
+		
+		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
+			$uri = url(diy_config('baseURL') . '/' . $path . '/' . $filename . '.' . $type);
+		} else {
+			$uri = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
+		}
+		
+		Response::streamDownload($uri, "{$filename}.{$type}", $headers);
+		
+		return json_encode(['diyExportStreamPath' => $uri]);
+	}
+	
+	private static function createFileCSV($filepath, $columns, $rows) {
 		$handle   = fopen($filepath, 'w');
 		fputcsv($handle, array_values($columns), '|');
 		foreach ($rows as $row) {
 			fputcsv($handle, str_replace(';', ' ', $row), '|');
 		}
 		fclose($handle);
+	}
+	
+	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
+		return $this->generate('csv', $data, $path, $filename);
 		
-		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
-			$uri = url(diy_config('baseURL') . '/' . $path . '/' . $filename . '.csv');
-		} else {
-			$uri = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
+		/* 
+		$pathFile = public_path();		
+		$realPath = str_replace('//', '/', "{$pathFile}/{$path}");
+		if (!file_exists($realPath)) {
+			diy_make_dir($realPath, 0777, true, true);
 		}
-		
-		Response::streamDownload($uri, "{$filename}.csv", $headers);
-		
-		return json_encode(['diyExportStreamPath' => $uri]);
+		 */
 	}
 }
