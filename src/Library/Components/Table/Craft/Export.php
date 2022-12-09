@@ -82,7 +82,6 @@ class Export {
 	}
 	
 	private function generate($type = 'csv', $data = [], $path = null, $filename = 'diyExportData') {
-		
 		$pathFile = public_path();
 		if (!file_exists($pathFile."/{$path}")) {
 			diy_make_dir($pathFile . "/{$path}", 0777, true, true);
@@ -120,7 +119,13 @@ class Export {
 	}
 	
 	private static function createFileCSV($filepath, $columns, $rows) {
-		$handle   = fopen($filepath, 'w');
+		$_columns = [];
+		foreach ($columns as $column) {
+			$columnLabel = ucwords(str_replace('_', ' ', $column));
+			$_columns[$columnLabel] = $columnLabel;
+		}
+		$columns = $_columns;		
+		$handle  = fopen($filepath, 'w');
 		fputcsv($handle, array_values($columns), '|');
 		foreach ($rows as $row) {
 			fputcsv($handle, str_replace(';', ' ', $row), '|');
