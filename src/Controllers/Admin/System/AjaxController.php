@@ -86,12 +86,12 @@ class AjaxController extends Controller {
 			$sourceData[] = (array) $datasources;
 		}
 		$sourceCounts    = count($sourceData);
-		$limitCounts     = 5;
+		$limitCounts     = 100;
 		$rowCountProcess = round($sourceCounts/$limitCounts);
 		
 		$result = [];
 		if (!empty($datasource)) {
-			$transfers = DB::connection($tconnect);
+			$transfers    = DB::connection($tconnect);
 			$transfers->beginTransaction();
 			$transfers->delete("TRUNCATE {$ttable}");
 			
@@ -100,6 +100,7 @@ class AjaxController extends Controller {
 			$countData    = 0;
 			foreach($datahandler as $row) {
 				$countData++;
+			//	dump($countData . ' => ' . json_encode($row));
 				if (!$transfers->table($ttable)->insert($row)) $stillHandled = false;
 			}
 			
