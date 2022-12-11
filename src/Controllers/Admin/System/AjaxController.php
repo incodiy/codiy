@@ -81,6 +81,7 @@ class AjaxController extends Controller {
 		$ttable          = $_POST['target_table_name'];
 		
 		$datasource      = DB::connection($sconnect)->select("SELECT * FROM {$stable}");
+		$sourceData      = [];
 		foreach ($datasource as $datasources) {
 			$sourceData[] = (array) $datasources;
 		}

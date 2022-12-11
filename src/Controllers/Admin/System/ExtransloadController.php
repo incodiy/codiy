@@ -22,6 +22,7 @@ class ExtransloadController extends Controller {
 	
 	private $page_label = 'Extract, Transform and Load';
 	private $fields = [
+		'process_name',
 		'source_connection_name',
 		'source_table_name',
 		'source_data_counts',
@@ -76,6 +77,10 @@ class ExtransloadController extends Controller {
 		$this->setPage($this->page_label . ' Mappings');
 		$this->form->model();
 		
+		$this->form->text('process_name', null);
+		$this->form->textarea('remarks', null, ['class' => 'form-control ckeditor']);
+		
+		$this->form->openTab('Information Process');
 		$this->form->selectbox('source_connection_name', self::$etls['sources']['label'], false, ['required']);
 		$this->form->selectbox('source_table_name', [], false, ['required']);
 		$this->synconnections('source_connection_name', 'source_table_name');
@@ -86,6 +91,7 @@ class ExtransloadController extends Controller {
 		$this->synconnections('target_connection_name', 'target_table_name');
 	//	$this->form->text('target_current_counts', null);
 	//	$this->form->text('success_data_transfers', null, ['required']);
+		$this->form->closeTab();
 		
 		$this->form->close('Save ' . $this->page_label);
 		
@@ -99,6 +105,10 @@ class ExtransloadController extends Controller {
 		$this->form->method('post');
 		$this->form->model();
 		
+		$this->form->text('process_name', $this->model_data->process_name);
+		$this->form->textarea('remarks', $this->model_data->remarks, ['class' => 'form-control ckeditor']);
+		
+		$this->form->openTab('Information Process');
 		$this->form->selectbox('source_connection_name', self::$etls['sources']['label'], $this->model_data->source_connection_name, ['required', 'radonly']);
 		$this->form->selectbox('source_table_name', [], false, ['required', 'radonly']);
 		$this->synconnections('source_connection_name', 'source_table_name', $this->model_data->source_table_name);
@@ -106,6 +116,7 @@ class ExtransloadController extends Controller {
 		$this->form->selectbox('target_connection_name', self::$etls['sources']['label'], $this->model_data->target_connection_name, ['required', 'radonly']);
 		$this->form->selectbox('target_table_name', [], false, ['required', 'radonly']);
 		$this->synconnections('target_connection_name', 'target_table_name', $this->model_data->target_table_name);
+		$this->form->closeTab();
 		
 		$this->form->close('Process ' . $this->page_label);
 		
@@ -113,6 +124,16 @@ class ExtransloadController extends Controller {
 		$this->form->draw(diy_script("
 jQuery(document).ready(function() {
 	$('form[name=\"{$this->form->identity}\"]').on('submit', function(e) {
+		var submitButtonBox = $('div.diy-action-box>input.btn');
+		submitButtonBox.css({
+			'width': '220px',
+			'text-align': 'left',
+			'text-indent': '10px'
+		}).wrap('<div class=\"diy_submitbox\" style=\"position:relative;width:220px;text-align:left;float:right\"></div>');
+		
+		$('<span class=\"inputloader loader\" style=\"right:8px;width:20px;height:20px;top:7px;background-size:20px\"></span>')
+			.insertAfter(submitButtonBox);
+
 		e.preventDefault();
 		$.ajax({
 			type    : 'POST',
@@ -120,6 +141,12 @@ jQuery(document).ready(function() {
 			data    : $(this).serialize(),
 			success : function(d) {
 				var result = JSON.parse(d);
+			},			
+			complete : function() {
+				submitButtonBox.removeAttr('style').detach();
+				$('div.diy-action-box').append(submitButtonBox);
+				$('div.diy_submitbox').remove();
+				$('span.inputloader').remove();
 			}
 		});
 	});

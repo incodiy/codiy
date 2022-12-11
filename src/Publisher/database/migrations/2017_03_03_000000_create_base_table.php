@@ -945,6 +945,8 @@ class CreateBaseTable extends Migration {
 			
 			$table->bigIncrements('id', true)->unsigned();
 			
+			$table->string('process_name', 300);
+			$table->text('remarks')->nullable();
 			$table->string('source_connection_name', 80);
 			$table->string('source_table_name', 200);
 			$table->integer('source_data_counts')->nullable()->default(0);
