@@ -38,13 +38,13 @@ Route::group(['middleware' => ['web']], function() {
 
 			// CONFIGURATION
 			Route::group(['prefix' => 'config'], function() {
-				Route::resource('module',     'App\Http\Controllers\Admin\System\ModulesController',    ['as' => 'system.config']);
-				Route::resource('preference', 'App\Http\Controllers\Admin\System\PreferenceController', ['as' => 'system.config']);
-				Route::resource('group',      'App\Http\Controllers\Admin\System\GroupController',      ['as' => 'system.config']);
+				Route::resource('module',     'App\Http\Controllers\Admin\System\ModulesController',     ['as' => 'system.config']);
+				Route::resource('preference', 'App\Http\Controllers\Admin\System\PreferenceController',  ['as' => 'system.config']);
+				Route::resource('group',      'App\Http\Controllers\Admin\System\GroupController',       ['as' => 'system.config']);
 				
-			//	Route::resource('icon',       'App\Http\Controllers\Admin\System\IconController',       ['as' => 'system.config']);
-				Route::resource('log',        'App\Http\Controllers\Admin\System\LogController',        ['as' => 'system.config']);
-		    
+			//	Route::resource('icon',       'App\Http\Controllers\Admin\System\IconController',        ['as' => 'system.config']);
+				Route::resource('log',        'App\Http\Controllers\Admin\System\LogController',         ['as' => 'system.config']);
+				Route::resource('etl',        'App\Http\Controllers\Admin\System\ExtransloadController', ['as' => 'system.config']);
 			});
 
 			// ACCOUNTS
@@ -55,9 +55,6 @@ Route::group(['middleware' => ['web']], function() {
 
 		Route::group(['prefix' => 'modules'], function() {
 			Route::resource('form', 'App\Http\Controllers\Admin\Modules\FormController', ['as' => 'modules']);
-			Route::group(['prefix' => 'mantra'], function() {
-				Route::resource('kpidistributor', 'App\Http\Controllers\Admin\Modules\Mantra\KpiDistributorControllers', ['as' => 'modules.mantra']);
-			});
 			Route::group(['prefix' => 'programs'], function() {
 				Route::resource('program_keren',           'App\Http\Controllers\Admin\Modules\Programs\ProgramKerenControllers',          ['as' => 'modules.programs']);
 				Route::resource('program_merapi',          'App\Http\Controllers\Admin\Modules\Programs\ProgramMerapiControllers',         ['as' => 'modules.programs']);
@@ -68,7 +65,7 @@ Route::group(['middleware' => ['web']], function() {
 		});
 
 		Route::group(['prefix' => 'ajax'], function() {
-			Route::post('post',   ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@post', 'as' => 'ajax.post']);			
+			Route::post('post',   ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@post',   'as' => 'ajax.post']);			
 			Route::post('export', ['uses' => 'App\Http\Controllers\Admin\System\AjaxController@export', 'as' => 'ajax.export']);
 		});
 	});

@@ -938,6 +938,32 @@ class CreateBaseTable extends Migration {
 		});
 	}
 	
+	private function extract_transform_and_load_table() {
+		// EXTRACT-TRANSFORM-&-LOAD TABLE
+		Schema::create('base_extransload', function (Blueprint $table) {
+			$this->set_engine($table->engine, $this->engine);
+			
+			$table->bigIncrements('id', true)->unsigned();
+			
+			$table->string('source_connection_name', 80);
+			$table->string('source_table_name', 200);
+			$table->integer('source_data_counts')->nullable()->default(0);
+			
+			$table->string('target_connection_name', 80);
+			$table->string('target_table_name', 200);
+			$table->integer('target_current_counts')->nullable()->default(0);
+			
+			$table->integer('success_data_transfers')->nullable()->default(0);
+			
+			$table->bigInteger('created_by')->nullable();
+			$table->bigInteger('updated_by')->nullable();
+			$table->timestamps();
+			
+			$table->index('source_table_name');
+			$table->index('target_table_name');
+		});
+	}
+	
 	/**
 	 * Run the migrations.
 	 *
@@ -952,6 +978,7 @@ class CreateBaseTable extends Migration {
 			$this->multiple_main_tables();
 			$this->multiple_relation_tables();
 		}
+		$this->extract_transform_and_load_table();
 	}
 	
 	private function multiple_drop_schema() {
@@ -1015,6 +1042,7 @@ class CreateBaseTable extends Migration {
 			Schema::dropIfExists("{$this->platform_table}_type");
 			Schema::dropIfExists("{$this->platform_table}_land_status");
 		}
+		Schema::dropIfExists('base_extransload');
 	}
 	
 	/**
