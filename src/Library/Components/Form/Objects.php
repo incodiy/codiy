@@ -137,6 +137,12 @@ class Objects {
 		$this->draw(Form::open($array) . '<div class="form-container">');
 	}
 	
+	private $method = 'PUT';
+	public function method($method) {
+		$this->method = $method;
+	}
+	
+	public $identity    = null;
 	public $modelToView = false;
 	/**
 	 * Draw Form Model Binding
@@ -213,18 +219,19 @@ class Objects {
 			if (false === $type) $type = 'route';
 			if (false !== $file) {
 				if (false !== $row_selected) {
-					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => 'PUT', 'files' => true];
+					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => $this->method, 'files' => true];
 				} else {
 					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'files' => true];
 				}
 			} else {
 				if (false !== $row_selected) {
-					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => 'PUT'];
+					$attr = [$type => [$path, $row_selected], 'name' => $model_name, 'method' => $this->method];
 				} else {
 					$attr = [$type => [$path, $row_selected], 'name' => $model_name];
 				}
 			}
-		
+			
+			$this->identity = $model_name;
 			$this->draw(Form::model($model, $attr));
 		} else {
 			$this->draw(Form::model([]));			

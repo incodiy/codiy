@@ -27,8 +27,8 @@ use Illuminate\Database\Eloquent\Model;
  * @email		wisnuwidi@gmail.com
  */
 class Icon extends Model {
-	protected $table	= 'base_icon';
-	protected $guarded	= [];
+	protected $table   = 'base_icon';
+	protected $guarded = [];
 	
-	public $timestamps	= false;
+	public $timestamps = false;
 }

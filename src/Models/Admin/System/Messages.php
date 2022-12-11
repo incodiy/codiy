@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Messages extends Model {
 	use SoftDeletes;
 	
-	protected $table	= 'mod_messages';
-	protected $guarded	= [];
-	protected $dates	= ['deleted_at'];
+	protected $table   = 'mod_messages';
+	protected $guarded = [];
+	protected $dates   = ['deleted_at'];
 }

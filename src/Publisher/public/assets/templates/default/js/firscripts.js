@@ -1,15 +1,27 @@
 function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'POST', onError = 'Error') {
 	var dataInfo = JSON.parse(data);
-	var lURL     = 'l=' + dataInfo.labels;
-	var vURL     = 'v=' + dataInfo.values;
-	var sURL     = 's=' + dataInfo.selected;
-	var qURL     = diy_random() + '=' + dataInfo.query;
+	
+	if (typeof dataInfo.labels   != 'undefined') var lURL     = 'l=' + dataInfo.labels;
+	if (typeof dataInfo.values   != 'undefined') var vURL     = 'v=' + dataInfo.values;
+	if (typeof dataInfo.selected != 'undefined') var sURL     = 's=' + dataInfo.selected;
+	if (typeof dataInfo.query    != 'undefined') var qURL     = diy_random() + '=' + dataInfo.query;
+	
+	if (typeof dataInfo.labels != 'undefined' && typeof dataInfo.values != 'undefined' && typeof dataInfo.selected != 'undefined' && typeof dataInfo.query != 'undefined') {
+		var urls = url + '&' + lURL + '&' + vURL + '&' + sURL + '&' + qURL;
+	} else {
+		if (typeof dataInfo.selected != 'undefined') {
+			var urls = url + '&' + sURL;
+		} else {
+			var urls = url;
+		}
+	}
+	
 	var selected = null;
 	var pinned   = '';
 	
 	$.ajax({
 		type    : method,
-		url     : url + '&' + lURL + '&' + vURL + '&' + sURL + '&' + qURL,
+		url     : urls,
 		data    : object.serialize(),
 		success : function(d) {
 			var result = JSON.parse(d);
@@ -18,7 +30,11 @@ function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'P
 			loader(target_id, 'show');
 			updateSelectChosen('select#' + target_id, true, '');
 			$.each(result.data, function(value, label) {				
-				if (selected === value) pinned = ' selected';
+				if (selected === value) {
+					pinned = ' selected';
+				} else {
+					pinned = '';
+				}
 				
 				if (value != '') {
 					var optionLabel = null;
@@ -36,8 +52,10 @@ function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'P
 			});
 			updateSelectChosen('select#' + target_id, false, false);
 		},
-		error: function() {
-			alert(onError);
+		error: function(xhr, status, error) {
+			var err = eval("(" + xhr.responseText + ")");
+			console.log(xhr);
+			alert(xhr);
 		},
 		complete: function() {
 			loader(target_id, 'fadeOut');
@@ -72,7 +90,6 @@ function updateSelectChosen(target, reset = true, optstring = 'Select an Option'
 	} else {
 		chosenTarget.trigger('chosen:updated');
 	}
-	
 }
 
 function loader(target_id, view = 'hide') {

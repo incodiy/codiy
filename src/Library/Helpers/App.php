@@ -1498,8 +1498,8 @@ if (!function_exists('flag_status')) {
 
 if (!function_exists('diy_get_ajax_urli')) {
 	
-	function diy_get_ajax_urli($init_post = 'AjaxPosF', $connection = null) {
-		$ajaxURL = new AjaxController($connection);
+	function diy_get_ajax_urli($init_post = 'AjaxPosF', $connections = null) {
+		$ajaxURL = new AjaxController($connections);
 		$ajaxURL::urli($init_post);
 		
 		return $ajaxURL::$ajaxUrli;

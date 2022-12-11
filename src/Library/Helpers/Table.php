@@ -29,6 +29,22 @@ if (!function_exists('diy_get_model_table')) {
 	}
 }
 
+if (!function_exists('diy_get_all_tables')) {
+	
+	/**
+	 * Get All Table Lists From Host Connection
+	 *
+	 * @param string $connection
+	 *
+	 * @return object|array
+	 */
+	function diy_get_all_tables($connection = null) {
+		return collect(DB::connection($connection)->select('show tables'))->map(function ($val) {
+			foreach ($val as $tbl) return $tbl;
+		});
+	}
+}
+
 if (!function_exists('diy_check_table_columns')) {
 	
 	/**

@@ -3,10 +3,9 @@ namespace Incodiy\Codiy\Controllers\Admin\System;
 
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
-use Illuminate\Http\Request;
-use Incodiy\Codiy\Models\Admin\System\DynamicTables;
-use Illuminate\Support\Facades\Response;
 use Incodiy\Codiy\Library\Components\Table\Craft\Export;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Created on Sep 23, 2022
@@ -62,10 +61,90 @@ class AjaxController extends Controller {
 		if (!empty($_GET)) {
 			if (!empty($_GET['AjaxPosF'])) {
 				return $this->post_filters();
+			} elseif (!empty($_GET['diyHostConn'])) {
+				return $this->getHostConnections();
+			} elseif (!empty($_GET['diyHostProcess'])) {
+				return $this->getHostProcess();
 			} elseif (!empty($_GET['filterDataTables'])) {
 				return $this->initFilterDatatables($_GET, $_POST);
 			}
 		}
+	}
+	
+	private function getHostProcess() {
+		$token           = $_POST['_token'];
+		unset($_POST['_token']);
+		
+		$sconnect        = $_POST['source_connection_name'];
+		$stable          = $_POST['source_table_name'];
+		$tconnect        = $_POST['target_connection_name'];
+		$ttable          = $_POST['target_table_name'];
+		
+		$datasource      = DB::connection($sconnect)->select("SELECT * FROM {$stable}");
+		foreach ($datasource as $datasources) {
+			$sourceData[] = (array) $datasources;
+		}
+		$sourceCounts    = count($sourceData);
+		$limitCounts     = 5;
+		$rowCountProcess = round($sourceCounts/$limitCounts);
+		
+		$result = [];
+		if (!empty($datasource)) {
+			$transfers = DB::connection($tconnect);
+			$transfers->beginTransaction();
+			$transfers->delete("TRUNCATE {$ttable}");
+			
+			$datahandler  = array_chunk($sourceData, $limitCounts);
+			$stillHandled = true;
+			$countData    = 0;
+			foreach($datahandler as $row) {
+				$countData++;
+				if (!$transfers->table($ttable)->insert($row)) $stillHandled = false;
+			}
+			
+			if ($stillHandled) {
+				if ($countData < $rowCountProcess) $transfers->commit();
+			} else {
+				$transfers->rollBack();
+			}
+					
+			$result['counts']['source'] = $sourceCounts;
+			$result['counts']['target'] = count($transfers->select("SELECT * FROM {$ttable}"));
+		}
+		
+		return json_encode($result);
+	}
+	
+	private function getHostConnections() {
+		$connection_sources = diy_config('sources', 'connections');
+		
+		unset($_GET['diyHostConn']);
+		unset($_GET['_token']);
+		
+		$info             = [];
+		$info['selected'] = null;
+		foreach ($_GET as $key => $data) {
+			if ('s' === $key) $info['selected'] = decrypt($data);
+		}
+		
+		$allTables = [];
+		foreach ($_POST as $value) {
+			$allTables = diy_get_all_tables($connection_sources[$value]['connection_name']);
+		}
+		
+		$result = [];
+		if (!empty($allTables)) {
+			foreach ($allTables as $tablename) {
+				$label = ucwords(str_replace('_', ' ', $tablename));
+				$result['data'][$tablename] = $label;
+			}
+		}
+		
+		if (!empty($info['selected'])) {
+			$result['selected'] = $info['selected'];
+		}
+		
+		return json_encode($result);
 	}
 	
 	private function post_filters() {
