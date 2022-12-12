@@ -215,7 +215,7 @@ class CreateBaseTable extends Migration {
 			$table->text('urli')->nullable();
 			$table->string('method', 8)->nullable();
 			
-			$table->string('ip_address', 30)->nullable();
+			$table->string('ip_address', 300)->nullable();
 			$table->string('user_agent')->nullable();
 			$table->text('sql_dump')->nullable();
 			
