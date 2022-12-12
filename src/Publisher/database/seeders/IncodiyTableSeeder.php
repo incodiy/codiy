@@ -78,11 +78,11 @@ class IncodiyTableSeeder extends Seeder {
 		$this->includes();
 	}
 	
-	private function includes() {/* 
+	private function includes() {
 		$this->insertTimezone();
 		$this->insertLanguages();
 		$this->insertIcons();
-		*/
+		
 		$this->insertUsers();
 		$this->insertGroups();
 		$this->insertUserGroup();
