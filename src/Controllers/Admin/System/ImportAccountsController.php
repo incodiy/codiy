@@ -4,6 +4,8 @@ namespace Incodiy\Codiy\Controllers\Admin\System;
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Illuminate\Http\Request;
 use Incodiy\Codiy\Models\Admin\System\Group;
+use Incodiy\Codiy\Models\Admin\System\User;
+use Illuminate\Support\Facades\Auth;
 /**
  * Created on Dec 13, 2022
  * 
@@ -16,13 +18,24 @@ use Incodiy\Codiy\Models\Admin\System\Group;
  * @email      wisnuwidi@gmail.com
  */
 class ImportAccountsController extends Controller {
+	
 	public $data;
-	public $import_field = 'import_csv';
+	
+	private $importField  = 'import_csv';
+	private $delimiter    = '|';
+	private $contents     = [];
+	private $groupName    = [];
+	private $userEmails   = [];
+	private $insertRoles  = [];
+	private $insertUsers  = [];
+	private $passPrefix   = '@';
+	private $passSuffix   = '#SF2022';
 	
 	public function __construct() {
 		parent::__construct();
 		
 		$this->checkGroups();
+		$this->checkUsers();
 	}
 	
 	public function index() {
@@ -31,49 +44,117 @@ class ImportAccountsController extends Controller {
 		
 		$this->form->modelWithFile();
 		
-		$this->form->file($this->import_field, [], 'Import .CSV File');
+		$this->form->file($this->importField, [], 'Import .CSV File');
 		$this->form->close('Submit', ['class' => 'btn btn-primary btn-slideright pull-right']);
 		
 		return $this->render();
 	}
 	
 	private function getRequestFileContents(Request $request) {
-		$file = $request->file($this->import_field)->openFile();
+		$file = $request->file($this->importField)->openFile();
 		return explode(PHP_EOL, $file->fread($file->getSize()));
 	}
 	
-	private $groupName = [];
 	private function checkGroups() {
 		$groups = new Group();
 		foreach ($groups->all() as $group) {
-			$groupInfo = $group->getAttributes();
-			$this->groupName[] = $groupInfo['group_name'];
+			$groupInfo         = $group->getAttributes();
+			$this->groupName[$groupInfo['id']] = $groupInfo['group_name'];
 		}
 	}
 	
-	private $insertRoles = [];
-	private function addGroups($content_roles) {
+	private function addGroups($content_roles, $active = true) {
+		$activeStatus = 0;
+		if (true === $active) {
+			$activeStatus = 1;
+		} elseif (false === $active) {
+			$activeStatus = 0;
+		} else {
+			$activeStatus = $active;
+		}
+		
 		$newRoles = array_diff($content_roles, $this->groupName);
 		if (!empty($newRoles)) {
-			$groupController = new GroupController();
-			
+			$groupController      = new GroupController();
 			foreach ($newRoles as $newrole) {
+				$camelCaseRole     = ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole)));
 				$this->insertRoles = [
-					'group_name' => $newrole,
-					'group_info' => ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole))),
-					'active'     => 1
+					'group_name' => str_replace(' ', '', $camelCaseRole),
+					'group_info' => $camelCaseRole,
+					'active'     => $activeStatus
 				];
 				
 				$insertGroupRequests = new Request($this->insertRoles);
 				$groupController->store($insertGroupRequests);
 			}
-			dump($this->insertRoles);
+			
+			$this->checkGroups();
+			
 			return $this->insertRoles;
 		}
 	}
 	
-	private $contents = [];
-	private $delimiter = '|';
+	private function checkUsers() {
+		$users = new User();
+		foreach ($users->all() as $user) {
+			$userInfo           = $user->getAttributes();
+			$this->userEmails[] = $userInfo['email'];
+		}
+	}
+	
+	private function setPassword($password) {
+		return bcrypt($password);
+	}
+	
+	private $userGroupRelated = [];
+	private function addUsers($data = []) {
+		$userEmails = [];
+		$userData   = [];
+		$userGroup  = [];
+		foreach ($data as $n => $userRows) {
+			foreach ($userRows as $fieldname => $value) {
+				if ('email' === $fieldname) {
+					$userEmails[$n]    = $value;
+					$userGroup[$value] = $userRows['role'];
+					unset($userRows['role']);
+					
+					$userData[$value]  = $userRows;
+				}
+			}
+		}
+		
+		$newUsers = array_diff($userEmails, $this->userEmails);
+		if (!empty($newUsers)) {
+			$userController = new UserController();
+			
+			foreach ($newUsers as $n => $newUser) {
+				foreach ($userData[$newUser] as $userField => $userValue) {
+					$this->insertUsers[$n][$userField] = $userValue;
+					if ('username' === $userField) {
+						$password = "{$this->passPrefix}{$userValue}{$this->passSuffix}";
+						$this->insertUsers[$n]['password']   = $password;//$this->setPassword($password);
+						$this->insertUsers[$n]['created_by'] = Auth::id();
+						$this->insertUsers[$n]['created_at'] = date('Y-m-d H:i:s');
+					}
+				}
+			}
+		//	dd($userGroup, $this->insertUsers);
+			if (!empty($this->insertUsers)) {
+				$groupID = array_flip($this->groupName);dump($groupID);
+				foreach ($this->insertUsers as $dataUsers) {
+					$requestGroup['group_id'] = $groupID[$userGroup[$dataUsers['email']]];
+					$requestGroup['email']    = $dataUsers['email'];
+					
+					$insertUserRequests = new Request($dataUsers);
+					$userController->set_data_before_post($requestGroup);
+				//	$userController->group_id = $requestGroup;
+					$userController->store($insertUserRequests);
+				}
+			}
+			dd($this->insertUsers);
+		}
+	}
+	
 	public function store(Request $request, $req = true) {
 		$data     = $this->getRequestFileContents($request);
 		$content  = [];
@@ -99,14 +180,17 @@ class ImportAccountsController extends Controller {
 				
 				$contentFile['users'][$n][$fieldname] = $fieldvalue;
 				if (diy_string_contained($fieldname, 'role')) {
-					$contentFile['roles'][$fieldvalue] = $fieldvalue;
+					$contentFile['roles'][$fieldvalue]    = $fieldvalue;
+					$contentFile['users'][$n][$fieldname] = ucwords(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
 				}
 			}
 		}
 		
 		// INSERT NEW ROLES
-		$this->addGroups($contentFile['roles']);
-		dd($this->insertRoles);
+	//	$this->addGroups($contentFile['roles']);
+	
+		// INSERT NEW USERS
+		$this->addUsers($contentFile['users']);
 		
 		$userRoles = [];
 		$userData  = [];
@@ -114,8 +198,7 @@ class ImportAccountsController extends Controller {
 			$userRoles[$userData['role']][$userData['username']] = $userData['username'];
 			unset($contentFile['users'][$n]['role']);
 		}
-		dd($this->groupName, $contentFile['roles']);
-		// next insert roles
+		
 		// next insert user
 		// next insert role for users
 		

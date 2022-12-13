@@ -95,7 +95,8 @@ class CreateBaseTable extends Migration {
 			$table->bigInteger('id', true)->unsigned();
 			
 			$table->string('username', 20);
-			$table->string('fullname', 50)->nullable();
+			$table->string('fullname', 150)->nullable();
+			$table->string('alias', 150)->nullable();
 			$table->string('email')->unique();
 			$table->timestamp('email_verified_at')->nullable();
 			$table->string('password');

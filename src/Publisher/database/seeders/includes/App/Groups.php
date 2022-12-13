@@ -78,7 +78,7 @@ trait Groups {
 	}
 	
 	private static function getQueryInfo($tablename, $fieldLabel, $fieldValue) {
-		$data   = DB::select("SELECT {$fieldValue}, {$fieldLabel} FROM {$tablename} GROUP BY {$fieldLabel} ORDER BY {$fieldLabel}");
+		$data   = DB::select("SELECT DISTINCT {$fieldLabel}, {$fieldValue} FROM {$tablename}");
 		$result = [];
 		foreach ($data as $row) {
 			$result[$row->{$fieldLabel}] = $row->{$fieldValue};

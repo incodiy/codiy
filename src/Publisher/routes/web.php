@@ -49,7 +49,8 @@ Route::group(['middleware' => ['web']], function() {
 
 			// ACCOUNTS
 			Route::group(['prefix' => 'accounts'], function() {
-				Route::resource('user', 'App\Http\Controllers\Admin\System\UserController', ['as' => 'system.accounts']);
+				Route::resource('user',       'App\Http\Controllers\Admin\System\UserController',           ['as' => 'system.accounts']);
+				Route::resource('import_csv', 'App\Http\Controllers\Admin\System\ImportAccountsController', ['as' => 'system.accounts']);
 			});
 		});
 

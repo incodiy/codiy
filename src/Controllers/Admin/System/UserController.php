@@ -22,8 +22,9 @@ use Illuminate\Http\Request;
  */
 class UserController extends Controller {
 	
-	private $group_id;
 	private $user_groups;
+	
+	public $group_id;
 	public $validations	= [];
 	
 	public function __construct() {
@@ -32,14 +33,14 @@ class UserController extends Controller {
 		$this->setValidations (
 			[
 				'username' => 'required|unique:users',
-				'fullname' => 'required|min:10',
+				'fullname' => 'required|min:5',
 				'email'    => 'required|unique:users',
 				'password' => 'required',
 				'group_id' => 'required_if:base_group,0|not_in:0',
 				'photo'    => diy_image_validations(2000)
 			], [
 				'username' => 'required',
-				'fullname' => 'required|min:10',
+				'fullname' => 'required|min:5',
 				'email'    => 'required',
 				'group_id' => 'required_if:base_group,0|not_in:0',
 				'photo'    => diy_image_validations(2000)
@@ -131,7 +132,10 @@ class UserController extends Controller {
 		 */
 		$this->set_data_before_post($request);
 		$this->insert_data($request, false);
-		$this->set_data_after_post($this->group_id);
+		
+		if (!empty($this->group_id['group_id'])) {
+			$this->set_data_after_post($this->group_id);
+		}
 		
 		return self::redirect("{$this->stored_id}/edit", $request);
 	}
@@ -260,7 +264,7 @@ class UserController extends Controller {
 		return diy_selectbox(Timezone::all(), 'id', 'timezone');
 	}
 	
-	private function set_data_before_post($request, $action_type = 'create') {
+	public function set_data_before_post($request, $action_type = 'create') {
 		if (true === is_object($request)) {
 			$requests = $request;
 		} else {
@@ -275,7 +279,13 @@ class UserController extends Controller {
 		$this->group_id = $group_id;
 		
 		$requests->offsetUnset('group_id');
-		$requests->merge(["{$action_type}d_by" => $this->session['id']]);
+		if (!empty($this->session['id'])) {
+			$created_by = $this->session['id'];
+		} else {
+			$created_by = auth()->id();
+		}
+		
+		$requests->merge(["{$action_type}d_by" => $created_by]);
 	}
 	
 	private function set_data_after_post($data, $id = false) {
