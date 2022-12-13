@@ -77,22 +77,13 @@ trait Groups {
 		DB::table('base_group')->insert(['group_name' => 'rsmwestjava',          'group_info' => 'RSM WEST JAVA',           'active' => 1]);
 	}
 	
-	private static function getGroupInfo() {
-		$group_id  = DB::select("SELECT id, group_name FROM base_group GROUP BY group_name ORDER BY id");
-		$groupInfo = [];
-		foreach ($group_id as $group_info) {
-			$groupInfo[$group_info->group_name] = $group_info->id;
+	private static function getQueryInfo($tablename, $fieldLabel, $fieldValue) {
+		$data   = DB::select("SELECT {$fieldValue}, {$fieldLabel} FROM {$tablename} GROUP BY {$fieldLabel} ORDER BY {$fieldLabel}");
+		$result = [];
+		foreach ($data as $row) {
+			$result[$row->{$fieldLabel}] = $row->{$fieldValue};
 		}
-		return $groupInfo;
-	}
-	
-	private static function getUserInfo() {
-		$user_id  = DB::select("SELECT id, email FROM users GROUP BY email ORDER BY id");
-		$userInfo = [];
-		foreach ($user_id as $user_info) {
-			$userInfo[$user_info->email] = $user_info->id;
-		}
-		return $userInfo;
+		return $result;
 	}
 	
 	/**
@@ -106,8 +97,8 @@ trait Groups {
 		GROUP BY email
 	 */
 	private function insertUserGroup() {
-		$groupInfo = self::getGroupInfo();
-		$userInfo  = self::getUserInfo();
+		$groupInfo = self::getQueryInfo('base_group', 'group_name', 'id');
+		$userInfo  = self::getQueryInfo('users', 'email', 'id');
 		
 		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['nila.narulita@smartfren.com'], 'group_id' => $groupInfo['hoheadoffice']]);
 		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['mohammad.wiyanto@smartfren.com'], 'group_id' => $groupInfo['hoheadoffice']]);
