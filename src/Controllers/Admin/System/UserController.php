@@ -26,21 +26,21 @@ class UserController extends Controller {
 	
 	public $group_id;
 	public $validations	= [];
-	
-	public function __construct() {
+	public $importPage   = false;
+	public function __construct($import = false) {
 		parent::__construct(User::class, 'system.accounts.user');
 		
 		$this->setValidations (
 			[
 				'username' => 'required|unique:users',
-				'fullname' => 'required|min:5',
+				'fullname' => 'required|min:1',
 				'email'    => 'required|unique:users',
 				'password' => 'required',
 				'group_id' => 'required_if:base_group,0|not_in:0',
 				'photo'    => diy_image_validations(2000)
 			], [
 				'username' => 'required',
-				'fullname' => 'required|min:5',
+				'fullname' => 'required|min:1',
 				'email'    => 'required',
 				'group_id' => 'required_if:base_group,0|not_in:0',
 				'photo'    => diy_image_validations(2000)
@@ -117,27 +117,24 @@ class UserController extends Controller {
 	
 	public function store(Request $request) {
 		$this->get_session();
-		/* 
-		if ($this->is_root) {
-			if (true === is_multiplatform()) {
-				$this->validations[$this->platform_key] = 'required';
-			}
-		}
-		$this->validations['email'] = 'required|unique:users';
+		if (!empty($request->diyImportProcess)) return $this->storeFromImports($request);
 		
-		$request->validate($this->validations);
-		if (true === is_multiplatform()) {
-			$request->offsetUnset($this->platform_key);
-		}
-		 */
 		$this->set_data_before_post($request);
 		$this->insert_data($request, false);
-		
-		if (!empty($this->group_id['group_id'])) {
-			$this->set_data_after_post($this->group_id);
-		}
+		$this->set_data_after_post($this->group_id);
 		
 		return self::redirect("{$this->stored_id}/edit", $request);
+	}
+	
+	public function storeFromImports($request) {
+		$user  = $request->user;
+		$group = $request->group;
+		
+		$this->set_data_before_post($group);
+		$this->insert_data(new Request($user), false);
+		$this->set_data_after_post($group);
+		
+		return $request;
 	}
 	
 	public function edit($id) {
@@ -264,7 +261,7 @@ class UserController extends Controller {
 		return diy_selectbox(Timezone::all(), 'id', 'timezone');
 	}
 	
-	public function set_data_before_post($request, $action_type = 'create') {
+	public function set_data_before_post($request, $action_type = 'create', $callbackDataGroup = false) {
 		if (true === is_object($request)) {
 			$requests = $request;
 		} else {
@@ -286,6 +283,8 @@ class UserController extends Controller {
 		}
 		
 		$requests->merge(["{$action_type}d_by" => $created_by]);
+		
+		if(true === $callbackDataGroup) return $this->group_id;
 	}
 	
 	private function set_data_after_post($data, $id = false) {

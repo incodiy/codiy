@@ -58,9 +58,13 @@ class ImportAccountsController extends Controller {
 	private function checkGroups() {
 		$groups = new Group();
 		foreach ($groups->all() as $group) {
-			$groupInfo         = $group->getAttributes();
+			$groupInfo = $group->getAttributes();
 			$this->groupName[$groupInfo['id']] = $groupInfo['group_name'];
 		}
+	}
+	
+	private function setGroupName($groupname) {
+		return str_replace(' ', '', ucwords(str_replace('_', ' ', str_replace('-', ' ', $groupname))));
 	}
 	
 	private function addGroups($content_roles, $active = true) {
@@ -78,14 +82,19 @@ class ImportAccountsController extends Controller {
 			$groupController      = new GroupController();
 			foreach ($newRoles as $newrole) {
 				$camelCaseRole     = ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole)));
-				$this->insertRoles = [
-					'group_name' => str_replace(' ', '', $camelCaseRole),
-					'group_info' => $camelCaseRole,
-					'active'     => $activeStatus
-				];
+				$groupLists        = array_flip($this->groupName);
+				$existingGroups    = $groupLists[$this->setGroupName($newrole)];
 				
-				$insertGroupRequests = new Request($this->insertRoles);
-				$groupController->store($insertGroupRequests);
+				if (!$existingGroups) {
+					$this->insertRoles = [
+						'group_name' => $this->setGroupName($newrole),
+						'group_info' => $camelCaseRole,
+						'active'     => $activeStatus
+					];
+					
+					$insertGroupRequests = new Request($this->insertRoles);
+					$groupController->store($insertGroupRequests);
+				}
 			}
 			
 			$this->checkGroups();
@@ -98,7 +107,7 @@ class ImportAccountsController extends Controller {
 		$users = new User();
 		foreach ($users->all() as $user) {
 			$userInfo           = $user->getAttributes();
-			$this->userEmails[] = $userInfo['email'];
+			$this->userEmails[$userInfo['username']] = $userInfo['email'];
 		}
 	}
 	
@@ -124,34 +133,42 @@ class ImportAccountsController extends Controller {
 		}
 		
 		$newUsers = array_diff($userEmails, $this->userEmails);
-		if (!empty($newUsers)) {
-			$userController = new UserController();
-			
+		if (!empty($newUsers)) {			
 			foreach ($newUsers as $n => $newUser) {
 				foreach ($userData[$newUser] as $userField => $userValue) {
 					$this->insertUsers[$n][$userField] = $userValue;
+					
 					if ('username' === $userField) {
-						$password = "{$this->passPrefix}{$userValue}{$this->passSuffix}";
-						$this->insertUsers[$n]['password']   = $password;//$this->setPassword($password);
-						$this->insertUsers[$n]['created_by'] = Auth::id();
-						$this->insertUsers[$n]['created_at'] = date('Y-m-d H:i:s');
+						if (!isset($this->userEmails[$userValue])) {
+							$this->insertUsers[$n]['password']   = "{$this->passPrefix}{$userValue}{$this->passSuffix}";
+							$this->insertUsers[$n]['created_by'] = Auth::id();
+							$this->insertUsers[$n]['created_at'] = date('Y-m-d H:i:s');
+						}
 					}
 				}
 			}
-		//	dd($userGroup, $this->insertUsers);
+			
 			if (!empty($this->insertUsers)) {
-				$groupID = array_flip($this->groupName);dump($groupID);
+				
+				$checkEmail     = array_flip($this->userEmails);
+				$userController = new UserController();
+				$groupID        = array_flip($this->groupName);
+				
 				foreach ($this->insertUsers as $dataUsers) {
-					$requestGroup['group_id'] = $groupID[$userGroup[$dataUsers['email']]];
-					$requestGroup['email']    = $dataUsers['email'];
-					
-					$insertUserRequests = new Request($dataUsers);
-					$userController->set_data_before_post($requestGroup);
-				//	$userController->group_id = $requestGroup;
-					$userController->store($insertUserRequests);
+					if (empty($checkEmail[$dataUsers['email']])) {
+						$requestGroup['group_id'] = $groupID[$this->setGroupName($userGroup[$dataUsers['email']])];
+						$requestGroup['email']    = $dataUsers['email'];
+						$insertUserRequests       = $dataUsers;
+						$requests                 = new Request([
+							'diyImportProcess' => true,
+							'user'             => $insertUserRequests,
+							'group'            => $requestGroup
+						]);
+						
+						$userController->store($requests);
+					}
 				}
 			}
-			dd($this->insertUsers);
 		}
 	}
 	
@@ -170,38 +187,34 @@ class ImportAccountsController extends Controller {
 		
 		$fileHeader  = $content['head'];
 		$fileData    = $content['data'];
+		$userLists   = [];
 		$contentFile = [];
+		
 		foreach ($fileData as $n => $rows) {
 			foreach ($rows as $i => $row) {
 				$fieldname  = $fileHeader[$i];
 				$fieldvalue = $row;
 				
-				if (diy_string_contained($fieldname, 'name') || diy_string_contained($fieldname, 'alias')) $fieldvalue = ucwords($row);
+				if (diy_string_contained($fieldname, 'username')) $fieldvalue = strtolower($row);
+				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias')) $fieldvalue = ucwords($row);
 				
-				$contentFile['users'][$n][$fieldname] = $fieldvalue;
+				$userLists[$n][$fieldname]            = $fieldvalue;
 				if (diy_string_contained($fieldname, 'role')) {
-					$contentFile['roles'][$fieldvalue]    = $fieldvalue;
-					$contentFile['users'][$n][$fieldname] = ucwords(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
+					$contentFile['roles'][$fieldvalue] = $fieldvalue;
+					$userLists[$n][$fieldname]         = ucwords(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
 				}
 			}
 		}
 		
+		foreach ($userLists as $userData) {
+			$contentFile['users'][$userData['email']] = $userData;
+		}
+		
 		// INSERT NEW ROLES
-	//	$this->addGroups($contentFile['roles']);
-	
+		$this->addGroups($contentFile['roles']);
 		// INSERT NEW USERS
 		$this->addUsers($contentFile['users']);
 		
-		$userRoles = [];
-		$userData  = [];
-		foreach ($contentFile['users'] as $n => $userData) {
-			$userRoles[$userData['role']][$userData['username']] = $userData['username'];
-			unset($contentFile['users'][$n]['role']);
-		}
-		
-		// next insert user
-		// next insert role for users
-		
-		dd($userRoles, $contentFile);
+		return self::redirect('', $request);
 	}
 }
