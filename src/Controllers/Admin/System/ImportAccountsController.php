@@ -83,9 +83,8 @@ class ImportAccountsController extends Controller {
 			foreach ($newRoles as $newrole) {
 				$camelCaseRole     = ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole)));
 				$groupLists        = array_flip($this->groupName);
-				$existingGroups    = $groupLists[$this->setGroupName($newrole)];
 				
-				if (!$existingGroups) {
+				if (empty($groupLists[$this->setGroupName($newrole)])) {
 					$this->insertRoles = [
 						'group_name' => $this->setGroupName($newrole),
 						'group_info' => $camelCaseRole,
