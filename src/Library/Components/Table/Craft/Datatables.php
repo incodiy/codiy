@@ -92,7 +92,7 @@ class Datatables {
 		$blacklists = ['password', 'action', 'no'];
 		if (!in_array('id', $data->datatables->columns[$table_name]['lists'])) {
 			$firstField = $data->datatables->columns[$table_name]['lists'][0];
-			$blacklists = ['total_all_revenue','password', 'action', 'no', 'id'];
+			$blacklists = ['password', 'action', 'no', 'id'];
 		}
 		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
@@ -150,10 +150,24 @@ class Datatables {
 		
 		// CHECK RELATIONSHIP DATATABLES	
 		if (!empty($column_data[$table_name]['foreign_keys'])) {
+			$fieldsets     = [];
+			$joinFields    = ["{$table_name}.*"];
 			foreach ($column_data[$table_name]['foreign_keys'] as $fkey1 => $fkey2) {
 				$ftables    = explode('.', $fkey1);
 				$model_data = $model_data->join($ftables[0], $fkey1, '=', $fkey2);
+				$fieldsets[$ftables[0]] = diy_get_table_columns($ftables[0]);
 			}
+			
+			foreach ($fieldsets as $fstname => $fieldRows) {
+				foreach ($fieldRows as $fieldset) {
+					if ('id' === $fieldset) {
+						$joinFields[] = "{$fstname}.{$fieldset} as {$fstname}_{$fieldset}";
+					} else {
+						$joinFields[] = "{$fstname}.{$fieldset}";
+					}
+				}
+			}
+			$model_data = $model_data->select($joinFields);
 		}
 		
 		$limitTotal      = 0;
@@ -285,17 +299,19 @@ class Datatables {
 			$this->imageViewColumn($rowModel, $datatables);
 			
 			// Data Relational
-			if (!empty($column_data[$table_name]['relations'])) {
-				foreach ($column_data[$table_name]['relations'] as $relField => $relData) {
-					$dataRelations = $relData['relation_data'];
-					$datatables->editColumn($relField, function($data) use ($dataRelations) {
-						$dataID = intval($data['id']);
-						if (!empty($dataRelations[$dataID]['field_value'])) {
-							return $dataRelations[$dataID]['field_value'];
-						} else {
-							return null;
-						}
-					});
+			if (empty($joinFields)) {
+				if (!empty($column_data[$table_name]['relations'])) {
+					foreach ($column_data[$table_name]['relations'] as $relField => $relData) {
+						$dataRelations = $relData['relation_data'];
+						$datatables->editColumn($relField, function($data) use ($dataRelations) {
+							$dataID = intval($data['id']);
+							if (!empty($dataRelations[$dataID]['field_value'])) {
+								return $dataRelations[$dataID]['field_value'];
+							} else {
+								return null;
+							}
+						});
+					}
 				}
 			}
 			
@@ -305,7 +321,11 @@ class Datatables {
 			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});
 			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
 		}
-		
+		/* 
+		foreach ($model->get() as $n => $mod) {
+			if ($n == 4) dd($mod->getAttributes());
+		}
+		 */
 		if (!empty($data->datatables->formula[$table_name])) {
 			$data_formula = $data->datatables->formula[$table_name];
 			$data->datatables->columns[$table_name]['lists'] = diy_set_formula_columns($data->datatables->columns[$table_name]['lists'], $data_formula);

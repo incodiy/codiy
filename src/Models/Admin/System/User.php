@@ -10,39 +10,28 @@ class User extends Authenticatable {
 	use Notifiable;
 	use SoftDeletes;
 	
-	protected $table = 'users';
+	protected $table   = 'users';
 	
 	public $groupInfo;
 	
-	/**
-	 * The attributes that are mass assignable.
-	 * 
-	 * @var array
-	 *//* 
-	protected $fillable = [ 
-		'name', 
-		'email', 
-		'password'
-	];
-	 */
 	/**
 	 * Bypassing all fields can be insert with data
 	 * 
 	 * @var array
 	 */
-	protected $guarded	= [];
+	protected $guarded = [];
 	
 	/**
 	 * The attributes that should be hidden for arrays.
 	 * 
 	 * @var array
 	 */
-	protected $hidden	= [ 
+	protected $hidden  = [ 
 		'password', 
 		'remember_token'
 	];
 	
-	protected $dates	= ['deleted_at'];
+	protected $dates   = ['deleted_at'];
 		
 	/**
 	 * Get Data Relation Group From User Group Table [ base_user_group ]
@@ -86,7 +75,6 @@ class User extends Authenticatable {
 	}
 	
 	public function getUserInfo($filter = false, $get = true) {
-	//	$platform_key = get_config('settings.platform_key');
 		$f1 = 'users.id';
 		$f2 = '!=';
 		$f3 = 0;
@@ -104,7 +92,6 @@ class User extends Authenticatable {
 		}
 		
 		$user_info = DB::table('users')
-		//	->select('users.*', 'base_user_group.group_id', 'base_group.group_name', 'base_group.group_info', "base_group.{$platform_key}")
 			->select('users.*', 'base_user_group.group_id', 'base_group.group_name', 'base_group.group_info')
 			->join('base_user_group', 'users.id', '=', 'base_user_group.user_id')
 			->join('base_group', 'base_group.id', '=', 'base_user_group.group_id')

@@ -100,7 +100,6 @@ class AjaxController extends Controller {
 			$countData    = 0;
 			foreach($datahandler as $row) {
 				$countData++;
-			//	dump($countData . ' => ' . json_encode($row));
 				if (!$transfers->table($ttable)->insert($row)) $stillHandled = false;
 			}
 			

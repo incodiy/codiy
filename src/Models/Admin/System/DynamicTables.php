@@ -45,7 +45,6 @@ class DynamicTables extends Model {
 		$query = diy_query($sql, $type);
 		$this->get_query = collect($query);
 		
-		
 		return $this;
 	}
 	
