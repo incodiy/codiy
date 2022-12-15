@@ -50,15 +50,15 @@ trait MappingPage {
 	}
 	
 	public function rolepage($data, $usein) {
-		return MappingData::getData($data, $usein, $this->nodeID);
+		return $this->map()::getData($data, $usein, $this->nodeID);
 	}
 
 	public function mapping_before_insert($requests, $group) {
 		$role    = [];
 		$reqs    = $requests->all();
 		
-		if (isset($reqs[MappingData::$prefixNode])) {
-			$request = $reqs[MappingData::$prefixNode];
+		if (isset($reqs[$this->map()::$prefixNode])) {
+			$request = $reqs[$this->map()::$prefixNode];
 			
 			foreach ($request['field_name'] as $mname => $mdata) {
 				foreach ($mdata as $tname => $tdata) {
@@ -98,7 +98,7 @@ trait MappingPage {
 			}
 			
 			// CLEARING MAPPING PAGE REQUESTS
-			request()->offsetUnset(MappingData::$prefixNode);
+			request()->offsetUnset($this->map()::$prefixNode);
 			
 			$this->map()->insert_process($roles, $group);
 		}
@@ -217,7 +217,7 @@ trait MappingPage {
 	private $roleNode;
 	private function rolename($basename, $identify = []) {
 		$rolename       = [];
-		$this->roleNode = MappingData::$prefixNode;
+		$this->roleNode = $this->map()::$prefixNode;
 		
 		$basename = "{$this->roleNode}[{$basename}]";
 		if (!empty($identify)) {
@@ -235,9 +235,9 @@ trait MappingPage {
 		}
 	}
 	
-	private function getFieldTable($table_name, $func) {
+	private function getFieldTable($table_name, $func, $connection = null) {
 		$result = [];
-		$data   = MappingData::{$func}($table_name);
+		$data   = $this->map()::{$func}($table_name, $connection);
 		
 		foreach ((array)json_decode($data) as $label => $value) {
 			$result[$value] = ucwords(str_replace('-', ' ', diy_clean_strings($label)));
@@ -252,7 +252,7 @@ trait MappingPage {
 			$connection                     = $roleData['model']['connection'];
 			$identifier                     = $roleData['model']['table_map'];
 			if (!empty($connection)) {
-				$identifier                  = $roleData['model']['table_map'] . '--diycon--' . $connection;
+				$identifier                  = $roleData['model']['table_map'] . $this->map()::$diycon . $connection;
 			}
 			$routeName                      = strtolower($module_data->route);
 			$routeNameAttribute             = str_replace('.', '-', $module_data->route);
@@ -270,6 +270,7 @@ trait MappingPage {
 			$roleValues['field_name']       = [];
 			$roleValues['field_value']      = [];
 			
+			$connection                     = null;
 			$buffers                        = [];
 			$buffer_data                    = [];
 			
@@ -280,10 +281,17 @@ trait MappingPage {
 				foreach ($buffers as $buffer_table => $buffer_data) {
 					$roleValues['table_map']  = $buffer_table;
 					
+					$bufferTableGetField      = $buffer_table;
+					if (diy_string_contained($buffer_table, $this->map()::$diycon)) {
+						$buffer_table_split    = explode($this->map()::$diycon, $buffer_table);
+						$bufferTableGetField   = $buffer_table_split[0];
+						$connection            = $buffer_table_split[1];
+					}
+					
 					if (!empty($buffer_data)) {
-						foreach ($buffer_data as $buffer_field => $buffered) {							
+						foreach ($buffer_data as $buffer_field => $buffered) {
 							$roleValues['field_name'][$buffer_table][$buffer_field]['selected']  = [$buffered->target_field_name => $buffered->target_field_name];
-							$roleValues['field_name'][$buffer_table][$buffer_field]['data']      = $this->getFieldTable($buffer_table, 'getTableFields');
+							$roleValues['field_name'][$buffer_table][$buffer_field]['data']      = $this->getFieldTable($bufferTableGetField, 'getTableFields', $connection);
 							
 							$buffered_values = [];
 							foreach (explode('::', $buffered->target_field_values) as $value_buffered) {

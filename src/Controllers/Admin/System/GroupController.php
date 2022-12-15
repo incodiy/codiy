@@ -196,14 +196,14 @@ class GroupController extends Controller {
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
-			if ('root' !== $this->model_data->group_name) {				
-				// SET MODULE PRIVILEGES
-				$this->form->openTab('Module Privileges');
-				$this->form->draw($this->group_privilege());
+			if ('root' !== $this->model_data->group_name) {
 				
 				// SET PAGE PRIVILEGES
 				$this->form->openTab('Mapping Page Privileges');
 				$this->form->draw($this->mapping());
+				// SET MODULE PRIVILEGES
+				$this->form->openTab('Module Privileges');
+				$this->form->draw($this->group_privilege());
 				
 				$this->form->closeTab();
 				

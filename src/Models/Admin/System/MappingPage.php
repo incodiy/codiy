@@ -1,7 +1,8 @@
 <?php
 namespace Incodiy\Codiy\Models\Admin\System;
 
-use Illuminate\Database\Eloquent\Model;
+
+use Incodiy\Codiy\Models\Core\Model;
 
 /**
  * Created on 10 Sep 2022
@@ -15,9 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 
 class MappingPage extends Model {
-	public $table = 'base_page_privilege';
+	public $table         = 'base_page_privilege';
+	public $role_data     = [];
+	public static $diycon = '--diycon--';
 	
-	public $role_data = [];
 	public function current_data($group_id, $data = []) {
 		$findata = diy_query($this->table)->where('group_id', intval($group_id));
 		
@@ -38,8 +40,8 @@ class MappingPage extends Model {
 		$checkTables = diy_query($this->table)->where('group_id', intval($group->id))->get();
 		$checkData   = [];
 		$qchecks     = [];
+		$tables      = [];
 		
-		$tables = [];
 		foreach ($checkTables as $table) {
 			$tables[$table->target_table][$table->target_field_name] = $table;
 		}
@@ -143,13 +145,10 @@ class MappingPage extends Model {
 		}
 	}
 	
-	private static $diycon = '--diycon--';
-	public static function getTableFields($data) {
-		$delicon = '--diycon--';
-		$fields  = [];
+	public static function getTableFields($data, $connection = null) {
+		$fields = [];
 		if (is_array($data)) {
 			foreach ($data as $tableName) {
-				$connection = null;
 				if (diy_string_contained($tableName, self::$diycon)) {
 					$split      = explode(self::$diycon, $tableName);
 					$tableName  = $split[0];
@@ -161,7 +160,6 @@ class MappingPage extends Model {
 				}
 			}
 		} else {
-			$connection = null;
 			if (diy_string_contained($data, self::$diycon)) {
 				$split      = explode(self::$diycon, $data);
 				$tableName  = $split[0];
@@ -169,7 +167,7 @@ class MappingPage extends Model {
 			}
 			
 			foreach (diy_get_table_columns($data, $connection) as $fieldname) {
-				$fields[$fieldname]    = $fieldname;
+				$fields[$fieldname] = $fieldname;
 			}
 		}
 		
@@ -177,9 +175,8 @@ class MappingPage extends Model {
 	}
 	
 	private static function queryFieldValues($requests, $tablename, $node = null) {
-		$sql      = [];
-		$fieldset = [];
-		
+		$sql        = [];
+		$fieldset   = [];
 		$connection = null;
 		if (diy_string_contained($tablename, self::$diycon)) {
 			$split      = explode(self::$diycon, $tablename);

@@ -45,6 +45,20 @@ if (!function_exists('diy_get_all_tables')) {
 	}
 }
 
+if (!function_exists('diy_set_connection_separator')) {
+	
+	/**
+	 * Set Separator Connection
+	 *
+	 * @param string $separator
+	 *
+	 * @return array
+	 */
+	function diy_set_connection_separator($separator = '--diycon--') {
+		return $separator;
+	}
+}
+
 if (!function_exists('diy_check_table_columns')) {
 	
 	/**
