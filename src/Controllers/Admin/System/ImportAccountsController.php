@@ -177,9 +177,9 @@ class ImportAccountsController extends Controller {
 		foreach ($data as $n => $rowData) {
 			if (!empty($rowData)) {
 				if (0 === $n) {
-					$content['head']     = explode($this->delimiter, $rowData);
+					$content['head']     = explode($this->delimiter, str_replace("\r", '', $rowData));
 				} else {
-					$content['data'][$n] = explode($this->delimiter, $rowData);
+					$content['data'][$n] = explode($this->delimiter, str_replace("\r", '', $rowData));
 				}
 			}
 		}
