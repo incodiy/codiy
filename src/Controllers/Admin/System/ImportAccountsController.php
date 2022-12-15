@@ -21,15 +21,15 @@ class ImportAccountsController extends Controller {
 	
 	public $data;
 	
-	private $importField  = 'import_csv';
-	private $delimiter    = '|';
-	private $contents     = [];
-	private $groupName    = [];
-	private $userEmails   = [];
-	private $insertRoles  = [];
-	private $insertUsers  = [];
-	private $passPrefix   = '@';
-	private $passSuffix   = '#SF2022';
+	private $importField = 'import_csv';
+	private $delimiter   = '|';
+	private $contents    = [];
+	private $groupName   = [];
+	private $userEmails  = [];
+	private $insertRoles = [];
+	private $insertUsers = [];
+	private $passPrefix  = '@';
+	private $passSuffix  = '#SF2022';
 	
 	public function __construct() {
 		parent::__construct();
@@ -79,10 +79,10 @@ class ImportAccountsController extends Controller {
 		
 		$newRoles = array_diff($content_roles, $this->groupName);
 		if (!empty($newRoles)) {
-			$groupController      = new GroupController();
+			$groupController  = new GroupController();
 			foreach ($newRoles as $newrole) {
-				$camelCaseRole     = ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole)));
-				$groupLists        = array_flip($this->groupName);
+				$camelCaseRole = ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole)));
+				$groupLists    = array_flip($this->groupName);
 				
 				if (empty($groupLists[$this->setGroupName($newrole)])) {
 					$this->insertRoles = [
@@ -105,7 +105,7 @@ class ImportAccountsController extends Controller {
 	private function checkUsers() {
 		$users = new User();
 		foreach ($users->all() as $user) {
-			$userInfo           = $user->getAttributes();
+			$userInfo = $user->getAttributes();
 			$this->userEmails[$userInfo['username']] = $userInfo['email'];
 		}
 	}
@@ -172,8 +172,8 @@ class ImportAccountsController extends Controller {
 	}
 	
 	public function store(Request $request, $req = true) {
-		$data     = $this->getRequestFileContents($request);
-		$content  = [];
+		$data    = $this->getRequestFileContents($request);
+		$content = [];
 		foreach ($data as $n => $rowData) {
 			if (!empty($rowData)) {
 				if (0 === $n) {
