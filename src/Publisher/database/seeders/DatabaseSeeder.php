@@ -2,6 +2,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Incodiy\Codiy\Database\Seeders\IncodiyTableSeeder;
 
 class DatabaseSeeder extends Seeder {
 	/**

@@ -1,7 +1,6 @@
 <?php
 namespace Incodiy\Codiy\Models\Admin\System;
 
-
 use Incodiy\Codiy\Models\Core\Model;
 
 /**

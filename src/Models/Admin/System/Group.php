@@ -1,8 +1,8 @@
 <?php
 namespace Incodiy\Codiy\Models\Admin\System;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Incodiy\Codiy\Models\Core\Model;
 
 /**
  * Created on Jan 14, 2018

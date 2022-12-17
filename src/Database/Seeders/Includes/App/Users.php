@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders\Includes\App;
+namespace Incodiy\Codiy\Database\Seeders\Includes\App;
 
 use Incodiy\Codiy\Models\Admin\System\User;
 /**

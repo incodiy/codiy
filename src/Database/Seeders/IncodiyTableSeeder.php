@@ -1,15 +1,15 @@
 <?php
-namespace Database\Seeders;
+namespace Incodiy\Codiy\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Incodiy\Codiy\Models\Admin\System\User;
 
-use Database\Seeders\Includes\Timezone;
-use Database\Seeders\Includes\Languages;
-use Database\Seeders\Includes\Icons;
-use Database\Seeders\Includes\App\Groups;
-use Database\Seeders\Includes\App\Users;
+use Incodiy\Codiy\Database\Seeders\Includes\Timezone;
+use Incodiy\Codiy\Database\Seeders\Includes\Languages;
+use Incodiy\Codiy\Database\Seeders\Includes\Icons;
+use Incodiy\Codiy\Database\Seeders\Includes\App\Groups;
+use Incodiy\Codiy\Database\Seeders\Includes\App\Users;
 
 /**
  * Created on Mar 6, 2017

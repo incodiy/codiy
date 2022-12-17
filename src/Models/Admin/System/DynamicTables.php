@@ -1,7 +1,7 @@
 <?php
 namespace Incodiy\Codiy\Models\Admin\System;
 
-use Illuminate\Database\Eloquent\Model;
+use Incodiy\Codiy\Models\Core\Model;
 
 /**
  * Created on 2 Jun 2021

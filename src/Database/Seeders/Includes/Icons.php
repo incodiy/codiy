@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders\Includes;
+namespace Incodiy\Codiy\Database\Seeders\Includes;
 
 use Illuminate\Support\Facades\DB;
 /**

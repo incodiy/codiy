@@ -7,13 +7,13 @@ use Incodiy\Codiy\Controllers\Core\Controller as Codiy;
 /**
  * Created on Mar 22, 2018
  * Time Created : 4:52:52 PM
- * Filename :	Incodiy\CmsServiceProvider.php
+ * Filename :  Incodiy\CmsServiceProvider.php
  *
  * @filesource Incodiy\CmsServiceProvider.php
  *            
- * @author		wisnuwidi@gmail.com - 2018
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2018
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
 class IncodiyServiceProvider extends ServiceProvider {
 
@@ -33,7 +33,6 @@ class IncodiyServiceProvider extends ServiceProvider {
 		if ($this->app->runningInConsole()) {
 			$this->publishes([ 
 				"{$publish_path}database/migrations"	=> database_path('migrations'),
-			//	"{$publish_path}database/seeds"			=> database_path('seeds'),
 				"{$publish_path}database/seeders"		=> database_path('seeders'),
 				"{$publish_path}config"						=> base_path('config'),
 				"{$publish_path}routes"						=> base_path('routes'),
@@ -44,8 +43,6 @@ class IncodiyServiceProvider extends ServiceProvider {
 			$this->publishes([ 
 				"{$publish_path}public" => base_path('public')
 			], 'Codiy Public Folder');
-			
-			// $this->publishes(["{$publish_path}database/factories" => database_path('factories')], 'Codiy Model Factory');
 		}
 	}
 
