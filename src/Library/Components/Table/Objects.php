@@ -617,10 +617,12 @@ class Objects extends Builder {
 			$fieldset_changed  = [];
 			if (!empty($this->relational_data)) {
 				foreach ($this->relational_data as $relData) {
-					foreach ($relData['field_target'] as $fr_name => $relation_fields) {
-						$field_relations[$fr_name] = $relation_fields;
-						if (in_array($fr_name, $fields)) {
-							$fieldset_changed[$fr_name] = $fr_name;
+					if (!empty($relData['field_target'])) {
+						foreach ($relData['field_target'] as $fr_name => $relation_fields) {
+							$field_relations[$fr_name] = $relation_fields;
+							if (in_array($fr_name, $fields)) {
+								$fieldset_changed[$fr_name] = $fr_name;
+							}
 						}
 					}
 					if (!empty($relData['foreign_keys'])) $this->columns[$table_name]['foreign_keys'] = $relData['foreign_keys'];

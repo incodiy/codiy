@@ -63,6 +63,11 @@ Route::group(['middleware' => ['web']], function() {
 			#	Route::resource('program_natuna_anambas',  'App\Http\Controllers\Admin\Modules\Programs\ProgramNatunaAnambasControllers',  ['as' => 'modules.programs']);
 			#	Route::resource('program_trikom_wireless', 'App\Http\Controllers\Admin\Modules\Programs\ProgramTrikomWirelessControllers', ['as' => 'modules.programs']);
 			});
+			
+			Route::group(['prefix' => 'shop'], function() {
+				Route::resource('product', 'App\Http\Controllers\Admin\Modules\Shop\ProductController',   ['as' => 'modules.shop']);
+				Route::resource('category', 'App\Http\Controllers\Admin\Modules\Shop\CategoryController', ['as' => 'modules.shop']);
+			});
 		});
 
 		Route::group(['prefix' => 'ajax'], function() {

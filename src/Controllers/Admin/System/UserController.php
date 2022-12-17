@@ -64,8 +64,8 @@ class UserController extends Controller {
 		$this->table->clickable();
 		$this->table->sortable();
 		
-		$this->table->relations($this->model, 'relational_group', 'group_info', self::key_relations());
-		$this->table->relations($this->model, 'relational_group', 'group_name', self::key_relations());
+		$this->table->relations($this->model, 'group', 'group_info', self::key_relations());
+		$this->table->relations($this->model, 'group', 'group_name', self::key_relations());
 		
 		$this->table->filterGroups('group_info', 'selectbox', true);
 		$this->table->filterGroups('username', 'selectbox', true);

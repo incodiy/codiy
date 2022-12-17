@@ -35,7 +35,7 @@ class ShopTables extends Config {
 		$this->schema::dropIfExists('shop_tax');
 		$this->schema::dropIfExists('shop_whitelist');
 		
-		$this->schema::dropIfExists('shop_products');
+		$this->schema::dropIfExists('shop_product');
 		$this->schema::dropIfExists('shop_category');
 		$this->schema::dropIfExists('shop_payment_method');
 		$this->schema::dropIfExists('shop_shiping_method');
@@ -43,13 +43,17 @@ class ShopTables extends Config {
 	
 	private function main_tables() {
 		// PRODUCTS
-		$this->schema::create('shop_products', function (Blueprint $table) {
+		$this->schema::create('shop_product', function (Blueprint $table) {
 			$this->set_engine($table, $this->setEngine);
 			
 			$table->bigInteger('id', true)->unsigned();
 			
 			$table->string('name', 300)->nullable();
+			$table->text('product_image')->nullable();
+			$table->text('product_image_thumb')->nullable();
 			$table->text('description')->nullable();
+			$table->text('product_gallery')->nullable();
+			$table->text('product_gallery_thumb')->nullable();
 			$table->bigInteger('price')->nullable();
 			
 			$table->bigInteger('created_by');
@@ -57,10 +61,10 @@ class ShopTables extends Config {
 			$table->timestamps();
 			
 			$table->softDeletes();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('name');
-			$table->index('status');
+			$table->index('active');
 		});
 		
 		// CATEGORY
@@ -70,16 +74,17 @@ class ShopTables extends Config {
 			$table->increments('id')->unsigned();
 			
 			$table->string('category', 300)->nullable();
+			$table->string('description', 300)->nullable();
 			
 			$table->bigInteger('created_by');
 			$table->bigInteger('updated_by')->nullable();
 			$table->timestamps();
 			
 			$table->softDeletes();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('category');
-			$table->index('status');
+			$table->index('active');
 		});
 			
 		// PAYMENT METHOD
@@ -99,10 +104,10 @@ class ShopTables extends Config {
 			$table->timestamps();
 			
 			$table->softDeletes();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('payment_method');
-			$table->index('status');
+			$table->index('active');
 		});
 		
 		// SHIPING METHOD
@@ -121,10 +126,10 @@ class ShopTables extends Config {
 			$table->timestamps();
 			
 			$table->softDeletes();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('shiping_method');
-			$table->index('status');
+			$table->index('active');
 		});
 	}
 	
@@ -141,7 +146,7 @@ class ShopTables extends Config {
 			$table->index('product_id');
 			$table->index('category_id');
 			
-			$table->foreign('product_id')->references('id')->on('shop_products')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('product_id')->references('id')->on('shop_product')->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('category_id')->references('id')->on('shop_category')->onUpdate('cascade')->onDelete('cascade');
 		});
 		
@@ -156,7 +161,7 @@ class ShopTables extends Config {
 			
 			$table->index('product_id');
 			
-			$table->foreign('product_id')->references('id')->on('shop_products')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('product_id')->references('id')->on('shop_product')->onUpdate('cascade')->onDelete('cascade');
 		});
 			
 		// PRODUCT DISCOUNT
@@ -167,11 +172,11 @@ class ShopTables extends Config {
 			
 			$table->bigInteger('product_id')->unsigned();
 			$table->integer('discount')->unsigned();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('product_id');
 			
-			$table->foreign('product_id')->references('id')->on('shop_products')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('product_id')->references('id')->on('shop_product')->onUpdate('cascade')->onDelete('cascade');
 		});
 			
 		// PRODUCT TAX
@@ -182,11 +187,11 @@ class ShopTables extends Config {
 			
 			$table->bigInteger('product_id')->unsigned();
 			$table->integer('tax')->unsigned();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('product_id');
 			
-			$table->foreign('product_id')->references('id')->on('shop_products')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('product_id')->references('id')->on('shop_product')->onUpdate('cascade')->onDelete('cascade');
 		});
 		
 		// PRODUCT WHITELISTS
@@ -197,12 +202,12 @@ class ShopTables extends Config {
 			
 			$table->bigInteger('product_id')->unsigned();
 			$table->bigInteger('user_id')->unsigned();
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('product_id');
 			$table->index('user_id');
 			
-			$table->foreign('product_id')->references('id')->on('shop_products')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('product_id')->references('id')->on('shop_product')->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('user_id')->references('id')->on('users');
 		});
 			
@@ -223,12 +228,12 @@ class ShopTables extends Config {
 			$table->timestamps();
 			$table->softDeletes();
 			
-			$table->smallInteger('status')->default(0);
+			$table->smallInteger('active')->default(0);
 			
 			$table->index('product_id');
 			$table->index('user_id');
 			
-			$table->foreign('product_id')->references('id')->on('shop_products')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('product_id')->references('id')->on('shop_product')->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('user_id')->references('id')->on('users');
 			
 			$table->foreign('payment_method_id')->references('id')->on('shop_payment_method')->onUpdate('cascade')->onDelete('cascade');

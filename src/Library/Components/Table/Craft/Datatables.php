@@ -154,7 +154,7 @@ class Datatables {
 			$joinFields    = ["{$table_name}.*"];
 			foreach ($column_data[$table_name]['foreign_keys'] as $fkey1 => $fkey2) {
 				$ftables    = explode('.', $fkey1);
-				$model_data = $model_data->join($ftables[0], $fkey1, '=', $fkey2);
+				$model_data = $model_data->leftJoin($ftables[0], $fkey1, '=', $fkey2);
 				$fieldsets[$ftables[0]] = diy_get_table_columns($ftables[0]);
 			}
 			
