@@ -45,7 +45,7 @@ class Controller extends BaseController {
 	
 	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 	use MetaTags, Template;
-	use Scripts, Action, View, Session;
+	use Scripts, Action, Session;
 	use Form, FileUpload, RouteInfo;
 	use Table;
 	use Chart;

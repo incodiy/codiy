@@ -14,6 +14,8 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
  
 trait Scripts {
 	
+	private $datatablesMode = 'GET';
+	
 	/**
 	 * Javascript Config for Rendering Datatables
 	 *
@@ -31,17 +33,22 @@ trait Scripts {
 	 */
 	protected function datatables($attr_id, $columns, $data_info = [], $server_side = false, $filters = false, $custom_link = false) {
 		
-		$varTableID   = explode('-', $attr_id);
-		$varTableID   = implode('', $varTableID);
-		$current_url  = url(diy_current_route()->uri);
+		$varTableID = explode('-', $attr_id);
+		$varTableID = implode('', $varTableID);
+		
+		if ('POST' === $this->datatablesMode) {
+			$current_url = url(diy_current_route()->uri);//route('plugins.datatables.post');
+		} else {
+			$current_url = url(diy_current_route()->uri);
+		}
 		
 		$buttonConfig = 'exportOptions:{columns:":visible:not(:last-child)"}';
 		$buttonset    = $this->setButtons($attr_id, [
 			'excel|text:"<i class=\"fa fa-external-link\" aria-hidden=\"true\"></i> <u>E</u>xcel"|key:{key:"e",altKey:true}',
-			'csv|'		. $buttonConfig,
-			'pdf|'		. $buttonConfig,
-			'copy|'		. $buttonConfig,
-			'print|'		. $buttonConfig
+			'csv|'   . $buttonConfig,
+			'pdf|'   . $buttonConfig,
+			'copy|'  . $buttonConfig,
+			'print|' . $buttonConfig
 		]);
 		
 		$initComplete	 = null;
@@ -99,9 +106,14 @@ trait Scripts {
 				}
 				$filter_js    .= $this->export($attr_id . $connection, $exportURI);
 			}
+			$token = csrf_token();
 			
 			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js} });";
-			$ajax = "ajax:'{$scriptURI}{$filters}'";
+			if ('POST' === $this->datatablesMode) {
+				$ajax = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
+			} else {
+				$ajax = "ajax:'{$scriptURI}{$filters}'";
+			}
 			
 			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true, {$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
 		} else {

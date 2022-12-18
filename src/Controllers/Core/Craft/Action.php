@@ -17,6 +17,7 @@ use Incodiy\Codiy\Models\Admin\System\DynamicTables;
  */
  
 trait Action {
+	use View;
 	
 	public $model			            = [];
 	public $model_path	            = null;
@@ -91,18 +92,14 @@ trait Action {
 	}
 	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		
+		// RENDER DATATABLES!!!
 		if (!empty($_GET['renderDataTables'])) {
-			if (!empty($_POST)) {
-				unset($_POST['_token']);
-				$input_filters	= [];
-				
-				foreach ($_POST as $field => $value) {
-					if (!empty($value)) $input_filters[] = "infil[{$field}]={$value}";
-				}
-				
-				$this->filter_datatables_string = '&filters=true&' . implode('&', $input_filters);
+			$filter_datatables = [];
+			if (!empty($this->model_filters)) {
+				$filter_datatables = $this->model_filters;
 			}
+			
+			return $this->initRenderDatatables([], $filter_datatables);
 		}
 	}
 	

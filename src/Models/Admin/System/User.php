@@ -41,10 +41,10 @@ class User extends Authenticatable {
 	public function group() {
 		return $this->belongsToMany(Group::class, 'base_user_group');
 	}
-	/* 
+	
 	public function relational_group() {
 		return $this->belongsToMany(Group::class, 'base_user_group');
-	} */
+	}
 	
 	/**
 	 * Print Out Group Info Logged In
@@ -118,7 +118,7 @@ class User extends Authenticatable {
 			JOIN base_group_privilege gp
 				ON g.id = gp.group_id
 			JOIN base_module m
-				ON gp.module_id = m.id;
+				ON gp.module_id = m.id
 		";
 	}
 }

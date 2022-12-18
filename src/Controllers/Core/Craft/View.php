@@ -64,8 +64,8 @@ trait View {
 		}
 		
 		$this->addScriptsFromElements();
-				
-		// RENDER DATATABLES!!!
+		
+		// RENDER DATATABLES WITH METHOD GET
 		if (!empty($_GET['renderDataTables'])) {
 			$filter_datatables = [];
 			if (!empty($this->model_filters)) {
