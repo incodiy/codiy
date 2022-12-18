@@ -33,14 +33,9 @@ trait Scripts {
 	 */
 	protected function datatables($attr_id, $columns, $data_info = [], $server_side = false, $filters = false, $custom_link = false) {
 		
-		$varTableID = explode('-', $attr_id);
-		$varTableID = implode('', $varTableID);
-		
-		if ('POST' === $this->datatablesMode) {
-			$current_url = url(diy_current_route()->uri);//route('plugins.datatables.post');
-		} else {
-			$current_url = url(diy_current_route()->uri);
-		}
+		$varTableID   = explode('-', $attr_id);
+		$varTableID   = implode('', $varTableID);
+		$current_url  = url(diy_current_route()->uri);
 		
 		$buttonConfig = 'exportOptions:{columns:":visible:not(:last-child)"}';
 		$buttonset    = $this->setButtons($attr_id, [
@@ -61,9 +56,9 @@ trait Scripts {
 		$_responsive    = '"responsive"   :false,';
 		$_autoWidth     = '"autoWidth"    :false,';
 		$_dom           = '"dom"          :"lBfrtip",';
-		$_lengthMenu    = 'lengthMenu     : [[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
+		$_lengthMenu    = 'lengthMenu     :[[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
 		$_buttons       = '"buttons"      :' . $buttonset . ',';
-		$responsive     = "rowReorder     : {selector:'td:nth-child(2)'},responsive: false,";
+		$responsive     = "rowReorder     :{selector:'td:nth-child(2)'},responsive: false,";
 		$default_set	 = $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
 		
 		$js_conditional = null;
@@ -112,10 +107,12 @@ trait Scripts {
 			if ('POST' === $this->datatablesMode) {
 				$ajax = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
 			} else {
-				$ajax = "ajax:'{$scriptURI}{$filters}'";
+				// FIX THE UNNECESARY @https://stackoverflow.com/a/46805503/20802728
+				$ajaxLimitGetURLs = "data: function (data) { for (var i = 0, len = data.columns.length; i < len; i++) { if (!data.columns[i].search.value) delete data.columns[i].search; if (data.columns[i].searchable === true) delete data.columns[i].searchable; if (data.columns[i].orderable === true) delete data.columns[i].orderable; if (data.columns[i].data === data.columns[i].name) delete data.columns[i].name; } delete data.search.regex; }";
+				$ajax = "ajax:{ url:'{$scriptURI}{$filters}',{$ajaxLimitGetURLs} }";
 			}
 			
-			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true, {$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
+			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true,{$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
 		} else {
 			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$default_set}columns:{$columns} });";
 		}
@@ -149,7 +146,7 @@ trait Scripts {
 			
 			foreach ($data as $condition) {
 				if (!empty($condition['logic_operator'])) {
-					$js .= "\n";
+				//	$js .= "\n";
 					$js .= "if (data.{$condition['field_name']} {$condition['logic_operator']} '{$condition['value']}') {";
 					
 					if ('row' === $condition['field_target']) $js .= "$(row).children('td').css({'{$condition['rule']}': '{$condition['action']}'});";
