@@ -109,8 +109,9 @@ trait Scripts {
 				$ajax = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
 			} else {
 				// FIX THE UNNECESARY @https://stackoverflow.com/a/46805503/20802728
-				$ajaxLimitGetURLs = "data: function (data) { for (var i = 0, len = data.columns.length; i < len; i++) { if (!data.columns[i].search.value) delete data.columns[i].search; if (data.columns[i].searchable === true) delete data.columns[i].searchable; if (data.columns[i].orderable === true) delete data.columns[i].orderable; if (data.columns[i].data === data.columns[i].name) delete data.columns[i].name; } delete data.search.regex; }";
-				$ajax = "ajax:{ url:'{$scriptURI}{$filters}',{$ajaxLimitGetURLs} }";
+				$idString         = str_replace('-', '', $attr_id);
+				$ajaxLimitGetURLs = "data: function (data) {var diyDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(diyDUDC{$idString}, true)}";
+				$ajax             = "ajax:{ url:'{$scriptURI}{$filters}',{$ajaxLimitGetURLs} }";
 			}
 			
 			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true,{$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
