@@ -101,18 +101,15 @@ trait Scripts {
 				}
 				$filter_js    .= $this->export($attr_id . $connection, $exportURI);
 			}
-			
+			$token = csrf_token();
 			$jsOrder = $this->jsOrder("cody_{$varTableID}_dt", $attr_id, $scriptURI.$filters);
-		//	$jsOrder = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', {$varTableID})";
-		//	$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
-			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
+			
+			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js} {$jsOrder} });";
 			if ('POST' === $this->datatablesMode) {
-				$token = csrf_token();
-				$ajax  = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
+				$ajax = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
 			} else {
 				// FIX THE UNNECESARY @https://stackoverflow.com/a/46805503/20802728
-				$idString = str_replace('-', '', $attr_id);
-				$ajaxLimitGetURLs = "data: function (data) {var diyDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(diyDUDC{$idString}, true)}";
+				$ajaxLimitGetURLs = "data: function (data) { for (var i = 0, len = data.columns.length; i < len; i++) { if (!data.columns[i].search.value) delete data.columns[i].search; if (data.columns[i].searchable === true) delete data.columns[i].searchable; if (data.columns[i].orderable === true) delete data.columns[i].orderable; if (data.columns[i].data === data.columns[i].name) delete data.columns[i].name; } delete data.search.regex; }";
 				$ajax = "ajax:{ url:'{$scriptURI}{$filters}',{$ajaxLimitGetURLs} }";
 			}
 			
@@ -148,7 +145,7 @@ $('#{$id}>thead>tr>th').each(function (n, d) {
 			urls['order']  = encodeURIComponent('order[0][column]');
 			urls['dir']    = encodeURIComponent('order[0][dir]');
 			var _urli      = '{$ajaxUrl}' + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
-
+			
 			$.ajax({
 				url: _urli,
 				dataType: 'json',
@@ -157,7 +154,7 @@ $('#{$id}>thead>tr>th').each(function (n, d) {
 					objTable.ajax.url(_urli).load();
 				}
 			});
-
+			
 		}, false);
 	}
 });
@@ -396,7 +393,7 @@ $('#{$id}>thead>tr>th').each(function (n, d) {
 			
 		$js .= "});";
 		
-	//	return $js;
+		return $js;
 	}
 	
 	private function initComplete($id, $location = 'footer') {
