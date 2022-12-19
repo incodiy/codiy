@@ -3,13 +3,13 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
 /**
  * Created on 22 May 2021
- * Time Created	: 00:29:19
+ * Time Created : 00:29:19
  *
- * @filesource	Scripts.php
+ * @filesource Scripts.php
  *
- * @author		wisnuwidi@gmail.com - 2021
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author    wisnuwidi@gmail.com - 2021
+ * @copyright wisnuwidi
+ * @email     wisnuwidi@gmail.com
  */
  
 trait Scripts {
@@ -101,12 +101,13 @@ trait Scripts {
 				}
 				$filter_js    .= $this->export($attr_id . $connection, $exportURI);
 			}
-			$token = csrf_token();
-			$jsOrder = $this->jsOrder("cody_{$varTableID}_dt", $attr_id, $scriptURI.$filters);
 			
-			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js} {$jsOrder} });";
+			$jsOrder      = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
+			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
+			
 			if ('POST' === $this->datatablesMode) {
-				$ajax = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
+				$token = csrf_token();
+				$ajax  = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
 			} else {
 				// FIX THE UNNECESARY @https://stackoverflow.com/a/46805503/20802728
 				$idString         = str_replace('-', '', $attr_id);
@@ -120,46 +121,6 @@ trait Scripts {
 		}
 		$js .= '});' . $documentLoad . '</script>';
 		
-		return $js;
-	}
-	
-	private function jsOrder($tableID, $id, $urli) {
-		$ajaxUrl  = $urli;
-		$js = "
-$('#{$id}>thead>tr>th').each(function (n, d) {
-	var classAttribute = this.attributes.class.nodeValue;
-	var nodeAttribute  = null;
-	if (!~classAttribute.indexOf('sorting_disabled') && !~classAttribute.indexOf('hidden-column')) {
-		d.addEventListener('click', function() {
-			var idAttributes  = $(this).attr('id');
-			
-			if ('undefined' === typeof $(this).attr('aria-sort')) {
-				nodeAttribute  = 'asc';
-			} else if ('descending' === $(this).attr('aria-sort')) {
-				nodeAttribute  = 'asc';
-			} else {
-				nodeAttribute  = 'desc';
-			}
-			
-			var urls       = [];
-			urls['column'] = encodeURIComponent('columns['+n+'][data]');
-			urls['order']  = encodeURIComponent('order[0][column]');
-			urls['dir']    = encodeURIComponent('order[0][dir]');
-			var _urli      = '{$ajaxUrl}' + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
-			
-			$.ajax({
-				url: _urli,
-				dataType: 'json',
-				success : function(d) {
-					var objTable = {$tableID};
-					objTable.ajax.url(_urli).load();
-				}
-			});
-			
-		}, false);
-	}
-});
-";
 		return $js;
 	}
 	
@@ -188,7 +149,6 @@ $('#{$id}>thead>tr>th').each(function (n, d) {
 			
 			foreach ($data as $condition) {
 				if (!empty($condition['logic_operator'])) {
-				//	$js .= "\n";
 					$js .= "if (data.{$condition['field_name']} {$condition['logic_operator']} '{$condition['value']}') {";
 					
 					if ('row' === $condition['field_target']) $js .= "$(row).children('td').css({'{$condition['rule']}': '{$condition['action']}'});";
@@ -335,7 +295,7 @@ $('#{$id}>thead>tr>th').each(function (n, d) {
 		$exportID   = 'export_' . str_replace('-', '_', $id) . '_cdyFILTERField';
 		$token      = csrf_token();
 		
-		return "exportFromModal('{$modalID}', '{$exportID}', '{$filterID}', '{$token}', '{$url}', '{$connection}')";
+		return "exportFromModal('{$modalID}', '{$exportID}', '{$filterID}', '{$token}', '{$url}', '{$connection}');";
 	}
 	
 	private function filter($id, $url) {
@@ -382,7 +342,7 @@ $('#{$id}>thead>tr>th').each(function (n, d) {
 					$js .= "});";
 				
 					$js .= "var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';";
-					$js .= "cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).load();";
+					$js .= "cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).draw();";
 				$js .= "},";
 				
 				$js .= "complete : function() {";

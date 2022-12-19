@@ -1,10 +1,10 @@
 function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'POST', onError = 'Error') {
 	var dataInfo = JSON.parse(data);
 	
-	if (typeof dataInfo.labels   != 'undefined') var lURL     = 'l=' + dataInfo.labels;
-	if (typeof dataInfo.values   != 'undefined') var vURL     = 'v=' + dataInfo.values;
-	if (typeof dataInfo.selected != 'undefined') var sURL     = 's=' + dataInfo.selected;
-	if (typeof dataInfo.query    != 'undefined') var qURL     = diy_random() + '=' + dataInfo.query;
+	if (typeof dataInfo.labels   != 'undefined') var lURL = 'l=' + dataInfo.labels;
+	if (typeof dataInfo.values   != 'undefined') var vURL = 'v=' + dataInfo.values;
+	if (typeof dataInfo.selected != 'undefined') var sURL = 's=' + dataInfo.selected;
+	if (typeof dataInfo.query    != 'undefined') var qURL = diy_random() + '=' + dataInfo.query;
 	
 	if (typeof dataInfo.labels != 'undefined' && typeof dataInfo.values != 'undefined' && typeof dataInfo.selected != 'undefined' && typeof dataInfo.query != 'undefined') {
 		var urls = url + '&' + lURL + '&' + vURL + '&' + sURL + '&' + qURL;
@@ -166,6 +166,9 @@ function softDeleteUnnecessaryDatatableComponents(data) {
 }
 
 function deleteUnnecessaryDatatableComponents(data, strict = false) {
+	if ('soft' === strict) {
+		softDeleteUnnecessaryDatatableComponents(data);
+	}
 	
 	for (var i=0, len=data.columns.length; i<len; i++) {
 		delete data.columns[i].search;
@@ -210,7 +213,7 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 					url: URLi,
 					dataType: 'json',
 					success : function(d) {
-						tableID.ajax.url(URLi).load();
+						tableID.ajax.url(URLi).draw();
 					}
 				});
 	
