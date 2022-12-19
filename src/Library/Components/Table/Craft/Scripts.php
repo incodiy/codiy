@@ -101,14 +101,18 @@ trait Scripts {
 				}
 				$filter_js    .= $this->export($attr_id . $connection, $exportURI);
 			}
-			$token = csrf_token();
 			
-			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js} });";
+			$jsOrder = $this->jsOrder("cody_{$varTableID}_dt", $attr_id, $scriptURI.$filters);
+		//	$jsOrder = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', {$varTableID})";
+		//	$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
+			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
 			if ('POST' === $this->datatablesMode) {
-				$ajax = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
+				$token = csrf_token();
+				$ajax  = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";
 			} else {
 				// FIX THE UNNECESARY @https://stackoverflow.com/a/46805503/20802728
-				$ajaxLimitGetURLs = "data: function (data) { for (var i = 0, len = data.columns.length; i < len; i++) { if (!data.columns[i].search.value) delete data.columns[i].search; if (data.columns[i].searchable === true) delete data.columns[i].searchable; if (data.columns[i].orderable === true) delete data.columns[i].orderable; if (data.columns[i].data === data.columns[i].name) delete data.columns[i].name; } delete data.search.regex; }";
+				$idString = str_replace('-', '', $attr_id);
+				$ajaxLimitGetURLs = "data: function (data) {var diyDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(diyDUDC{$idString}, true)}";
 				$ajax = "ajax:{ url:'{$scriptURI}{$filters}',{$ajaxLimitGetURLs} }";
 			}
 			
@@ -118,6 +122,46 @@ trait Scripts {
 		}
 		$js .= '});' . $documentLoad . '</script>';
 		
+		return $js;
+	}
+	
+	private function jsOrder($tableID, $id, $urli) {
+		$ajaxUrl  = $urli;
+		$js = "
+$('#{$id}>thead>tr>th').each(function (n, d) {
+	var classAttribute = this.attributes.class.nodeValue;
+	var nodeAttribute  = null;
+	if (!~classAttribute.indexOf('sorting_disabled') && !~classAttribute.indexOf('hidden-column')) {
+		d.addEventListener('click', function() {
+			var idAttributes  = $(this).attr('id');
+			
+			if ('undefined' === typeof $(this).attr('aria-sort')) {
+				nodeAttribute  = 'asc';
+			} else if ('descending' === $(this).attr('aria-sort')) {
+				nodeAttribute  = 'asc';
+			} else {
+				nodeAttribute  = 'desc';
+			}
+			
+			var urls       = [];
+			urls['column'] = encodeURIComponent('columns['+n+'][data]');
+			urls['order']  = encodeURIComponent('order[0][column]');
+			urls['dir']    = encodeURIComponent('order[0][dir]');
+			var _urli      = '{$ajaxUrl}' + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
+
+			$.ajax({
+				url: _urli,
+				dataType: 'json',
+				success : function(d) {
+					var objTable = {$tableID};
+					objTable.ajax.url(_urli).load();
+				}
+			});
+
+		}, false);
+	}
+});
+";
 		return $js;
 	}
 	
@@ -352,7 +396,7 @@ trait Scripts {
 			
 		$js .= "});";
 		
-		return $js;
+	//	return $js;
 	}
 	
 	private function initComplete($id, $location = 'footer') {

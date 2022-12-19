@@ -154,3 +154,67 @@ function exportFromModal(modalID, exportID, filterID, token, url, link) {
 		});
 	});
 }
+
+function softDeleteUnnecessaryDatatableComponents(data) {
+	for (var i=0, len=data.columns.length; i<len; i++) { 
+		if (!data.columns[i].search.value) delete data.columns[i].search;
+		if (data.columns[i].searchable === true) delete data.columns[i].searchable;
+		if (data.columns[i].orderable === true) delete data.columns[i].orderable;
+		if (data.columns[i].data === data.columns[i].name) delete data.columns[i].name; 
+	
+	} delete data.search.regex;
+}
+
+function deleteUnnecessaryDatatableComponents(data, strict = false) {
+	
+	for (var i=0, len=data.columns.length; i<len; i++) {
+		delete data.columns[i].search;
+		delete data.columns[i].searchable;
+		delete data.columns[i].orderable;
+		delete data.columns[i].name;
+		if (true === strict) {
+			delete data.columns[i].data;
+		}
+	}
+	delete data.search.regex;
+	delete data.search.value;
+	if (true === strict) {
+		delete data.order[0].column;
+		delete data.order[0].dir;
+	}
+}
+
+function drawDatatableOnClickColumnOrder(id, urli, tableID) {
+	$('#'+id+'>thead>tr>th').each(function (n, d) {
+		var classAttribute = this.attributes.class.nodeValue;
+		var nodeAttribute  = null;
+		if (!~classAttribute.indexOf('sorting_disabled') && !~classAttribute.indexOf('hidden-column')) {
+			d.addEventListener('click', function() {
+				var idAttributes  = $(this).attr('id');
+				
+				if ('undefined' === typeof $(this).attr('aria-sort')) {
+					nodeAttribute  = 'asc';
+				} else if ('descending' === $(this).attr('aria-sort')) {
+					nodeAttribute  = 'asc';
+				} else {
+					nodeAttribute  = 'desc';
+				}
+				
+				var urls       = [];
+				urls['column'] = encodeURIComponent('columns['+n+'][data]');
+				urls['order']  = encodeURIComponent('order[0][column]');
+				urls['dir']    = encodeURIComponent('order[0][dir]');
+				var URLi       = urli + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
+	
+				$.ajax({
+					url: URLi,
+					dataType: 'json',
+					success : function(d) {
+						tableID.ajax.url(URLi).load();
+					}
+				});
+	
+			}, false);
+		}
+	});
+}

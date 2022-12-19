@@ -281,9 +281,10 @@ class Datatables {
 		}
 		
 		if (!empty($order_by)) {
-			$datatables->order(function ($query) use($order_by) {
-				$query->orderBy($order_by['column'], $order_by['order']);
-			});
+			$orderBy = $order_by;
+			$datatables->order(function ($query) use($orderBy) {$query->orderBy($orderBy['column'], $orderBy['order']);});
+		} else {
+			$orderBy = ['column' => $data->datatables->columns[$table_name]['lists'][0], 'order' => 'desc'];
 		}
 		
 		$object_called	= get_object_called_name($model);

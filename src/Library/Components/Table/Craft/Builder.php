@@ -104,12 +104,15 @@ class Builder {
 		return $html;
 	}
 	
+	private $columnManipulated = [];
 	private function checkColumnLabel($check_labels, $columns) {
 		$labels = [];
 		foreach ($columns as $icol => $vcol) {
 			if (!empty($this->labels[$vcol])) {
+				$this->columnManipulated[$this->labels[$vcol]] = $vcol;
 				$labels[$icol] = $this->labels[$vcol];
 			} else {
+				$this->columnManipulated[$vcol] = $vcol;
 				$labels[$icol] = $vcol;
 			}
 		}
@@ -169,7 +172,9 @@ class Builder {
 			
 			$mergeColumn = $columns['merge'];
 		}
-		if (!empty($columns['lists'])) $columns = $columns['lists'];
+		if (!empty($columns['lists'])) {
+			$columns = $columns['lists'];
+		}
 		if (true === $numbering) {
 			$number  = ['number_lists'];
 			$columns = array_merge($number, $columns);
@@ -180,7 +185,13 @@ class Builder {
 		}
 		
 		if (!empty($this->labels)) {
-			$columns = $this->checkColumnLabel($this->labels, $columns);
+			$columns     = $this->checkColumnLabel($this->labels, $columns);
+		}
+		
+		if (!empty($this->columnManipulated)) {
+			$dataColumns = $this->columnManipulated;
+		} else {
+			$dataColumns = $columns;
 		}
 		// COLUMN DATA MANIPULATION
 		
@@ -212,8 +223,9 @@ class Builder {
 				} else {
 					// If no one set field(s) merged
 					foreach ($columns as $column) {
-						$class				= null;
-						$classAttributes	= null;
+						$id              = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+						$class           = null;
+						$classAttributes = null;
 						
 						if (!empty($alignColumn['header'][$column])) $classAttributes .= $alignColumn['header'][$column];
 						if ('action' === strtolower($column))        $classAttributes .= ' diy-column-action';						
@@ -232,9 +244,9 @@ class Builder {
 							if (!empty($widthColumn[strtolower($column)])) $width_column = ' width="' . $widthColumn[strtolower($column)] . '"';
 							
 							if (!empty($columnColor[$column])) {
-								$headerTable .= "<th{$class}{$headerColor}{$columnColor[$column]}{$width_column}>{$headerLabel}</th>";
+								$headerTable .= "<th{$id}{$class}{$headerColor}{$columnColor[$column]}{$width_column}>{$headerLabel}</th>";
 							} else {
-								$headerTable .= "<th{$class}{$headerColor}{$width_column}>{$headerLabel}</th>";
+								$headerTable .= "<th{$id}{$class}{$headerColor}{$width_column}>{$headerLabel}</th>";
 							}
 						}
 					}
