@@ -269,6 +269,9 @@ class Builder {
 		$mergedTable  = null;
 		$setMergeText = '::merge::';
 		
+		$columns      = $this->checkColumnLabel($this->labels, $columns);
+		$dataColumns  = $this->columnManipulated;
+		
 		$columnColor  = [];
 		$headerColor  = null;
 		if (!empty($attributes['attributes']['bg_color'])) {
@@ -287,20 +290,21 @@ class Builder {
 					foreach ($mergeColumn as $mergeLabel => $mergeData) {
 						foreach ($mergeData['columns'] as $merge_column) {
 							if ($column === $merge_column) {
+								if (!empty($dataColumns[$column])) $id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
 								if (!empty($attributes['attributes']['column']['class'][$merge_column])) {
 									$columnClass = $this->setAttributes(['class' => $attributes['attributes']['column']['class'][$merge_column]]);
 									
 									// coloring background
 									if (!empty($columnColor[$column])) {
-										$mergedTable .= "<th{$columnClass}{$headerColor}{$columnColor[$column]}>{$headerLabel}</th>";
+										$mergedTable .= "<th{$id}{$columnClass}{$headerColor}{$columnColor[$column]}>{$headerLabel}</th>";
 									} else {
-										$mergedTable .= "<th{$columnClass}{$headerColor}>{$headerLabel}</th>";
+										$mergedTable .= "<th{$id}{$columnClass}{$headerColor}>{$headerLabel}</th>";
 									}
 								} else {
 									if (!empty($columnColor[$column])) {
-										$mergedTable .= "<th{$headerColor}{$columnColor[$column]}>{$headerLabel}</th>";
+										$mergedTable .= "<th{$id}{$headerColor}{$columnColor[$column]}>{$headerLabel}</th>";
 									} else {
-										$mergedTable .= "<th{$headerColor}>{$headerLabel}</th>";
+										$mergedTable .= "<th{$id}{$headerColor}>{$headerLabel}</th>";
 									}
 								}
 								
@@ -321,11 +325,12 @@ class Builder {
 				$columnClass = null;
 				$headerLabel = ucwords(str_replace('_', ' ', str_replace($setMergeText, '', $column)));
 				
+				if (!empty($dataColumns[$column])) $id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
 				if (str_contains($column, $setMergeText)) {
 					$merge_label  = explode($setMergeText, $column);
 					$colspan      = intval($merge_label[1]);
 					$headerLabel  = ucwords(str_replace('_', ' ', $merge_label[0]));
-					$headerTable .= "<th colspan=\"{$colspan}\"{$headerColor}>{$headerLabel}</th>";
+					$headerTable .= "<th class=\"merge-column\" colspan=\"{$colspan}\"{$headerColor}>{$headerLabel}</th>";
 				} else {
 					if ('no' === strtolower($column) || 'id' === strtolower($column) || 'nik' === strtolower($column)) {
 						$headerTable .= "<th rowspan=\"2\" width=\"50\"{$headerColor}>{$headerLabel}</th>";
@@ -344,9 +349,9 @@ class Builder {
 						
 						
 						if (!empty($columnColor[$column])) {
-							$headerTable .= "<th rowspan=\"2\"{$columnClass}{$headerColor}{$columnColor[$column]}{$width_column}>{$headerLabel}</th>";
+							$headerTable .= "<th rowspan=\"2\"{$id}{$columnClass}{$headerColor}{$columnColor[$column]}{$width_column}>{$headerLabel}</th>";
 						} else {
-							$headerTable .= "<th rowspan=\"2\"{$columnClass}{$headerColor}{$width_column}>{$headerLabel}</th>";
+							$headerTable .= "<th rowspan=\"2\"{$id}{$columnClass}{$headerColor}{$width_column}>{$headerLabel}</th>";
 						}
 					}
 				}
