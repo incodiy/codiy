@@ -28,6 +28,7 @@ class FormController extends Controller {
 	
 	private $fieldlists        = ['region', 'cluster', 'category', 'distributor', 'actual', 'target'];//, 'achv%', 'weight%', 'max_cap%:Max %**', 'total_point:Total Point*'];
 	
+	private $chartClass;
 	public function __construct() {
 		parent::__construct(Form::class, 'modules.development.form');
 		
@@ -37,10 +38,17 @@ class FormController extends Controller {
 	//	$this->setFileElements('file_field_alt', 'file', 'txt,xlx,xlxs,pdf', 2);
 	}
 	
+	private $nodeObject;
+	private function setNode($node) {
+		$this->nodeObject = $node;
+	}
+	private function setChartObject() {
+		return $this->chartClass = new Chart();
+	}
 	private $chartData = [];
 	private function renderChart($name, $labels = [], $data = []) {
 		$chart = $name;
-		$chart = new Chart();
+		$chart = $this->chartClass;
 		
 		$chart->labels($labels);
 		$chart->dataset($name, 'column', $data);
@@ -50,7 +58,7 @@ class FormController extends Controller {
 	
 	public function index() {
 		$this->setPage();
-				
+		
 	//	$this->js("https://cdn.jsdelivr.net/npm/fusioncharts@3.12.2/fusioncharts.js");
 		/* 
 		$chart1 = new Chart();
@@ -58,15 +66,23 @@ class FormController extends Controller {
 		$chart1->dataset('My Chart 1', 'line', [1, 2, 3, 4]);
 		$chart1->dataset('My Chart 1', 'line', collect([1, 2, 3, 4]));
 		 */
-	//	$this->renderChart('chart1', ['label 1', 'label 2', 'label 3', 'label 4'], [1, 2, 3, 4]);
-		//	$this->renderChart('chart2', ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4', 'Chart 5', 'Chart 6', 'Chart 7'], [1, 2, 3, 4, 5, 6, 7]);
-	
+		//	$this->setNode('node');
 		
-	//	$this->charts->library('highcharts');
+		
+		
+		/* 
+		$this->setChartObject();
+		$this->renderChart('chart', ['label 1', 'label 2', 'label 3', 'label 4'], [1, 2, 3, 4]);
+		$this->setChartObject();
+		$this->renderChart('chart2', ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4', 'Chart 5', 'Chart 6', 'Chart 7'], [1, 2, 3, 4, 5, 6, 7]);
+		 */
+		
+		$this->charts->canvas('chart_canvas_1');
 		$this->charts->column('column 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [10, 9, 15, 14]);
 		$this->charts->line('line 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [1, 2, 3, 4]);
-	//	$this->charts->canvas();
-	//	$this->charts->line('pie 1', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [10, 8, 7, 9]);
+		
+		$this->charts->canvas('chart_canvas_2');
+		$this->charts->pie('pie 1', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [10, 8, 7, 9]);
 		
 	//	$this->charts->break();
 		/* 

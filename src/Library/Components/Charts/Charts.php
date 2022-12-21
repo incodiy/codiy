@@ -14,8 +14,10 @@ namespace Incodiy\Codiy\Library\Components\Charts;
  */
 class Charts {
 	
-	public $object  = [];
-	public $library = 'highcharts';
+	public $identity = [];
+	public $canvaser = null;
+	public $object   = [];
+	public $library  = 'highcharts';
 	
 	private $libraries = [
 		'highcharts' => 'ConsoleTVs\Charts\Classes\Highcharts\Chart',
@@ -30,8 +32,11 @@ class Charts {
 		$this->object = new $this->libraries[$this->library]();
 	}
 	
-	public function library($library) {
-		$this->library = $library;
-		$this->callLibrary();
+	public function canvas($name, $library = null) {
+		if (!empty($library)) $this->library = $library;
+		$this->canvaser        = $name;
+		$this->identity[$name] = diy_random_strings(22, false, 'diy_canvas' . $this->library . $name);
+		
+		return $this->callLibrary();
 	}
 }

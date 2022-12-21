@@ -16,11 +16,12 @@ use ConsoleTVs\Charts\Classes\Highcharts\Chart;
  */
 class Objects extends Charts {
 	
-	public $elements = [];
+	public $elements     = [];
 	public $element_name = [];
-	
+	private $checkId     = null;
 	public function __construct() {
 		parent::__construct();
+		
 	}
 	
 	public function render($object) {
@@ -28,36 +29,37 @@ class Objects extends Charts {
 	}
 	
 	private function draw($initial, $data = []) {
-		$this->element_name['charts'] = $this->library;
+		$charts = [];
+		foreach ($data as $key => $item) {
+			$charts[$key] = $item;
+		}
+		dump($charts);
+	/* 	$this->element_name['charts'] = $this->library;
 		if ($data) {
 			$this->elements['charts'][$initial] = $data;
-		}
+		} */
 	}
 	
-	private function build($type, $name, $labels = [], $data = []) {
-		if (empty($this->object)) {
-			$this->callLibrary();
-		}
-		
-		if (!empty($this->canvasIdentifier)) {
-			$chartId = $this->canvasIdentifier;
-		} else {
-			$chartId = diy_random_strings(22, false, 'diy');
-		}
+	private $name   = [];
+	private $charts = [];
+	private function build($type, $name, $label = [], $data = []) {
+		if (empty($this->object)) $this->callLibrary();
 		
 		$chart = $name;
-		$chart = $this->object;
-		
-		$chart->id = $chartId;
-		$chart->labels($labels);
+		$chart = $this->object;/* 
+		$chart->labels($label);
 		$chart->dataset($name, $type, $data);
+		 */
+		$this->name = diy_clean_strings($name);
+		$this->charts[$this->identity[$this->canvaser]][$this->name] = $chart;/* 
+		$this->charts[$this->identity[$this->canvaser]][$this->name] = $chart->labels($label);
+		$this->charts[$this->identity[$this->canvaser]][$this->name] = $chart->dataset($name, $type, $data); */
 		
-		$this->draw($name, $chart);
+		$this->canvaser($this->charts);
 	}
 	
-	private $canvasIdentifier = null;
-	public function canvas() {
-		$this->canvasIdentifier = diy_random_strings(22, false, 'diy');
+	private function canvaser($charts) {
+		$this->draw($this->name, $charts[$this->identity[$this->canvaser]]);
 	}
 	
 	public function column($name, $labels = [], $data = []) {
