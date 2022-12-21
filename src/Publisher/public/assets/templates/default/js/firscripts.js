@@ -65,9 +65,7 @@ function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'P
 
 function ajaxSelectionBox(id, target_id, url, data = [], method = 'POST', onError = 'Error') {
 	var object   = $('select#' + id);
-	if (object.val() !== '') {
-		ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
-	}
+	if (object.val() !== '') ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
 	object.change(function(e) {
 		ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
 	});
@@ -82,9 +80,7 @@ function ucwords(str, force) {
 
 function updateSelectChosen(target, reset = true, optstring = 'Select an Option') {
 	var chosenTarget = $(target);
-	if (true === reset) {
-		chosenTarget.find('option').remove().end();
-	}
+	if (true === reset) chosenTarget.find('option').remove().end();
 	if (false !== optstring) {
 		chosenTarget.append('<option value=\"\">' + optstring + '</option>').trigger('chosen:updated');
 	} else {
@@ -109,9 +105,8 @@ function diy_random(length = 8) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-	for ( var i = 0; i < length; i++ ) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
+	for ( var i = 0; i < length; i++ ) result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	
 	return result;
 }
 
@@ -122,8 +117,8 @@ function diy_array_to_object(array) {
 function exportFromModal(modalID, exportID, filterID, token, url, link) {
 	$('#exportFilterButton' + modalID).on('click', function(event) {
 		$(this).css({
-			'position': 'relative',
-			'width': '138px',
+			'position'  : 'relative',
+			'width'     : '138px',
 			'text-align': 'left'
 		}).append('<span id="loader_'+ modalID +'" class="inputloader loader" style="right:8px;width:20px;height:20px;top:7px;background-size:20px"></span>');
 		
@@ -166,9 +161,7 @@ function softDeleteUnnecessaryDatatableComponents(data) {
 }
 
 function deleteUnnecessaryDatatableComponents(data, strict = false) {
-	if ('soft' === strict) {
-		softDeleteUnnecessaryDatatableComponents(data);
-	}
+	if ('soft' === strict) softDeleteUnnecessaryDatatableComponents(data);
 	
 	for (var i=0, len=data.columns.length; i<len; i++) {
 		delete data.columns[i].search;
@@ -188,7 +181,7 @@ function deleteUnnecessaryDatatableComponents(data, strict = false) {
 }
 
 function drawDatatableOnClickColumnOrder(id, urli, tableID) {
-	$('#'+id+'>thead>tr>th').each(function (n, d) {
+	$('#' + id + '>thead>tr>th').each(function (n, d) {
 		var classAttribute = this.attributes.class.nodeValue;
 		var nodeAttribute  = null;
 		if (!~classAttribute.indexOf('sorting_disabled') && !~classAttribute.indexOf('hidden-column')) {
@@ -196,11 +189,11 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 				var idAttributes  = $(this).attr('id');
 				
 				if ('undefined' === typeof $(this).attr('aria-sort')) {
-					nodeAttribute  = 'asc';
+					nodeAttribute = 'asc';
 				} else if ('descending' === $(this).attr('aria-sort')) {
-					nodeAttribute  = 'asc';
+					nodeAttribute = 'asc';
 				} else {
-					nodeAttribute  = 'desc';
+					nodeAttribute = 'desc';
 				}
 				
 				var urls       = [];
@@ -219,5 +212,51 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 	
 			}, false);
 		}
+	});
+}
+
+function diyDataTableFilters(id, url, obTable) {
+	$('#diy-' + id + '-search-box').appendTo('.cody_' + id + '_diy-dt-filter-box');
+	$('.diy-dt-search-box').removeClass('hide');
+	$('#' + id + '_cdyFILTERForm').on('submit', function(event) {
+		$('#' + id + '_cdyProcessing').hide();
+		event.preventDefault();
+		var form = $(this);
+		$.ajax ({
+			type : 'GET',
+			data : form.serialize(),
+			url  : url + '&filters=true',
+			beforeSend : function() {
+				$('#' + id + '_cdyProcessing').show();
+			},
+			success : function(data) {
+				var input = data.input;
+				var filterURI = [];
+				$.each(input, function(index, value) {
+					if (
+						index != 'renderDataTables' &&
+						index != 'difta'            &&
+						index != 'filters'          &&
+						index != '_token'           &&
+						null  != value              &&
+						'____-__-__ __:__:__' != value
+					) {
+						if ('string' === typeof(value)) {
+							filterURI.push(index + '=' + encodeURIComponent(value));
+						} else if ('object' === typeof(value)) {
+							$.each(value, function(idx, _val) {
+								filterURI.push(index + '[' + idx + ']' + '=' + encodeURIComponent(_val));
+							});
+						}
+					}
+				});
+				var filterURL = url + '&' + filterURI.join('&') + '&filters=true';
+				obTable.ajax.url(filterURL).draw();
+			},
+			complete : function() {
+				$('#' + id + '_cdyProcessing').hide();
+				$('#' + id + '_cdyFILTER').modal('hide');
+			}
+		});
 	});
 }

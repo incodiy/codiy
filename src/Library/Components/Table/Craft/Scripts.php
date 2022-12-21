@@ -302,59 +302,7 @@ trait Scripts {
 		$varTableID	= explode('-', $id);
 		$varTableID	= implode('', $varTableID);
 		
-		$js  = "$('#diy-{$id}-search-box').appendTo('.cody_{$id}_diy-dt-filter-box');";
-		$js .= "$('.diy-dt-search-box').removeClass('hide');";
-		
-		$js .= "$('#{$id}_cdyFILTERForm').on('submit', function(event) {";
-			$js .= "$('#{$id}_cdyProcessing').hide();";
-			$js .= "event.preventDefault();";
-			$js .= "var {$varTableID}_form = $(this);";
-			
-			$js .= "$.ajax ({";
-				$js .= "type : 'GET',";
-				$js .= "data : {$varTableID}_form.serialize(),";
-				$js .= "url  : '{$url}&filters=true',";
-				
-				$js .= "beforeSend : function() {";
-					$js .= "$('#{$id}_cdyProcessing').show();";
-				$js .= "},";
-				
-				$js .= "success : function(data) {";
-					$js .= "var {$varTableID}_inputData = data.input;";
-					$js .= "var {$varTableID}_filterURI = [];";
-					$js .= "$.each({$varTableID}_inputData, function(index, value) {";
-						$js .= "if (";
-							$js .= "index != 'renderDataTables' &&";
-							$js .= "index != 'difta' &&";
-							$js .= "index != 'filters' &&";
-							$js .= "index != '_token' &&";
-							$js .= "null  != value &&";
-							$js .= "'____-__-__ __:__:__' != value";
-						$js .= ") {";
-							$js .= "if ('string' === typeof(value)) {";
-								$js .= "{$varTableID}_filterURI.push(index + '=' + encodeURIComponent(value));";
-							$js .= "} else if ('object' === typeof(value)) {";
-								$js .= "$.each(value, function(idx, _val) {";
-									$js .= "{$varTableID}_filterURI.push(index + '[' + idx + ']' + '=' + encodeURIComponent(_val));";
-								$js .= "});";
-							$js .= "}";
-						$js .= "}";
-					$js .= "});";
-				
-					$js .= "var {$varTableID}_filterURL = '{$url}&' + {$varTableID}_filterURI.join('&') + '&filters=true';";
-					$js .= "cody_{$varTableID}_dt.ajax.url({$varTableID}_filterURL).draw();";
-				$js .= "},";
-				
-				$js .= "complete : function() {";
-					$js .= "$('#{$id}_cdyProcessing').hide();";
-					$js .= "$('#{$id}_cdyFILTER').modal('hide');";
-				$js .= "}";
-				
-			$js .= "});";
-			
-		$js .= "});";
-		
-		return $js;
+		return "diyDataTableFilters('{$id}', '{$url}', cody_{$varTableID}_dt);";
 	}
 	
 	private function initComplete($id, $location = 'footer') {

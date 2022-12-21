@@ -419,7 +419,7 @@ class Search {
 			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}}";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
-			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};console.log('{$uri}');";
+			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
 					
 			$ajaxSuccess .= "$.ajax ({";
 				$ajaxSuccess .= "type : 'POST',";
