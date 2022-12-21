@@ -3,7 +3,7 @@ namespace Incodiy\Codiy\Controllers\Admin\Modules;
 
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Models\Admin\Modules\Form;
-use SebastianBergmann\Type\TrueType;
+use ConsoleTVs\Charts\Classes\Highcharts\Chart;
 
 /**
  * Created on 23 Mar 2021
@@ -26,17 +26,51 @@ class FormController extends Controller {
 	
 	private $setTableFields		= ['email_field:Email', 'text_field', 'number_field:Number', 'month_field:Month', 'time_field', 'file_field', 'file_field_alt', 'updated_at'];
 	
-	private $fieldlists = ['region', 'cluster', 'category', 'distributor', 'actual', 'target'];//, 'achv%', 'weight%', 'max_cap%:Max %**', 'total_point:Total Point*'];
+	private $fieldlists        = ['region', 'cluster', 'category', 'distributor', 'actual', 'target'];//, 'achv%', 'weight%', 'max_cap%:Max %**', 'total_point:Total Point*'];
 	
 	public function __construct() {
 		parent::__construct(Form::class, 'modules');
 		
 		
-		$this->preventInsertDbThumbnail('file_field_alt');
+	//	$this->preventInsertDbThumbnail('file_field_alt');
 	//	$this->setImageElements('file_field', 1, true);
 	//	$this->setFileElements('file_field_alt', 'file', 'txt,xlx,xlxs,pdf', 2);
 	}
 	
+	private $chartData = [];
+	private function renderChart($name, $labels = [], $data = []) {
+		$chart = $name;
+		$chart = new Chart();
+		
+		$chart->labels($labels);
+		$chart->dataset($name, 'column', $data);
+		
+		return $this->data['charts'][$name] = $chart;
+	}
+	
+	public function index() {
+		$this->setPage();
+				
+		$this->js("https://cdn.jsdelivr.net/npm/fusioncharts@3.12.2/fusioncharts.js");
+		/* 
+		$chart1 = new Chart();
+		$chart1->labels(['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4']);
+		$chart1->dataset('My Chart 1', 'line', [1, 2, 3, 4]);
+		$chart1->dataset('My Chart 1', 'line', collect([1, 2, 3, 4]));
+		 */
+		$this->renderChart('chart1', ['label 1', 'label 2', 'label 3', 'label 4'], [1, 2, 3, 4]);
+		$this->renderChart('chart2', ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4', 'Chart 5', 'Chart 6', 'Chart 7'], [1, 2, 3, 4, 5, 6, 7]);
+		
+	//	$this->data['content_page'] = $chart;
+	//	dd($this);
+	//	dd($this->chartData);
+		return view('welcome', $this->data);
+	//	$this->chart->render($chart);
+	
+		return $this->render();
+	}
+	
+	/*
 	public function index() {
 		$this->setPage();
 		
@@ -46,7 +80,7 @@ class FormController extends Controller {
 		
 		return $this->render();
 	}
-	
+	 
 	public function indexColumn() {
 		$this->setPage();
 		
@@ -103,7 +137,7 @@ class FormController extends Controller {
 	
 	public function index3() {
 		$this->setPage();
-		/* 
+		
 		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
@@ -113,7 +147,7 @@ class FormController extends Controller {
 		$this->table->filterGroups('category', 'selectbox', true);
 		
 		$this->table->lists('t_view_mantra_kpi_distributors', $this->fieldlists, false);
-		 */
+		
 		
 		$series = [
 			[
@@ -144,7 +178,7 @@ class FormController extends Controller {
 //		dd($this);
 		return $this->render();
 	}
-	
+	 */
 	public function index1() {
 		$this->setPage();
 		

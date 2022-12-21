@@ -1,7 +1,7 @@
 <?php
 namespace Incodiy\Codiy\Models\Admin\Modules;
 
-use Illuminate\Database\Eloquent\Model;
+use Incodiy\Codiy\Models\Core\Model;
 
 /**
  * Created on 24 Mar 2021
@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Model;
  */
  
 class Form extends Model {
+	protected $connection = 'mysql_mantra_etl';
 	
-	protected $table	 = 't_view_mantra_kpi_distributors';//'test_inputform';
+	protected $table	 = 'report_data_summary_ho_program_keren_merapi';//'test_inputform';
 	protected $guarded = [];
 }
