@@ -52,6 +52,7 @@ trait Scripts {
 		}
 		
 		if (!empty($this->chart->elements)) $this->getScriptFromElements($this->chart);
+		if (!empty($this->charts->elements)) $this->getScriptFromElements($this->charts);
 		
 		$this->setScriptUnique('js',	$scripts);
 		$this->setScriptUnique('css',	$scripts);

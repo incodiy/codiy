@@ -29,7 +29,7 @@ class FormController extends Controller {
 	private $fieldlists        = ['region', 'cluster', 'category', 'distributor', 'actual', 'target'];//, 'achv%', 'weight%', 'max_cap%:Max %**', 'total_point:Total Point*'];
 	
 	public function __construct() {
-		parent::__construct(Form::class, 'modules');
+		parent::__construct(Form::class, 'modules.development.form');
 		
 		
 	//	$this->preventInsertDbThumbnail('file_field_alt');
@@ -51,20 +51,32 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 				
-		$this->js("https://cdn.jsdelivr.net/npm/fusioncharts@3.12.2/fusioncharts.js");
+	//	$this->js("https://cdn.jsdelivr.net/npm/fusioncharts@3.12.2/fusioncharts.js");
 		/* 
 		$chart1 = new Chart();
 		$chart1->labels(['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4']);
 		$chart1->dataset('My Chart 1', 'line', [1, 2, 3, 4]);
 		$chart1->dataset('My Chart 1', 'line', collect([1, 2, 3, 4]));
 		 */
-		$this->renderChart('chart1', ['label 1', 'label 2', 'label 3', 'label 4'], [1, 2, 3, 4]);
-		$this->renderChart('chart2', ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4', 'Chart 5', 'Chart 6', 'Chart 7'], [1, 2, 3, 4, 5, 6, 7]);
+	//	$this->renderChart('chart1', ['label 1', 'label 2', 'label 3', 'label 4'], [1, 2, 3, 4]);
+		//	$this->renderChart('chart2', ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4', 'Chart 5', 'Chart 6', 'Chart 7'], [1, 2, 3, 4, 5, 6, 7]);
+	
 		
+	//	$this->charts->library('highcharts');
+		$this->charts->column('column 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [10, 9, 15, 14]);
+		$this->charts->line('line 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [1, 2, 3, 4]);
+	//	$this->charts->canvas();
+	//	$this->charts->line('pie 1', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [10, 8, 7, 9]);
+		
+	//	$this->charts->break();
+		/* 
+		$this->charts->column('chartDeveleopment2', ['Render Chart 1', 'Render Chart 2'], [1, 2]);
+		$this->charts->line('chartDeveleopment2', ['Render Chart 1', 'Render Chart 2'], [1, 2]);
+		 */
 	//	$this->data['content_page'] = $chart;
 	//	dd($this);
 	//	dd($this->chartData);
-		return view('welcome', $this->data);
+	//	return view('welcome', $this->data);
 	//	$this->chart->render($chart);
 	
 		return $this->render();

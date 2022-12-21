@@ -58,9 +58,16 @@ trait View {
 			$tableElements = $this->table->render($this->data['components']->table->elements);
 		}
 		
+		// CoDIY Development Chart
 		$chartElements = [];
 		if (!empty($this->data['components']->chart->elements)) {
 			$chartElements = $this->chart->render($this->data['components']->chart->elements);
+		}
+		
+		// Chart Package From Laravel-Charts
+		$chartsElements = [];
+		if (!empty($this->data['components']->charts->elements)) {
+			$chartsElements = $this->charts->render($this->data['components']->charts->elements);
 		}
 		
 		$this->addScriptsFromElements();
@@ -112,11 +119,11 @@ trait View {
 						$merge_data    = array_merge($this->data['content_page'], $data_contents);
 					}
 				}
-				$dataContent = array_merge($merge_data, $formElements, $tableElements, $chartElements);
+				$dataContent = array_merge($merge_data, $formElements, $tableElements, $chartsElements, $chartElements);
 				
 				$this->data['content_page'] = $dataContent;
 			} else {
-				$this->data['content_page'] = array_merge($formElements, $tableElements, $chartElements);
+				$this->data['content_page'] = array_merge($formElements, $tableElements, $chartsElements, $chartElements);
 			}
 		} else {
 			$this->data['breadcrumbs'] = null;

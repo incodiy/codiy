@@ -137,11 +137,20 @@ return [
 			
 			'highcharts' => [
 				'js'  => [
+				//	'charts/highcharts/highcharts.js'
 					'vendor/plugins/highcharts/js/highcharts.js',
 					'vendor/plugins/highcharts/js/modules/exporting.js'
+					
 				],
 				'css' => [null]
 			],
+			
+			'chartjs' => [
+				'js'  => [
+					'charts/chartjs/Chart.min.js'
+				],
+				'css' => [null]
+			]
 		]
 	]
 ];

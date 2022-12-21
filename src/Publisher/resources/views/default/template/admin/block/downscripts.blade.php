@@ -18,15 +18,15 @@ if (!empty($components->template->scripts['js']['bottom'])) $scripts['bottom'] =
 $scripts['bottom_last']  = [];
 if (!empty($components->template->scripts['js']['bottom_last'])) $scripts['bottom_last'] = $components->template->scripts['js']['bottom_last'];
 ?>
-    <!-- JS -->
+	<!-- JS -->
 	@foreach ($scripts['bottom_first'] as $script)
-    {!! $script->html !!}
-    @endforeach
+	{!! $script->html !!}
+	@endforeach
     
 	@foreach ($scripts['bottom'] as $script)
-    {!! $script->html !!}
-    @endforeach
+	{!! $script->html !!}
+	@endforeach
     
 	@foreach ($scripts['bottom_last'] as $script)
-    {!! $script->html !!}
-    @endforeach
+	{!! $script->html !!}
+	@endforeach

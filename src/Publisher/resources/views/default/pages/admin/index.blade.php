@@ -15,9 +15,16 @@
 
 @section('content')
 	
-    @foreach($content_page as $content)
+    @foreach($content_page as $key => $content)
     	@if (!is_array($content))
     	{!! $content !!}
+    	@else
+    		@if ('charts' === $key)
+    			@foreach ($content as $chart)
+    				{!! $chart->container() !!}
+    				{!! $chart->script() !!}
+    			@endforeach
+    		@endif
     	@endif
     @endforeach
     
