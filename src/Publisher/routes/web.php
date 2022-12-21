@@ -55,7 +55,11 @@ Route::group(['middleware' => ['web']], function() {
 		});
 
 		Route::group(['prefix' => 'modules'], function() {
-			Route::resource('form', 'App\Http\Controllers\Admin\Modules\FormController', ['as' => 'modules']);
+			
+			Route::group(['prefix' => 'development'], function() {
+				Route::resource('form', 'App\Http\Controllers\Admin\Modules\FormController', ['as' => 'modules.development']);
+			});
+			
 			Route::group(['prefix' => 'programs'], function() {
 				Route::resource('program_keren',           'App\Http\Controllers\Admin\Modules\Programs\ProgramKerenControllers',          ['as' => 'modules.programs']);
 				Route::resource('program_merapi',          'App\Http\Controllers\Admin\Modules\Programs\ProgramMerapiControllers',         ['as' => 'modules.programs']);
