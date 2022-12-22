@@ -14,8 +14,7 @@ namespace Incodiy\Codiy\Library\Components\Charts;
  */
 class Charts {
 	
-	public $identity = [];
-	public $canvaser = null;
+	public $canvas = [];
 	public $object   = [];
 	public $library  = 'highcharts';
 	
@@ -26,16 +25,16 @@ class Charts {
 	
 	public function __construct() {
 		$this->library;
+		$this->canvas = diy_random_strings(22, false, 'diy_canvas' . $this->library);
 	}
 	
 	protected function callLibrary() {
 		$this->object = new $this->libraries[$this->library]();
 	}
 	
-	public function canvas($name, $library = null) {
+	public function canvas($library = null) {
 		if (!empty($library)) $this->library = $library;
-		$this->canvaser        = $name;
-		$this->identity[$name] = diy_random_strings(22, false, 'diy_canvas' . $this->library . $name);
+		$this->canvas = diy_random_strings(22, false, 'diy_canvas' . $this->library);
 		
 		return $this->callLibrary();
 	}

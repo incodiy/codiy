@@ -18,10 +18,9 @@ class Objects extends Charts {
 	
 	public $elements     = [];
 	public $element_name = [];
-	private $checkId     = null;
+	
 	public function __construct() {
 		parent::__construct();
-		
 	}
 	
 	public function render($object) {
@@ -29,15 +28,10 @@ class Objects extends Charts {
 	}
 	
 	private function draw($initial, $data = []) {
-		$charts = [];
-		foreach ($data as $key => $item) {
-			$charts[$key] = $item;
-		}
-		dump($charts);
-	/* 	$this->element_name['charts'] = $this->library;
+		$this->element_name['charts'] = $this->library;
 		if ($data) {
 			$this->elements['charts'][$initial] = $data;
-		} */
+		}
 	}
 	
 	private $name   = [];
@@ -46,20 +40,11 @@ class Objects extends Charts {
 		if (empty($this->object)) $this->callLibrary();
 		
 		$chart = $name;
-		$chart = $this->object;/* 
+		$chart = $this->object;
 		$chart->labels($label);
 		$chart->dataset($name, $type, $data);
-		 */
-		$this->name = diy_clean_strings($name);
-		$this->charts[$this->identity[$this->canvaser]][$this->name] = $chart;/* 
-		$this->charts[$this->identity[$this->canvaser]][$this->name] = $chart->labels($label);
-		$this->charts[$this->identity[$this->canvaser]][$this->name] = $chart->dataset($name, $type, $data); */
 		
-		$this->canvaser($this->charts);
-	}
-	
-	private function canvaser($charts) {
-		$this->draw($this->name, $charts[$this->identity[$this->canvaser]]);
+		$this->draw($this->canvas, $chart);
 	}
 	
 	public function column($name, $labels = [], $data = []) {
