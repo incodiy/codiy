@@ -58,4 +58,36 @@ class Objects extends Charts {
 	public function pie($name, $labels = [], $data = []) {
 		$this->build(__FUNCTION__, $name, $labels, $data);
 	}
+	
+	public function area($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function areaspline($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function spline($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function scatter($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function gauge($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function arearange($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function areasplinerange($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function columnrange($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
 }
