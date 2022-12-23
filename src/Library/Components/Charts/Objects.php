@@ -36,44 +36,82 @@ class Objects extends Charts {
 	
 	private $name   = [];
 	private $charts = [];
-	private function build($type, $name, $label = [], $data = []) {
+	
+	/**
+	 * 
+	 * @param string $type
+	 * @param string $name
+	 * @param array $label
+	 * @param array $data
+	 * @param array $options
+	 * 	[
+				'chart' => [
+					'params' => [
+						['labelsRotation', -20],
+						['minimalist', false]
+					]
+				],
+				'data' => ['color' => 'red']
+			]
+	 */
+	private function build($type, $name, $label = [], $data = [], $options = []) {
 		if (empty($this->object)) $this->callLibrary();
 		
 		$chart = $name;
 		$chart = $this->object;
-		$chart->labels($label);
-		$chart->dataset($name, $type, $data);
+		$chart->labels($label);	
+		if (!empty($options['chart'])) {
+			foreach ($options['chart'] as $opType => $opts) {
+				if ('params' === $opType) {
+					foreach ($opts as $optChart) {
+						$chart->{$optChart[0]}($optChart[1]);
+					}
+				}
+			}
+		}
+		
+		if (!empty($options['data'])) {
+			$chart->dataset($name, $type, $data)->options($options['data']);
+		} else {
+			$chart->dataset($name, $type, $data);
+		}
 		
 		$this->draw($this->canvas, $chart);
 	}
 	
-	public function column($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function bar($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
 	
-	public function line($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function column($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
 	
-	public function pie($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function line($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
 	
-	public function area($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function pie($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
 	
-	public function areaspline($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function area($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
 	
-	public function spline($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function areaspline($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
 	
-	public function scatter($name, $labels = [], $data = []) {
-		$this->build(__FUNCTION__, $name, $labels, $data);
+	public function spline($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
 	}
+	
+	public function scatter($name, $labels = [], $data = [], $options = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data, $options);
+	}
+	
+	
 	
 	public function gauge($name, $labels = [], $data = []) {
 		$this->build(__FUNCTION__, $name, $labels, $data);
@@ -88,6 +126,18 @@ class Objects extends Charts {
 	}
 	
 	public function columnrange($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function bellcurve($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function columnpyramid($name, $labels = [], $data = []) {
+		$this->build(__FUNCTION__, $name, $labels, $data);
+	}
+	
+	public function errorbar($name, $labels = [], $data = []) {
 		$this->build(__FUNCTION__, $name, $labels, $data);
 	}
 }

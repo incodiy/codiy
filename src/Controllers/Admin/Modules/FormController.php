@@ -59,6 +59,35 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 		
+		$opt = [
+			'chart' => [
+				'params' => [
+					['labelsRotation', -20],
+					['minimalist', false]
+				]
+			],
+			'data' => ['color' => 'green']
+		];
+		$this->charts->column('Legend 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [10, 9, 15, 14], $opt);
+	//	$this->charts->column('Area', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [[48, 51], [68, 73], [92, 110], [128, 136], [140, 150]]);
+		/* 
+		$this->charts->canvas();
+		$this->charts->column('column 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [10, 9, 15, 14]);
+		$this->charts->column('pie 1', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [10, 8, 7, 9]);
+		$this->charts->line('line 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [1, 2, 3, 4]);
+		
+		$this->charts->canvas();
+		$this->charts->area('Pie Canvas', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [10, 18, 17, 19]);
+		$this->charts->spline('Column Canvas', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [20, 29, 16, 17]);
+		$this->charts->areaspline('Re-Pie Canvas', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [8, 7, 9, 5]);
+		$this->charts->scatter('Line Canvas', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [1, 2, 3, 4]);
+		 */
+		return $this->render();
+	}
+	
+	public function indexX() {
+		$this->setPage();
+		
 	//	$this->js("https://cdn.jsdelivr.net/npm/fusioncharts@3.12.2/fusioncharts.js");
 		/* 
 		$chart1 = new Chart();
@@ -76,6 +105,7 @@ class FormController extends Controller {
 		$this->setChartObject();
 		$this->renderChart('chart2', ['Chart 1', 'Chart 2', 'Chart 3', 'Chart 4', 'Chart 5', 'Chart 6', 'Chart 7'], [1, 2, 3, 4, 5, 6, 7]);
 		 */
+		
 		$this->charts->canvas();
 		$this->charts->column('column 1', ['Render Chart 1', 'Render Chart 2', 'Render Chart 3', 'Render Chart 4'], [10, 9, 15, 14]);
 		$this->charts->column('pie 1', ['Pie Chart 1', 'Pie Chart 2', 'Pie Chart 3', 'Pie Chart 4'], [10, 8, 7, 9]);
