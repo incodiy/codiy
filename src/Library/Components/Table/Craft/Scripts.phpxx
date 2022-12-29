@@ -15,8 +15,64 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
 trait Scripts {
 	
 	private $datatablesMode = 'GET';
-	private $strictGetUrls  = false;
-	private $strictColumns  = 'soft';
+	
+	protected function datatablesD($attr_id, $columns, $data_info = [], $server_side = false, $filters = false, $custom_link = false) {
+		$varTableID   = explode('-', $attr_id);
+		$varTableID   = implode('', $varTableID);
+		$current_url  = url(diy_current_route()->uri);
+		
+		$buttonConfig = 'exportOptions:{columns:":visible:not(:last-child)"}';
+		$buttonset    = $this->setButtons($attr_id, [
+			'excel|text:"<i class=\"fa fa-external-link\" aria-hidden=\"true\"></i> <u>E</u>xcel"|key:{key:"e",altKey:true}',
+			'csv|'   . $buttonConfig,
+			'pdf|'   . $buttonConfig,
+			'copy|'  . $buttonConfig,
+			'print|' . $buttonConfig
+		]);
+		
+		$initComplete	 = null;
+		$_searching     = '"searching"    :true,';
+		$_processing    = '"processing"   :true,';
+		$_retrieve      = '"retrieve"     :true,';
+		$_paginate      = '"paginate"     :true,';
+		$_searchDelay   = '"searchDelay"  :1000,';
+		$_bDeferRender  = '"bDeferRender" :true,';
+		$_responsive    = '"responsive"   :false,';
+		$_autoWidth     = '"autoWidth"    :false,';
+		$_dom           = '"dom"          :"lBfrtip",';
+		$_lengthMenu    = 'lengthMenu     :[[10, 25, 50, 100, 250, 500, 1000, -1],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
+		$_buttons       = '"buttons"      :' . $buttonset . ',';
+		$responsive     = "rowReorder     :{selector:'td:nth-child(2)'},responsive: false,";
+		$default_set	 = $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
+		
+		$js_conditional = null;
+		if (!empty($data_info['conditions']['columns'])) {
+			$js_conditional = $this->conditionalColumns($data_info['conditions']['columns'], $data_info['columns']);
+		}
+		
+		$filter_button = false;
+		$filter_js     = false;
+		$js            = '<script type="text/javascript">';
+		
+		$js .= "jQuery(function($) {";
+		
+		$js .= "
+var cody_{$varTableID}_dt = $('#{$attr_id}').DataTable();
+
+$(document).ready(function () {
+	cody_{$varTableID}_dt.DataTable({ 
+		{$default_set}
+		columns:{$columns}
+	});
+});
+		";
+		
+		$js .= "});";
+		
+		$js .= '</script>';
+		
+		return $js;
+	}
 	
 	/**
 	 * Javascript Config for Rendering Datatables
@@ -49,7 +105,7 @@ trait Scripts {
 		]);
 		
 		$initComplete	 = null;
-		$_searching     = '"searching"    :true,';
+		$_searching     = '"searching"    :true,search:{return: true},';
 		$_processing    = '"processing"   :true,';
 		$_retrieve      = '"retrieve"     :true,';
 		$_paginate      = '"paginate"     :true,';
@@ -103,13 +159,59 @@ trait Scripts {
 				}
 				$filter_js    .= $this->export($attr_id . $connection, $exportURI);
 			}
-			
-			$jsOrder = null;
-			if (true === $this->strictGetUrls) {
-				$jsOrder   = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
-			}
-			
-			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
+		//	$jsOrder      = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
+			$jsOrder = '';
+			$filter_js   = "
+
+$('#diy-{$attr_id}-search-box').appendTo('.cody_{$attr_id}_diy-dt-filter-box');
+
+
+$('.diy-dt-search-box').removeClass('hide');
+$('#{$attr_id}_cdyFILTERForm').on('submit', function(event) {
+	$('#{$attr_id}_cdyProcessing').hide();
+	event.preventDefault();
+	var form = $(this);
+	var urli = '{$scriptURI}{$filters}';
+	$.ajax ({
+		type : 'GET',
+		data : form.serialize(),
+		url  : urli + '&filters=true',
+		beforeSend : function() {
+			$('#{$attr_id}_cdyProcessing').show();
+		},
+		success : function(data) {
+			var input = data.input;
+			var filterURI = [];
+			$.each(input, function(index, value) {
+				if (
+					index != 'renderDataTables' &&
+					index != 'difta'            &&
+					index != 'filters'          &&
+					index != '_token'           &&
+					null  != value              &&
+					'____-__-__ __:__:__' != value
+				) {
+					if ('string' === typeof(value)) {
+						filterURI.push(index + '=' + encodeURIComponent(value));
+					} else if ('object' === typeof(value)) {
+						$.each(value, function(idx, _val) {
+							filterURI.push(index + '[' + idx + ']' + '=' + encodeURIComponent(_val));
+						});
+					}
+				}
+			});
+			var filterURL = urli + '&' + filterURI.join('&') + '&filters=true';
+			cody_{$varTableID}_dt.ajax.reload();
+		},
+		complete : function() {
+			$('#{$attr_id}_cdyProcessing').hide();
+			$('#{$attr_id}_cdyFILTER').modal('hide');
+		//	cody_{$varTableID}_dt.ajax.reload();
+		}
+	});
+});
+";
+			$documentLoad = "$('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder}";
 			
 			if ('POST' === $this->datatablesMode) {
 				$token = csrf_token();
@@ -117,19 +219,25 @@ trait Scripts {
 			} else {
 				// FIX THE UNNECESARY @https://stackoverflow.com/a/46805503/20802728
 				$idString         = str_replace('-', '', $attr_id);
-				$ajaxLimitGetURLs = null;
-				if (true === $this->strictGetUrls) {
-					$ajaxLimitGetURLs = ",data: function (data) {var diyDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(diyDUDC{$idString}, {$this->strictColumns})}";
-				}
-				
-				$ajax = "ajax:{ url:'{$scriptURI}{$filters}'{$ajaxLimitGetURLs} }";
+				$ajaxLimitGetURLs = "data: function (data) {var diyDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(diyDUDC{$idString}, 'soft')}";
+				$ajax             = "ajax:{ url:'{$scriptURI}{$filters}',{$ajaxLimitGetURLs} }";
 			}
 			
-			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true,{$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
+			$js .= "
+var cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true,{$ajax}{$columns}{$initComplete}{$js_conditional} });";
+			$js .= "
+cody_{$varTableID}_dt
+{$clickAction}
+{$filter_button}
+";
 		} else {
 			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$default_set}columns:{$columns} });";
 		}
-		$js .= '});' . $documentLoad . '</script>';
+		$js .= '$(document).ready(function() { ';
+		$js .= $documentLoad;
+		$js .= '});';
+		$js .= '});';
+		$js .= '</script>';
 		
 		return $js;
 	}

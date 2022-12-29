@@ -86,11 +86,11 @@ trait MappingPage {
 									$target_field_values = implode('::', $field_values);
 								}
 								
-								$roles[$table_name][$field_name]['group_id']            = $group_id;
-								$roles[$table_name][$field_name]['module_id']           = $module_id;
-								$roles[$table_name][$field_name]['target_table']        = $table_name;
-								$roles[$table_name][$field_name]['target_field_name']   = $field_name;
-								$roles[$table_name][$field_name]['target_field_values'] = $target_field_values;
+								$roles[$route_path][$table_name][$field_name]['group_id']            = $group_id;
+								$roles[$route_path][$table_name][$field_name]['module_id']           = $module_id;
+								$roles[$route_path][$table_name][$field_name]['target_table']        = $table_name;
+								$roles[$route_path][$table_name][$field_name]['target_field_name']   = $field_name;
+								$roles[$route_path][$table_name][$field_name]['target_field_values'] = $target_field_values;
 							}
 						}
 					}
