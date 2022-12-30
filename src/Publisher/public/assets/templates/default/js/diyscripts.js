@@ -2,7 +2,9 @@
 function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onError = 'Error') {
 	var qtarget     = null;
 	var idsplit     = id.split('__node__');
-	var inputSource = $('input#qmod-' + idsplit[0]);
+	var inputSource = $('input#qmod-' + idsplit[0] + '.' + idsplit[2]);
+	var infoClass   = inputSource.attr('class');
+	
 	var roleNode    = 'rolePages';
 	var prefixNode  = {'module':'module','field_name':'field_name','field_value':'field_value'};
 	if (roleNode) {
@@ -22,12 +24,15 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 			qtarget   = sourcebox.val();
 			
 			if (~$('select#' + target_id).attr('class').indexOf('field_name')) {
-				$('input#qmod-' + idsplit[0]).attr({'name': prefixNode.module + '[' + inputSource.attr('class') + ']'});
-				$('select#' + target_id).attr({'name': prefixNode.field_name + '[' + inputSource.attr('class') + '][' + idsplit[0] + '][]'});
+				$('input#qmod-' + idsplit[0] + '.' + infoClass).attr({'name': prefixNode.module + '[' + infoClass.replaceAll('-', '.') + ']'});
+				$('select#' + target_id).attr({'name': prefixNode.field_name + '[' + infoClass.replaceAll('-', '.') + '][' + idsplit[0] + '][]'});
 			}
 			
 			if (~$('select#' + target_id).attr('class').indexOf('field_value')) {
-				$('select#' + target_id).attr({'name': prefixNode.field_value + '[' + inputSource.attr('class') + '][' + idsplit[0] + '][' + qtarget + '][]'});
+				var targetClass = $('select#' + target_id).attr('class').split('__');
+				if (typeof infoClass === 'undefined') infoClass = targetClass[1].replaceAll('-', '.');
+				
+				$('select#' + target_id).attr({'name': prefixNode.field_value + '[' + infoClass.replaceAll('-', '.') + '][' + idsplit[0] + '][' + qtarget + '][]'});
 			}
 			
 			loader(target_id, 'show');
@@ -64,24 +69,30 @@ function setAjaxSelectionBox(object, id, target_id, url, method = 'POST', onErro
 	});
 }
 
-function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebtn = null, method = 'POST', onError = 'Error') {
+function mappingPageTableFieldname(id, target_id, url, target_opt = null, nodebtn = null, nodemodel = null, method = 'POST', onError = 'Error') {
 	var node_add    = 'role-add-' + target_id;	
 	var node_btn    = $('#' + nodebtn);
-	var firstRemove = $('span#remove-row' + target_id);	
+	var firstRemove = $('span#remove-row' + target_id);
+	var nodestring  = '__node__';
 	
 	node_btn.hide();
 	if ($('#' + id).is(':checked')) {
 		node_btn.fadeIn(1800);
 	}
 	
-	$('#' + id).change(function(e) {
+	var classInfo = id + nodestring + nodemodel;
+	$('#' + id + '.' + classInfo).change(function(e) {
 		if ($(this).is(':checked')) {
 			node_btn.fadeIn(1800);
-			setAjaxSelectionBox($(this), id, target_id, url, method, onError);
+			infoID = classInfo;
+			setAjaxSelectionBox($(this), infoID, target_id, url, method, onError);
 		} else {
-
-			var idsplit = id.split('__node__');
+			/*
+			var idsplit = id.split(nodestring);
 			$('input#qmod-' + idsplit[0]).removeAttr('name');
+			*/
+			var idsplit = $(this).attr('class').split(nodestring);
+			$('input#qmod-' + idsplit[0] + '.' + idsplit[2]).removeAttr('name');
 			
 			loader(target_id, 'show');
 			loader(target_id, 'fadeOut');

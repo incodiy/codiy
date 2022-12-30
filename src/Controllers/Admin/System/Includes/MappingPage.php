@@ -305,12 +305,13 @@ trait MappingPage {
 				}
 			}
 			
+			$nodeModel                      = str_replace('.', '-', $routeName);
 			$roleColumns                    = [];
 			$roleColumns['ajax_field_name'] = $this->ajax_urli('field_name', true);
-			$roleColumns['identifier']      = diy_input('hidden', "qmod-{$identifier}", $routeName, null, $module_data->id);
+			$roleColumns['identifier']      = diy_input('hidden', "qmod-{$identifier}", $nodeModel, null, $module_data->id);
 			$tableID                        = $this->setID($identifier);
 			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
-			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID, "class='aaaa'");
+			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID, "class='{$tableID}{$this->nodeID}{$nodeModel}'");
 			
 			$fieldID   = $this->setID($identifier);
 			$valueID   = $this->setID($identifier);
@@ -340,7 +341,7 @@ trait MappingPage {
 						$fieldValueAttr  = ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
 					}
 					
-					$roleColumns['identifier'] = diy_input('hidden', "qmod-{$identifier}", $routeName, "{$this->roleNode}[module][{$module_data->route}]", $module_data->id);
+					$roleColumns['identifier'] = diy_input('hidden', "qmod-{$identifier}", $nodeModel, "{$this->roleNode}[module][{$module_data->route}]", $module_data->id);
 					
 					$fieldNameValues    = $roleValues['field_name'][$identifier][$buffer_field];
 					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox (
@@ -383,7 +384,7 @@ trait MappingPage {
 			$resultBox['scripts']['table'] = [
 				diy_table_row_attr (
 					$this->buttonAdd($nodebtn, $tableID, $fieldID, $valueID) . 
-					$this->js_rolemap_table($tableID, $fieldID, $valueID, $nodebtn) .
+					$this->js_rolemap_table($tableID, $fieldID, $valueID, $nodebtn, $nodeModel) .
 					$this->js_rolemap_fieldname($fieldID, $valueID),
 					['align' => 'center', 'id' => strtolower($module_name) . '-row', 'width' => 100, 'style' => 'padding:8px']
 				)
@@ -415,9 +416,9 @@ trait MappingPage {
 		}
 	}
 	
-	private function js_rolemap_table($id, $target_id, $second_target, $nodebtn) {
+	private function js_rolemap_table($id, $target_id, $second_target, $nodebtn, $nodeModel) {
 		$this->ajax_urli('table_name');
-		return diy_script("mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}');");
+		return diy_script("mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}', '{$nodeModel}');");
 	}
 	
 	private function js_rolemap_fieldname($id, $target_id) {
