@@ -2,6 +2,7 @@
 namespace Incodiy\Codiy\Library\Components\Table\Craft;
 
 use Incodiy\Codiy\Models\Admin\System\DynamicTables;
+use Incodiy\Codiy\Library\Components\Table\Craft\Method\Post;
 
 /**
  * Created on 21 Apr 2021
@@ -18,6 +19,11 @@ class Builder {
 	use Scripts;
 	
 	public $model;
+	protected $method = 'GET';
+	
+	protected function setMethod($method) {
+		$this->method = $method;
+	}
 	
 	protected function table($name, $columns = [], $attributes = [], $label = null) {
 		$data = [];
@@ -599,7 +605,14 @@ class Builder {
 		}
 		
 		$dt_columns = diy_clear_json(json_encode($dt_columns));
-		$datatable  = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
+		
+		
+		if ('GET' === $this->method) {
+			$datatable  = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
+		} else {
+			$post      = new Post($tableID, $dt_columns, $dt_info, true, $filter_data);
+			$datatable = $post->script();
+		}
 		
 		return $datatable;
 	}

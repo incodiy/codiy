@@ -14,7 +14,7 @@ namespace Incodiy\Codiy\Library\Components\Charts;
  */
 class Charts {
 	
-	public $canvas = [];
+	public $canvas   = [];
 	public $object   = [];
 	public $library  = 'highcharts';
 	

@@ -712,7 +712,6 @@ class Objects extends Builder {
 			}
 			if (!empty($this->conditions['where'])) {
 				$whereCond = $this->conditions['where'];
-				unset($this->conditions['where']);
 				$this->conditions[$table_name]['where']   = $whereCond;
 			}
 			if (!empty($this->conditions['columns'])) {
@@ -738,6 +737,10 @@ class Objects extends Builder {
 		}
 	}
 	
+	public function method($method) {
+		$this->method = $method;
+	}
+	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
 		if (!empty($this->variables['table_data_model'])) {
 			$attributes[$name]['model'] = $this->variables['table_data_model'];
@@ -748,6 +751,8 @@ class Objects extends Builder {
 		if (!empty($this->search_columns)) {
 			$columns[$name]['filters'] = $this->search_columns;
 		}
+		
+		$this->setMethod($this->method);
 		
 		return $this->draw($this->tableID[$name], $this->table($name, $columns, $attributes, $label));
 	}

@@ -4,7 +4,7 @@ namespace Incodiy\Codiy\Controllers\Admin\System;
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Illuminate\Http\Request;
 use Incodiy\Codiy\Models\Admin\System\Group;
-use Incodiy\Codiy\Models\Admin\System\User;
+use Incodiy\Codiy\Models\Admin\System\ImportAccounts;
 use Illuminate\Support\Facades\Auth;
 /**
  * Created on Dec 13, 2022
@@ -32,7 +32,7 @@ class ImportAccountsController extends Controller {
 	private $passSuffix  = '#SF2022';
 	
 	public function __construct() {
-		parent::__construct();
+		parent::__construct(ImportAccounts::class, 'system.accounts.import_csv');
 		
 		$this->checkGroups();
 		$this->checkUsers();
@@ -103,7 +103,7 @@ class ImportAccountsController extends Controller {
 	}
 	
 	private function checkUsers() {
-		$users = new User();
+		$users = new ImportAccounts();
 		foreach ($users->all() as $user) {
 			$userInfo = $user->getAttributes();
 			$this->userEmails[$userInfo['username']] = $userInfo['email'];
