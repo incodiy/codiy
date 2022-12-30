@@ -209,7 +209,7 @@ trait MappingPage {
 				}
 			}
 			
-		}		
+		}
 		
 		return $row_table;
 	}
@@ -310,7 +310,7 @@ trait MappingPage {
 			$roleColumns['identifier']      = diy_input('hidden', "qmod-{$identifier}", $routeName, null, $module_data->id);
 			$tableID                        = $this->setID($identifier);
 			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
-			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID);
+			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID, "class='aaaa'");
 			
 			$fieldID   = $this->setID($identifier);
 			$valueID   = $this->setID($identifier);

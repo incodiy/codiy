@@ -240,7 +240,7 @@ if (!function_exists('diy_form_checkList')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_checkList($name, $value = false, $label = false, $checked = false, $class = 'success', $id = false) {
+	function diy_form_checkList($name, $value = false, $label = false, $checked = false, $class = 'success', $id = false, $inputNode = null) {
 		$nameAttr	= false;
 		$valueAttr	= false;
 		$idAttr		= false;
@@ -259,8 +259,9 @@ if (!function_exists('diy_form_checkList')) {
 		}
 		if (false !== $label)   $labelName = "&nbsp; {$label}";
 		if (false !== $checked) $checkBox  = ' checked="checked"';
+		if (!empty($inputNode)) $inputNode = " {$inputNode}";
 		
-		$o = "<div class=\"ckbox ckbox-{$class}\"><input type=\"checkbox\"{$valueAttr}{$nameAttr}{$idAttr}{$checkBox}><label{$idForAttr}>{$labelName}</label></div>";
+		$o = "<div class=\"ckbox ckbox-{$class}\"><input type=\"checkbox\"{$valueAttr}{$nameAttr}{$idAttr}{$checkBox}{$inputNode}><label{$idForAttr}>{$labelName}</label></div>";
 		
 		return $o;
 	}
