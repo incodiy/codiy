@@ -181,7 +181,7 @@ class Builder {
 		if (!empty($columns['lists'])) {
 			$columns = $columns['lists'];
 		}
-		if (true === $numbering) {
+		if (true === $numbering && !in_array('id', $columns)) {
 			$number  = ['number_lists'];
 			$columns = array_merge($number, $columns);
 		}
@@ -194,11 +194,11 @@ class Builder {
 			$columns     = $this->checkColumnLabel($this->labels, $columns);
 		}
 		
+		$dataColumns = [];
 		if (!empty($this->columnManipulated)) {
 			$dataColumns = $this->columnManipulated;
-		} else {
-			$dataColumns = $columns;
 		}
+		
 		// COLUMN DATA MANIPULATION
 		
 		// COLORING BACKGROUD
@@ -229,7 +229,11 @@ class Builder {
 				} else {
 					// If no one set field(s) merged
 					foreach ($columns as $column) {
-						$id              = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+						if (!empty($dataColumns)) {
+							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+						} else {
+							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($column))]);
+						}
 						$class           = null;
 						$classAttributes = null;
 						
