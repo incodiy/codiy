@@ -201,15 +201,7 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 				urls['order']  = encodeURIComponent('order[0][column]');
 				urls['dir']    = encodeURIComponent('order[0][dir]');
 				var URLi       = urli + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
-	
-				$.ajax({
-					url: URLi,
-					dataType: 'json',
-					success : function(d) {
-						tableID.ajax.url(URLi).draw();
-					}
-				});
-	
+				tableID.ajax.url(URLi).load();	
 			}, false);
 		}
 	});
