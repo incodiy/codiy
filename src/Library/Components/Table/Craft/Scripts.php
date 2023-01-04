@@ -15,8 +15,8 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
 trait Scripts {
 	
 	private $datatablesMode = 'GET';
-	private $strictGetUrls  = false;
-	private $strictColumns  = 'soft';
+	private $strictGetUrls  = true;
+	private $strictColumns  = true;
 	
 	/**
 	 * Javascript Config for Rendering Datatables
