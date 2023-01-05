@@ -106,7 +106,7 @@ trait Scripts {
 			
 			$jsOrder = null;
 			if (true === $this->strictGetUrls) {
-				$jsOrder   = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
+			//	$jsOrder   = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
 			}
 			
 			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";

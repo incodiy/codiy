@@ -245,6 +245,12 @@ class Search {
 						case 'selectbox':
 							$this->form->selectbox($field, $values[$field], false, $attributes, true, false);
 							break;
+						case 'date':
+							$this->form->date($field, $values[$field], $attributes);
+							break;
+						case 'datetime':
+							$this->form->date($field, $values[$field], $attributes);
+							break;
 						case 'checkbox':
 							if (!empty($values[$field])) {
 								if (!in_array('', $values[$field]) || !in_array(null, $values[$field])) $this->form->checkbox($field, $values[$field]);
@@ -279,7 +285,7 @@ class Search {
 						$this->form->date($field, null, ['id' => $field]);
 						break;
 					case 'datetime':
-						$this->form->datetime($field, null, ['id' => $field]);
+						$this->form->date($field, null, ['id' => $field]);
 						break;
 					case 'time':
 						$this->form->time($field, null, ['id' => $field]);
