@@ -285,7 +285,7 @@ class Search {
 						$this->form->date($field, null, ['id' => $field]);
 						break;
 					case 'datetime':
-						$this->form->date($field, null, ['id' => $field]);
+						$this->form->datetime($field, null, ['id' => $field]);
 						break;
 					case 'time':
 						$this->form->time($field, null, ['id' => $field]);
@@ -327,7 +327,7 @@ class Search {
 		}
 		
 		foreach ($element_scripts[$nodElm] as $type) {
-			if ('selectbox' === $type) $type = 'select';
+			if ('selectbox' === $type || 'smallint' === $type) $type = 'select';
 			
 			foreach ($current_template as $element => $data) {
 				if ($element === $type) {
