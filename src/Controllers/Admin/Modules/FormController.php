@@ -75,6 +75,7 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 		
+		$this->table->method('POST');
 		$this->table->searchable();
 		$this->table->sortable();
 		$this->table->clickable();

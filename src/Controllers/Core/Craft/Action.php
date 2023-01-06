@@ -91,18 +91,6 @@ trait Action {
 		}
 	}
 	
-	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		// RENDER DATATABLES!!!
-		if (!empty($_GET['renderDataTables'])) {
-			$filter_datatables = [];
-			if (!empty($this->model_filters)) {
-				$filter_datatables = $this->model_filters;
-			}
-			
-			return $this->initRenderDatatables([], $filter_datatables);
-		}
-	}
-	
 	public function insert_data(Request $request, $routeback = true) {
 		$this->validation($request, 'edit');
 		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
@@ -133,8 +121,20 @@ trait Action {
 		}
 	}
 	
+	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
+		// RENDER DATATABLES!!!
+		if (!empty($_GET['renderDataTables'])) {
+			$filter_datatables = [];
+			if (!empty($this->model_filters)) {
+				$filter_datatables = $this->model_filters;
+			}
+			
+			return $this->initRenderDatatables([], $filter_datatables);
+		}
+	}
+	
 	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
-		$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
+	//	$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
 		if (!empty($this->exportRedirection) && true == $_POST['exportData']) {
 			echo redirect($this->exportRedirection);
 			exit;

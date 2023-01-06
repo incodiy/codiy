@@ -72,14 +72,25 @@ trait View {
 		
 		$this->addScriptsFromElements();
 		
-		// RENDER DATATABLES WITH METHOD GET
-		if (!empty($_GET['renderDataTables'])) {
+		if (!empty($this->data['components']->table->method) && 'post' === strtolower($this->data['components']->table->method)) {
+			// RENDER DATATABLES WITH METHOD POST
 			$filter_datatables = [];
 			if (!empty($this->model_filters)) {
 				$filter_datatables = $this->model_filters;
 			}
 			
-			return $this->initRenderDatatables([], $filter_datatables);
+			return $this->initRenderDatatables($filter_datatables, $this->data['components']->table);
+			
+		} else {
+			if (!empty($_GET['renderDataTables']) && 'false' != $_GET['renderDataTables']) {
+				// RENDER DATATABLES WITH METHOD GET
+				$filter_datatables = [];
+				if (!empty($this->model_filters)) {
+					$filter_datatables = $this->model_filters;
+				}
+				
+				return $this->initRenderDatatables($filter_datatables);
+			}
 		}
 		
 		if (!empty($_GET['ajaxfproc'])) {
@@ -139,6 +150,29 @@ trait View {
 		return view($this->pageView, $this->data, $this->dataOptions);
 	}
 	
+	private function initRenderDatatables($model_filters = [], $data = []) {
+		if (!empty($data)) {
+			$dataTable = $data;
+		} else {
+			$dataTable = $this->data['components']->table;
+		}
+		
+		if (!empty($dataTable)) {
+			$Datatables = [];
+			$Datatables['datatables'] = $dataTable;
+			$datatables = diy_array_to_object_recursive($Datatables);
+			
+			$filters    = [];
+			if (!empty($_GET['filters'])) {
+				if ('true' === $_GET['filters']) $filters = $_GET;
+			}
+			
+			$DataTables = new Datatables();
+			
+			return $DataTables->process($datatables, $filters, $model_filters);
+		}
+	}
+	
 	private function checkIfAnyButtonRemoved() {
 		if (!empty($this->removeButtons)) {
 			$add    = null;
@@ -174,21 +208,6 @@ trait View {
 		}
 		
 		return $data;
-	}
-	
-	private function initRenderDatatables($filters = [], $model_filters = []) {
-		if ('false' != $_GET['renderDataTables']) {
-			$Datatables = [];
-			$Datatables['datatables'] = $this->data['components']->table;
-			$datatables = diy_array_to_object_recursive($Datatables);
-			
-			if (!empty($_GET['filters'])) {
-				if ('true' === $_GET['filters']) $filters = $_GET;
-			}
-			
-			$DataTables = new Datatables();
-			return $DataTables->process($datatables, $filters, $model_filters);
-		}
 	}
 	
 	public function setPageType($page_type = true) {

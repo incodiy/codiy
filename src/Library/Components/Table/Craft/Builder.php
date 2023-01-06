@@ -19,7 +19,7 @@ class Builder {
 	use Scripts;
 	
 	public $model;
-	protected $method = 'GET';
+	public $method = 'GET';
 	
 	protected function setMethod($method) {
 		$this->method = $method;
