@@ -111,6 +111,9 @@ trait Scripts {
 			
 			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
 			
+			if (!empty($this->method)) {
+				$this->datatablesMode = $this->method;
+			}
 			if ('POST' === $this->datatablesMode) {
 				$token = csrf_token();
 				$ajax  = "ajax:{url:'{$scriptURI}{$filters}',type:'POST',headers:{'X-CSRF-TOKEN': '{$token}'} }";

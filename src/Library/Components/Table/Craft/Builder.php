@@ -612,10 +612,11 @@ class Builder {
 		
 		
 		if ('GET' === $this->method) {
-			$datatable  = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
-		} else {
+			$datatable = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
+		} else {/* 
 			$post      = new Post($tableID, $dt_columns, $dt_info, true, $filter_data);
-			$datatable = $post->script();
+			$datatable = $post->script(); */
+			$datatable = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
 		}
 		
 		return $datatable;
