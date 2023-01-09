@@ -16,6 +16,7 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  */
  
 trait View {
+	use Action;
 	
 	public $pageType         = false;
 	
@@ -176,7 +177,7 @@ trait View {
 			
 			$DataTables = new Datatables();
 			if (!empty($method['method']) && 'post' === $method['method']) {
-				$this->initRenderDatatablePost = [
+				$initRenderDatatablePost['datatables'] = [
 					'method'           => $method['method'],
 					'renderDataTables' => $method['renderDataTables'],
 					'difta'            => $method['difta'], 
@@ -185,15 +186,11 @@ trait View {
 					'model_filters'    => $model_filters						
 				];
 				
-				return $this->getInitPostDatatables();
+				return $this->setObjectInjection($initRenderDatatablePost);
 			}
 			
 			return $DataTables->process($method, $datatables, $filters, $model_filters);
 		}
-	}
-	
-	public function getInitPostDatatables() {
-		return $this->initRenderDatatablePost;
 	}
 	
 	private function checkIfAnyButtonRemoved() {

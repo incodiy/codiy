@@ -17,7 +17,6 @@ use Incodiy\Codiy\Models\Admin\System\DynamicTables;
  */
  
 trait Action {
-	use View;
 	
 	public $model			            = [];
 	public $model_path	            = null;
@@ -120,19 +119,15 @@ trait Action {
 		}
 	}
 	
+	private $objectInjection = [];
+	public function setObjectInjection($object) {
+		$this->objectInjection = $object;
+		dd($object);
+	}
+	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		
-		if (!empty($_POST)) {
-			dd($this->getInitPostDatatables());
-		}
-		// RENDER DATATABLES!!!
-		if (!empty($_GET['renderDataTables'])) {
-			$filter_datatables = [];
-			if (!empty($this->model_filters)) {
-				$filter_datatables = $this->model_filters;
-			}
-			
-			return $this->initRenderDatatables([], $filter_datatables);
+		if (!empty($_POST['draw']) && !empty($_POST['columns'][0]['data']) && !empty($_POST['length'])) {
+			dd($this->objectInjection);
 		}
 	}
 	
