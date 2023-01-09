@@ -21,6 +21,7 @@ use Incodiy\Codiy\Controllers\Core\Craft\Components\Charts;
 
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\FileUpload;
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
+use Incodiy\Codiy\Controllers\Core\Craft\View;
 
 /**
  * Bismillahirrahmanirrahiim
@@ -46,7 +47,7 @@ class Controller extends BaseController {
 	
 	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 	use MetaTags, Template;
-	use Scripts, Action, Session;
+	use Scripts, View, Session;
 	use Form, FileUpload, RouteInfo;
 	use Table;
 	use Chart;

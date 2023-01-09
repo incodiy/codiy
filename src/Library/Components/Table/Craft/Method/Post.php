@@ -65,7 +65,7 @@ class Post {
 		$this->setConfig('autoWidth', false);
 		$this->setConfig('dom', 'lBfrtip');
 		$this->setConfig('rowReorder', "{selector:'td:nth-child(2)'}");
-		$this->setConfig('lengthMenu', '[[10, 25, 50, 100, 250, 500, 1000, -1],["10", "25", "50", "100", "250", "500", "1000", "Show All"]]');
+		$this->setConfig('lengthMenu', [[10, 25, 50, 100, 250, 500, 1000, -1],["10", "25", "50", "100", "250", "500", "1000", "Show All"]]);
 		$this->setConfig('buttons', $this->setButtons($this->id, [
 			'excel|text:"<i class=\"fa fa-external-link\" aria-hidden=\"true\"></i> <u>E</u>xcel"|key:{key:"e",altKey:true}',
 			'csv|'   . $this->buttonConfig,
@@ -91,6 +91,6 @@ jQuery(function($) {
 });
 		";
 		$script .= '</script>';
-		var_dump($script);exit;
+		return $script;
 	}
 }

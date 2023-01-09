@@ -37,6 +37,55 @@ class FormController extends Controller {
 	//	$this->setFileElements('file_field_alt', 'file', 'txt,xlx,xlxs,pdf', 2);
 	}
 	
+	private $fieldsUser = [
+		'username',
+		'fullname',
+		'alias',
+		'email',
+		'email_verified_at',
+		'password',
+		'gender',
+		'birth_date',
+		'birth_place',
+		'photo',
+		'photo_thumb',
+		'file_info',
+		'address',
+		'phone',
+		'language',
+		'timezone',
+		'ip_address',
+		'first_route',
+		'reg_date',
+		'last_visit_date',
+		'past_visit_date',
+		'remember_token',
+		'change_password',
+		'last_change_password_date',
+		'expire_date',
+		'cryptcode',
+		'created_by',
+		'updated_by',
+		'created_at',
+		'updated_at',
+		'deleted_at',
+		'active'
+	];
+	
+	public function index() {
+		$this->setPage();
+		
+		$this->table->method('POST');
+		$this->table->searchable();
+		$this->table->sortable();
+		$this->table->clickable();
+		
+		$this->table->lists('users', $this->fieldsUser);
+		
+		return $this->render();
+	}
+	
+	
 	private $nodeObject;
 	private function setNode($node) {
 		$this->nodeObject = $node;
@@ -55,7 +104,7 @@ class FormController extends Controller {
 		return $this->data['charts'][$name] = $chart;
 	}
 	
-	public function index() {
+	public function indexChart1() {
 		return $this->indexColumn();
 	}
 	

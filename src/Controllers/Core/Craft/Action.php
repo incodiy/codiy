@@ -17,7 +17,6 @@ use Incodiy\Codiy\Models\Admin\System\DynamicTables;
  */
  
 trait Action {
-	use View;
 	
 	public $model			            = [];
 	public $model_path	            = null;
@@ -91,18 +90,6 @@ trait Action {
 		}
 	}
 	
-	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
-		// RENDER DATATABLES!!!
-		if (!empty($_GET['renderDataTables'])) {
-			$filter_datatables = [];
-			if (!empty($this->model_filters)) {
-				$filter_datatables = $this->model_filters;
-			}
-			
-			return $this->initRenderDatatables([], $filter_datatables);
-		}
-	}
-	
 	public function insert_data(Request $request, $routeback = true) {
 		$this->validation($request, 'edit');
 		return $this->INSERT_DATA_PROCESSOR($request, $routeback);
@@ -114,7 +101,6 @@ trait Action {
 				$data         = [];
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
-				$token        = $_POST['_token'];
 				unset($_POST['_token']);
 				
 				if ('dynamics' === $model_source) {
@@ -130,6 +116,18 @@ trait Action {
 					}
 				}
 			}
+		}
+	}
+	
+	private $objectInjection = [];
+	public function setObjectInjection($object) {
+		$this->objectInjection = $object;
+		dd($object);
+	}
+	
+	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
+		if (!empty($_POST['draw']) && !empty($_POST['columns'][0]['data']) && !empty($_POST['length'])) {
+			dd($this->objectInjection);
 		}
 	}
 	

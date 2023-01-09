@@ -51,7 +51,7 @@ trait Scripts {
 			$this->getScriptFromElements($this->table);
 		}
 		
-		if (!empty($this->chart->elements)) $this->getScriptFromElements($this->chart);
+		if (!empty($this->chart->elements))  $this->getScriptFromElements($this->chart);
 		if (!empty($this->charts->elements)) $this->getScriptFromElements($this->charts);
 		
 		$this->setScriptUnique('js',	$scripts);

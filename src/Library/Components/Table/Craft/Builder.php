@@ -19,7 +19,7 @@ class Builder {
 	use Scripts;
 	
 	public $model;
-	protected $method = 'GET';
+	public $method = 'GET';
 	
 	protected function setMethod($method) {
 		$this->method = $method;
@@ -181,7 +181,7 @@ class Builder {
 		if (!empty($columns['lists'])) {
 			$columns = $columns['lists'];
 		}
-		if (true === $numbering) {
+		if (true === $numbering && !in_array('id', $columns)) {
 			$number  = ['number_lists'];
 			$columns = array_merge($number, $columns);
 		}
@@ -194,11 +194,11 @@ class Builder {
 			$columns     = $this->checkColumnLabel($this->labels, $columns);
 		}
 		
+		$dataColumns = [];
 		if (!empty($this->columnManipulated)) {
 			$dataColumns = $this->columnManipulated;
-		} else {
-			$dataColumns = $columns;
 		}
+		
 		// COLUMN DATA MANIPULATION
 		
 		// COLORING BACKGROUD
@@ -229,7 +229,11 @@ class Builder {
 				} else {
 					// If no one set field(s) merged
 					foreach ($columns as $column) {
-						$id              = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+						if (!empty($dataColumns)) {
+							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+						} else {
+							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($column))]);
+						}
 						$class           = null;
 						$classAttributes = null;
 						
@@ -608,10 +612,11 @@ class Builder {
 		
 		
 		if ('GET' === $this->method) {
-			$datatable  = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
-		} else {
+			$datatable = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
+		} else {/* 
 			$post      = new Post($tableID, $dt_columns, $dt_info, true, $filter_data);
-			$datatable = $post->script();
+			$datatable = $post->script(); */
+			$datatable = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
 		}
 		
 		return $datatable;

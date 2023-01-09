@@ -184,7 +184,7 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 	$('#' + id + '>thead>tr>th').each(function (n, d) {
 		var classAttribute = this.attributes.class.nodeValue;
 		var nodeAttribute  = null;
-		if (!~classAttribute.indexOf('sorting_disabled') && !~classAttribute.indexOf('hidden-column')) {
+		if (!~classAttribute.indexOf('sorting_disableds') && !~classAttribute.indexOf('hidden-column')) {
 			d.addEventListener('click', function() {
 				var idAttributes  = $(this).attr('id');
 				
@@ -201,21 +201,72 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 				urls['order']  = encodeURIComponent('order[0][column]');
 				urls['dir']    = encodeURIComponent('order[0][dir]');
 				var URLi       = urli + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
-	
-				$.ajax({
-					url: URLi,
-					dataType: 'json',
-					success : function(d) {
-						tableID.ajax.url(URLi).draw();
-					}
-				});
-	
+			//	tableID.ajax.url(URLi).load();	
 			}, false);
 		}
 	});
 }
 
 function diyDataTableFilters(id, url, obTable) {
+	$('#diy-' + id + '-search-box').appendTo('.cody_' + id + '_diy-dt-filter-box');
+	$('.diy-dt-search-box').removeClass('hide');
+	$('#' + id + '_cdyProcessing').hide();
+	
+	$('#' + id + '_cdyFILTERForm').on('submit', function(event) {
+		event.preventDefault();
+		$('#' + id + '_cdyProcessing').show();
+		
+		var input = {};
+		$.each($(this).serialize().split('&'), function(i, d) {
+			var urls       = d.split('=');
+			input[urls[0]] = urls[1];
+		});
+		
+		var filterURI = [];
+		$.each(input, function(index, value) {
+			if (
+				index != 'renderDataTables'          &&
+				index != 'difta'                     &&
+				index != 'filters'                   &&
+				index != '_token'                    &&
+				null  != value                       &&
+				''    != value                       &&
+				'____-__-__ __:__:__'       != value &&
+				'____-__-__%20__%3A__%3A__' != value &&
+				'____-__-__'                != value
+			) {
+				if ('string' === typeof(value)) {
+					filterURI.push(index + '=' + encodeURIComponent(value));
+				} else if ('object' === typeof(value)) {
+					$.each(value, function(idx, _val) {
+						filterURI.push(index + '[' + idx + ']' + '=' + encodeURIComponent(_val));
+					});
+				}
+			}
+		});
+		
+		obTable.ajax.url(url + '&' + filterURI.join('&') + '&filters=true').load(function() {
+			$('#' + id + '_cdyProcessing').hide();
+			$('#' + id + '_cdyFILTER').modal('hide');
+		});
+	});
+}
+/*
+function __diyDataTableFilters(id, url, obTable) {
+	$('#diy-' + id + '-search-box').appendTo('.cody_' + id + '_diy-dt-filter-box');
+	$('.diy-dt-search-box').removeClass('hide');
+	$('#' + id + '_cdyProcessing').hide();
+	$('#' + id + '_cdyFILTERForm').on('submit', function(event) {
+		event.preventDefault();
+		$('#' + id + '_cdyProcessing').show();
+		obTable.ajax.url(url + '&' + $(this).serialize() + '&filters=true').load(function () {
+			$('#' + id + '_cdyProcessing').hide();
+			$('#' + id + '_cdyFILTER').modal('hide');
+		});
+	});
+}
+
+function _diyDataTableFilters(id, url, obTable) {
 	$('#diy-' + id + '-search-box').appendTo('.cody_' + id + '_diy-dt-filter-box');
 	$('.diy-dt-search-box').removeClass('hide');
 	$('#' + id + '_cdyFILTERForm').on('submit', function(event) {
@@ -251,7 +302,7 @@ function diyDataTableFilters(id, url, obTable) {
 					}
 				});
 				var filterURL = url + '&' + filterURI.join('&') + '&filters=true';
-				obTable.ajax.url(filterURL).draw();
+				obTable.ajax.url(filterURL).load();
 			},
 			complete : function() {
 				$('#' + id + '_cdyProcessing').hide();
@@ -260,3 +311,4 @@ function diyDataTableFilters(id, url, obTable) {
 		});
 	});
 }
+*/

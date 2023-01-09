@@ -1,8 +1,7 @@
 <?php
 namespace App\Models\Admin\Modules;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Incodiy\Codiy\Models\Core\Model;
 
 /**
  * Created on 24 Mar 2021
@@ -17,6 +16,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  
 class Form extends Model {
 	
-	protected $table	= 'test_inputform';
-	protected $guarded	= [];
+	protected $table	 = 'test_inputform';
+	protected $guarded = [];
 }

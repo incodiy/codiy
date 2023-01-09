@@ -16,6 +16,7 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  */
  
 trait View {
+	use Action;
 	
 	public $pageType         = false;
 	
@@ -72,14 +73,31 @@ trait View {
 		
 		$this->addScriptsFromElements();
 		
-		// RENDER DATATABLES WITH METHOD GET
-		if (!empty($_GET['renderDataTables'])) {
+		if (!empty($this->data['components']->table->method) && 'post' === strtolower($this->data['components']->table->method)) {
+			// RENDER DATATABLES WITH METHOD POST
 			$filter_datatables = [];
 			if (!empty($this->model_filters)) {
 				$filter_datatables = $this->model_filters;
 			}
 			
-			return $this->initRenderDatatables([], $filter_datatables);
+			$method = [
+				'method' => 'post',
+				'renderDataTables' => true,
+				'difta' => ['name' => array_keys($this->data['components']->table->model)[0], 'source' => 'dynamics']
+			];
+			
+			$this->initRenderDatatables($method, $this->data['components']->table, $filter_datatables);
+			
+		} else {
+			if (!empty($_GET['renderDataTables']) && 'false' != $_GET['renderDataTables']) {
+				// RENDER DATATABLES WITH METHOD GET
+				$filter_datatables = [];
+				if (!empty($this->model_filters)) {
+					$filter_datatables = $this->model_filters;
+				}
+				
+				return $this->initRenderDatatables($_GET, $this->data['components']->table, $filter_datatables);
+			}
 		}
 		
 		if (!empty($_GET['ajaxfproc'])) {
@@ -139,6 +157,42 @@ trait View {
 		return view($this->pageView, $this->data, $this->dataOptions);
 	}
 	
+	public $initRenderDatatablePost = [];
+	private function initRenderDatatables($method, $data = [], $model_filters = []) {
+		if (!empty($data)) {
+			$dataTable = $data;
+		} else {
+			$dataTable = $this->data['components']->table;
+		}
+		
+		if (!empty($dataTable)) {
+			$Datatables = [];
+			$Datatables['datatables'] = $dataTable;
+			$datatables = diy_array_to_object_recursive($Datatables);
+			
+			$filters    = [];
+			if (!empty($method['filters'])) {
+				if ('true' === $method['filters']) $filters = $method;
+			}
+			
+			$DataTables = new Datatables();
+			if (!empty($method['method']) && 'post' === $method['method']) {
+				$initRenderDatatablePost['datatables'] = [
+					'method'           => $method['method'],
+					'renderDataTables' => $method['renderDataTables'],
+					'difta'            => $method['difta'], 
+					'datatables'       => $datatables, 
+					'filters'          => $filters, 
+					'model_filters'    => $model_filters						
+				];
+				
+				return $this->setObjectInjection($initRenderDatatablePost);
+			}
+			
+			return $DataTables->process($method, $datatables, $filters, $model_filters);
+		}
+	}
+	
 	private function checkIfAnyButtonRemoved() {
 		if (!empty($this->removeButtons)) {
 			$add    = null;
@@ -176,21 +230,6 @@ trait View {
 		return $data;
 	}
 	
-	private function initRenderDatatables($filters = [], $model_filters = []) {
-		if ('false' != $_GET['renderDataTables']) {
-			$Datatables = [];
-			$Datatables['datatables'] = $this->data['components']->table;
-			$datatables = diy_array_to_object_recursive($Datatables);
-			
-			if (!empty($_GET['filters'])) {
-				if ('true' === $_GET['filters']) $filters = $_GET;
-			}
-			
-			$DataTables = new Datatables();
-			return $DataTables->process($datatables, $filters, $model_filters);
-		}
-	}
-	
 	public function setPageType($page_type = true) {
 		if (false === $page_type || str_contains($page_type, 'front') || str_contains($page_type, 'index')) {
 			$this->pageType = 'frontpage';
@@ -199,9 +238,9 @@ trait View {
 		}
 	}
 	
-	public $is_root = false;	
+	public $is_root     = false;	
 	public $filter_page = [];
-	public $page_name = null;
+	public $page_name   = null;
 	/**
 	 * Set Page Attributes
 	 *
