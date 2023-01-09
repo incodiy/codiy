@@ -58,12 +58,11 @@ class Datatables {
 		}
 	}
 	
-	public function process($data, $filters = [], $filter_page = []) {
+	public function process($method, $data, $filters = [], $filter_page = []) {
 		
-		if (!empty($data->datatables->model[$_GET['difta']['name']])) {
-		//	dd($data, $filters, $filter_page, $_GET, $_POST);
-			$model_type   = $data->datatables->model[$_GET['difta']['name']]['type'];
-			$model_source = $data->datatables->model[$_GET['difta']['name']]['source'];
+		if (!empty($data->datatables->model[$method['difta']['name']])) {
+			$model_type   = $data->datatables->model[$method['difta']['name']]['type'];
+			$model_source = $data->datatables->model[$method['difta']['name']]['source'];
 			
 			if ('model' === $model_type) {
 				$model_data = $model_source;
@@ -78,10 +77,6 @@ class Datatables {
 			// DEVELOPMENT STATUS | @WAITINGLISTS
 			if ('sql' === $model_type) {
 				$model_data = new DynamicTables($model_source);
-			}
-		} else {
-			if (!empty($_POST)) {
-				dd($data, $filters, $filter_page, $_GET, $_POST);
 			}
 		}
 		

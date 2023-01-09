@@ -102,7 +102,6 @@ trait Action {
 				$data         = [];
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
-				$token        = $_POST['_token'];
 				unset($_POST['_token']);
 				
 				if ('dynamics' === $model_source) {
@@ -122,6 +121,10 @@ trait Action {
 	}
 	
 	private function CHECK_DATATABLES_ACCESS_PROCESSOR() {
+		
+		if (!empty($_POST)) {
+			dd($this->getInitPostDatatables());
+		}
 		// RENDER DATATABLES!!!
 		if (!empty($_GET['renderDataTables'])) {
 			$filter_datatables = [];
@@ -134,7 +137,7 @@ trait Action {
 	}
 	
 	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
-	//	$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
+		$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
 		if (!empty($this->exportRedirection) && true == $_POST['exportData']) {
 			echo redirect($this->exportRedirection);
 			exit;

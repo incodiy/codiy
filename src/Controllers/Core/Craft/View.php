@@ -79,7 +79,13 @@ trait View {
 				$filter_datatables = $this->model_filters;
 			}
 			
-			return $this->initRenderDatatables($filter_datatables, $this->data['components']->table);
+			$method = [
+				'method' => 'post',
+				'renderDataTables' => true,
+				'difta' => ['name' => array_keys($this->data['components']->table->model)[0], 'source' => 'dynamics']
+			];
+			
+			$this->initRenderDatatables($method, $this->data['components']->table, $filter_datatables);
 			
 		} else {
 			if (!empty($_GET['renderDataTables']) && 'false' != $_GET['renderDataTables']) {
@@ -89,7 +95,7 @@ trait View {
 					$filter_datatables = $this->model_filters;
 				}
 				
-				return $this->initRenderDatatables($filter_datatables);
+				return $this->initRenderDatatables($_GET, $this->data['components']->table, $filter_datatables);
 			}
 		}
 		
@@ -150,7 +156,8 @@ trait View {
 		return view($this->pageView, $this->data, $this->dataOptions);
 	}
 	
-	private function initRenderDatatables($model_filters = [], $data = []) {
+	public $initRenderDatatablePost = [];
+	private function initRenderDatatables($method, $data = [], $model_filters = []) {
 		if (!empty($data)) {
 			$dataTable = $data;
 		} else {
@@ -163,14 +170,30 @@ trait View {
 			$datatables = diy_array_to_object_recursive($Datatables);
 			
 			$filters    = [];
-			if (!empty($_GET['filters'])) {
-				if ('true' === $_GET['filters']) $filters = $_GET;
+			if (!empty($method['filters'])) {
+				if ('true' === $method['filters']) $filters = $method;
 			}
 			
 			$DataTables = new Datatables();
+			if (!empty($method['method']) && 'post' === $method['method']) {
+				$this->initRenderDatatablePost = [
+					'method'           => $method['method'],
+					'renderDataTables' => $method['renderDataTables'],
+					'difta'            => $method['difta'], 
+					'datatables'       => $datatables, 
+					'filters'          => $filters, 
+					'model_filters'    => $model_filters						
+				];
+				
+				return $this->getInitPostDatatables();
+			}
 			
-			return $DataTables->process($datatables, $filters, $model_filters);
+			return $DataTables->process($method, $datatables, $filters, $model_filters);
 		}
+	}
+	
+	public function getInitPostDatatables() {
+		return $this->initRenderDatatablePost;
 	}
 	
 	private function checkIfAnyButtonRemoved() {
@@ -218,9 +241,9 @@ trait View {
 		}
 	}
 	
-	public $is_root = false;	
+	public $is_root     = false;	
 	public $filter_page = [];
-	public $page_name = null;
+	public $page_name   = null;
 	/**
 	 * Set Page Attributes
 	 *
