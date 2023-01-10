@@ -224,10 +224,10 @@ class Datatables {
 						$name !== '_'
 					) {
 						if (!is_array($value)) {
-							$fstrings[]    = [$name => $value];
+							$fstrings[]    = [$name => urldecode($value)];
 						} else {
 							foreach ($value as $val) {
-								$fstrings[] = [$name => $val];
+								$fstrings[] = [$name => urldecode($val)];
 							}
 						}
 					}
