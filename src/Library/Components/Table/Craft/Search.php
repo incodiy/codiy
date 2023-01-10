@@ -145,31 +145,29 @@ class Search {
 			
 			$where = implode(' ', $mf_where);
 		}
-		if (!empty($this->filters['filter_query'])) {
-			$fq_where = [];
-			$fqn      = 0;
-			
+		if (!empty($this->filters['filter_query'])) {	
 			$filterQueries = [];
 			foreach ($this->filters['filter_query'] as $i => $fqData) {
-				$op = ' = ';
-				
 				$fqFieldName = $fqData['field_name'];
 				$fqDataValue = $fqData['value'];
-				
-				$fqCond = 'AND ';
-				if ($fqn <= 1) {
+				$fqCond      = 'AND ';
+				if ($i <= 0) {
 					if (!empty($mf_where)) {
+						$fqCond = 'AND ';
+					} else if (!empty($condition)) {
 						$fqCond = 'AND ';
 					} else {
 						$fqCond = 'WHERE ';
 					}
 				}
 				
-				if (count($fqData['value']) >= 2) {
-					$fQdataValue = implode("', '", $fqDataValue);
-					$filterQueries[$i] = "{$fqCond}`{$fqFieldName}` IN('{$fQdataValue}')";
+				if (is_array($fqData['value'])) {
+					if (count($fqData['value']) >= 2) {
+						$fQdataValue = implode("', '", $fqDataValue);
+						$filterQueries[$i] = "{$fqCond}{$table}.`{$fqFieldName}` IN('{$fQdataValue}')";
+					}
 				} else {
-					$filterQueries[$i] = "{$fqCond}`{$fqFieldName}` = '{$fqDataValue}'";
+					$filterQueries[$i] = "{$fqCond}{$table}.`{$fqFieldName}` = '{$fqDataValue}'";
 				}
 			}
 			
@@ -187,7 +185,7 @@ class Search {
 		}
 		
 		if (!empty($strfields)) {
-			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};", $this->searchConnection);
+			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where} GROUP BY {$strfields};", $this->searchConnection);
 			if (!empty($query)) {
 				$selections = [];
 				foreach ($query as $rows) {
@@ -222,6 +220,11 @@ class Search {
 	private function search_box($info, $tablename, $data, $model) {
 		$this->form->excludeFields = ['password_field'];
 		$this->form->hideFields    = ['id'];
+		
+		$filterQuery = [];
+		if (!empty($this->filters['filter_query'])) {
+			$filterQuery = $this->filters['filter_query'];
+		}
 		
 		foreach (array_keys($this->data) as $dataFields) {
 			$this->searchFields[$dataFields] = $dataFields;
@@ -336,12 +339,12 @@ class Search {
 		
 		$boxTitle   = ucwords(str_replace('-', ' ', diy_clean_strings($tablename)));
 		$boxName    = $info . 'modalBOX';
-		$this->addScriptsTemplate($script_elements, $tablename, $boxName);
+		$this->addScriptsTemplate($script_elements, $tablename, $boxName, $filterQuery);
 		$this->html = diy_modal_content_html($boxName, $boxTitle, $this->form->elements);
 	}
 	
 	public $add_scripts  = [];
-	private function addScriptsTemplate(array $element_scripts, string $table, $node) {
+	private function addScriptsTemplate(array $element_scripts, string $table, $node, $filters = []) {
 		$current_template = diy_template_config('admin.' . diy_current_template());
 		unset($current_template['position']);
 		
@@ -356,7 +359,7 @@ class Search {
 			
 			$fields['current'] = [$index => $field];
 			
-			$this->script_next_data($node, $field, $fields, $table);
+			$this->script_next_data($node, $field, $fields, $table, $filters);
 		}
 		
 		foreach ($element_scripts[$nodElm] as $type) {
@@ -381,7 +384,7 @@ class Search {
 	}
 	
 	private $scriptToHTML = 'diyScriptNode::';
-	private function script_next_data($node, $identity, $fields, $table) {
+	private function script_next_data($node, $identity, $fields, $table, $filters = []) {
 		$currKey     = key($fields['current']);
 		$iNode       = $this->cleardash(str_replace('modalBOX', $identity, $node));
 		$fNode       = $this->cleardash(str_replace('modalBOX', 'Field', $node));
@@ -455,7 +458,12 @@ class Search {
 			if (!empty($this->searchConnection)) {
 				$ajaxConnection = ",'grabCoDIYC':'{$this->searchConnection}'";
 			}
-			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}}";
+			
+			$diyF = null;
+			if (!empty($filters)) {
+				$diyF = json_encode($filters);
+			}
+			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}, '_diyF':{$diyF} }";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
 			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";

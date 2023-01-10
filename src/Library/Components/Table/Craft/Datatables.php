@@ -464,6 +464,12 @@ class Datatables {
 				unset($post['grabCoDIYC']);
 			}
 			
+			$filters = [];
+			if (!empty($post['_diyF'])) {
+				$filters = $post['_diyF'];
+				unset($post['_diyF']);
+			}
+			
 			$fdata  = explode('::', $post['_fita']);
 			$table  = $fdata[1];
 			$target = $fdata[2];
@@ -496,10 +502,29 @@ class Datatables {
 			
 			if (!empty($post['_forKeys'])) unset($post['_forKeys']);
 			
+			if (!empty($filters)) {
+				$filterQueries = [];
+				foreach ($filters as $n => $filter) {
+					$fqFieldName = $filter['field_name'];
+					$fqDataValue = $filter['value'];
+					
+					if (is_array($filter['value'])) {
+						$fQdataValue = implode("', '", $fqDataValue);
+						$filterQueries[$n] = "`{$fqFieldName}` IN ('{$fQdataValue}')";
+					} else {
+						$filterQueries[$n] = "`{$fqFieldName}` = '{$fqDataValue}'";
+					}
+				}
+			}
+			
 			$wheres = [];
 			foreach ($post as $key => $value) {
 				$wheres[] = "`{$key}` = '{$value}'";
 			}
+			if (!empty($filterQueries)) {
+				$wheres = array_merge_recursive($wheres, $filterQueries);
+			}
+			$wheres = implode(' AND ', $wheres);
 			
 			$wherepPrefious = null;
 			if ('#null' !== $prev) {
@@ -529,8 +554,6 @@ class Datatables {
 				
 				$wherepPrefious = ' AND ' . implode(' AND ', $previousdata);
 			}
-			
-			$wheres = implode(' AND ', $wheres);
 			
 			if (!empty($fKeys)) {
 				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}";
