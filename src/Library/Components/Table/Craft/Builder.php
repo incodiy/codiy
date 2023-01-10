@@ -575,9 +575,14 @@ class Builder {
 					$data_sql   = null;
 				}
 				
+				$filterQuery = [];
+				if (!empty($this->conditions['where'])) {
+					$filterQuery = $this->conditions['where'];
+				}
+				
 				$searchInfo            = ['id' => $tableID];
 				$searchInfoAttribute   = "{$searchInfo['id']}_cdyFILTER";
-				$search_object         = new Search("{$searchInfo['id']}_cdyFILTER", $data_model, $search_data, $data_sql, $this->connection);
+				$search_object         = new Search("{$searchInfo['id']}_cdyFILTER", $data_model, $search_data, $data_sql, $this->connection, $filterQuery);
 				$this->filter_object   = $search_object;
 				
 				$dt_info['id']         = $searchInfo['id'];

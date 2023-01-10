@@ -27,10 +27,10 @@ class Search {
 	private $searchConnection;
 	
 	private $model_filters = [];
-	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null) {
+	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null, $filterQuery = []) {
 		if (!empty($connection)) $this->searchConnection = $connection;
 		
-		$this->info = $info;
+		$this->info        = $info;
 		if (!empty($model)) $model = new $model();
 		
 		if (!empty($filters['filter_model'])) {
@@ -46,6 +46,9 @@ class Search {
 		$this->sql          = $sql;
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
+		if (!empty($filterQuery)) {
+			$this->filters['filter_query'] = $filterQuery;
+		}
 	}
 	
 	public function render($info, string $table, array $fields) {
@@ -142,6 +145,36 @@ class Search {
 			
 			$where = implode(' ', $mf_where);
 		}
+		if (!empty($this->filters['filter_query'])) {
+			$fq_where = [];
+			$fqn      = 0;
+			
+			$filterQueries = [];
+			foreach ($this->filters['filter_query'] as $i => $fqData) {
+				$op = ' = ';
+				
+				$fqFieldName = $fqData['field_name'];
+				$fqDataValue = $fqData['value'];
+				
+				$fqCond = 'AND ';
+				if ($fqn <= 1) {
+					if (!empty($mf_where)) {
+						$fqCond = 'AND ';
+					} else {
+						$fqCond = 'WHERE ';
+					}
+				}
+				
+				if (count($fqData['value']) >= 2) {
+					$fQdataValue = implode("', '", $fqDataValue);
+					$filterQueries[$i] = "{$fqCond}`{$fqFieldName}` IN('{$fQdataValue}')";
+				} else {
+					$filterQueries[$i] = "{$fqCond}`{$fqFieldName}` = '{$fqDataValue}'";
+				}
+			}
+			
+			$where = implode(' ', $filterQueries);
+		}
 		
 		if (!empty($this->relations)) {
 			if (!empty($this->relations[$strfields]['relation_data'])) {
@@ -221,9 +254,9 @@ class Search {
 					
 					$classFieldInfo = "{$this->cleardash($info)}Field";
 					if (!empty($values[$field])) {
-						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}"];//'_' . $this->cleardash($info) . 'Field'];
+						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}"];
 					} else {
-						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}", 'disabled' => 'disabled'];//'_' . $this->cleardash($info) . 'Field', 'disabled' => 'disabled'];
+						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}", 'disabled' => 'disabled'];
 					}
 					
 					$field_label = ucwords(diy_clean_strings($field, ' '));
