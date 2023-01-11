@@ -40,11 +40,40 @@ class Export {
 				unset($_POST['lurExp']);
 				unset($_POST['exportData']);
 				
+				$filterPage = [];
+				if (!empty($_POST['ftrExp'])) {
+					foreach ($_POST['ftrExp'] as $fpage) {
+						if (!is_array($fpage['value'])) {
+							$filterPage[$fpage['field_name']] = $fpage['value'];
+						} else {
+							foreach ($fpage['value'] as $n => $fval) {
+								if (!empty($fval)) {
+									$filterPage[$fpage['field_name']][$n] = $fval;
+								}
+							}
+						}
+					}
+				}
+				unset($_POST['ftrExp']);
+				
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
 				$token        = $_POST['_token'];
 				unset($_POST['_token']);
-				$filters      = $_POST;
+				
+				$filters = $_POST;
+				if (!empty($filterPage)) {
+					$postsInitPage = [];
+					foreach ($filterPage as $fpageName => $fpageValues) {
+						$postsInitPage[$fpageName]    = $fpageValues;
+						if (!empty($_POST[$fpageName])) {
+							$postsInitPage[$fpageName] = $_POST[$fpageName];
+							unset($_POST[$fpageName]);
+						}
+					}
+					
+					$filters = array_merge_recursive($postsInitPage, $_POST);
+				}
 				
 				if ('dynamics' === $model_source) {
 					$model = new DynamicTables(null, $link);
@@ -53,10 +82,31 @@ class Export {
 						$filterData = [];
 						foreach ($filters as $field_name => $field_value) {
 							if (!empty($field_value)) {
-								$filterData[$field_name] = $field_value;
+								if (is_array($field_value)) {
+									foreach ($field_value as $n => $fvalue) {
+										if (!empty($fvalue)) {
+											$filterData[$field_name][$n] = $fvalue;
+										}
+									}
+								} else {
+									$filterData[$field_name] = $field_value;
+								}
 							}
 						}
-						$model = $model->where($filterData);
+						
+						$filters = [];
+						foreach ($filterData as $fieldData => $fieldValues) {
+							if (!is_array($fieldValues)) {
+								$filters[$fieldData] = $fieldValues;
+							}
+						}
+						$model = $model->where($filters);
+						
+						foreach ($filterData as $fieldData => $fieldValues) {
+							if (is_array($fieldValues)) {
+								$model->whereIn($fieldData, $fieldValues);
+							}
+						}
 					}
 					$data[$table_source]['model'] = get_class($model);
 					
@@ -135,13 +185,5 @@ class Export {
 	
 	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
 		return $this->generate('csv', $data, $path, $filename);
-		
-		/* 
-		$pathFile = public_path();		
-		$realPath = str_replace('//', '/', "{$pathFile}/{$path}");
-		if (!file_exists($realPath)) {
-			diy_make_dir($realPath, 0777, true, true);
-		}
-		 */
 	}
 }

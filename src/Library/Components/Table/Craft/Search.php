@@ -164,10 +164,10 @@ class Search {
 				if (is_array($fqData['value'])) {
 					if (count($fqData['value']) >= 2) {
 						$fQdataValue = implode("', '", $fqDataValue);
-						$filterQueries[$i] = "{$fqCond}{$table}.`{$fqFieldName}` IN('{$fQdataValue}')";
+						$filterQueries[$i] = "{$fqCond} `{$fqFieldName}` IN ('{$fQdataValue}')";
 					}
 				} else {
-					$filterQueries[$i] = "{$fqCond}{$table}.`{$fqFieldName}` = '{$fqDataValue}'";
+					$filterQueries[$i] = "{$fqCond} `{$fqFieldName}` = '{$fqDataValue}'";
 				}
 			}
 			
@@ -392,10 +392,20 @@ class Search {
 		$next_target = null;
 		$nextNode    = null;
 		
+		$fieldsets   = $fields['others'];
+		$curTargets  = null;
+		$nexTargets  = [];
 		if (!empty($fields['others'][$currKey+1])) {
 			$next_target = $fields['others'][key($fields['current'])+1];
 			$nextNode    = "{$next_target}_{$fNode}";
+			
+			$curTargets  = $fieldsets[key($fields['current'])];/* 
+			unset($fieldsets[key($fields['current'])]);
+			unset($fieldsets[key($fields['current'])+1]); */
+			$nexTargets  = $fieldsets;
 		}
+		$firstTarget = $fieldsets[0];
+		$lastTarget  = $fieldsets[count($fieldsets)-2];
 		
 		$nests       = [];		
 		$prev        = null;
@@ -461,18 +471,19 @@ class Search {
 			
 			$diyF = null;
 			if (!empty($filters)) {
-				$diyF = json_encode($filters);
+				$diyFilters = json_encode($filters);
+				$diyF = ",'_diyF':{$diyFilters}";
 			}
-			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}, '_diyF':{$diyF} }";
+			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}{$diyF}}";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
 			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
 					
 			$ajaxSuccess .= "$.ajax ({";
-				$ajaxSuccess .= "type : 'POST',";
-				$ajaxSuccess .= "url : '{$uri}',";
-				$ajaxSuccess .= "data : {$ajax_data},";
-				$ajaxSuccess .= "dataType : 'json',";
+				$ajaxSuccess .= "type       : 'POST',";
+				$ajaxSuccess .= "url        : '{$uri}',";
+				$ajaxSuccess .= "data       : {$ajax_data},";
+				$ajaxSuccess .= "dataType   : 'json',";
 				$ajaxSuccess .= "beforeSend : function() {";
 					$ajaxSuccess .= "$('#cdyInpLdr{$next_target}').show();";
 				$ajaxSuccess .= "},";
@@ -502,6 +513,22 @@ class Search {
 				$script .= "$('#{$node}').children('div.form-group').each(function () {";
 				
 					$script .= "$(this).find('select#{$identity}.{$firstNode}').change(function () {";
+
+						if (!empty($nexTargets)) {
+							$curN = 0;
+							foreach ($nexTargets as $n => $nextElement) {
+								if ($curTargets === $nextElement) $curN = $n;
+								$curNode = $curN+1;
+								
+								if ($n > $curNode) {
+									if ($lastTarget !== $nextElement) {
+										if ($identity === $firstTarget) $script .= "$('select#{$lastTarget}').empty().trigger('chosen:updated');";
+										if ($identity !== $lastTarget)  $script .= "$('select#{$nextElement}').empty().trigger('chosen:updated');";
+									}
+								}
+							}
+						}
+
 						$script .= "var _val{$iNode} = $(this).val();";
 						$script .= "if (_val{$iNode} != '0' && _val{$iNode} != null && _val{$iNode} != '') {";
 							$script .= "{$ajaxSuccess}";

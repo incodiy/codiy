@@ -308,7 +308,13 @@ trait Scripts {
 		$exportID   = 'export_' . str_replace('-', '_', $id) . '_cdyFILTERField';
 		$token      = csrf_token();
 		
-		return "exportFromModal('{$modalID}', '{$exportID}', '{$filterID}', '{$token}', '{$url}', '{$connection}');";
+		$filters = [];
+		if (!empty($this->conditions['where'])) {
+			$filters = $this->conditions['where'];
+		}
+		$filter = json_encode($filters);
+		
+		return "exportFromModal('{$modalID}', '{$exportID}', '{$filterID}', '{$token}', '{$url}', '{$connection}', {$filter});";
 	}
 	
 	private function filter($id, $url) {
