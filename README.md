@@ -28,6 +28,11 @@ This package used for simplifying some code with Laravel framework, hopefully ca
     	"type"      : "vcs",
     	"url"       : "git@github.com:incodiy/codiy.git"
     }]
+    
+    
+    Or just type this code:
+    
+    composer require incodiy/codiy
 
 3). COMPOSER UPDATE
 --------------------------------------------------------------------------------
