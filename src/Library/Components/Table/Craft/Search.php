@@ -27,10 +27,10 @@ class Search {
 	private $searchConnection;
 	
 	private $model_filters = [];
-	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null) {
+	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null, $filterQuery = []) {
 		if (!empty($connection)) $this->searchConnection = $connection;
 		
-		$this->info = $info;
+		$this->info        = $info;
 		if (!empty($model)) $model = new $model();
 		
 		if (!empty($filters['filter_model'])) {
@@ -46,6 +46,9 @@ class Search {
 		$this->sql          = $sql;
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
+		if (!empty($filterQuery)) {
+			$this->filters['filter_query'] = $filterQuery;
+		}
 	}
 	
 	public function render($info, string $table, array $fields) {
@@ -142,6 +145,34 @@ class Search {
 			
 			$where = implode(' ', $mf_where);
 		}
+		if (!empty($this->filters['filter_query'])) {	
+			$filterQueries = [];
+			foreach ($this->filters['filter_query'] as $i => $fqData) {
+				$fqFieldName = $fqData['field_name'];
+				$fqDataValue = $fqData['value'];
+				$fqCond      = 'AND ';
+				if ($i <= 0) {
+					if (!empty($mf_where)) {
+						$fqCond = 'AND ';
+					} else if (!empty($condition)) {
+						$fqCond = 'AND ';
+					} else {
+						$fqCond = 'WHERE ';
+					}
+				}
+				
+				if (is_array($fqData['value'])) {
+					if (count($fqData['value']) >= 2) {
+						$fQdataValue = implode("', '", $fqDataValue);
+						$filterQueries[$i] = "{$fqCond} `{$fqFieldName}` IN ('{$fQdataValue}')";
+					}
+				} else {
+					$filterQueries[$i] = "{$fqCond} `{$fqFieldName}` = '{$fqDataValue}'";
+				}
+			}
+			
+			$where = implode(' ', $filterQueries);
+		}
 		
 		if (!empty($this->relations)) {
 			if (!empty($this->relations[$strfields]['relation_data'])) {
@@ -154,7 +185,7 @@ class Search {
 		}
 		
 		if (!empty($strfields)) {
-			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where}GROUP BY {$strfields};", $this->searchConnection);
+			$query = $this->select("SELECT {$strfields} FROM `{$table}` {$where} GROUP BY {$strfields};", $this->searchConnection);
 			if (!empty($query)) {
 				$selections = [];
 				foreach ($query as $rows) {
@@ -190,6 +221,11 @@ class Search {
 		$this->form->excludeFields = ['password_field'];
 		$this->form->hideFields    = ['id'];
 		
+		$filterQuery = [];
+		if (!empty($this->filters['filter_query'])) {
+			$filterQuery = $this->filters['filter_query'];
+		}
+		
 		foreach (array_keys($this->data) as $dataFields) {
 			$this->searchFields[$dataFields] = $dataFields;
 		}
@@ -221,9 +257,9 @@ class Search {
 					
 					$classFieldInfo = "{$this->cleardash($info)}Field";
 					if (!empty($values[$field])) {
-						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}"];//'_' . $this->cleardash($info) . 'Field'];
+						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}"];
 					} else {
-						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}", 'disabled' => 'disabled'];//'_' . $this->cleardash($info) . 'Field', 'disabled' => 'disabled'];
+						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}", 'disabled' => 'disabled'];
 					}
 					
 					$field_label = ucwords(diy_clean_strings($field, ' '));
@@ -303,12 +339,12 @@ class Search {
 		
 		$boxTitle   = ucwords(str_replace('-', ' ', diy_clean_strings($tablename)));
 		$boxName    = $info . 'modalBOX';
-		$this->addScriptsTemplate($script_elements, $tablename, $boxName);
+		$this->addScriptsTemplate($script_elements, $tablename, $boxName, $filterQuery);
 		$this->html = diy_modal_content_html($boxName, $boxTitle, $this->form->elements);
 	}
 	
 	public $add_scripts  = [];
-	private function addScriptsTemplate(array $element_scripts, string $table, $node) {
+	private function addScriptsTemplate(array $element_scripts, string $table, $node, $filters = []) {
 		$current_template = diy_template_config('admin.' . diy_current_template());
 		unset($current_template['position']);
 		
@@ -323,7 +359,7 @@ class Search {
 			
 			$fields['current'] = [$index => $field];
 			
-			$this->script_next_data($node, $field, $fields, $table);
+			$this->script_next_data($node, $field, $fields, $table, $filters);
 		}
 		
 		foreach ($element_scripts[$nodElm] as $type) {
@@ -348,7 +384,7 @@ class Search {
 	}
 	
 	private $scriptToHTML = 'diyScriptNode::';
-	private function script_next_data($node, $identity, $fields, $table) {
+	private function script_next_data($node, $identity, $fields, $table, $filters = []) {
 		$currKey     = key($fields['current']);
 		$iNode       = $this->cleardash(str_replace('modalBOX', $identity, $node));
 		$fNode       = $this->cleardash(str_replace('modalBOX', 'Field', $node));
@@ -356,10 +392,18 @@ class Search {
 		$next_target = null;
 		$nextNode    = null;
 		
+		$fieldsets   = $fields['others'];
+		$curTargets  = null;
+		$nexTargets  = [];
 		if (!empty($fields['others'][$currKey+1])) {
 			$next_target = $fields['others'][key($fields['current'])+1];
 			$nextNode    = "{$next_target}_{$fNode}";
+			
+			$curTargets  = $fieldsets[key($fields['current'])];
+			$nexTargets  = $fieldsets;
 		}
+		$firstTarget = $fieldsets[0];
+		$lastTarget  = $fieldsets[count($fieldsets)-2];
 		
 		$nests       = [];		
 		$prev        = null;
@@ -422,16 +466,22 @@ class Search {
 			if (!empty($this->searchConnection)) {
 				$ajaxConnection = ",'grabCoDIYC':'{$this->searchConnection}'";
 			}
-			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}}";
+			
+			$diyF = null;
+			if (!empty($filters)) {
+				$diyFilters = json_encode($filters);
+				$diyF = ",'_diyF':{$diyFilters}";
+			}
+			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}{$diyF}}";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
 			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
 					
 			$ajaxSuccess .= "$.ajax ({";
-				$ajaxSuccess .= "type : 'POST',";
-				$ajaxSuccess .= "url : '{$uri}',";
-				$ajaxSuccess .= "data : {$ajax_data},";
-				$ajaxSuccess .= "dataType : 'json',";
+				$ajaxSuccess .= "type       : 'POST',";
+				$ajaxSuccess .= "url        : '{$uri}',";
+				$ajaxSuccess .= "data       : {$ajax_data},";
+				$ajaxSuccess .= "dataType   : 'json',";
 				$ajaxSuccess .= "beforeSend : function() {";
 					$ajaxSuccess .= "$('#cdyInpLdr{$next_target}').show();";
 				$ajaxSuccess .= "},";
@@ -461,6 +511,22 @@ class Search {
 				$script .= "$('#{$node}').children('div.form-group').each(function () {";
 				
 					$script .= "$(this).find('select#{$identity}.{$firstNode}').change(function () {";
+
+						if (!empty($nexTargets)) {
+							$curN = 0;
+							foreach ($nexTargets as $n => $nextElement) {
+								if ($curTargets === $nextElement) $curN = $n;
+								$curNode = $curN+1;
+								
+								if ($n > $curNode) {
+									if ($lastTarget !== $nextElement) {
+										if ($identity === $firstTarget) $script .= "$('select#{$lastTarget}').empty().trigger('chosen:updated');";
+										if ($identity !== $lastTarget)  $script .= "$('select#{$nextElement}').empty().trigger('chosen:updated');";
+									}
+								}
+							}
+						}
+
 						$script .= "var _val{$iNode} = $(this).val();";
 						$script .= "if (_val{$iNode} != '0' && _val{$iNode} != null && _val{$iNode} != '') {";
 							$script .= "{$ajaxSuccess}";

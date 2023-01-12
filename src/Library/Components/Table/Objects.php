@@ -369,10 +369,6 @@ class Objects extends Builder {
 		$this->variables['filter_groups'][] = $filters;
 	}
 	
-	public function export($to, $separator = '|') {
-		
-	}
-	
 	protected $filter_model = [];
 	public function filterModel(array $data = []) {
 		$this->filter_model = $data;
@@ -445,7 +441,6 @@ class Objects extends Builder {
 	 * @return array
 	 */
 	public function filterConditions($filters = []) {
-	//	if (empty($filters)) $filters = $this->model_filters;
 		return $this->where($filters);
 	}
 	
@@ -545,6 +540,24 @@ class Objects extends Builder {
 			} else {
 				$this->button_removed = [$remove];
 			}
+		}
+	}
+	
+	private $objectInjections = [];
+	public $filterPage = [];
+	/**
+	 * Initiate Configuration
+	 * 
+	 * @param string $connection
+	 * @param array $object
+	 */
+	public function config($object = []) {
+		if (!empty($this->connection)) {
+			$this->connection($this->connection);
+		}
+		
+		if (!empty($this->filter_page)) {
+			$this->filterPage = $this->filter_page;
 		}
 	}
 	
