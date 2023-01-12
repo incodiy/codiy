@@ -399,9 +399,7 @@ class Search {
 			$next_target = $fields['others'][key($fields['current'])+1];
 			$nextNode    = "{$next_target}_{$fNode}";
 			
-			$curTargets  = $fieldsets[key($fields['current'])];/* 
-			unset($fieldsets[key($fields['current'])]);
-			unset($fieldsets[key($fields['current'])+1]); */
+			$curTargets  = $fieldsets[key($fields['current'])];
 			$nexTargets  = $fieldsets;
 		}
 		$firstTarget = $fieldsets[0];

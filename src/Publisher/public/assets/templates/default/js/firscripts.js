@@ -22,7 +22,7 @@ function updateSelectChosen(target, reset = true, optstring = 'Select an Option'
 	var chosenTarget = $(target);
 	if (true === reset) chosenTarget.find('option').remove().end();
 	if (false !== optstring) {
-		chosenTarget.append('<option value=\"\">' + optstring + '</option>').trigger('chosen:updated');
+		chosenTarget.append('<option value="">' + optstring + '</option>').trigger('chosen:updated');
 	} else {
 		chosenTarget.trigger('chosen:updated');
 	}
@@ -37,6 +37,6 @@ function loader(target_id, view = 'hide') {
 	} else if ('fadeOut' == view) {
 		$('span.inputloader').fadeOut(1800, function() { $(this).remove(); });
 	} else {
-		$(_loaderTarget).before('<span class=\"inputloader loader ' + view + '\" id=\"'+ _loaderID + '\"></span>');
+		$(_loaderTarget).before('<span class="inputloader loader ' + view + '" id="'+ _loaderID + '"></span>');
 	}
 }

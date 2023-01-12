@@ -201,7 +201,7 @@ function drawDatatableOnClickColumnOrder(id, urli, tableID) {
 				urls['column'] = encodeURIComponent('columns['+n+'][data]');
 				urls['order']  = encodeURIComponent('order[0][column]');
 				urls['dir']    = encodeURIComponent('order[0][dir]');
-				var URLi       = urli + '&draw=0&'+urls['column']+'='+idAttributes+'&'+urls['order']+'='+n+'&'+urls['dir']+'='+nodeAttribute;
+				var URLi       = urli + '&draw=0&' + urls['column'] + '=' + idAttributes + '&' + urls['order'] + '=' + n + '&' + urls['dir'] + '=' + nodeAttribute;
 			}, false);
 		}
 	});
