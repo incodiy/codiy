@@ -225,7 +225,7 @@ if (!function_exists('diy_table_action_button')) {
 	 * @return string
 	 */
 	function diy_table_action_button($row_data, $current_url, $action, $removed_button = null) {
-		$privileges              = session()->all()['privileges'];
+		$privileges              = session()->all()['privileges']['role'];
 		$path                    = [];
 		$addActions              = [];
 		$add_path                = false;
@@ -235,7 +235,7 @@ if (!function_exists('diy_table_action_button')) {
 		$enabledAction['modify'] = true;
 		$enabledAction['delete'] = true;
 		
-		$actions = null;
+		$actions = [];
 		if (in_array(current_route(), $privileges)) {
 			foreach ($privileges as $roles) {
 				if (diy_string_contained($roles, routelists_info()['base_info'])) {
@@ -245,7 +245,18 @@ if (!function_exists('diy_table_action_button')) {
 				}
 			}
 			
-			$action = $actions[routelists_info()['base_info']];
+			$actionType            = [];
+			$actionType['custom']  = [];
+			$actionType['default'] = $actions[routelists_info()['base_info']];
+			
+			foreach ($action as $ai => $actval) {
+				if (in_array($actval, ['show', 'view', 'create', 'edit', 'delete'])) {
+					unset($action[$ai]);
+				} else {
+					$actionType['custom'][] = $actval;
+				}
+			}
+			$action = array_merge_recursive($actionType['default'], $actionType['custom']);
 		}
 		
 		if (!empty($removed_button)) {
@@ -270,9 +281,12 @@ if (!function_exists('diy_table_action_button')) {
 		if (is_array($action)) {
 			foreach ($action as $action_data) {
 				if (diy_string_contained($action_data, '|')) {
-					$action_info = diy_add_action_button_by_string($action_data);
-					$addActions[key($action_info)] = $action_info[key($action_info)];
+					$action_info                      = diy_add_action_button_by_string($action_data);
+					$addActions[key($action_info)]    = $action_info[key($action_info)];
 					$enabledAction[key($action_info)] = true;
+				} else {
+					$addActions[$action_data]         = diy_add_action_button_by_string("{$action_data}|default|link");
+					$enabledAction[$action_data]      = true;
 				}
 			}
 		} else {			
@@ -300,10 +314,17 @@ if (!function_exists('diy_table_action_button')) {
 		
 		if (count($addActions) >= 1) {
 			foreach ($addActions as $action_name => $action_values) {
-				$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
-				if (is_array($action_values)) {
-					foreach ($action_values as $actionKey => $actionValue) {
-						$add_path[$action_name][$actionKey] = $actionValue;
+				if (!in_array($action_name, ['show', 'view', 'create', 'edit', 'delete'])) {
+					$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
+					if (is_array($action_values)) {
+						foreach ($action_values as $actionKey => $actionValue) {
+							if ($actionKey === $action_name) {
+								$add_path[$action_name]        = $actionValue;
+								$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
+							} else {
+								$add_path[$action_name][$actionKey] = $actionValue;
+							}
+						}
 					}
 				}
 			}
@@ -376,7 +397,6 @@ if (!function_exists('create_action_buttons')) {
 	 * @return string
 	 */
 	function create_action_buttons($view = false, $edit = false, $delete = false, $add_action = [], $as_root = false) {
-		
 		$deleteURL          = false;
 		$delete_id          = false;
 		$buttonDelete       = false;
@@ -433,8 +453,10 @@ if (!function_exists('create_action_buttons')) {
 				foreach ($add_action as $new_action_name => $new_action_values) {
 					$row_name  = camel_case($new_action_name);
 					$row_url   = $new_action_values['url'];
-					$row_color = $new_action_values['color'];
-					$row_icon  = $new_action_values['icon'];
+					$row_color = null;
+					$row_icon  = null;
+					if (!empty($new_action_values['color'])) $row_color = $new_action_values['color'];
+					if (!empty($new_action_values['icon']))  $row_icon  = $new_action_values['icon'];
 					
 					if (true === $restoreDeleted) {
 						$actionVisibilityAttr = ' readonly disabled class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="' . $row_name . '"';

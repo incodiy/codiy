@@ -615,7 +615,6 @@ class Builder {
 		
 		$dt_columns = diy_clear_json(json_encode($dt_columns));
 		
-		
 		if ('GET' === $this->method) {
 			$datatable = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);
 		} else {/* 

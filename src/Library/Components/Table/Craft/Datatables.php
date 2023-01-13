@@ -321,11 +321,7 @@ class Datatables {
 			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});
 			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
 		}
-		/* 
-		foreach ($model->get() as $n => $mod) {
-			if ($n == 4) dd($mod->getAttributes());
-		}
-		 */
+		
 		if (!empty($data->datatables->formula[$table_name])) {
 			$data_formula = $data->datatables->formula[$table_name];
 			$data->datatables->columns[$table_name]['lists'] = diy_set_formula_columns($data->datatables->columns[$table_name]['lists'], $data_formula);

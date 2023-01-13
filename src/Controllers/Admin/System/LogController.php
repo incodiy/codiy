@@ -40,7 +40,7 @@ class LogController extends Controller {
 		
 	//	$this->table->method('POST');
 		$this->table->searchable(['user_fullname', 'user_group_info', 'method', 'module_name']);
-		$this->table->clickable();
+		$this->table->clickable(false);
 		$this->table->sortable();
 		
 		$this->table->filterGroups('user_fullname', 'selectbox', true);
@@ -48,7 +48,8 @@ class LogController extends Controller {
 		$this->table->filterGroups('method', 'selectbox', true);
 		$this->table->filterGroups('module_name', 'selectbox', true);
 		
-		$this->table->lists($this->model_table, $this->field_lists, false);
+	//	$this->table->lists($this->model_table, $this->field_lists, ['new_button', 'button_name|warning|tags']);
+		$this->table->lists($this->model_table, $this->field_lists);
 		
 		return $this->render();
 	}
