@@ -250,7 +250,7 @@ if (!function_exists('diy_table_action_button')) {
 			$actionType['default'] = $actions[routelists_info()['base_info']];
 			
 			foreach ($action as $ai => $actval) {
-				if (in_array($actval, ['show', 'view', 'create', 'edit', 'delete'])) {
+				if (in_array($actval, ['show', 'view', 'create', 'edit', 'delete', 'insert'])) {
 					unset($action[$ai]);
 				} else {
 					$actionType['custom'][] = $actval;
