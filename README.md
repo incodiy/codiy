@@ -21,18 +21,18 @@ This package used for simplifying some code with Laravel framework, hopefully ca
 
 2). COMPOSER JSON FILE SETTING:
 --------------------------------------------------------------------------------
-    "require": {
-        "incodiy/codiy": "dev-master"
-    },
-    "repositories": [{
-    	"type"      : "vcs",
-    	"url"       : "git@github.com:incodiy/codiy.git"
-    }]
-    
-    
-    Or just type this code:
-    
-    composer require incodiy/codiy
+	"require": {
+		"incodiy/codiy": "dev-master"
+	},
+	"repositories": [{
+		"type"      : "vcs",
+		"url"       : "git@github.com:incodiy/codiy.git"
+	}]
+	
+	
+	Or just type this code:
+	
+	composer require incodiy/codiy
 
 3). COMPOSER UPDATE
 --------------------------------------------------------------------------------
