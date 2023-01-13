@@ -686,6 +686,7 @@ class Objects extends Builder {
 		}
 		$this->search_columns = $search_columns;
 		
+		if (false === $actions) $actions       = [];
 		$this->columns[$table_name]['lists']	= $fields;
 		$this->columns[$table_name]['actions']	= $actions;
 		
@@ -712,6 +713,7 @@ class Objects extends Builder {
 		if (!empty($this->variables['column_width'])) {
 			$this->params[$table_name]['attributes']['column_width']   = $this->variables['column_width'];
 		}
+		
 		if (!empty($this->variables['add_table_attributes'])) {
 			$this->params[$table_name]['attributes']['add_attributes'] = $this->variables['add_table_attributes'];
 		}
@@ -734,14 +736,10 @@ class Objects extends Builder {
 			}
 		}
 		
-		if (!empty($this->filter_model)) {
-			$this->params[$table_name]['filter_model']   = $this->filter_model;
-		}
+		if (!empty($this->filter_model)) $this->params[$table_name]['filter_model'] = $this->filter_model;
 		
 		$label = null;
-		if (!empty($this->variables['table_name'])) {
-			$label = $this->variables['table_name'];
-		}
+		if (!empty($this->variables['table_name'])) $label = $this->variables['table_name'];
 		
 		if ('datatable' === $this->tableType) {
 			$this->renderDatatable($table_name, $this->columns, $this->params, $label);
