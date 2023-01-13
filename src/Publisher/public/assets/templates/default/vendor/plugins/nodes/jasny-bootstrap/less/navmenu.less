@@ -15,6 +15,20 @@
   border-style: solid;
   border-radius: @border-radius-base;
 }
+// Fixed iphone with disableScrolling
+.lockIphone {
+  position: fixed;
+  overflow: hidden;
+  height: 100%;
+  -webkit-overflow-scrolling: auto;
+}
+// Fix the bug for bootstrap 3.2.0 (https://github.com/jasny/bootstrap/issues/355)
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+  -webkit-transform: none;
+  -o-transform: none;
+  transform: none;
+}
 
 .navmenu-fixed-left,
 .navmenu-fixed-right,
@@ -26,15 +40,33 @@
   overflow-y: auto;
   border-radius: 0;
 }
+
+.navmenu-fixed-left,
+.navmenu-fixed-right {
+  .dropdown .dropdown-menu {
+    position: static !important;
+    float: none;
+    transform: none !important;
+    background: rgba(0, 0, 0, .02);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+
+    .nav-link {
+      padding: .35rem 1rem .35rem 1.3rem;
+    }
+  }
+}
+
 .navmenu-fixed-left,
 .navbar-offcanvas.navmenu-fixed-left {
   left: 0;
-  right: auto;
+  right: auto!important;
   border-width: 0 1px 0 0;
 }
 .navmenu-fixed-right,
 .navbar-offcanvas {
-  left: auto;
+  left: auto!important;
   right: 0;
   border-width: 0 0 0 1px;
 }
@@ -43,13 +75,18 @@
   margin-bottom: @navmenu-margin-vertical;
 
   &.dropdown-menu {
-    position: static;
+    position: static!important;
+    transform: none!important;
     margin: 0;
     padding-top: 0;
     float: none;
     border: none;
     .box-shadow(none);
     border-radius: 0;
+
+    li > a {
+      white-space: normal;
+    }
   }
 }
 

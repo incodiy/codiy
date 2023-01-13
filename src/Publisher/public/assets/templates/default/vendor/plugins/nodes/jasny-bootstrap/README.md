@@ -1,13 +1,12 @@
-# [Jasny Bootstrap](http://jasny.github.io/bootstrap/) [![Build Status](https://secure.travis-ci.org/jasny/bootstrap.png)](http://travis-ci.org/jasny/bootstrap)[![devDependency Status](https://david-dm.org/jasny/bootstrap/dev-status.png)](https://david-dm.org/jasny/bootstrap#info=devDependencies)
+# [Jasny Bootstrap](http://jasny.github.io/bootstrap/)
 
 Jasny Bootstrap is an extension of the famous [Bootstrap](http://getbootstrap.com/), adding the following components:
 
-* [Button labels](http://jasny.github.io/bootstrap/css/#buttons-labels)
+* [Button labels](http://jasny.github.io/bootstrap/components/#buttons-labels)
 * [Off canvas navmenu](http://jasny.github.io/bootstrap/components/#navmenu)
 * [Fixed alerts](http://jasny.github.io/bootstrap/components/#alerts-fixed)
-* [Row link](http://jasny.github.io/bootstrap/javascript/#rowlink)
-* [Input mask](http://jasny.github.io/bootstrap/javascript/#inputmask)
-* [File input widget](http://jasny.github.io/bootstrap/javascript/#fileinput)
+* [Row link](http://jasny.github.io/bootstrap/components/#rowlink)
+* [File input widget](http://jasny.github.io/bootstrap/components/#fileinput)
 
 To get started, check out <http://jasny.github.io/bootstrap>!
 
@@ -16,10 +15,10 @@ To get started, check out <http://jasny.github.io/bootstrap>!
 
 Four quick start options are available:
 
-* [Download the latest release](https://github.com/jasny/bootstrap/releases/download/v3.1.3/jasny-bootstrap-3.1.3-dist.zip).
+* [Download the latest release](https://github.com/jasny/bootstrap/releases/download/v4.0.0/jasny-bootstrap-4.0.0-dist.zip).
 * Clone the repo: `git clone git://github.com/jasny/bootstrap.git`.
-* Install with [Bower](http://bower.io): `bower install jasny-bootstrap`.
 * Use [cdnjs](http://cdnjs.com/libraries/jasny-bootstrap).
+* Install with [Meteor](https://meteor.com): `meteor add jasny:bootstrap`.
 
 Read the [Getting Started page](http://jasny.github.io/bootstrap/getting-started/) for information on the framework contents, templates and examples, and more.
 
@@ -147,9 +146,10 @@ __The major version will follow Bootstrap's major version. This means backward c
 
 **Arnold Daniels**
 
-+ [http://twitter.com/ArnoldDaniels](http://twitter.com/ArnoldDaniels)
-+ [http://github.com/jasny](http://github.com/jasny)
-+ [http://jasny.net](http://jasny.net)
++ [twitter.com/ArnoldDaniels](https://twitter.com/ArnoldDaniels)
++ [github.com/jasny](https://github.com/jasny)
++ [jasny.net](http://jasny.net)
++ [fiestainfo.com](https://www.fiestainfo.com)
 
 
 ## Copyright and license

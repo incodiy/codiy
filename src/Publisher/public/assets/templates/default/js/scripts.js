@@ -9,7 +9,7 @@
 	}
 	
 	var splitPath	= window.location.pathname.split('public')[0] + 'public/';
-	var soundsPath	= splitPath.split(window.location.pathname.split('/')[1])[1] + 'assets/templates/default/vendor/node_modules/ion-sound/sounds/';
+	var soundsPath	= splitPath.split(window.location.pathname.split('/')[1])[1] + 'assets/templates/default/vendor/plugins/nodes/ion-sound/sounds/';
 
 	var preloader	= $('#preloader');
 	$(window).on('load', function() {

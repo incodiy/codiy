@@ -3,6 +3,10 @@ _gh_pages
 _site
 .ruby-version
 
+#ignore dist zip and gz files 
+/dist/jasny-bootstrap-*.zip
+/dist/jasny-bootstrap-*.tar.gz
+
 # Numerous always-ignore extensions
 *.diff
 *.err
@@ -38,4 +42,5 @@ validation-status.json
 validation-report.json
 
 # Folders to ignore
+bower_components
 node_modules
