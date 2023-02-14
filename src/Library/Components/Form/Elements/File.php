@@ -56,7 +56,7 @@ trait File {
 			}
 			
 			$o  = '<div class="fileinput fileinput-new' . $hideAttribute . '" data-provides="fileinput">';
-			$o .= '<div id="' . $name . '-fileinput-preview" class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">' . $fileValue . '</div>';
+			$o .= '<div id="' . $name . '-fileinput-preview" class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 198px; height: 150px;">' . $fileValue . '</div>';
 			$o .= '<div>';
 			
 			$o .= "<span class=\"btn btn-primary btn-file\"><span class=\"fileinput-new\">Select Image</span><span class=\"fileinput-exists\">Change</span>{$input_file}</span>";

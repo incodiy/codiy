@@ -752,6 +752,11 @@ class Objects extends Builder {
 		$this->method = $method;
 	}
 	
+	public $labelTable = null;
+	public function label($lable) {
+		$this->labelTable = $lable;
+	}
+	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
 		if (!empty($this->variables['table_data_model'])) {
 			$attributes[$name]['model'] = $this->variables['table_data_model'];
@@ -764,6 +769,11 @@ class Objects extends Builder {
 		}
 		
 		$this->setMethod($this->method);
+		
+		if (!empty($this->labelTable)) {
+			$label = $this->labelTable . ':setLabelTable';
+			$this->labelTable = null;
+		}
 		
 		return $this->draw($this->tableID[$name], $this->table($name, $columns, $attributes, $label));
 	}

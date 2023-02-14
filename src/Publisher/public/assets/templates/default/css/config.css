@@ -2862,6 +2862,7 @@ input.form-control:hover {
 }
 .fileinput-preview.thumbnail {
 	line-height: 150px;
+	text-align: center;
 }
 .fileinput .btn {
 	cursor: button;

@@ -48,6 +48,12 @@ trait Tab {
 		$this->draw("{$this->opentabHTML}{$label}{$classAttribute}{$this->openNewTab}");
 	}
 	
+	private $contentTab = null;
+	public function addTabContent($content) {
+		$this->contentTab = $content;
+		$this->draw("{$this->contentTab}");
+	}
+	
 	/**
 	 * Create Close Tab
 	 * 		: After the Open Tab

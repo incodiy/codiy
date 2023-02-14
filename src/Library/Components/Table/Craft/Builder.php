@@ -71,10 +71,18 @@ class Builder {
 		
 		// RENDER DATA TABLE
 		if (false !== $name) {
-			if (empty($label)) {
-				$titleText  = ucwords(str_replace('_', ' ', $name)) . ' List(s)';
+			$list = null;
+			if (diy_string_contained($label, ':setLabelTable')) {
+				$list = null;
+				$label = str_replace(':setLabelTable', '', $label);
 			} else {
-				$titleText  = ucwords(str_replace('_', ' ', $label)) . ' List(s)';
+				$list = ' List(s)';
+			}
+			
+			if (empty($label)) {
+				$titleText  = ucwords(str_replace('_', ' ', $name)) . $list;
+			} else {
+				$titleText  = ucwords(str_replace('_', ' ', $label)) . $list;
 			}
 			$tableTitle = '<div class="panel-heading"><div class="pull-left"><h3 class="panel-title">' . $titleText . '</h3></div><div class="clearfix"></div></div>';
 		}

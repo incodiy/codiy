@@ -343,7 +343,9 @@ class Datatables {
 				$datatables->editColumn($format['field_name'], function($data) use ($field, $format) {
 					if ($field === $format['field_name']) {
 						$dataValue = $data->getAttributes();
-						return diy_format($dataValue[$field], $format['decimal_endpoint'], $format['separator'], $format['format_type']);
+						if (!empty($dataValue[$field])) {
+							return diy_format($dataValue[$field], $format['decimal_endpoint'], $format['separator'], $format['format_type']);
+						}
 					}
 				});
 			}
