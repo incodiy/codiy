@@ -13,9 +13,11 @@ use Illuminate\Support\Facades\Auth;
  *
  * @filesource	ImportAccountsController.php
  *
- * @author     wisnuwidi@gmail.com - 2022
- * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @author      wisnuwidi@gmail.com - 2022
+ * @copyright   wisnuwidi
+ * @email       wisnuwidi@gmail.com
+ * 
+ * @uses        'username|email|fullname|role|info|alias'
  */
 class ImportAccountsController extends Controller {
 	
@@ -77,18 +79,21 @@ class ImportAccountsController extends Controller {
 			$activeStatus = $active;
 		}
 		
-		$newRoles = array_diff($content_roles, $this->groupName);
+		$newRoles = array_diff(array_keys($content_roles), $this->groupName);
 		if (!empty($newRoles)) {
-			$groupController  = new GroupController();
+			$groupController = new GroupController();
 			foreach ($newRoles as $newrole) {
-				$camelCaseRole = ucwords(str_replace('_', ' ', str_replace('-', ' ', $newrole)));
-				$groupLists    = array_flip($this->groupName);
+				$groupLists  = array_flip($this->groupName);
 				
 				if (empty($groupLists[$this->setGroupName($newrole)])) {
+				    $roleInfo = $content_roles[$newrole]['info'];
+				    if (strlen($content_roles[$newrole]['info']) <= 3) $roleInfo = strtoupper($content_roles[$newrole]['info']);
+				    
 					$this->insertRoles = [
-						'group_name' => $this->setGroupName($newrole),
-						'group_info' => $camelCaseRole,
-						'active'     => $activeStatus
+					    'group_name'   => $this->setGroupName($newrole),
+					    'group_info'   => $roleInfo,
+					    'group_alias'  => $content_roles[$newrole]['alias'],
+						'active'       => $activeStatus
 					];
 					
 					$insertGroupRequests = new Request($this->insertRoles);
@@ -172,7 +177,7 @@ class ImportAccountsController extends Controller {
 	}
 	
 	public function store(Request $request, $req = true) {
-		$data    = $this->getRequestFileContents($request);
+	    $data    = $this->getRequestFileContents($request);
 		$content = [];
 		foreach ($data as $n => $rowData) {
 			if (!empty($rowData)) {
@@ -195,15 +200,38 @@ class ImportAccountsController extends Controller {
 				$fieldvalue = $row;
 				
 				if (diy_string_contained($fieldname, 'username')) $fieldvalue = strtolower($row);
-				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias')) $fieldvalue = ucwords($row);
+				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias') || diy_string_contained($fieldname, 'info')) $fieldvalue = ucwords($row);
 				
-				$userLists[$n][$fieldname]            = $fieldvalue;
-				if (diy_string_contained($fieldname, 'role')) {
-					$contentFile['roles'][$fieldvalue] = $fieldvalue;
-					$userLists[$n][$fieldname]         = ucwords(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
+				if (diy_string_contained($fieldname, 'role'))  $contentFile['roles'][$n]['role']  = $fieldvalue;
+				if (diy_string_contained($fieldname, 'info'))  $contentFile['roles'][$n]['info']  = $fieldvalue;
+				if (diy_string_contained($fieldname, 'alias')) $contentFile['roles'][$n]['alias'] = $fieldvalue;
+				
+				if (!diy_string_contained($fieldname, 'info') && !diy_string_contained($fieldname, 'alias')) {
+				    if (diy_string_contained($fieldname, 'email')) {
+				        $userLists[$n][$fieldname] = strtolower(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
+				    } else {
+				        $userLists[$n][$fieldname] = ucwords(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
+				    }
 				}
 			}
 		}
+		
+		$manageRoles = [];
+		$roleName    = null;
+		foreach ($contentFile['roles'] as $roleList) {
+		    foreach ($roleList as $info => $value) {
+		        if ('role' === $info) {
+		            $roleName = $value;
+		            $manageRoles[$roleName]['role'] = $value;
+		        }
+		    }
+		    foreach ($roleList as $info => $value) {
+		        if ('role' !== $info) {
+		            $manageRoles[$roleName][$info] = $value;
+		        }
+		    }
+		}
+		$contentFile['roles'] = $manageRoles;
 		
 		foreach ($userLists as $userData) {
 			$contentFile['users'][$userData['email']] = $userData;

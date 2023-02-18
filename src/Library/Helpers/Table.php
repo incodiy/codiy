@@ -99,9 +99,10 @@ if (!function_exists('diy_get_table_column_type')) {
 	 *
 	 * @return string
 	 */
-	function diy_get_table_column_type($table_name, $field_name, $db_connection = 'mysql') {
-		$connection = DB::connection($db_connection);
-		return $connection->getSchemaBuilder()->getColumnType($table_name, $field_name);
+    function diy_get_table_column_type($table_name, $field_name, $db_connection = 'mysql') {
+        $connection = DB::connection($db_connection);
+        return $connection->getSchemaBuilder()->getColumnType($table_name, $field_name);
+      //  return $connection->getSchemaBuilder()->getColumnListing($table_name, $field_name);
 	}
 }
 
@@ -185,7 +186,7 @@ if (!function_exists('diy_modal_content_html')) {
 				$html .= '<button id="submitFilterButton" class="btn btn-primary btn-slideright pull-right" type="submit">';
 					$html .= '<i class="fa fa-filter"></i> &nbsp; Filter Data ' . $title;
 				$html .= '</button>';
-				$html .= '<button id="exportFilterButton' . $name . '" class="btn btn-info btn-slideright pull-right btn-export-csv" type="button">Export to CSV</button>';
+				$html .= '<button id="exportFilterButton' . $name . '" class="btn btn-info btn-slideright pull-right btn-export-csv hide" type="button">Export to CSV</button>';
 			$html .= '</div>';
 		$html .= '</div>';
 		

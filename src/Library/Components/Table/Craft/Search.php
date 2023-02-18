@@ -23,6 +23,7 @@ class Search {
 	private $foreign_keys;
 	private $sql;
 	private $table;
+	private $tableFromView = false;
 	private $info;
 	private $searchConnection;
 	
@@ -30,13 +31,17 @@ class Search {
 	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null, $filterQuery = []) {
 		if (!empty($connection)) $this->searchConnection = $connection;
 		
-		$this->info        = $info;
+		if (diy_string_contained($filters['table_name'], 'view_')) {
+		    $this->tableFromView = true;
+		}
+		
+		$this->info = $info;
 		if (!empty($model)) $model = new $model();
 		
 		if (!empty($filters['filter_model'])) {
 			$this->model_filters = $filters['filter_model'];
 			$this->model         = $model->where($this->model_filters);
-		} else $this->model     = $model;
+		} else $this->model      = $model;
 		
 		$this->form         = new Form();
 		$this->table        = $filters['table_name'];
@@ -470,9 +475,9 @@ class Search {
 			$diyF = null;
 			if (!empty($filters)) {
 				$diyFilters = json_encode($filters);
-				$diyF = ",'_diyF':{$diyFilters}";
+				$diyF       = ",'_diyF':{$diyFilters}";
 			}
-			$ajax_data = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}{$diyF}}";
+			$ajax_data    = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}{$diyF}}";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
 			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
@@ -520,8 +525,12 @@ class Search {
 								
 								if ($n > $curNode) {
 									if ($lastTarget !== $nextElement) {
-										if ($identity === $firstTarget) $script .= "$('select#{$lastTarget}').empty().trigger('chosen:updated');";
-										if ($identity !== $lastTarget)  $script .= "$('select#{$nextElement}').empty().trigger('chosen:updated');";
+									    if ($identity === $firstTarget) {
+									        $script .= "if ($(this).val() != '') { $('button#exportFilterButton{$node}').removeClass('hide'); } else { $('button#exportFilterButton{$node}').addClass('hide'); }";
+									        $script .= "$('select#{$lastTarget}').empty().trigger('chosen:updated');";
+									    }
+									    
+										if ($identity !== $lastTarget) $script .= "$('select#{$nextElement}').empty().trigger('chosen:updated');";
 									}
 								}
 							}
@@ -561,7 +570,7 @@ class Search {
 	private function getColumnInfo(string $table, array $fields) {
 		$columns = [];
 		foreach ($this->getColumns($table) as $column) {
-			$columns[$column] = $this->getColumnType($table, $column);
+		    if (false === $this->tableFromView) $columns[$column] = $this->getColumnType($table, $column);
 		}
 		
 		$info = [];

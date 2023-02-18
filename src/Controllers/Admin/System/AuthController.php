@@ -131,6 +131,7 @@ class AuthController extends Controller {
 			$userData['id']                   = $user->id;
 			$userData['group_id']             = $group_info->id;
 			$userData['user_group']           = $group_info->group_name;
+			$userData['group_alias']          = $group_info->group_alias;
 			$userData['group_info']           = $group_info->group_info;
 			$userData['privileges']           = $this->set_module_privileges($group_info->id);
 			
@@ -166,6 +167,7 @@ class AuthController extends Controller {
 		Session::forget('group_id');
 		
 		Session::forget('user_group');
+		Session::forget('group_alias');
 		Session::forget('group_info');
 		Session::forget('name');
 		Session::forget('fullname');

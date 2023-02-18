@@ -207,6 +207,7 @@ class BaseTables extends Config {
 			$table->increments('id')->unsigned();
 
 			$table->string('group_name', 30);
+			$table->text('group_alias')->nullable();
 			$table->text('group_info')->nullable();
 			if (true === $this->is_multiplatform) $table->bigInteger($this->platform_key)->unsigned();
 

@@ -1725,7 +1725,7 @@ if (!function_exists('diy_date_info')) {
 			ORDER BY {$field} DESC
 			LIMIT 1",
 			
-			'select',
+			'SELECT',
 			$connection
 		);
 		

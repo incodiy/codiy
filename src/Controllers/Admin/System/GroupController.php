@@ -35,7 +35,7 @@ class GroupController extends Controller {
 		$this->setValidations(
 			[
 				'group_name' => 'required|unique:base_group',
-				'group_info' => 'required|unique:base_group',
+				'group_info' => 'required',
 				'active'     => 'required'
 			],[
 				'group_name' => 'required',
@@ -60,17 +60,18 @@ class GroupController extends Controller {
 			$this->filterPage(['group_name' => 'root'], '!=');
 		}
 		
-		$this->table->mergeColumns('Group', ['group_name', 'group_info']);
+		$this->table->mergeColumns('Group', ['group_info', 'group_name', 'group_alias']);
 		
 		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
 		
 		$this->table->filterGroups('group_name', 'selectbox', true);
+		$this->table->filterGroups('group_alias', 'selectbox', true);
 		$this->table->filterGroups('group_info', 'selectbox', true);
 		
 		$this->table->columnCondition('group_name', 'row', '==', $this->session['user_group'], 'background-color', 'rgba(222, 249, 195, 0.51)');
-		$this->table->lists($this->model_table, ['group_name', 'group_info', 'active']);
+		$this->table->lists($this->model_table, ['group_info', 'group_name', 'group_alias', 'active']);
 		
 		return $this->render();
 	}
@@ -95,6 +96,7 @@ class GroupController extends Controller {
 				
 		$this->form->model();
 		$this->form->text('group_name', null, ['required']);
+		$this->form->text('group_alias', null, ['required']);
 		$this->form->text('group_info', null, ['required']);
 		$this->form->selectbox('active', active_box(), false, ['required']);
 		
@@ -193,6 +195,7 @@ class GroupController extends Controller {
 		$this->form->model();
 		$this->form->text('group_name', null, ['required', 'readonly']);
 		$this->form->text('group_info', null, ['required']);
+		$this->form->text('group_alias', null, ['required']);
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
@@ -224,8 +227,9 @@ class GroupController extends Controller {
 	
 	private function set_data_before_insert($request, $model_id = false) {
 		if (false === $model_id) {
-			$getGroup = diy_query($this->model_table)
-				->where('group_name', $request->group_name)
+		    $getGroup = diy_query($this->model_table)
+    		    ->where('group_name', $request->group_name)
+    		    ->where('group_alias', $request->group_alias)
 				->where('group_info', $request->group_info)
 				->first();
 		} else {
@@ -255,11 +259,11 @@ class GroupController extends Controller {
 	 * @return number
 	 */
 	private function validation_groups($request) {
-		$dataReq	= $request->all();
+		$dataReq = $request->all();
 		if (true === is_multiplatform()) {
-			$objects	= diy_query($this->model_table)->where($this->platform_key, $dataReq[$this->platform_key])->where('group_name', $dataReq['group_name'])->get();
+			$objects = diy_query($this->model_table)->where($this->platform_key, $dataReq[$this->platform_key])->where('group_name', $dataReq['group_name'])->get();
 		} else {
-			$objects	= diy_query($this->model_table)->where('group_name', $dataReq['group_name'])->get();
+			$objects = diy_query($this->model_table)->where('group_name', $dataReq['group_name'])->get();
 		}
 		
 		return count($objects);
