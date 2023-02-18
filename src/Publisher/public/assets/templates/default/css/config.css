@@ -593,7 +593,7 @@ body .page-container>.main-content>.main-content-inner>.content-box>.body .callo
 	cursor: default !important;
 }
 
-.hidden-column {
+.hidden-column, .diy-hide-column {
 	display: none;
 	width: 0;
 }
@@ -2862,7 +2862,6 @@ input.form-control:hover {
 }
 .fileinput-preview.thumbnail {
 	line-height: 150px;
-	text-align: center;
 }
 .fileinput .btn {
 	cursor: button;

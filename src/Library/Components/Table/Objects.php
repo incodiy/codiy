@@ -130,6 +130,11 @@ class Objects extends Builder {
 		$this->variables['merged_columns'][$label] = ['position' => $label_position, 'counts' => count($merged_columns), 'columns' => $merged_columns];
 	}
 	
+	public $hidden_columns = [];
+	public function setHiddenColumns($fields = []) {
+		$this->variables['hidden_columns'] = $fields;
+	}
+	
 	/**
 	 * Set Column Alignment
 	 *
@@ -698,6 +703,10 @@ class Objects extends Builder {
 		if (!empty($this->variables['searchable_columns'])) $this->columns[$table_name]['searchable']    = $this->variables['searchable_columns'];
 		if (!empty($this->variables['filter_groups']))      $this->columns[$table_name]['filter_groups'] = $this->variables['filter_groups'];
 		if (!empty($this->variables['format_data']))        $this->columns[$table_name]['format_data']   = $this->variables['format_data'];
+		if (!empty($this->variables['hidden_columns'])) {
+			$this->columns[$table_name]['hidden_columns'] =  $this->variables['hidden_columns'];
+			$this->variables['hidden_columns']            =  [];
+		}
 		
 		$this->tableID[$table_name] = diy_clean_strings("CoDIY_{$this->tableType}_" . $table_name . '_' . diy_random_strings(50, false));
 		$attributes['table_id']     = $this->tableID[$table_name];

@@ -1714,3 +1714,21 @@ if (!function_exists('diy_memory')) {
 		}
 	}
 }
+
+if (!function_exists('diy_date_info')) {
+	
+	function diy_date_info($table, $field, $filter = null, $connection = null) {
+		$query = diy_query("
+			SELECT
+				DISTINCT DATE_FORMAT({$field}, '%d% %M %Y') date_info
+			FROM `{$table}` {$filter}
+			ORDER BY {$field} DESC
+			LIMIT 1",
+			
+			'select',
+			$connection
+		);
+		
+		return $query[0]->date_info;
+	}
+}

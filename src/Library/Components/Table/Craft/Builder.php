@@ -160,6 +160,9 @@ class Builder {
 			}
 		}
 		
+		$hiddenColumn = [];
+		if (!empty($data['columns']['hidden_columns'])) $hiddenColumn = $data['columns']['hidden_columns'];
+		
 		$alignColumn = [];
 		if (!empty($columns['align'])) {
 			foreach ($columns['align'] as $align => $column_data) {
@@ -199,7 +202,7 @@ class Builder {
 		}
 		
 		if (!empty($this->labels)) {
-			$columns     = $this->checkColumnLabel($this->labels, $columns);
+			$columns = $this->checkColumnLabel($this->labels, $columns);
 		}
 		
 		$dataColumns = [];
@@ -236,7 +239,7 @@ class Builder {
 					$headerTable .= $this->mergeColumns($mergeColumn, $columns, $attributes);
 				} else {
 					// If no one set field(s) merged
-					foreach ($columns as $column) {
+					foreach ($columns as $column) {						
 						if (!empty($dataColumns)) {
 							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
 						} else {
@@ -245,6 +248,7 @@ class Builder {
 						$class           = null;
 						$classAttributes = null;
 						
+						if (in_array($column, $hiddenColumn))        $classAttributes .= ' diy-hide-column';
 						if (!empty($alignColumn['header'][$column])) $classAttributes .= $alignColumn['header'][$column];
 						if ('action' === strtolower($column))        $classAttributes .= ' diy-column-action';						
 						if (!empty($classAttributes))                $class = $this->setAttributes(['class' => $classAttributes]);
@@ -422,6 +426,9 @@ class Builder {
 		if (!empty($attributes['actions']))                $actions   = $attributes['actions'];
 		if (!empty($attributes['numbering']))              $numbering = $attributes['numbering'];
 		
+		$hiddenColumn = [];
+		if (!empty($data['columns']['hidden_columns'])) $hiddenColumn = $data['columns']['hidden_columns'];
+		
 		// COLUMN DATA MANIPULATION
 		$columns = $columnData['lists'];
 		if (true === $numbering) {
@@ -469,12 +476,14 @@ class Builder {
 		}
 		
 		foreach ($columns as $column) {
-			$jsonData['data']			= $column;
-			$jsonData['name']			= $column;
-			$jsonData['sortable']	= false;
-			$jsonData['searchable']	= false;
-			$jsonData['class']		= 'auto-cut-text';
-			$jsonData['onclick']		= 'return false';
+			$jsonData['data']       = $column;
+			$jsonData['name']       = $column;
+			$jsonData['sortable']   = false;
+			$jsonData['searchable'] = false;
+			$jsonData['class']      = 'auto-cut-text';
+			$jsonData['onclick']    = 'return false';
+			
+			if (in_array($column, $hiddenColumn)) $jsonData['class'] = 'auto-cut-text diy-hide-column';
 			
 			$formula_column = null;
 			if (!empty($formula_fields[$column])) {

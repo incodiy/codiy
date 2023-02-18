@@ -51,7 +51,7 @@ trait Tab {
 	private $contentTab = null;
 	public function addTabContent($content) {
 		$this->contentTab = $content;
-		$this->draw("{$this->contentTab}");
+		$this->draw("<div class=\"diy-add-tab-content\">{$this->contentTab}</div>");
 	}
 	
 	/**

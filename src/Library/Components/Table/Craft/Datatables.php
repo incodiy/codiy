@@ -326,13 +326,26 @@ class Datatables {
 			$data_formula = $data->datatables->formula[$table_name];
 			$data->datatables->columns[$table_name]['lists'] = diy_set_formula_columns($data->datatables->columns[$table_name]['lists'], $data_formula);
 			
+			$formula_fields = [];
 			foreach ($data_formula as $formula) {
+				if (!empty($formula['field_lists'])) {
+					foreach ($formula['field_lists'] as $fflist) {
+						$formula_fields[] = $fflist;
+					}
+				}
+				
 				$datatables->editColumn($formula['name'], function($data) use ($formula) {
 					// ambil referensi dari: calculateFormulaCells() wpdatatables
 					$logic = new Formula($formula, $data);
 					return $logic->calculate();
 				});
 			}
+			/* 
+			if (!empty($formula_fields)) {
+				foreach ($formula_fields as $formulaFields) {
+					$datatables->editColumn($formulaFields, function($formulaFields) {return null;});
+				}
+			} */
 		}
 		
 		// Data Formating
