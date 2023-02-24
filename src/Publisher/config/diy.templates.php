@@ -72,7 +72,7 @@ return [
 				'css'	=> [
 					'vendor/plugins/nodes/datatables/css/dataTables.bootstrap.css',
 					'vendor/plugins/nodes/datatables/css/buttons.dataTables.min.css',
-					'vendor/plugins/nodes/datatables/css/dataTables.responsive.css',
+					'vendor/plugins/nodes/datatables/css/datatables.responsive.css',
 				]
 			],
 		    
