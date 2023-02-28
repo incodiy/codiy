@@ -11,7 +11,7 @@
  * @email		wisnuwidi@gmail.com
  */
 $config               = [];
-$config['title']      = __('ADMIN LOGIN');
+$config['title']      = __('Admin Login');
 $config['logo']       = asset('assets/templates/default') . '/images/logo-almasjid.png';
 $config['background'] = null;
 if (!empty($content_page['login_page'])) {
@@ -42,7 +42,7 @@ $formStyle  = null;
 							<h4>{{ $config['title'] }}</h4>
 						</div>
 						<div class="login-form-body">
-							<div class="form-gp">
+							<!-- <div class="form-gp">
 								<label for="expresscode-input-login-email">{{ __('E-Mail Address') }}</label>
 								{!! Form::email('email', old('email'), ['id' => 'expresscode-input-login-email', 'class' => $errors->has('email') ? ' is-invalid' : '', 'required', 'autofocus']) !!}
 								<i class="ti-email"></i>
@@ -50,6 +50,17 @@ $formStyle  = null;
 								@if ($errors->has('email'))
 								<span class="invalid-feedback" role="alert">
 									<strong>{{ $errors->first('email') }}</strong>
+								</span>
+								@endif
+							</div> -->
+							<div class="form-gp">
+								<label for="expresscode-input-login-email">{{ __('Username') }}</label>
+								{!! Form::text('username', old('username'), ['id' => 'expresscode-input-login-username', 'class' => $errors->has('username') ? ' is-invalid' : '', 'required', 'autofocus']) !!}
+								<i class="ti-username"></i>
+								
+								@if ($errors->has('username'))
+								<span class="invalid-feedback" role="alert">
+									<strong>{{ $errors->first('username') }}</strong>
 								</span>
 								@endif
 							</div>
@@ -67,19 +78,19 @@ $formStyle  = null;
 							<div class="row mb-4 rmber-area">
 								<div class="col-6">
 									<div class="custom-control custom-checkbox mr-sm-2">
-										<input type="checkbox" class="custom-control-input" id="customControlAutosizing" {{ old('remember') ? 'checked' : '' }} />
-										<label class="custom-control-label" for="customControlAutosizing">{{ __('Remember Me') }}</label>
+										<!-- <input type="checkbox" class="custom-control-input" id="customControlAutosizing" {{ old('remember') ? 'checked' : '' }} />
+										<label class="custom-control-label" for="customControlAutosizing">{{ __('Remember Me') }}</label> -->
 									</div>
 								</div>
 								<div class="col-6 text-right">
-									<a href="{{ route('password.request') }}" id="forgot-password-button" data-toggle="modalxxx" data-target="#forgot-password-boxxx">{{ __('Forgot Your Password?') }}</a>
+									<!-- <a href="{{ route('password.request') }}" id="forgot-password-button" data-toggle="modalxxx" data-target="#forgot-password-boxxx">{{ __('Forgot Your Password?') }}</a> -->
 								</div>
 							</div>
 							<div class="submit-btn-area">
 								{!! Form::submit('Submit', ['class' => 'btn btn-primary btn-lg btn-block no-margin rounded', 'id' => 'login-btn']) !!}
 							</div>
 							<div class="form-footer text-center mt-5">
-								<p class="text-muted">Don't have an account? <a href="{{ route('register') }}">{{ __('Register') }}</a></p>
+								<p class="text-muted">Mantra web-app reporting<a href="#">{{ __('Smartfren') }}</a></p>
 							</div>
 						</div>
 					{!! Form::close() !!}

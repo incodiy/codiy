@@ -9,9 +9,6 @@
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
-
-/* @import url('fonts/fonts.css'); */
-/* @import url('../vendor/node_modules/bootstrap/dist/css/bootstrap.min.css'); */
 @import url('font-awesome.min.css');
 @import url('themify-icons.css');
 @import url('metisMenu.css');
@@ -21,6 +18,15 @@
 @import url('responsive.css');
 @import url('colors.css');
 @import url('animate.css');
+
+@font-face {
+	font-family: Congenial Black;
+	src: url('../fonts/Congenial Black.ttf');
+}
+
+.font-congenial-black {
+	font-family: Congenial Black;
+}
 
 body {
 	font-size: 13px !important;
@@ -35,6 +41,10 @@ body {
 
 .relative-box {
 	position: relative !important;
+}
+
+.lights {
+	animation: lights 5s 750ms linear infinite;
 }
 
 .modal-open .modal {
@@ -488,11 +498,76 @@ label:active:after {
 	right: 10px;
 	float: right;
 }
-
+@font-face {
+	font-family: Congenial Black;
+	src: url('../fonts/Congenial Black.ttf');
+}
+@keyframes lights {
+  0% {
+    color: hsl(230, 40%, 80%);
+    text-shadow:
+      0 0 1em hsla(320, 100%, 50%, 0.2),
+      0 0 0.125em hsla(320, 100%, 60%, 0.3),
+      -1em -0.125em 0.5em hsla(40, 100%, 60%, 0),
+      1em 0.125em 0.5em hsla(200, 100%, 60%, 0);
+  }
+  
+  30% { 
+    color: hsl(230, 80%, 90%);
+    text-shadow:
+      0 0 1em hsla(320, 100%, 50%, 0.5),
+      0 0 0.125em hsla(320, 100%, 60%, 0.5),
+      -0.5em -0.125em 0.25em hsla(40, 100%, 60%, 0.2),
+      0.5em 0.125em 0.25em hsla(200, 100%, 60%, 0.4);
+  }
+  
+  40% { 
+    color: hsl(230, 100%, 95%);
+    text-shadow:
+      0 0 1em hsla(320, 100%, 50%, 0.5),
+      0 0 0.125em hsla(320, 100%, 90%, 0.5),
+      -0.25em -0.125em 0.125em hsla(40, 100%, 60%, 0.2),
+      0.25em 0.125em 0.125em hsla(200, 100%, 60%, 0.4);
+  }
+  
+  70% {
+    color: hsl(230, 80%, 90%);
+    text-shadow:
+      0 0 1em hsla(320, 100%, 50%, 0.5),
+      0 0 0.125em hsla(320, 100%, 60%, 0.5),
+      0.5em -0.125em 0.25em hsla(40, 100%, 60%, 0.2),
+      -0.5em 0.125em 0.25em hsla(200, 100%, 60%, 0.4);
+  }
+  
+  100% {
+    color: hsl(230, 40%, 80%);
+    text-shadow:
+      0 0 1em hsla(320, 100%, 50%, 0.2),
+      0 0 0.125em hsla(320, 100%, 60%, 0.3),
+      1em -0.125em 0.5em hsla(40, 100%, 60%, 0),
+      -1em 0.125em 0.5em hsla(200, 100%, 60%, 0);
+  }
+  
+}
 .login-form-head h4 {
-	text-indent: 125px;
-    position: relative;
-    top: 40px;
+	animation: lights 5s 750ms linear infinite;
+	font-family: 'Congenial Black' !important;
+	font-style: italic !important;
+	font-weight: bolder !important;
+	text-decoration: none !important;
+	text-indent: 154px;
+	position: relative;
+	top: 50px;
+	font-size: 25pt;
+}
+
+.login-form-body > .submit-btn-area > input {
+	animation: lights 5s 750ms linear infinite;
+	font-family: 'Congenial Black' !important;
+	font-style: italic !important;
+	font-weight: bolder !important;
+	text-decoration: none !important;
+	font-size: 14pt;
 }
 
 .invalid-feedback {
@@ -1035,7 +1110,7 @@ label {
 	padding-bottom: 100px;
 }
 .sidebar-header {
-	height: 60px;
+	height: 80px;
 }
 .sbar_collapsed .main-content .header-area {
 	width: calc(100%);
@@ -3436,9 +3511,6 @@ input.form-control:hover {
 /* 	padding: 0.3% 1%; */
 	font-weight: lighter;
 	vertical-align: middle;
-}
-.logo img {
-	width: 53%;
 }
 .table tbody tr td>a {
 	margin-right: 5px;

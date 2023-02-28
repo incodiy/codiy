@@ -9,11 +9,16 @@
  * @copyright	wisnuwidi
  * @email		wisnuwidi@gmail.com
  */
+$fileExists = file_exists(public_path().$logo);
 ?>
 <div class="sidebar-menu">
 	<div class="sidebar-header">
 		<div class="logo">
-			<a href="{{ URL::to('admin')}}"><img class="logo" src="{{ $logo }}" alt="{{ $appName }}" /></a>
+			@if ($fileExists)
+				<a href="{{ URL::to('admin')}}" class="lights font-congenial-black color-transparent"><img alt="{{ $appName }}" /></a>
+			@else
+				<a href="{{ URL::to('admin')}}" class="lights font-congenial-black color-transparent"><img src="{{ $logo }}" alt="{{ $components->meta->content['text']['app_name'] }}" /><span>{{ $components->meta->content['text']['app_name'] }}</span></a>
+			@endif
 		</div>
 	</div>
 	@if($sidebar_content)

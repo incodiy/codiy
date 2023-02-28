@@ -6,9 +6,9 @@
  *
  * @filesource	settings.php
  *
- * @author		wisnuwidi @Expresscode - 2017
- * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @author		wisnuwidi @Incodiy - 2017
+ * @copyright	wisnuwidi, incodiy
+ * @email		wisnuwidi@gmail.com, wisnuwidi@incodiy.com
  */
 
 $multiPlatform		       = false;
@@ -37,8 +37,8 @@ return [
 	'template'            => 'default',
 	'base_template'       => 'assets/templates',
 	'base_resources'      => 'assets/resources',
-	'app_name'            => 'CoDIY - code from DIY',
-	'app_desc'            => 'CoDIY Application Website',
+	'app_name'            => 'IncoDIY',
+	'app_desc'            => 'CoDIY Application Website from DIY',
 	'version'             => 'cbxpsscdeis-v3.0.0',
 	'lang'                => 'en',
 	'charset'             => 'UTF-8',

@@ -142,7 +142,7 @@
 }
 
 .sidebar-header {
-   padding: 4px 23px;
+   padding: 4px 16px;
    border: none;
 }
 
@@ -151,10 +151,29 @@
 }
 
 .logo a {
-   display: inline-block;
-   max-width: 77px !important;
+   display: flex;
+   max-width: 86% !important;
    position: relative;
    top: 8px;
+   font-size: 28pt;
+}
+
+.logo img {
+	max-width: 86%;
+	max-height: 60px;
+}
+
+.logo>a>span {
+	position: relative;
+	bottom: -10px;
+}
+
+.color-transparent {
+	color: rgb(255, 255, 255) !important;
+}
+
+.color-gradient-pink {
+	color: rgba(183, 0, 69, 0.7) !important;
 }
 
 .main-menu > li > a {
@@ -1515,7 +1534,7 @@ table.dbkit-table tr td {
    opacity: 0;
 }
 
-@-webkit-keyframes "pulse " {
+@keyframes pulse {
    0% {
       -webkit-transform: scale(0);
       opacity: 0;
@@ -2297,7 +2316,6 @@ table.dataTable thead td {
 
 .login-form-head h4 {
    letter-spacing: 0;
-   text-transform: uppercase;
    font-weight: 600;
    margin-bottom: 7px;
    color: #fff;
@@ -2389,7 +2407,7 @@ table.dataTable thead td {
 
 .submit-btn-area button:hover {
    background: #2c71da;
-   color: #86939efff;
+   color: #86939e;
 }
 
 .submit-btn-area button i {

@@ -84,8 +84,10 @@ class AuthController extends Controller {
 		}
 	}
 	
+	private $sendRequestKeyWith = 'email';
 	public function login_processor(Request $request) {
-		/* 
+	    $dataRequests      = $request->all();
+	    /* 
 		$this->validateLogin($request);
 		if ($this->hasTooManyLoginAttempts($request)) {
 			$this->fireLockoutEvent($request);
@@ -95,9 +97,13 @@ class AuthController extends Controller {
 		$this->incrementLoginAttempts($request);
 		 */
 		
-		$data = $request->only('email', 'password');
+	    if (array_key_exists('username', $dataRequests)) {
+	        $this->sendRequestKeyWith = 'username';
+	    }
+	    
+	    $data = $request->only($this->sendRequestKeyWith, 'password');
 		if (Auth::attempt($data)) {
-			$this->set_session_auth($data['email']);
+		    $this->set_session_auth($data[$this->sendRequestKeyWith]);
 			foreach ($this->session_auth as $session_key => $session_auth) {
 				$request->session()->put($session_key, $session_auth);
 			}
@@ -120,9 +126,9 @@ class AuthController extends Controller {
 		return back()->withInput();
 	}
 	
-	public function set_session_auth($email, $return_data = false) {
+	public function set_session_auth($requestKey, $return_data = false) {
 		$userData	= [];
-		$user_data	= User::where('email', $email)->get();
+		$user_data	= User::where($this->sendRequestKeyWith, $requestKey)->get();
 		
 		foreach ($user_data as $user) {
 			$user_info	= User::find($user->id);

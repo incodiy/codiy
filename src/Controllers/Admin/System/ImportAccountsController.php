@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
  * @email       wisnuwidi@gmail.com
  * 
  * @uses        'username|email|fullname|role|info|alias'
+ *              'pass format prefix_[lower(username)]_suffix'
  */
 class ImportAccountsController extends Controller {
 	
@@ -195,6 +196,7 @@ class ImportAccountsController extends Controller {
 		$contentFile = [];
 		
 		foreach ($fileData as $n => $rows) {
+		    $roleDataValues = [];
 			foreach ($rows as $i => $row) {
 				$fieldname  = $fileHeader[$i];
 				$fieldvalue = $row;
@@ -203,12 +205,39 @@ class ImportAccountsController extends Controller {
 				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias') || diy_string_contained($fieldname, 'info')) $fieldvalue = ucwords($row);
 				
 				if (diy_string_contained($fieldname, 'role'))  $contentFile['roles'][$n]['role']  = $fieldvalue;
+				if (diy_string_contained($fieldname, 'role'))  {
+				    $roleFieldValue = explode('-', $fieldvalue);
+				    foreach ($roleFieldValue as $nr => $roleDataFieldValue) {
+				        if (0 === $nr && strlen($roleDataFieldValue) <= 4) {
+				            $roleDataValues[$nr] = strtoupper($roleDataFieldValue);
+				        } else {
+				            $roleDataValues[$nr] = ucwords($roleDataFieldValue);
+				        }
+				    }
+				    $roleDataValue = implode('-', $roleDataValues);
+				    
+				    $contentFile['roles'][$n]['role']  = $roleDataValue;
+				}
 				if (diy_string_contained($fieldname, 'info'))  $contentFile['roles'][$n]['info']  = $fieldvalue;
 				if (diy_string_contained($fieldname, 'alias')) $contentFile['roles'][$n]['alias'] = $fieldvalue;
 				
 				if (!diy_string_contained($fieldname, 'info') && !diy_string_contained($fieldname, 'alias')) {
 				    if (diy_string_contained($fieldname, 'email')) {
 				        $userLists[$n][$fieldname] = strtolower(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
+				    } elseif (diy_string_contained($fieldname, 'username')) {
+				        $userLists[$n][$fieldname] = strtolower(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
+				    } elseif (diy_string_contained($fieldname, 'role')) {
+				        $roleFieldValue = explode('-', $fieldvalue);
+				        foreach ($roleFieldValue as $nr => $roleDataFieldValue) {
+				            if (0 === $nr && strlen($roleDataFieldValue) <= 4) {
+				                $roleDataValues[$nr] = strtoupper($roleDataFieldValue);
+				            } else {
+				                $roleDataValues[$nr] = ucwords($roleDataFieldValue);
+				            }
+				        }
+				        $roleDataValue = implode(' ', $roleDataValues);
+				        
+				        $userLists[$n][$fieldname] = $roleDataValue;
 				    } else {
 				        $userLists[$n][$fieldname] = ucwords(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
 				    }
