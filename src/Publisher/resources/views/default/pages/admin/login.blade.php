@@ -27,6 +27,14 @@ if (!empty($config['background'])) {
 	$formStyle  = 'left:-35% !important;position:relative;margin:auto 15% !important;';
 }
 $formStyle  = null;
+$mailErrorClass = '';
+if ($errors->has('email')) {
+    $mailErrorClass = ' is-invalid';
+}
+$usernameErrorClass = '';
+if ($errors->has('username')) {
+    $usernameErrorClass = ' is-invalid';
+}
 ?>
 
 @extends('default.template.admin.index')
@@ -42,31 +50,26 @@ $formStyle  = null;
 							<h4>{{ $config['title'] }}</h4>
 						</div>
 						<div class="login-form-body">
-							<!-- <div class="form-gp">
-								<label for="expresscode-input-login-email">{{ __('E-Mail Address') }}</label>
-								{!! Form::email('email', old('email'), ['id' => 'expresscode-input-login-email', 'class' => $errors->has('email') ? ' is-invalid' : '', 'required', 'autofocus']) !!}
-								<i class="ti-email"></i>
+							<div class="form-gp">
+								<label class="IncoDIY-input-login" for="IncoDIY-input-login-key">{{ __('Username') }}</label>
+								{!! Form::text('username', old('username'), ['id' => 'IncoDIY-input-login-key', 'required', 'autofocus']) !!}
+								<i id="info-login" class="ti-user"></i>
+								
+								@if ($errors->has('username')) 
+								<span class="invalid-feedback" role="alert">
+									<strong>{{ $errors->first('username') }}</strong>
+								</span>
+								@endif
 								
 								@if ($errors->has('email'))
 								<span class="invalid-feedback" role="alert">
 									<strong>{{ $errors->first('email') }}</strong>
 								</span>
 								@endif
-							</div> -->
-							<div class="form-gp">
-								<label for="expresscode-input-login-email">{{ __('Username') }}</label>
-								{!! Form::text('username', old('username'), ['id' => 'expresscode-input-login-username', 'class' => $errors->has('username') ? ' is-invalid' : '', 'required', 'autofocus']) !!}
-								<i class="ti-username"></i>
-								
-								@if ($errors->has('username'))
-								<span class="invalid-feedback" role="alert">
-									<strong>{{ $errors->first('username') }}</strong>
-								</span>
-								@endif
 							</div>
 							<div class="form-gp">
-								<label for="expresscode-input-login-password">{{ __('Password') }}</label>
-								{!! Form::password('password', ['id' => 'expresscode-input-login-password']) !!}
+								<label for="IncoDIY-input-login-password">{{ __('Password') }}</label>
+								{!! Form::password('password', ['id' => 'IncoDIY-input-login-password', 'required']) !!}
 								<i class="ti-lock"></i>
 								
 								@if ($errors->has('password'))
@@ -75,6 +78,33 @@ $formStyle  = null;
 								</span>
 								@endif
 							</div>
+							<script type="text/javascript">
+								function validateEmail(objMail) {
+                                	var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+                                	var email = objMail[0].value;
+                                	var outPut = false;
+                                 	if (pattern.test(String(email).toLowerCase())) {
+                                		outPut = true;
+                                	}
+                                	
+                                	return outPut;
+                                }
+								$(document).ready(function() {
+                                    $("#IncoDIY-input-login-key").focusout(function(){
+    									if (true == validateEmail($(this))) {
+    										$('label.IncoDIY-input-login').text('E-Mail Address');
+    										$(this).attr('name', 'email');
+    										$(this).attr('class', ${!! $mailErrorClass !!} );
+    										$('i#info-login').attr('class', 'ti-email');
+    									} else {
+    										$('label.IncoDIY-input-login').text('Username');
+    										$(this).attr('name', 'username');
+    										$(this).attr('class', {!! $usernameErrorClass !!} );
+    										$('i#info-login').attr('class', 'ti-user');
+    									}
+                                    });
+                                });
+							</script>
 							<div class="row mb-4 rmber-area">
 								<div class="col-6">
 									<div class="custom-control custom-checkbox mr-sm-2">

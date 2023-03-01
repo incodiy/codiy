@@ -4,7 +4,7 @@ namespace Incodiy\Codiy\Controllers\Admin\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-//use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 use Incodiy\Codiy\Models\Admin\System\User;
 use Incodiy\Codiy\Controllers\Core\Controller;
@@ -24,6 +24,7 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
  */
 class AuthController extends Controller {
 	use Privileges;
+	use AuthenticatesUsers;
 	
 	public function login() {
 	//	$this->get_maintenance_content();
@@ -56,7 +57,7 @@ class AuthController extends Controller {
 			$time_durations = explode(' | ', $object->time_duration);
 			$date_first     = date('Y-m-d H:i:s');
 			if (strtotime($time_durations[0]) >= strtotime($date_first)) {
-				$date_first  = "{$time_durations[0]} 00:00:00";				
+				$date_first = "{$time_durations[0]} 00:00:00";				
 			}
 			$durations      = daterange_to_seconds($date_first, "{$time_durations[1]} 00:00:00");
 			
@@ -74,7 +75,7 @@ class AuthController extends Controller {
 			$this->getLogin = false;
 			if (count($_GET) >= 1) {
 				$type_as = 'name';
-				if (true === str_contains($_GET['as'], '@') || true === str_contains($_GET['as'], '.com')) {
+				if (true === str_contains($_GET['as'], '@') || true === str_contains($_GET['as'], '.com') || true === str_contains($_GET['as'], '.net') || true === str_contains($_GET['as'], '.org') || true === str_contains($_GET['as'], '.web')) {
 					$type_as = 'email';
 				}
 				
@@ -84,23 +85,29 @@ class AuthController extends Controller {
 		}
 	}
 	
-	private $sendRequestKeyWith = 'email';
+	private $sendRequestKeyWith = 'username';
+	
+	public function username() {
+	    return $this->sendRequestKeyWith;
+	}
+	
 	public function login_processor(Request $request) {
-	    $dataRequests      = $request->all();
-	    /* 
-		$this->validateLogin($request);
+	    $dataRequests = $request->all();
+	    
+	    if (array_key_exists('email', $dataRequests)) {
+	        $this->sendRequestKeyWith = 'email';
+	    } else {
+	        $this->sendRequestKeyWith = 'username';
+	    }
+	    
+	    $this->validateLogin($request);
 		if ($this->hasTooManyLoginAttempts($request)) {
 			$this->fireLockoutEvent($request);
 			
 			return $this->sendLockoutResponse($request);
 		}
 		$this->incrementLoginAttempts($request);
-		 */
 		
-	    if (array_key_exists('username', $dataRequests)) {
-	        $this->sendRequestKeyWith = 'username';
-	    }
-	    
 	    $data = $request->only($this->sendRequestKeyWith, 'password');
 		if (Auth::attempt($data)) {
 		    $this->set_session_auth($data[$this->sendRequestKeyWith]);
@@ -192,8 +199,10 @@ class AuthController extends Controller {
 	
 	public function logout() {
 		if (!empty(auth()->user()->id)) {
-		//	$this->add_log('Logout', auth()->user()->id);
-			Auth::logout();
+	    //	$this->add_log('Logout', auth()->user()->id);
+		    
+		    Session::flush();
+		    Auth::logout();
 		}
 		
 		return redirect()->route('login');
