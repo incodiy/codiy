@@ -1026,6 +1026,7 @@ label {
 .user-panel h6.font-weight-light {
 	font-size: 16px;
 	color: #86939e;
+	text-transform: capitalize;
 }
 .blink {
 	text-decoration: blink;
@@ -1110,7 +1111,7 @@ label {
 	padding-bottom: 100px;
 }
 .sidebar-header {
-	height: 80px;
+	height: 86px;
 }
 .sbar_collapsed .main-content .header-area {
 	width: calc(100%);
@@ -1675,6 +1676,7 @@ nav>.main-menu .sidebar-category i.fa-bookmark {
 	border: 2px solid #f9fcfe;
 	background-color: #ffffff;
 	text-align: center;
+	vertical-align: middle;
 	line-height: 25px;
 	width: 30px;
 	font-size: 12px;
@@ -1691,8 +1693,8 @@ nav>.main-menu .sidebar-category i.fa-bookmark {
 .main-menu>li>a>.icon i:before {
 	position: relative;
 	z-index: 1;
-	right: 1px;
-	top: 1px;
+	text-align: center;
+	vertical-align: middle;
 }
 .main-menu>li>a>.icon::after {
 	border: 1px solid #f9fcfe;
