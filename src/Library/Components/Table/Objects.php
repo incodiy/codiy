@@ -748,16 +748,62 @@ class Objects extends Builder {
 		}
 		
 		if (!empty($this->conditions)) {
-			$this->params[$table_name]['conditions']     = $this->conditions;
+			$this->params[$table_name]['conditions']      = $this->conditions;
 			if (!empty($this->conditions['formula'])) {
 				$this->formula[$table_name]               = $this->conditions['formula'];
 				unset($this->conditions['formula']);
 				$this->conditions[$table_name]['formula'] = $this->formula[$table_name];
 			}
 			if (!empty($this->conditions['where'])) {
-				$whereCond = $this->conditions['where'];
-				$this->conditions[$table_name]['where']   = $whereCond;
+				$whereConds = [];//$this->conditions['where'];
+				foreach ($this->conditions['where'] as $where_conds) {
+					$whereConds[$where_conds['field_name']][$where_conds['operator']]['field_name'][$where_conds['field_name']] = $where_conds['field_name'];
+					$whereConds[$where_conds['field_name']][$where_conds['operator']]['operator'][$where_conds['operator']]     = $where_conds['operator'];
+					$whereConds[$where_conds['field_name']][$where_conds['operator']]['values'][]                               = $where_conds['value'];
+				}
+				$whereConditions = [];
+				foreach ($whereConds as $whereFields => $whereFieldValues) {
+					foreach ($whereFieldValues as $whereOperators => $whereOperatorValues) {
+						foreach ($whereOperatorValues as $whereOperatorDataKey => $whereOperatorDataValues) {
+							if ('values' === $whereOperatorDataKey) {
+								if (is_array($whereOperatorDataValues)) {
+									foreach ($whereOperatorDataValues as $whereOperatorDataValue) {
+										if (is_array($whereOperatorDataValue)) {
+											foreach ($whereOperatorDataValue as $_whereOperatorDataValue) {												
+												$whereConditions[$whereFields][$whereOperators][$whereOperatorDataKey][$_whereOperatorDataValue] = $_whereOperatorDataValue;
+											}
+										} else {
+											$whereConditions[$whereFields][$whereOperators][$whereOperatorDataKey][$whereOperatorDataValue] = $whereOperatorDataValue;
+										}
+									}
+								}
+							} else {
+								$whereConditions[$whereFields][$whereOperators][$whereOperatorDataKey] = $whereOperatorDataValues;
+							}
+						}
+						
+					}
+				}
+				
+				$whereConditionals = [];
+				foreach ($whereConditions as $whereConditionsFieldName => $whereConditionsDataFields) {
+					foreach ($whereConditionsDataFields as $whereOperatorsType => $whereConditionalData) {
+						$whereConditionals[$whereConditionsFieldName][$whereOperatorsType]['field_name'] = $whereConditionsFieldName;
+						$whereConditionals[$whereConditionsFieldName][$whereOperatorsType]['operator']   = $whereOperatorsType;
+						$whereConditionals[$whereConditionsFieldName][$whereOperatorsType]['value']      = $whereConditionalData['values'];
+					}
+				}
+				
+				$whereDataConditions = [];
+				foreach ($whereConditionals as $whereConditionalsFieldData) {
+					foreach ($whereConditionalsFieldData as $whereConditionalsFieldSets) {
+						$whereDataConditions[] = $whereConditionalsFieldSets;
+					}
+				}
+				
+				$this->conditions[$table_name]['where']   = $whereDataConditions;
 			}
+			
 			if (!empty($this->conditions['columns'])) {
 				$columnCond = $this->conditions['columns'];
 				unset($this->conditions['columns']);
