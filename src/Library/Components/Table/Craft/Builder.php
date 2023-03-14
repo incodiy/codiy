@@ -555,6 +555,10 @@ class Builder {
 			$dt_info['columns']    = $new_data_columns;
 		}
 		
+		if (!empty($data['attributes']['on_load']['display_limit_rows'])) {
+			$dt_info['onload_limit_rows'] = $data['attributes']['on_load']['display_limit_rows'];
+		}
+		
 		$filter = false;
 		if (!empty($searchable)) {
 			$filter = true;

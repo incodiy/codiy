@@ -374,6 +374,20 @@ class Objects extends Builder {
 		$this->variables['filter_groups'][] = $filters;
 	}
 	
+	public function displayRowsLimitOnLoad($limit = 10) {
+		if (is_string($limit)) {
+			if (in_array(strtolower($limit), ['*', 'all'])) {
+				$this->variables['on_load']['display_limit_rows'] = '*';
+			}
+		} else {
+			$this->variables['on_load']['display_limit_rows'] = intval($limit);
+		}
+	}
+	
+	public function clearOnLoad() {
+		unset($this->variables['on_load']['display_limit_rows']);
+	}
+	
 	protected $filter_model = [];
 	public function filterModel(array $data = []) {
 		$this->filter_model = $data;
@@ -404,6 +418,7 @@ class Objects extends Builder {
 	
 	private $variables = [];
 	private function clear_all_variables() {
+		$this->variables['on_load']              = [];
 		$this->variables['merged_columns']       = [];
 		$this->variables['text_align']           = [];
 		$this->variables['background_color']     = [];
@@ -713,6 +728,11 @@ class Objects extends Builder {
 		$attributes['table_class']  = diy_clean_strings("CoDIY_{$this->tableType}_") . ' ' . $this->variables['table_class'];
 		if (!empty($this->variables['background_color'])) $attributes['bg_color'] = $this->variables['background_color'];
 		
+		if (!empty($this->variables['on_load'])) {
+			if (!empty($this->variables['on_load']['display_limit_rows'])) {
+				$this->params[$table_name]['on_load']['display_limit_rows'] = $this->variables['on_load']['display_limit_rows'];
+			}
+		}
 		$this->params[$table_name]['actions']                         = $actions;
 		$this->params[$table_name]['buttons_removed']                 = $this->button_removed;
 		$this->params[$table_name]['numbering']                       = $numbering;

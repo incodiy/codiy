@@ -34,7 +34,6 @@ trait Scripts {
 	 * @return string
 	 */
 	protected function datatables($attr_id, $columns, $data_info = [], $server_side = false, $filters = false, $custom_link = false) {
-		
 		$varTableID   = explode('-', $attr_id);
 		$varTableID   = implode('', $varTableID);
 		$current_url  = url(diy_current_route()->uri);
@@ -58,7 +57,37 @@ trait Scripts {
 		$_responsive    = '"responsive"   :false,';
 		$_autoWidth     = '"autoWidth"    :false,';
 		$_dom           = '"dom"          :"lBfrtip",';
-		$_lengthMenu    = 'lengthMenu     :[[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
+		
+		$allLimitRows        = 9999999999;
+		$limitRowsData       = [10, 25, 50, 100, 250, 500, 1000, $allLimitRows];
+		$onloadRowsLimit     = [10];
+		if (!empty($data_info['onload_limit_rows'])) {
+			if (is_string($data_info['onload_limit_rows'])) {
+				if (in_array(strtolower($data_info['onload_limit_rows']), ['*', 'all'])) {
+					unset($limitRowsData[array_search(end($limitRowsData), $limitRowsData)]);
+					$onloadRowsLimit = [$allLimitRows];
+				}
+			} else {
+				unset($limitRowsData[array_search($data_info['onload_limit_rows'], $limitRowsData)]);
+				$onloadRowsLimit = [intval($data_info['onload_limit_rows'])];
+			}
+			
+			$limitRowsData = array_merge_recursive($onloadRowsLimit, $limitRowsData);
+		}
+		
+		$limitRowsDataString = [];
+		foreach ($limitRowsData as $row => $limit) {
+			if ($allLimitRows == $limit) {
+				$limitRowsDataString[$row] = "Show All";
+			} else {
+				$limitRowsDataString[$row] = (string) $limit . ' Rows';
+			}
+		}
+		$lengthMenu     = json_encode([$limitRowsData, $limitRowsDataString]);//'[[' . implode(', ', $limitRowsData) . '], [' . implode(', ', $limitRowsDataString) . ']]';
+		
+	//	$_lengthMenu    = 'lengthMenu     :[[10, 25, 50, 100, 250, 500, 1000, 9999999999],["10", "25", "50", "100", "250", "500", "1000", "Show All"]],';
+		$_lengthMenu    = "lengthMenu     :{$lengthMenu}, ";
+		
 		$_buttons       = '"buttons"      :' . $buttonset . ',';
 		$responsive     = "rowReorder     :{selector:'td:nth-child(2)'},responsive: false,";
 		$default_set	 = $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
