@@ -707,8 +707,8 @@ class Objects extends Builder {
 		$this->search_columns = $search_columns;
 		
 		if (false === $actions) $actions       = [];
-		$this->columns[$table_name]['lists']	= $fields;
-		$this->columns[$table_name]['actions']	= $actions;
+		$this->columns[$table_name]['lists']   = $fields;
+		$this->columns[$table_name]['actions'] = $actions;
 		
 		if (!empty($this->variables['text_align']))         $this->columns[$table_name]['align']         = $this->variables['text_align'];
 		if (!empty($this->variables['merged_columns']))     $this->columns[$table_name]['merge']         = $this->variables['merged_columns'];
@@ -740,7 +740,7 @@ class Objects extends Builder {
 		$this->params[$table_name]['server_side']['status']           = $server_side;
 		$this->params[$table_name]['server_side']['custom_url']       = $server_side_custom_url;
 		if (!empty($this->variables['column_width'])) {
-			$this->params[$table_name]['attributes']['column_width']   = $this->variables['column_width'];
+			$this->params[$table_name]['attributes']['column_width']  = $this->variables['column_width'];
 		}
 		
 		if (!empty($this->variables['add_table_attributes'])) {
@@ -801,7 +801,7 @@ class Objects extends Builder {
 					}
 				}
 				
-				$this->conditions[$table_name]['where']   = $whereDataConditions;
+				$this->conditions[$table_name]['where'] = $whereDataConditions;
 			}
 			
 			if (!empty($this->conditions['columns'])) {

@@ -195,7 +195,7 @@ class GroupController extends Controller {
 		$this->form->model();
 		$this->form->text('group_name', null, ['required', 'readonly']);
 		$this->form->text('group_info', null, ['required']);
-		$this->form->text('group_alias', null, ['required']);
+		$this->form->text('group_alias', null);
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
 		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
