@@ -50,7 +50,7 @@ class IncodiyTableSeeder extends Seeder {
 		// USER TABLE
 		DB::table('users')->delete();
 		User::create(['username' => 'eclipsync', 'fullname' => 'Eclip Sync'   , 'email' => 'wisnuwidi@incodiy.com', 'password' => bcrypt('@eclipsync'), 'cryptcode' => diy_user_cryptcode('eclipsync', 'wisnuwidi@incodiy.com'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
-		User::create(['username' => 'admin'    , 'fullname' => 'Administrator', 'email' => 'admin@gmail.com'    , 'password' => bcrypt('@admin')    , 'cryptcode' => diy_user_cryptcode('admin'    , 'admin@gmail.com')    , 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+		User::create(['username' => 'admin'    , 'fullname' => 'Administrator', 'email' => 'admin@gmail.com',       'password' => bcrypt('@admin'),     'cryptcode' => diy_user_cryptcode('admin',     'admin@gmail.com'),       'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
 		
 		// USER RELATION GROUP TABLE
 		DB::table('base_user_group')->delete();
