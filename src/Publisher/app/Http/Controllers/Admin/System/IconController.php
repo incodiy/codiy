@@ -10,8 +10,8 @@ use Incodiy\Codiy\Controllers\Admin\System\IconController as Icon;
  *
  * @filesource	IconController.php
  *
- * @author		wisnuwidi@gmail.com - 2018
+ * @author		wisnuwidi@incodiy.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class IconController extends Icon {}

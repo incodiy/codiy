@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Auth;
  *
  * @filesource	ImportAccountsController.php
  *
- * @author      wisnuwidi@gmail.com - 2022
+ * @author      wisnuwidi@incodiy.com - 2022
  * @copyright   wisnuwidi
- * @email       wisnuwidi@gmail.com
+ * @email       wisnuwidi@incodiy.com
  * 
  * @uses        'username|email|fullname|role|info|alias'
  *              'pass format prefix_[lower(username)]_suffix'

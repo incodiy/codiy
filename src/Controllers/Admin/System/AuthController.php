@@ -18,9 +18,9 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
  *
  * @filesource	AuthController.php
  *
- * @author		wisnuwidi @Expresscode - 2017
+ * @author		wisnuwidi @IncoDIY - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class AuthController extends Controller {
 	use Privileges;

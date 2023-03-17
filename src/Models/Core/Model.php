@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model as BaseModel;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
  
 class Model extends BaseModel {}

@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
  *
  * @filesource	Groups.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 
 trait Groups {
@@ -30,8 +30,8 @@ trait Groups {
 		FROM `user_data_regional_keren` GROUP BY 1, 2 ORDER BY 1, 2;
 	 */
 	private function insertGroups() {
-		DB::table('base_group')->insert(['group_name' => 'internal', 'group_info' => 'Internal', 'active' => 1]);
-		DB::table('base_group')->insert(['group_name' => 'regional', 'group_info' => 'Regional', 'active' => 1]);
+	    DB::table('base_group')->insert(['group_name' => 'sales.reporting', 'group_info' => 'Sales Reporting', 'group_alias' => 'National', 'active' => 1]);
+	    DB::table('base_group')->insert(['group_name' => 'customer.analytics', 'group_info' => 'Customer Analytics', 'group_alias' => 'National', 'active' => 1]);
 	}
 	
 	private static function getQueryInfo($tablename, $fieldLabel, $fieldValue) {
@@ -57,7 +57,7 @@ trait Groups {
 		$groupInfo = self::getQueryInfo('base_group', 'group_name', 'id');
 		$userInfo  = self::getQueryInfo('users', 'email', 'id');
 		
-		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['sf@team.net'], 'group_id' => $groupInfo['internal']]);
-		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['reg@sf.test'], 'group_id' => $groupInfo['regional']]);
+		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['sales.reporting@smartfren.com'], 'group_id' => $groupInfo['sales.reporting']]);
+		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['customer.analytics@smartfren.com'], 'group_id' => $groupInfo['customer.analytics']]);
 	}
 }

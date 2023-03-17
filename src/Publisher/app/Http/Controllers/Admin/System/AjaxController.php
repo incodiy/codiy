@@ -10,9 +10,9 @@ use Incodiy\Codiy\Controllers\Admin\System\AjaxController as Ajax;
  *
  * @filesource	AjaxController.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 
 class AjaxController extends Ajax {}

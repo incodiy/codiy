@@ -9,9 +9,9 @@ use Incodiy\Codiy\Library\Components\Charts\Objects;
  *
  * @filesource	Charts.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 trait Charts {
 	public $charts;

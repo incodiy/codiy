@@ -9,8 +9,8 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  * Created on Jun 4, 2016
  * Time Created : 8:10:51 PM
  *
- * @author      : wisnuwidi @Expresscode - 2016
- * @link        : wisnuwidi@gmail.com
+ * @author      : wisnuwidi @IncoDIY - 2016
+ * @link        : wisnuwidi@incodiy.com
  * @copyright   : Wisnu Widiantoko
  */
 class MetaTags {

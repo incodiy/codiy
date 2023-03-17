@@ -12,6 +12,6 @@ use Incodiy\Codiy\Controllers\Admin\Modules\Shop\CategoryController as Category;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class CategoryController extends Category {}

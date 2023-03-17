@@ -16,9 +16,9 @@ use Illuminate\Http\Request;
  *
  * @filesource UserController.php
  *
- * @author     wisnuwidi @Expresscode - 2017
+ * @author     wisnuwidi @IncoDIY - 2017
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class UserController extends Controller {
 	

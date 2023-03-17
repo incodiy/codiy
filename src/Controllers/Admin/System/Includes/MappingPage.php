@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\System\MappingPage as MappingData;
  *
  * @filesource	MappingPage.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 
 trait MappingPage {

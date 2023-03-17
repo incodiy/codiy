@@ -10,8 +10,8 @@ use Incodiy\Codiy\Controllers\Admin\System\GroupController as Group;
  *
  * @filesource	GroupController.php
  *
- * @author		wisnuwidi@Expresscode - 2018
+ * @author		wisnuwidi@IncoDIY - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class GroupController extends Group {}

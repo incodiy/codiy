@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\DB;
  *
  * @filesource	Table.php
  *
- * @author    wisnuwidi@gmail.com - 2021
+ * @author    wisnuwidi@incodiy.com - 2021
  * @copyright wisnuwidi
- * @email     wisnuwidi@gmail.com
+ * @email     wisnuwidi@incodiy.com
  */
  
 if (!function_exists('diy_get_model_table')) {
@@ -523,7 +523,7 @@ if (!function_exists('diy_generate_table')) {
 	 */
 	function diy_generate_table($title = false, $title_id = false, $header = array(), $body = array(), $attributes = array(), $numbering = false, $containers = true, $server_side = false, $server_side_custom_url = false) {
 		// set attributes
-		$datatableClass = 'expresscode-table table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
+		$datatableClass = 'IncoDIY-table table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
 		if (false !== $attributes && is_array($attributes)) {
 			if (empty($attributes)) {
 				$_attributes = array (

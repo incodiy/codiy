@@ -18,9 +18,9 @@ use Incodiy\Codiy\Database\Seeders\Includes\App\Users;
  *
  * @filesource	IncodiyTableSeeder.php
  *
- * @author		wisnuwidi @Expresscode - 2017
+ * @author		wisnuwidi @IncoDIY - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class IncodiyTableSeeder extends Seeder {
 	use Timezone, Languages, Icons;
@@ -36,7 +36,7 @@ class IncodiyTableSeeder extends Seeder {
 			'session_lifetime' => 1800,
 			'meta_author'      => 'Wisnu Widiantoko',
 			'email_person'     => 'wisnuwidi',
-			'email_address'    => 'wisnuwidi@gmail.com',
+			'email_address'    => 'wisnuwidi@incodiy.com',
 			'login_attempts'   => 8,
 			'debug'            => false,
 			'maintenance'      => false
@@ -49,7 +49,7 @@ class IncodiyTableSeeder extends Seeder {
 		
 		// USER TABLE
 		DB::table('users')->delete();
-		User::create(['username' => 'eclipsync', 'fullname' => 'Eclip Sync'   , 'email' => 'eclipsync@gmail.com', 'password' => bcrypt('@eclipsync'), 'cryptcode' => diy_user_cryptcode('eclipsync', 'eclipsync@gmail.com'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
+		User::create(['username' => 'eclipsync', 'fullname' => 'Eclip Sync'   , 'email' => 'wisnuwidi@incodiy.com', 'password' => bcrypt('@eclipsync'), 'cryptcode' => diy_user_cryptcode('eclipsync', 'wisnuwidi@incodiy.com'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
 		User::create(['username' => 'admin'    , 'fullname' => 'Administrator', 'email' => 'admin@gmail.com'    , 'password' => bcrypt('@admin')    , 'cryptcode' => diy_user_cryptcode('admin'    , 'admin@gmail.com')    , 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
 		
 		// USER RELATION GROUP TABLE

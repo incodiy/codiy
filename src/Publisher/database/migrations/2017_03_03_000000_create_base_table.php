@@ -6,8 +6,8 @@ use Incodiy\Codiy\Database\Migrations\Process;
  * Time Created	: 11:03:33 PM
  * Filename			: 2017_03_03_000000_create_base_table.php
  *
- * @author		wisnuwidi @Expresscode - 2017
+ * @author		wisnuwidi @IncoDIY - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class CreateBaseTable extends Process {}

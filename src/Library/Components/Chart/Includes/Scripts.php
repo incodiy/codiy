@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart\Includes;
  *
  * @filesource	Scripts.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 
 trait Scripts {

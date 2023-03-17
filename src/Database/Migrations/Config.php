@@ -13,7 +13,7 @@ use Illuminate\Database\Migrations\Migration;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
  
 class Config extends Migration {

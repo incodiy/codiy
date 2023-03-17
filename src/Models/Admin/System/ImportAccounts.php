@@ -10,6 +10,6 @@ namespace Incodiy\Codiy\Models\Admin\System;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class ImportAccounts extends User {}

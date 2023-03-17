@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart;
  *
  * @filesource	Charts.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class Charts {
 	

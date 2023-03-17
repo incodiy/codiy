@@ -17,9 +17,9 @@ use Incodiy\Codiy\Models\Admin\System\Log;
  * Time Created : 13:28:50
  *
  * @filesource	App.php
- * @author		wisnuwidi@gmail.com - 2021
+ * @author		wisnuwidi@incodiy.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 
 if (!function_exists('meta')) {

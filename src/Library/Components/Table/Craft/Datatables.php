@@ -11,9 +11,9 @@ use Yajra\DataTables\DataTables as DataTable;
  *
  * @filesource Datatables.php
  *
- * @author     wisnuwidi@gmail.com - 2021
+ * @author     wisnuwidi@incodiy.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class Datatables {
 	use Privileges;

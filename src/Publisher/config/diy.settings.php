@@ -8,7 +8,7 @@
  *
  * @author		wisnuwidi @Incodiy - 2017
  * @copyright	wisnuwidi, incodiy
- * @email		wisnuwidi@gmail.com, wisnuwidi@incodiy.com
+ * @email		wisnuwidi@incodiy.com, wisnuwidi@incodiy.com
  */
 
 $multiPlatform		       = false;
@@ -62,7 +62,7 @@ return [
 	'location'            => 'Jakarta',
 	'location_abbr'       => 'ID',
 	'created_at'          => '2017 - ' . date('Y'),
-	'email'               => 'wisnuwidi@gmail.com',
+	'email'               => 'wisnuwidi@incodiy.com',
 	'website'             => 'codiy.co.id',
 
 	// Meta Tags

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class Category extends Model {
 	use SoftDeletes;

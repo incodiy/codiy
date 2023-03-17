@@ -12,7 +12,7 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class ProductCategory extends Model {
 	protected $table	 = 'shop_product_category';

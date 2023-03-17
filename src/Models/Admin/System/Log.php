@@ -9,9 +9,9 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource	Log.php
  *
- * @author		wisnuwidi@Expresscode - 2018
+ * @author		wisnuwidi@IncoDIY - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class Log extends Model {
 	protected $table	   = 'log_activities';

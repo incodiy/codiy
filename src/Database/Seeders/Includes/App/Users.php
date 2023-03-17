@@ -9,9 +9,9 @@ use Incodiy\Codiy\Models\Admin\System\User;
  *
  * @filesource	Users.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 
 trait Users {
@@ -38,8 +38,8 @@ trait Users {
 		FROM user_data_regional_keren
 		GROUP BY nik, email;
 	 */
-	private function insertUsers() {
-		User::create(['username' => 'internal', 'fullname' => 'Internal Team', 'email' => 'sf@team.net', 'password' => bcrypt('@Internal'), 'cryptcode' => diy_user_cryptcode('sf@team.net', 'sf@team.net'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
-		User::create(['username' => 'regional', 'fullname' => 'Regional', 'email' => 'reg@sf.test', 'password' => bcrypt('@Regional'), 'cryptcode' => diy_user_cryptcode('regional', 'reg@sf.test'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+    private function insertUsers() {
+        User::create(['username' => 'sales.reporting', 'fullname' => 'Sales Reporting', 'email' => 'sales.reporting@smartfren.com', 'password' => bcrypt('@Internal'), 'cryptcode' => diy_user_cryptcode('sales.reporting@smartfren.com', 'sales.reporting@smartfren.com'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+        User::create(['username' => 'customer.analytics', 'fullname' => 'Customer Analytics', 'email' => 'customer-analytics@smartfren.com', 'password' => bcrypt('@sfDJca#2023!Mar'), 'cryptcode' => diy_user_cryptcode('customer-analytics@smartfren.com', 'customer-analytics@smartfren.com'), 'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
 	}
 }

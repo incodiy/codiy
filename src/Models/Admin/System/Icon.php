@@ -6,9 +6,9 @@
  *
  * @filesource	Icon.php
  *
- * @author		wisnuwidi@gmail.com - 2018
+ * @author		wisnuwidi@incodiy.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
  
 namespace Incodiy\Codiy\Models\Admin\System;
@@ -22,9 +22,9 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource	Group.php
  *
- * @author		wisnuwidi@Expresscode - 2018
+ * @author		wisnuwidi@IncoDIY - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 class Icon extends Model {
 	protected $table   = 'base_icon';

@@ -10,8 +10,8 @@ use Incodiy\Codiy\Controllers\Admin\System\ImportAccountsController as ImportAcc
  *
  * @filesource	ImportAccountsController.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class ImportAccountsController extends ImportAccounts {}

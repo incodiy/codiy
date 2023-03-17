@@ -10,9 +10,9 @@ use ConsoleTVs\Charts\Classes\Highcharts\Chart;
  *
  * @filesource	Objects.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class Objects extends Charts {
 	

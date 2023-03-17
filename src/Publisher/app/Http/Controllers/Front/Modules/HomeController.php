@@ -9,9 +9,9 @@ use Incodiy\Codiy\Controllers\Front\Modules\HomeController as Home;
  *
  * @filesource	HomeController.php
  *
- * @author		wisnuwidi@gmail.com - 2021
+ * @author		wisnuwidi@incodiy.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
  
 class HomeController extends Home {}

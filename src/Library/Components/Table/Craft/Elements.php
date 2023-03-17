@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
  *
  * @filesource	Elements.php
  *
- * @author     wisnuwidi@gmail.com - 2022
+ * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 
 trait Elements {

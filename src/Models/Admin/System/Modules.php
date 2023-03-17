@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @filesource	Modules.php
  *
- * @author		wisnuwidi@Expresscode - 2018
+ * @author		wisnuwidi@IncoDIY - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
  
 class Modules extends Model {

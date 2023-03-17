@@ -7,13 +7,13 @@ use Incodiy\Codiy\Controllers\Core\Controller as Codiy;
 /**
  * Created on Mar 22, 2018
  * Time Created : 4:52:52 PM
- * Filename :  Incodiy\CmsServiceProvider.php
+ * Filename :  Incodiy\IncodiyServiceProvider.php
  *
- * @filesource Incodiy\CmsServiceProvider.php
+ * @filesource Incodiy\IncodiyServiceProvider.php
  *            
- * @author    wisnuwidi@gmail.com - 2018
+ * @author    wisnuwidi@incodiy.com - 2018
  * @copyright wisnuwidi
- * @email     wisnuwidi@gmail.com
+ * @email     wisnuwidi@incodiy.com
  */
 class IncodiyServiceProvider extends ServiceProvider {
 
@@ -32,17 +32,17 @@ class IncodiyServiceProvider extends ServiceProvider {
 		
 		if ($this->app->runningInConsole()) {
 			$this->publishes([ 
-				"{$publish_path}database/migrations"	=> database_path('migrations'),
-				"{$publish_path}database/seeders"		=> database_path('seeders'),
-				"{$publish_path}config"						=> base_path('config'),
-				"{$publish_path}routes"						=> base_path('routes'),
-				"{$publish_path}app"							=> base_path('app'),
-				"{$publish_path}resources/views" 		=> base_path('resources/views')
+				"{$publish_path}database/migrations" => database_path('migrations'),
+				"{$publish_path}database/seeders"    => database_path('seeders'),
+				"{$publish_path}config"              => base_path('config'),
+				"{$publish_path}routes"              => base_path('routes'),
+				"{$publish_path}app"                 => base_path('app'),
+				"{$publish_path}resources/views"     => base_path('resources/views')
 			], 'Codiy');
 			
 			$this->publishes([ 
 				"{$publish_path}public" => base_path('public')
-			], 'Codiy Public Folder');
+			], 'IncoDIY Public Folder');
 		}
 	}
 

@@ -8,7 +8,7 @@
  *
  * @author		wisnuwidi @gmail.com - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 $config               = [];
 $config['title']      = __('Admin Login');

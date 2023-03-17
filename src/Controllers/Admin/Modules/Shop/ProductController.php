@@ -14,7 +14,7 @@ use Incodiy\Codiy\Models\Admin\Modules\Shop\Products;
  *
  * @author     wisnuwidi @Incodiy - 2022
  * @copyright  wisnuwidi
- * @email      eclipsync@gmail.com
+ * @email      wisnuwidi@incodiy.com
  */
 class ProductController extends Controller {
 	private $fields = [

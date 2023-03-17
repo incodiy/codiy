@@ -5,9 +5,9 @@
  *
  * @filesource	header.blade.php
  *
- * @author		wisnuwidi@gmail.com - 2021
+ * @author		wisnuwidi@incodiy.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@gmail.com
+ * @email		wisnuwidi@incodiy.com
  */
 $baseUrl      = diy_config('baseURL');
 $baseTemplate = diy_config('base_template');
@@ -26,7 +26,7 @@ $assetURL     = "{$baseUrl}/{$baseTemplate}/{$template}";
 									<span></span>
 									<span></span>
 								</div>
-								<div class="search-box expresscode-search-box pull-left">
+								<div class="search-box IncoDIY-search-box pull-left">
 									<div class="search-inputbox">
 										<form action="#">
 											<input id="search-input" type="text" name="search" placeholder="Search..." required />
