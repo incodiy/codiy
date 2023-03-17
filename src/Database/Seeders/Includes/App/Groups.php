@@ -54,8 +54,8 @@ trait Groups {
 		GROUP BY email
 	 */
 	private function insertUserGroup() {
-		$groupInfo = self::getQueryInfo('base_group', 'group_name', 'id');
-		$userInfo  = self::getQueryInfo('users', 'email', 'id');
+	    $groupInfo = self::getQueryInfo('base_group', 'group_name', 'id');
+	    $userInfo  = self::getQueryInfo('users', 'email', 'id');
 		
 		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['sales.reporting@smartfren.com'], 'group_id' => $groupInfo['sales.reporting']]);
 		DB::table('base_user_group')->insert(['user_id'	=> $userInfo['customer.analytics@smartfren.com'], 'group_id' => $groupInfo['customer.analytics']]);
