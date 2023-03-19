@@ -157,7 +157,7 @@ class BaseTables extends Config {
 
 			$table->bigInteger('id', true)->unsigned();
 
-			$table->string('username', 20);
+			$table->string('username', 150);
 			$table->string('fullname', 150)->nullable();
 			$table->string('alias', 150)->nullable();
 			$table->string('email')->unique();
