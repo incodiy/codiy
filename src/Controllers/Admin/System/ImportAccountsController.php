@@ -32,7 +32,7 @@ class ImportAccountsController extends Controller {
 	private $insertRoles = [];
 	private $insertUsers = [];
 	private $passPrefix  = '@';
-	private $passSuffix  = '#SF2022';
+	private $passSuffix  = '#ImU323';
 	
 	public function __construct() {
 		parent::__construct(ImportAccounts::class, 'system.accounts.import_csv');
