@@ -147,6 +147,15 @@ class UserController extends Controller {
 	public function edit($id) {
 		$this->setPage();
 		
+		if (!$this->is_root && !diy_string_contained($this->session['user_group'], 'admin')) {
+		    if (intval($this->session['id']) !== intval($id)) {
+    		    $this->removeActionButtons(['add', 'view', 'delete', 'back']);
+    		    $redirect = str_replace("{$id}/edit", "{$this->session['id']}/edit", url()->current());
+		        
+    		    return $this->render('<center>Found something, here? Our system found you lost to this page. Apologize us, but this is not your own land. Find your own land <a href=' . $redirect . '>from this route</a> and good luck!</center>');
+    		}
+		}
+		
 		$selected_group = false;
 		foreach ($this->model_data->group as $group) {
 			$selected_group = $group->id;
