@@ -25,8 +25,8 @@ class UserController extends Controller {
 	private $user_groups;
 	
 	public $group_id;
-	public $validations	= [];
-	public $importPage   = false;
+	public $validations = [];
+	public $importPage  = false;
 	public function __construct($import = false) {
 		parent::__construct(User::class, 'system.accounts.user');
 		
@@ -56,24 +56,30 @@ class UserController extends Controller {
 	}
 	
 	public function index() {
-		$this->setPage();
+	    $this->setPage();
+	    $action = true;
+	    $this->table->searchable();
+	    
+		if (!$this->is_root && !diy_string_contained($this->session['user_group'], 'admin')) {
+		    return self::redirect("{$this->session['id']}/edit");
+		    /* 
+		    $this->filterPage(['username' => $this->session['username']], '=');
+		    $action = false;
+		    $this->table->searchable(false); */
+		}
 		
-	//	if (!$this->is_root) $this->filterPage(['group_name' => 'root'], '!=');
-		
-		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
 		
-		$this->table->relations($this->model, 'group', 'group_info', self::key_relations());
-		$this->table->relations($this->model, 'group', 'group_name', self::key_relations());
+		if ($this->is_root && diy_string_contained($this->session['user_group'], 'admin')) {
+    		$this->table->relations($this->model, 'group', 'group_info', self::key_relations());
+    		$this->table->relations($this->model, 'group', 'group_name', self::key_relations());
+    		
+    		$this->table->filterGroups('username', 'selectbox', true);
+    		$this->table->filterGroups('group_info', 'selectbox', true);
+		}
 		
-		$this->table->filterGroups('username', 'selectbox', true);
-	//	$this->table->filterGroups('group_name', 'selectbox', true);
-		$this->table->filterGroups('group_info', 'selectbox', true);
-	//	$this->table->filterGroups('email', 'selectbox', true);
-	//	$this->table->filterGroups('expire_date', 'date', true);
-		
-		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'active']);
+		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'active'], $action);
 		
 		return $this->render();
 	}
