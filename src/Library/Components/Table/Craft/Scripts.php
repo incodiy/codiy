@@ -187,9 +187,30 @@ trait Scripts {
 			
 			$js .= ", 'createdRow': function(row, data, dataIndex, cells) {";
 			
+			$jsConds = [];
+			$jsCond  = '';
 			foreach ($data as $condition) {
 				if (!empty($condition['logic_operator'])) {
-					$js .= "if (data.{$condition['field_name']} {$condition['logic_operator']} '{$condition['value']}') {";
+					$conditionValue = $condition['value'];
+					if (diy_string_contained($condition['value'], '|')) {
+						$conditionValue = explode('|', $condition['value']);
+					}
+					if (in_array($condition['logic_operator'], ['=', '==', '===', '<', '<=', '>', '>='])) {
+						$js .= "if (data.{$condition['field_name']} {$condition['logic_operator']} '{$condition['value']}') {";
+					} else {
+						$isNot = '';
+						if (in_array($condition['logic_operator'], ['NOT LIKE'])) $isNot = '!';
+						
+						if (is_array($conditionValue)) {
+							foreach ($conditionValue as $condVal) {
+								$jsConds[] = "{$isNot}~data.{$condition['field_name']}.indexOf('{$condVal}')";
+							}
+							$jsCond = implode(' && ', $jsConds);
+						} else {
+							$jsCond = "{$isNot}~data.{$condition['field_name']}.indexOf('{$condition['value']}')";
+						}
+						$js .= "if ({$jsCond}) {";
+					}
 					
 					if ('row' === $condition['field_target']) $js .= "$(row).children('td').css({'{$condition['rule']}': '{$condition['action']}'});";
 					
@@ -249,7 +270,7 @@ trait Scripts {
 			
 			$js .= "}";
 		}
-		
+	//	dd($js);
 		return $js;
 	}
 	
