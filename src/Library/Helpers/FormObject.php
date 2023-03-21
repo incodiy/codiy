@@ -496,8 +496,22 @@ if (!function_exists('diy_selectbox')) {
 		$options = [0 => ''];
 		if (true === $set_null_array) $options[] = '';
 		
+		$keyLabel = [];
+		if (diy_string_contained($key_label, '|')) {
+			$keyLabel = explode('|', $key_label);
+		} else {
+			$keyLabel[] = $key_label;
+		}
+		
 		foreach ($object as $row) {
-			$options[$row[$key_value]] = $row[$key_label];
+			$keyLabelValue = $row[$keyLabel[0]];
+			if (!empty($keyLabel[1])) {
+				if (!empty($row[$keyLabel[1]])) {
+					$keyLabelValue = $row[$keyLabel[0]] . ' - ' . $keyLabelValue = $row[$keyLabel[1]];
+				}
+			}
+			
+			$options[$row[$key_value]] = $keyLabelValue;
 		}
 		
 		return $options;

@@ -16,17 +16,18 @@ use Illuminate\Http\Request;
  *
  * @filesource UserController.php
  *
- * @author     wisnuwidi @IncoDIY - 2017
+ * @author     wisnuwidi @Expresscode - 2017
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@gmail.com
  */
 class UserController extends Controller {
 	
 	private $user_groups;
 	
 	public $group_id;
-	public $validations = [];
+	public $validations	= [];
 	public $importPage  = false;
+	
 	public function __construct($import = false) {
 		parent::__construct(User::class, 'system.accounts.user');
 		
@@ -56,30 +57,23 @@ class UserController extends Controller {
 	}
 	
 	public function index() {
-	    $this->setPage();
-	    $action = true;
-	    $this->table->searchable();
-	    
+		$this->setPage();
+		
 		if (!$this->is_root && !diy_string_contained($this->session['user_group'], 'admin')) {
-		    return self::redirect("{$this->session['id']}/edit");
-		    /* 
-		    $this->filterPage(['username' => $this->session['username']], '=');
-		    $action = false;
-		    $this->table->searchable(false); */
+			return self::redirect("{$this->session['id']}/edit");
 		}
 		
+		$this->table->searchable();
 		$this->table->clickable();
 		$this->table->sortable();
 		
-		if ($this->is_root && diy_string_contained($this->session['user_group'], 'admin')) {
-    		$this->table->relations($this->model, 'group', 'group_info', self::key_relations());
-    		$this->table->relations($this->model, 'group', 'group_name', self::key_relations());
-    		
-    		$this->table->filterGroups('username', 'selectbox', true);
-    		$this->table->filterGroups('group_info', 'selectbox', true);
-		}
+		$this->table->relations($this->model, 'group', 'group_info', self::key_relations());
+		$this->table->relations($this->model, 'group', 'group_name', self::key_relations());
 		
-		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'active'], $action);
+		$this->table->filterGroups('username', 'selectbox', true);
+		$this->table->filterGroups('group_info', 'selectbox', true);
+		
+		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'active']);
 		
 		return $this->render();
 	}
@@ -146,15 +140,6 @@ class UserController extends Controller {
 	
 	public function edit($id) {
 		$this->setPage();
-		
-		if (!$this->is_root && !diy_string_contained($this->session['user_group'], 'admin')) {
-		    if (intval($this->session['id']) !== intval($id)) {
-    		    $this->removeActionButtons(['add', 'view', 'delete', 'back']);
-    		    $redirect = str_replace("{$id}/edit", "{$this->session['id']}/edit", url()->current());
-		        
-    		    return $this->render('<center>Found something, here? Our system found you lost to this page. Apologize us, but this is not your own land. Find your own land <a href=' . $redirect . '>from this route</a> and good luck!</center>');
-    		}
-		}
 		
 		$selected_group = false;
 		foreach ($this->model_data->group as $group) {
@@ -266,7 +251,7 @@ class UserController extends Controller {
 			$this->user_groups = Group::all();
 		}
 		
-		return diy_selectbox($this->user_groups, 'id', 'group_info');
+		return diy_selectbox($this->user_groups, 'id', 'group_info|group_alias');
 	}
 	
 	private function input_language() {
