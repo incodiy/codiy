@@ -204,8 +204,8 @@ class ImportAccountsController extends Controller {
 				if (diy_string_contained($fieldname, 'username')) $fieldvalue = strtolower($row);
 				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias') || diy_string_contained($fieldname, 'info')) $fieldvalue = ucwords($row);
 				
-				if (diy_string_contained($fieldname, 'role'))  $contentFile['roles'][$n]['role']  = $fieldvalue;
-				if (diy_string_contained($fieldname, 'role'))  {
+				if (diy_string_contained($fieldname, 'role')) $contentFile['roles'][$n]['role']  = $fieldvalue;
+				if (diy_string_contained($fieldname, 'role')) {
 				    $roleFieldValue = explode('-', $fieldvalue);
 				    foreach ($roleFieldValue as $nr => $roleDataFieldValue) {
 				        if (0 === $nr && strlen($roleDataFieldValue) <= 4) {
