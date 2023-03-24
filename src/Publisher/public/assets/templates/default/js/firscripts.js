@@ -40,3 +40,74 @@ function loader(target_id, view = 'hide') {
 		$(_loaderTarget).before('<span class="inputloader loader ' + view + '" id="'+ _loaderID + '"></span>');
 	}
 }
+
+function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'POST', onError = 'Error') {
+	var dataInfo = JSON.parse(data);
+	
+	if (typeof dataInfo.labels   != 'undefined') var lURL = 'l=' + dataInfo.labels;
+	if (typeof dataInfo.values   != 'undefined') var vURL = 'v=' + dataInfo.values;
+	if (typeof dataInfo.selected != 'undefined') var sURL = 's=' + dataInfo.selected;
+	if (typeof dataInfo.query    != 'undefined') var qURL = diy_random() + '=' + dataInfo.query;
+	
+	if (typeof dataInfo.labels != 'undefined' && typeof dataInfo.values != 'undefined' && typeof dataInfo.selected != 'undefined' && typeof dataInfo.query != 'undefined') {
+		var urls = url + '&' + lURL + '&' + vURL + '&' + sURL + '&' + qURL;
+	} else {
+		if (typeof dataInfo.selected != 'undefined') {
+			var urls = url + '&' + sURL;
+		} else {
+			var urls = url;
+		}
+	}
+	
+	var selected = null;
+	var pinned   = '';
+	
+	$.ajax({
+		type    : method,
+		url     : urls,
+		data    : object.serialize(),
+		success : function(d) {
+			var result = JSON.parse(d);
+			selected   = result.selected;
+			
+			loader(target_id, 'show');
+			updateSelectChosen('select#' + target_id, true, '');
+			$.each(result.data, function(value, label) {				
+				if (selected === value) {
+					pinned = ' selected';
+				} else {
+					pinned = '';
+				}
+				
+				if (value != '') {
+					var optionLabel = null;
+					
+					if (~label.indexOf('_')) {
+						optionLabel = ucwords(label.replaceAll('_', ' '));
+					} else if (~label.indexOf('.')) {
+						optionLabel = ucwords(label.replaceAll('.', ' '));
+					} else {
+						optionLabel = ucwords(label);
+					}
+					
+					$('select#' + target_id).append('<option value=\"' + value + '\"' + pinned + '>' + optionLabel + '</option>');
+				}
+			});
+			updateSelectChosen('select#' + target_id, false, false);
+		},
+		error: function(xhr, status, error) {
+			onError = xhr.responseText;
+		},
+		complete: function() {
+			loader(target_id, 'fadeOut');
+		}
+	});
+}
+
+function ajaxSelectionBox(id, target_id, url, data = [], method = 'POST', onError = 'Error') {
+	var object = $('select#' + id);
+	if (object.val() !== '') ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
+	object.change(function(e) {
+		ajaxSelectionProcess(object, id, target_id, url, data, method, onError);
+	});
+}
