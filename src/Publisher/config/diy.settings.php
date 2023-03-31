@@ -11,7 +11,7 @@
  * @email		wisnuwidi@incodiy.com, wisnuwidi@incodiy.com
  */
 
-$multiPlatform		       = false;
+$multiPlatform		     = false;
 
 $platform                = [];
 $platform['type']        = 'single';
@@ -32,7 +32,7 @@ if (true === $multiPlatform) {
 }
 
 return [
-	'baseURL'             => 'http://localhost/eclipsync/incodiy/.dev/public',
+	'baseURL'             => 'http://your/domain/web/public',
 	'index_folder'        => 'public',
 	'template'            => 'default',
 	'base_template'       => 'assets/templates',
@@ -72,17 +72,21 @@ return [
 	'meta_description'    => 'CoDIY Application Website',
 	'meta_viewport'       => 'width=device-width, initial-scale=1.0, maximum-scale=1.0',
 	'meta_http_equiv'     => [
-		'type'             => 'X-UA-Compatible',
-		'content'          => 'IE=edge,chrome=1'
+		'type'            => 'X-UA-Compatible',
+		'content'         => 'IE=edge,chrome=1'
+	],
+	
+	'user' => [
+		'alias_label'     => null
 	],
 	
 	'log_activity'        => [
-		'run_status'       => 'unexceptions',
-		'exceptions'       => [
-			'controllers'   => [
+		'run_status'      => 'unexceptions',
+		'exceptions'      => [
+			'controllers' => [
 				App\Http\Controllers\Admin\System\LogController::class
 			],
-			'groups' => [
+			'groups'      => [
 				'admin'
 			]
 		]

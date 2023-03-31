@@ -133,6 +133,37 @@ class AuthController extends Controller {
 		return back()->withInput();
 	}
 	
+	/**
+	 * Filter User Aliases
+	 *
+	 * @param string $alias
+	 *
+	 * @example: ':filterName|value (separated by [,]colon)'
+	 *
+	 * @return array|mixed
+	 */
+	private function filterUserAliases($alias = null) {
+		$filterAliases = $alias;
+		
+		if (diy_string_contained($alias, ':')) {
+			$filterAliases = [];
+			$filterAlias   = str_replace(':', '', $alias);
+			
+			if (diy_string_contained($filterAlias, ',')) {
+				$_filterAliases = explode(',', $filterAlias);
+				foreach ($_filterAliases as $filterAliasData) {
+					$filterAliasArray = explode('|', $filterAliasData);
+					$filterAliases[$filterAliasArray[0]][] = $filterAliasArray[1];
+				}
+			} else {
+				$filterAliasArray = explode('|', $filterAlias);
+				$filterAliases[$filterAliasArray[0]][] = $filterAliasArray[1];
+			}
+		}
+		
+		return $filterAliases;
+	}
+	
 	public function set_session_auth($requestKey, $return_data = false) {
 		$userData	= [];
 		$user_data	= User::where($this->sendRequestKeyWith, $requestKey)->get();
@@ -140,11 +171,16 @@ class AuthController extends Controller {
 		foreach ($user_data as $user) {
 			$user_info	= User::find($user->id);
 			$group_info	= (object) $user_info->groupInfo();
+			$user_alias = 'user_alias';
+			if (!empty(diy_config('user.alias_session_name'))) {
+				$user_alias = diy_config('user.alias_session_name');
+			}
 			
 			$userData['id']                   = $user->id;
 			$userData['group_id']             = $group_info->id;
 			$userData['user_group']           = $group_info->group_name;
 			$userData['group_alias']          = $group_info->group_alias;
+			$userData[$user_alias]            = $this->filterUserAliases($user->alias);
 			$userData['group_info']           = $group_info->group_info;
 			$userData['privileges']           = $this->set_module_privileges($group_info->id);
 			

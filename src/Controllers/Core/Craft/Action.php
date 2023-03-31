@@ -324,16 +324,16 @@ trait Action {
 		$this->model_table      = $this->model->getTable();
 		if (true === $this->softDeletedModel) {
 			if (!in_array($currentPage, $routeprocessor)) {
-				$this->model      = $this->model::withTrashed();
+				$this->model    = $this->model::withTrashed();
 			}
 		}
 		if (!empty($this->model_filters)) {
-			$this->model         = $this->model->where($this->model_filters);
+			$this->model        = $this->model->where($this->model_filters);
 		}
 		$this->model_original   = $this->model;
 		
 		if (!empty(diy_get_current_route_id())) {
-			$this->model_id   = diy_get_current_route_id();
+			$this->model_id     = diy_get_current_route_id();
 			$this->model_find($this->model_id);
 			//	$this->connection = $this->model->getConnectionName();
 		}

@@ -416,6 +416,10 @@ class Objects extends Builder {
 		return $this->clearVariables($clear_set);
 	}
 	
+	public function clearVar($name) {
+		$this->variables[$name] = [];
+	}
+	
 	private $variables = [];
 	private function clear_all_variables() {
 		$this->variables['on_load']              = [];

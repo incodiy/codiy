@@ -97,6 +97,7 @@ class UserController extends Controller {
 			$this->form->selectbox('group_id', $this->input_group(), false, [], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
 			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute());
+			$this->form->text('alias', null, ['placeholder' => diy_config('user.alias_placeholder')], diy_config('user.alias_label'));
 		}
 		
 		$this->form->openTab('User Info');
@@ -164,7 +165,7 @@ class UserController extends Controller {
 		$this->form->text('phone', $this->model_data->phone);
 		$this->form->selectbox('language', $this->input_language(), 'id_ID');
 		$this->form->selectbox('timezone', $this->input_timezone(), 218);
-				
+		
 		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
 			if (intval($this->model_data->id) !== intval($this->session['id'])) {
 				$this->form->openTab('User Group');
@@ -177,6 +178,7 @@ class UserController extends Controller {
 			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
 			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute(), $this->model_data->first_route);
+			$this->form->text('alias', $this->model_data->alias, [], diy_config('user.alias_label'));
 		}
 		
 		$this->form->openTab('User Status');
