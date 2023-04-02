@@ -18,7 +18,7 @@ use Incodiy\Codiy\Models\Admin\System\DynamicTables;
  
 trait Action {
 	
-	public $model			            = [];
+	public $model			        = [];
 	public $model_path	            = null;
 	public $model_table	            = null;
 	public $model_id;
@@ -28,7 +28,7 @@ trait Action {
 	public $softDeletedModel         = false;
 	public $is_softdeleted           = false;
 	
-	public $validations	            = [];
+	public $validations	             = [];
 	public $uploadTrack;
 	
 	public $stored_id;
