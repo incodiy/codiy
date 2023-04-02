@@ -241,9 +241,9 @@ class Builder {
 					// If no one set field(s) merged
 					foreach ($columns as $column) {						
 						if (!empty($dataColumns)) {
-							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+							$id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
 						} else {
-							$id           = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($column))]);
+							$id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($column))]);
 						}
 						$class           = null;
 						$classAttributes = null;
@@ -499,13 +499,13 @@ class Builder {
 				
 				$dt_columns[]      = $jsonData;
 				if (!empty($column_id))	{
-					$dt_columns[]   = $column_id;
+					$dt_columns[]  = $column_id;
 				}
-				$jsonData          = [];
+				$jsonData = [];
 				
 			} else if ($formula_column === $column) {
-				$jsonData['data']  = $column;
-				$jsonData['name']  = $column;
+				$jsonData['data'] = $column;
+				$jsonData['name'] = $column;
 				
 				if (!empty($alignment['body'][$column])) {
 					$jsonData['class'] = $jsonData['class'] . " {$alignment['body'][$column]}";
@@ -519,8 +519,8 @@ class Builder {
 				$dt_columns[] = $jsonData;
 				
 			} else {
-				$jsonData['data']	= $column;
-				$jsonData['name']	= $column;
+				$jsonData['data'] = $column;
+				$jsonData['name'] = $column;
 				
 				if (!empty($alignment['body'][$column])) {
 					$jsonData['class'] = $jsonData['class'] . " {$alignment['body'][$column]}";
@@ -565,17 +565,17 @@ class Builder {
 			$dt_info['searchable'] = $data['columns']['searchable'];
 			
 			if (!empty($data['columns']['filters'])) {
-				$search_data                     = [];
-				$search_data['table_name']       = $name;
-				$search_data['searchable']       = $data['columns']['searchable'];
-				$search_data['columns']          = $data['columns']['filters'];
+				$search_data                      = [];
+				$search_data['table_name']        = $name;
+				$search_data['searchable']        = $data['columns']['searchable'];
+				$search_data['columns']           = $data['columns']['filters'];
 				
-				$search_data['relations']        = [];
+				$search_data['relations']         = [];
 				if (!empty($data['columns']['relations'])) {
 					$search_data['relations']     = $data['columns']['relations'];
 				}
 				
-				$search_data['foreign_keys']     = [];
+				$search_data['foreign_keys']      = [];
 				if (!empty($data['columns']['foreign_keys'])) {
 					$search_data['foreign_keys']  = $data['columns']['foreign_keys'];
 				}
@@ -609,15 +609,15 @@ class Builder {
 				$dt_info['id']         = $searchInfo['id'];
 				$dt_info['class']      = 'dt-button buttons-filter';
 				$dt_info['attributes'] = [
-					'id'                => $searchInfoAttribute,
-					'class'             => "modal fade {$tableID}",
-					'role'              => 'dialog',
-					'tabindex'          => '-1',
-					'aria-hidden'       => 'true',
-					'aria-controls'     => $tableID,
-					'aria-labelledby'   => $tableID,
-					'data-backdrop'     => 'static',
-					'data-keyboard'     => 'false'
+					'id'               => $searchInfoAttribute,
+					'class'            => "modal fade {$tableID}",
+					'role'             => 'dialog',
+					'tabindex'         => '-1',
+					'aria-hidden'      => 'true',
+					'aria-controls'    => $tableID,
+					'aria-labelledby'  => $tableID,
+					'data-backdrop'    => 'static',
+					'data-keyboard'    => 'false'
 				];
 				$dt_info['button_label']          = '<i class="fa fa-filter"></i> Filter';
 				$dt_info['action_button_removed'] = $data['attributes']['buttons_removed'];

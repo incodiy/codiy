@@ -105,13 +105,13 @@ trait View {
 		}
 		
 		$this->template->render_sidebar_menu($this->menu);
-		$this->data['menu_sidebar']    = [];
+		$this->data['menu_sidebar'] = [];
 		if (!is_null($this->template->menu_sidebar)) {
 			$this->data['menu_sidebar'] = $this->template->menu_sidebar;
 		}
 		
 		$this->template->render_sidebar_content();
-		$this->data['sidebar_content']    = [];
+		$this->data['sidebar_content'] = [];
 		if (!is_null($this->template->sidebar_content)) {
 			$this->data['sidebar_content'] = $this->template->sidebar_content;
 		}
@@ -207,11 +207,13 @@ trait View {
 				if (diy_string_contained($action, 'back'))   $back   = $action;
 			}
 			
-			foreach (array_keys($this->data['route_info']->action_page) as $key) {
-				if (!empty($add)    && diy_string_contained($key, $add))    unset($this->data['route_info']->action_page[$key]);
-				if (!empty($view)   && diy_string_contained($key, $view))   unset($this->data['route_info']->action_page[$key]);
-				if (!empty($delete) && diy_string_contained($key, $delete)) unset($this->data['route_info']->action_page[$key]);
-				if (!empty($back)   && diy_string_contained($key, $back))   unset($this->data['route_info']->action_page[$key]);
+			if (!empty($this->data['route_info'])) {
+    			foreach (array_keys($this->data['route_info']->action_page) as $key) {
+    				if (!empty($add)    && diy_string_contained($key, $add))    unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($view)   && diy_string_contained($key, $view))   unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($delete) && diy_string_contained($key, $delete)) unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($back)   && diy_string_contained($key, $back))   unset($this->data['route_info']->action_page[$key]);
+    			}
 			}
 		}
 	}
@@ -297,8 +299,12 @@ trait View {
 	 *
 	 * @param string $path
 	 */
-	private function configView($path = false) {
-		$this->setPageType();
+	private function configView($path = false, $pageAdmin = true) {
+	    if (!empty($this->pageType) && 'login' !== current_route()) {
+	        $pageAdmin = false; // as user in frontpage
+	    }
+	    
+	    $this->setPageType($pageAdmin);
 		$page_type = str_replace('page', '', $this->pageType);
 		
 		if (false !== $page_type) {
