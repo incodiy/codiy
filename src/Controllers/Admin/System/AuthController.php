@@ -199,7 +199,7 @@ class AuthController extends Controller {
 			$userData['cryptcode']            = $user->cryptcode;
 			$userData['active']               = $user->active;
 		}
-		
+	//	dd($userData);
 		if (false === $return_data) {
 			$this->session_auth = $userData;
 		//	$this->add_log('Login', $this->session_auth['id']);
