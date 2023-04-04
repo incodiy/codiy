@@ -13,47 +13,36 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
  * @email       wisnuwidi@gmail.com
  */
 trait Handler {
-	private $roleHandlerAlias = ['admin'];
-	private $roleHandlerInfo  = [];
-	
-	private function initHandler() {
-		$this->roleAlias(['admin', 'internal']);
-		$this->roleInfo(['National']);
-	}
+	private $roleAlias = ['admin'];
+	private $roleInfo  = [];
 	
 	private function roleHandlerInfo($role) {
-		$this->roleHandlerInfo = $role;
+		$this->roleInfo = $role;
 	}
 	
 	private function roleHandlerAlias($role) {
-		$this->roleHandlerAlias = $role;
+		$this->roleAlias = $role;
 	}
+	
+	private function initHandler() {}
 	
 	private function customHandler() {}
 	
 	protected function sessionFilters() {
 		$this->initHandler();
-		$user_session_alias = diy_config('user.alias_session_name');
-		
 		if ('root' !== $this->session['user_group']) {
-			if (!in_array($this->session['user_group'], $this->roleHandlerAlias)) {
-				if (!empty($this->roleHandlerInfo)) {
-					if (!in_array($this->session['group_alias'], $this->roleHandlerInfo)) {
-						$this->customHandler();
-						if (!empty($this->session[$user_session_alias])) {
-							foreach ($this->session[$user_session_alias] as $fieldset => $fieldvalues) {
-								$this->filterPage([$fieldset => $fieldvalues], '=');
-							}
-						}
-					}
-				} else {
-					$this->customHandler();
-					if (!empty($this->session[$user_session_alias])) {
-						foreach ($this->session[$user_session_alias] as $fieldset => $fieldvalues) {
-							$this->filterPage([$fieldset => $fieldvalues], '=');
-						}
-					}
-				}
+			if (!in_array($this->session['user_group'], $this->roleAlias)) {
+				$this->customHandler();
+				$this->sessionConfig();
+			}
+		}
+	}
+	
+	private function sessionConfig() {
+		$user_session_alias = diy_config('user.alias_session_name');
+		if (!empty($this->session[$user_session_alias])) {
+			foreach ($this->session[$user_session_alias] as $fieldset => $fieldvalues) {
+				$this->filterPage([$fieldset => $fieldvalues], '=');
 			}
 		}
 	}
