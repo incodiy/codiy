@@ -1,3 +1,8 @@
+.page-item.active .page-link {
+  background-color: #e65772 !important;
+  border-color: #e87777 !important;
+}
+
 .login-form-head, .btn-primary, button.dt-button, div.dt-button, a.dt-button {
 	background-color: rgb(219, 7, 87) !important
 }

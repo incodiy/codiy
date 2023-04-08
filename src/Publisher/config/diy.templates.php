@@ -6,9 +6,9 @@
  *
  * @filesource	diy.templates.php
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@gmail.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@gmail.com
  */
  
 return [
@@ -51,31 +51,32 @@ return [
 					]
 				]
 			],
-		    
-		    
+			/* LOCAL VERSION 
 			'datatable' => [
 				'js'	=> [
-					'vendor/plugins/nodes/datatables/js/responsive/jquery.dataTables.10.01.19.min.js',// 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
-					'vendor/plugins/nodes/datatables/js/responsive/dataTables.responsive.2.2.3.min.js',// 'https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js',
-					
-					'vendor/plugins/nodes/datatables/js/dataTables.bootstrap.js',
-					'vendor/plugins/nodes/datatables/extentions/dataTables.buttons.min.js',
-					'vendor/plugins/nodes/datatables/extentions/buttons.html5.min.js',
-					'vendor/plugins/nodes/datatables/extentions/buttons.colVis.min.js',
-					'vendor/plugins/nodes/datatables/extentions/buttons.print.min.js',
-					'vendor/plugins/nodes/datatables/extentions/jszip.min.js',
-					'vendor/plugins/nodes/datatables/extentions/pdfmake.min.js',
-					'vendor/plugins/nodes/datatables/extentions/vfs_fonts.js',
-					'vendor/plugins/nodes/datatables/extentions/buttons.flash.min.js',
+					'vendor/DataTables/js/datatables.min.js',
+					'vendor/DataTables/js/pdfmake.js',
+					'vendor/DataTables/js/vfs_fonts.js',
 					'js/datatables/filter.js'
 				],
 				'css'	=> [
-					'vendor/plugins/nodes/datatables/css/dataTables.bootstrap.css',
-					'vendor/plugins/nodes/datatables/css/buttons.dataTables.min.css',
-					'vendor/plugins/nodes/datatables/css/datatables.responsive.css',
+					'vendor/DataTables/css/datatables.css'
 				]
 			],
-		    
+			 */
+			/* CDN VERSION */
+			'datatable' => [
+				'js'	=> [
+					'https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.13.4/af-2.5.3/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/cr-1.6.2/date-1.4.0/fc-4.2.2/fh-3.3.2/kt-2.8.2/r-2.4.1/rg-1.3.1/rr-1.3.3/sc-2.1.1/sb-1.4.2/sp-2.1.2/sl-1.6.2/sr-1.2.2/datatables.min.js',
+					'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js',
+					'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js',
+					'js/datatables/filter.js'
+				],
+				'css'	=> [
+					'https://cdn.datatables.net/v/bs4/jq-3.6.0/jszip-2.5.0/dt-1.13.4/af-2.5.3/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/cr-1.6.2/date-1.4.0/fc-4.2.2/fh-3.3.2/kt-2.8.2/r-2.4.1/rg-1.3.1/rr-1.3.3/sc-2.1.1/sb-1.4.2/sp-2.1.2/sl-1.6.2/sr-1.2.2/datatables.css'
+				]
+			],
+			
 			'textarea'	=> [
 				'js'	=> ['vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js'],
 				'css'	=> [null]

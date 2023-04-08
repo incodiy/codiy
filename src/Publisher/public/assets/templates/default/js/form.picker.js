@@ -5,9 +5,9 @@
  *
  * @filesource	form.picker.js
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@gmail.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@gmail.com
  */
  
 var JSFormPicker = function () {

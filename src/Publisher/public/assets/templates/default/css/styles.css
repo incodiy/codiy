@@ -65,11 +65,6 @@
    padding-left: 0;
 }
 
-.diy-wrapper-table {
-	width: 100%;
-	overflow-x: auto;
-}
-
 .card {
    border: none;
    border-radius: 4px;
@@ -2063,6 +2058,7 @@ label {
 /*-------------------- END Icons ------------------- */
 
 /*-------------------- 19. Table Basic ------------------- */
+
 .single-table .table {
    margin-bottom: 0;
 }
@@ -2079,12 +2075,12 @@ table tr td {
 table tr td [class^="ti-"] {
    cursor: pointer;
 }
-
+/* 
 .table-bordered td,
 .table-bordered th {
    border: 1px solid rgba(120, 130, 140, 0.13) !important;
 }
-
+ */
 .status-p {
    color: #86939e;
    padding: 0px 20px 1px;
@@ -2120,7 +2116,7 @@ div.dataTables_wrapper div.dataTables_length select {
 }
 
 table.dataTable.no-footer {
-   border-bottom: 1px solid rgba(120, 130, 140, 0.13) !important;
+   border-bottom: 1px solid rgba(120, 130, 140, 0.13);
 }
 
 table.dataTable thead th,

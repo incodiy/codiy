@@ -42,6 +42,15 @@ class Objects extends Builder {
 		$this->variables['table_class'] = 'table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
 	}
 	
+	public function method($method) {
+		$this->method = $method;
+	}
+	
+	public $labelTable = null;
+	public function label($lable) {
+		$this->labelTable = $lable;
+	}
+	
 	public $filter_scripts = [];
 	private function draw($initial, $data = []) {
 		if ($data) {
@@ -133,6 +142,15 @@ class Objects extends Builder {
 	public $hidden_columns = [];
 	public function setHiddenColumns($fields = []) {
 		$this->variables['hidden_columns'] = $fields;
+	}
+	
+	public function fixedColumns($left_pos = null, $right_pos = null) {
+		if (!empty($left_pos))  $this->variables['fixed_columns']['left']  = $left_pos;
+		if (!empty($right_pos)) $this->variables['fixed_columns']['right'] = $right_pos;
+	}
+	
+	public function clearFixedColumns() {
+		if (!empty($this->variables['fixed_columns'])) unset($this->variables['fixed_columns']);
 	}
 	
 	/**
@@ -435,6 +453,7 @@ class Objects extends Builder {
 		$this->variables['column_width']         = [];
 		$this->variables['format_data']          = [];
 		$this->variables['add_table_attributes'] = [];
+		$this->variables['fixed_columns']        = [];
 	}
 	
 	public $conditions = [];
@@ -594,7 +613,7 @@ class Objects extends Builder {
 	}
 	
 	public $tableName	= [];
-	private $tableID	= [];
+	public $tableID	= [];
 	/**
 	 * Create List(s) Data Table
 	 * 
@@ -737,6 +756,9 @@ class Objects extends Builder {
 				$this->params[$table_name]['on_load']['display_limit_rows'] = $this->variables['on_load']['display_limit_rows'];
 			}
 		}
+		
+		if (!empty($this->variables['fixed_columns'])) $this->params[$table_name]['fixed_columns'] = $this->variables['fixed_columns'];
+		
 		$this->params[$table_name]['actions']                         = $actions;
 		$this->params[$table_name]['buttons_removed']                 = $this->button_removed;
 		$this->params[$table_name]['numbering']                       = $numbering;
@@ -825,15 +847,6 @@ class Objects extends Builder {
 		} else {
 			$this->renderGeneralTable($table_name, $this->columns, $this->params);
 		}
-	}
-	
-	public function method($method) {
-		$this->method = $method;
-	}
-	
-	public $labelTable = null;
-	public function label($lable) {
-		$this->labelTable = $lable;
 	}
 	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {

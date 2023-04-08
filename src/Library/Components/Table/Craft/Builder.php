@@ -555,9 +555,8 @@ class Builder {
 			$dt_info['columns']    = $new_data_columns;
 		}
 		
-		if (!empty($data['attributes']['on_load']['display_limit_rows'])) {
-			$dt_info['onload_limit_rows'] = $data['attributes']['on_load']['display_limit_rows'];
-		}
+		if (!empty($data['attributes']['on_load']['display_limit_rows'])) $dt_info['onload_limit_rows'] = $data['attributes']['on_load']['display_limit_rows'];
+		if (!empty($data['attributes']['fixed_columns']))                 $dt_info['fixed_columns']     = $data['attributes']['fixed_columns'];
 		
 		$filter = false;
 		if (!empty($searchable)) {
@@ -617,7 +616,7 @@ class Builder {
 					'aria-controls'    => $tableID,
 					'aria-labelledby'  => $tableID,
 					'data-backdrop'    => 'static',
-					'data-keyboard'    => 'false'
+					'data-keyboard'    => 'true'
 				];
 				$dt_info['button_label']          = '<i class="fa fa-filter"></i> Filter';
 				$dt_info['action_button_removed'] = $data['attributes']['buttons_removed'];

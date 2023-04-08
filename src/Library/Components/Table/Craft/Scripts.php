@@ -48,9 +48,14 @@ trait Scripts {
 		]);
 		
 		$initComplete  = null;
+		$_fixedColumn  = '';
+		if (!empty($data_info['fixed_columns'])) {
+			$fixedColumnData = json_encode($data_info['fixed_columns']);
+			$_fixedColumn    = 'scrollY:300,scrollX:true,scrollCollapse:true,fixedColumns:' . $fixedColumnData . ',';
+		}
 		$_searching    = '"searching"    :true,';
 		$_processing   = '"processing"   :true,';
-		$_retrieve     = '"retrieve"     :true,';
+		$_retrieve     = '"retrieve"     :false,';
 		$_paginate     = '"paginate"     :true,';
 		$_searchDelay  = '"searchDelay"  :1000,';
 		$_bDeferRender = '"bDeferRender" :true,';
@@ -88,7 +93,7 @@ trait Scripts {
 		
 		$_buttons       = '"buttons"  :' . $buttonset . ',';
 		$responsive     = "rowReorder :{selector:'td:nth-child(2)'},responsive: false,";
-		$default_set    = $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
+		$default_set    = $_fixedColumn . $_searching . $_processing . $_retrieve . $_paginate . $_searchDelay . $_bDeferRender . $_responsive . $_autoWidth . $_dom . $_lengthMenu . $_buttons;
 		
 		$js_conditional = null;
 		if (!empty($data_info['conditions']['columns'])) {
@@ -111,8 +116,9 @@ trait Scripts {
 			}
 			
 			$scriptURI    = "{$current_url}?{$link_url}";
-			$colDefs      = ",columnDefs:[{targets:[1],visible:true,searchable:false,className:'control hidden-column'}";
-			$orderColumn  = ",order:[[1, 'desc']]{$colDefs}]";
+			$colDefs      = ",columnDefs:[{target:[1],visible:false,searchable:false,className:'control hidden-column'}";
+		//	$colDefs      = ",columnDefs:[";
+			$orderColumn  = ",order:[[1,'desc']]{$colDefs}]";
 			$columns      = ",columns:{$columns}{$orderColumn}";
 			$url_path     = url(diy_current_route()->uri);
 			$hash         = hash_code_id();
@@ -135,8 +141,10 @@ trait Scripts {
 			if (true === $this->strictGetUrls) {
 			//	$jsOrder   = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
 			}
-			
-			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>');{$filter_js};{$jsOrder} });";
+		//	$hiddenColumn = "$('#{$attr_id}').DataTable().columns([1]).visible(false);";
+			$hiddenColumn = '';//"cody_{$varTableID}_dt.column(1).visible(false).columns.adjust().responsive.recalc();";
+			$fixedColumn  = "$('.dtfc-fixed-left').last().addClass('last-of-scrool-column-table');";
+			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>'); {$filter_js}; {$jsOrder} {$hiddenColumn} {$fixedColumn} });";
 			
 			if (!empty($this->method)) {
 				$this->datatablesMode = $this->method;
@@ -270,7 +278,7 @@ trait Scripts {
 			
 			$js .= "}";
 		}
-	//	dd($js);
+		
 		return $js;
 	}
 	

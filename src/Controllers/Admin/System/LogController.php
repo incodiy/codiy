@@ -47,7 +47,7 @@ class LogController extends Controller {
 		$this->table->filterGroups('user_group_info', 'selectbox', true);
 		$this->table->filterGroups('method', 'selectbox', true);
 		$this->table->filterGroups('module_name', 'selectbox', true);
-		
+		$this->table->displayRowsLimitOnLoad(30);
 	//	$this->table->lists($this->model_table, $this->field_lists, ['new_button', 'button_name|warning|tags']);
 		$this->table->lists($this->model_table, $this->field_lists);
 		

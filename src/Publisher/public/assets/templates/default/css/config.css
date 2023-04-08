@@ -5,9 +5,9 @@
  *
  * @filesource	index.php
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@gmail.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@gmail.com
  */
 @import url('font-awesome.min.css');
 @import url('themify-icons.css');
@@ -22,6 +22,122 @@
 @font-face {
 	font-family: Congenial Black;
 	src: url('../fonts/Congenial Black.ttf');
+}
+
+/* FORCE DATATABLE LOAD PROCESSING VIEW */
+div.dataTables_wrapper div.dataTables_processing {
+	top: 26px !important;
+	left: 100px !important;
+	width: 100% !important;
+}
+div.dataTables_processing > div:last-child {
+	display: none;
+}
+/* FORCE DATATABLE LOAD PROCESSING VIEW */
+
+.diy-wrapper-table {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.dataTables_scrollBody .diy-wrapper-table {
+	width: auto !important;
+	overflow-x: initial !important;
+}
+
+.diy-wrapper-table .dataTables_scrollHead > .dataTables_scrollFootInner table.table-bordered tr th:first-child, 
+.diy-wrapper-table .dataTables_scrollHead > .dataTables_scrollHeadInner table.table-bordered tr th:first-child,
+.diy-wrapper-table .dataTables_scrollHead > .dataTables_scrollFootInner table.table-bordered tr th:first-child:hover, 
+.diy-wrapper-table .dataTables_scrollHead > .dataTables_scrollHeadInner table.table-bordered tr th:first-child:hover {
+  border: 1px 1px 7px solid #f17d7d !important;
+}
+
+.diy-wrapper-table table.dataTable.table-striped > tbody > tr.odd > * {
+  box-shadow: none !important;
+}
+
+.diy-wrapper-table .table-default.table-bordered td,
+.diy-wrapper-table .table-default.table-bordered th {
+	border-top: 1px solid rgba(232, 119, 119, 0.05) !important;
+}
+
+.diy-wrapper-table .table-default.table-bordered td {
+	border-right: 1px solid rgba(232, 119, 119, 0.1) !important;
+}
+
+.diy-wrapper-table .table-default.table-bordered th {	
+	border-right: 1px solid rgba(232, 119, 119, 1) !important;
+}
+
+.diy-wrapper-table .codiy-datatable {
+	margin-top: 0 !important;
+}
+
+.diy-wrapper-table table.dataTable.no-footer {
+  border-bottom: none !important;
+}
+
+.table-default.table-bordered {
+	border: none !important;
+}
+
+.last-of-scrool-column-table,
+.dtfc-fixed-left:last-of-type {
+	color: red !important;
+}
+
+div.dataTables_scrollBody {
+  border-left: 1px solid transparent !important;
+}
+
+.dataTables_length {
+	display: inline-block;
+	width: auto;
+	max-width: 12%;
+	margin: 0.1% 1%;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+	display: inline-block;
+	width: auto;
+	max-width: 14%;
+}
+
+.btn-secondary {
+  color: #fff;
+  background-color: #DB0757;
+  border-color: #FF006C;
+}
+
+button.dt-button, div.dt-button, a.dt-button, .btn-secondary {
+/*   background-color: #578de6;
+  border-color: #007bff; */
+  background-image: none !important;
+  color: #fff !important;
+  padding: 0.4em 0.8em !important;
+  font-size: 0.80em !important;
+  font-weight: lighter;
+}
+
+button.dt-button:hover, div.dt-button:hover, a.dt-button:hover, .btn-secondary:hover {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  background-image: none !important;
+}
+
+.diy-dt-search-box button.dt-button.buttons-filter, .diy-dt-search-box div.dt-button.buttons-filter, .diy-dt-search-box a.dt-button.buttons-filter {
+	border: none;
+	padding: 0.5em 0.8em !important;
+	position: relative;
+	top: 1px;
+}
+
+.tab-content .diy-dt-search-box button.dt-button.buttons-filter, .tab-content .diy-dt-search-box div.dt-button.buttons-filter, .tab-content .diy-dt-search-box a.dt-button.buttons-filter {
+	top: 0;
+}
+
+.btn-group, .btn-group-vertical {
+	display: inline-block !important;
 }
 
 .font-congenial-black {
@@ -363,7 +479,7 @@ div.input-group .cke {
 	padding: 10px 0 !important;
 }
 
-.IncoDIY-table {
+.expresscode-table {
 	position: relative;
 	z-index: 1;
 }
@@ -618,11 +734,11 @@ label:active:after {
 	
 }
 
-.IncoDIY-nav-box {
+.expresscode-nav-box {
 	position: relative;
 }
 
-.IncoDIY-nav-box .info {
+.expresscode-nav-box .info {
 	font-size: 10pt;
     position: absolute;
     top: 0;
@@ -633,13 +749,13 @@ label:active:after {
 	margin: 0 0 0 5px !important;
 }
 
-.IncoDIY-nav-box .info span {
+.expresscode-nav-box .info span {
 	border-color: transparent !important;
 	margin-left: 0;
 	padding-left: 0;
 }
 
-.IncoDIY-nav-box .info span:hover {
+.expresscode-nav-box .info span:hover {
 	background-color: transparent !important;
 }
 
@@ -684,7 +800,8 @@ body .page-container>.main-content>.main-content-inner>.content-box>.body .callo
 	width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 1;
+    top: 0;
+    z-index: 3;
     color: transparent !important;
 }
 table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child {
@@ -832,21 +949,21 @@ form .btn[type="submit"] {
 	right: 4px;
 	font-size: 24px;
 }
-.modal-box-IncoDIY.modal.fade.show {
+.modal-box-expresscode.modal.fade.show {
 	padding-right: 2px !important;
 }
-.modal-box-IncoDIY .modal-dialog {
+.modal-box-expresscode .modal-dialog {
 	width: 100%;
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
-.modal-box-IncoDIY .modal-content {
+.modal-box-expresscode .modal-content {
 	height: auto;
 	min-height: 100%;
 	border-radius: 0;
 }
-.modal-box-IncoDIY .modal {
+.modal-box-expresscode .modal {
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -854,7 +971,7 @@ form .btn[type="submit"] {
 	left: 0;
 	overflow: hidden;
 }
-.modal-box-IncoDIY .modal-dialog {
+.modal-box-expresscode .modal-dialog {
 	position: fixed;
 	margin: 0;
 	width: auto;
@@ -862,7 +979,7 @@ form .btn[type="submit"] {
 	height: 100%;
 	padding: 0;
 }
-.modal-box-IncoDIY .modal-content {
+.modal-box-expresscode .modal-content {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -872,7 +989,7 @@ form .btn[type="submit"] {
 	border-radius: 0;
 	box-shadow: none;
 }
-.modal-box-IncoDIY .modal-header {
+.modal-box-expresscode .modal-header {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -881,14 +998,14 @@ form .btn[type="submit"] {
 	background: #6598d9;
 	border-radius: 0;
 }
-.modal-box-IncoDIY .modal-title {
+.modal-box-expresscode .modal-title {
 	font-weight: 300;
 	font-size: 1.8em;
 	color: #fff;
 	line-height: 30px;
 	margin: 5px 15px 8px 15px;
 }
-.modal-box-IncoDIY .modal-body {
+.modal-box-expresscode .modal-body {
 	position: absolute;
 	top: 64px;
 	bottom: 60px;
@@ -898,7 +1015,7 @@ form .btn[type="submit"] {
 	margin: 20px 0;
 	padding: 0;
 }
-.modal-box-IncoDIY .modal-footer {
+.modal-box-expresscode .modal-footer {
 	position: absolute;
 	right: 0;
 	bottom: 0;
@@ -1065,16 +1182,15 @@ label {
 .body {
 	position: relative;
 }
-.body .IncoDIY-search-box {
+.body .expresscode-search-box {
 	width: 100%;
 }
-.blury {
+.blury, .sorting_1, .dtfc-fixed-left, .dtfc-fixed-right {
     transition: background-color 0.5s cubic-bezier(0.28, 0.11, 0.32, 1) !important;
 	backdrop-filter: saturate(180%) blur(20px) !important;
 	background-color: rgba(255, 255, 255, 0.70) !important;
 }
 .blury-blue {
-	/* background-color: rgb(225, 234, 255) !important; */
 	background-color: rgba(0, 95, 255, 0.72) !important;
 }
 .header-area {
@@ -3355,7 +3471,7 @@ input.form-control:hover {
 	background-color: #EEEEEE;
 	border-color: #e1e1e1 #e1e1e1 gainsboro;
 	vertical-align: middle;
-	border-width: 1px 1px 7px;
+	border-width: 1px 1px 1px 1px;
 	border-style: solid;
 	font-weight: 400;
 	font-size: 13px;
@@ -4271,9 +4387,11 @@ table td .rdio label:before {
 }
 div.dataTables_paginate {
 	margin: 0;
-	position: relative;
-	width: 64%;
+	position: absolute;
+	width: 60%;
 	font-weight: lighter;
+	right: 10px;
+	bottom: 2px;
 }
 div.dataTables_paginate ul.pagination {
 	margin: 2px 10px 2px 0;
@@ -5539,8 +5657,8 @@ div.dataTables_paginate ul.pagination {
 	font-weight: lighter;
 }
 div.dt-buttons {
-	margin: 1% 1.5% 0% 1.5%;
-	width: calc(100% - 420px);
+	margin: 0.1% 1.5% 0% 1.5%;
+	width: calc(100% - 486px);
 	text-align: center;
 	font-weight: lighter;
 }
@@ -5640,20 +5758,15 @@ div.dataTables_filter label {
 div.dataTables_filter input {
 	margin-left: 10px;
 }
-.dataTables_length select {
-	width: 50px !important;
-	height: 25px !important;
-	padding: 2px 3px !important;
-}
-div.dataTables_wrapper div.dataTables_length select {
-	width: 50px !important;
-	height: 25px !important;
-	padding: 2px 3px !important;
+div.dataTables_wrapper>div.dataTables_length>label>select {
+	width: 86px;
+	height: 25px;
+	padding: 2px 8px;
 }
 .dataTables_filter {
-	top: 6px;
+	top: .8vw;
 	position: relative;
-	right: .4%;
+	right: -20px;
 }
 button.dt-button,
 div.dt-button,
