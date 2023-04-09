@@ -66,7 +66,7 @@ class PreferenceController extends Controller {
 		$this->form->text('sub_title');
 		$this->form->file('logo', ['imagepreview']);
 		
-		$this->form->textarea('header', $this->model_data->header);
+		$this->form->textarea('header', $this->model_data->header, ['class' => 'text-area-class limit-info', 'maxlength' => 20, 'placeholder' => 'Header']);
 		$this->form->textarea('footer', $this->model_data->footer);
 		$this->form->selectbox('template', ['', 'default' => 'Default'], $this->model_data->template);
 		$this->form->selectbox('language', $this->input_language(), $this->model_data->language);

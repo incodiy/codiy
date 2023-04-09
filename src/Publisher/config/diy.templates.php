@@ -51,7 +51,11 @@ return [
 					]
 				]
 			],
-			/* LOCAL VERSION 
+				
+			/**
+			 * DATATABLES 
+			 */
+			/* LOCAL VERSION */
 			'datatable' => [
 				'js'	=> [
 					'vendor/DataTables/js/datatables.min.js',
@@ -63,8 +67,8 @@ return [
 					'vendor/DataTables/css/datatables.css'
 				]
 			],
-			 */
-			/* CDN VERSION */
+			/* LOCAL VERSION */
+			/* CDN VERSION *
 			'datatable' => [
 				'js'	=> [
 					'https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.13.4/af-2.5.3/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/cr-1.6.2/date-1.4.0/fc-4.2.2/fh-3.3.2/kt-2.8.2/r-2.4.1/rg-1.3.1/rr-1.3.3/sc-2.1.1/sb-1.4.2/sp-2.1.2/sl-1.6.2/sr-1.2.2/datatables.min.js',
@@ -76,9 +80,16 @@ return [
 					'https://cdn.datatables.net/v/bs4/jq-3.6.0/jszip-2.5.0/dt-1.13.4/af-2.5.3/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/cr-1.6.2/date-1.4.0/fc-4.2.2/fh-3.3.2/kt-2.8.2/r-2.4.1/rg-1.3.1/rr-1.3.3/sc-2.1.1/sb-1.4.2/sp-2.1.2/sl-1.6.2/sr-1.2.2/datatables.css'
 				]
 			],
+			/* CDN VERSION */
+			/**
+			 * DATATABLES
+			 */
 			
 			'textarea'	=> [
-				'js'	=> ['vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js'],
+				'js'	=> [
+					'vendor/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+					'js/textarea.js'
+				],
 				'css'	=> [null]
 			],
 		    
@@ -131,14 +142,12 @@ return [
 				'js'	=> [
 					'vendor/plugins/bootstrap-timepicker/js/bootstrap-timepicker.js',
 					'last:js/form.picker.js'
-				//	'vendor/plugins/prettify/prettify.js'
 				],
 				'css'	=> ['vendor/plugins/bootstrap-timepicker/css/timepicker.css']
 			],
 			
 			'highcharts' => [
 				'js'  => [
-				//	'charts/highcharts/highcharts.js'
 					'vendor/plugins/highcharts/js/highcharts.js',
 					'vendor/plugins/highcharts/js/modules/exporting.js'
 					

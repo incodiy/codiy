@@ -97,7 +97,7 @@ class UserController extends Controller {
 			$this->form->selectbox('group_id', $this->input_group(), false, [], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
 			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute());
-			$this->form->text('alias', null, ['placeholder' => diy_config('user.alias_placeholder')], diy_config('user.alias_label'));
+			$this->form->tags('alias', null, ['placeholder' => diy_config('user.alias_placeholder')], diy_config('user.alias_label'));
 		}
 		
 		$this->form->openTab('User Info');
@@ -178,7 +178,8 @@ class UserController extends Controller {
 			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
 			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute(), $this->model_data->first_route);
-			$this->form->text('alias', $this->model_data->alias, [], diy_config('user.alias_label'));
+		//	$this->form->text('alias', $this->model_data->alias, [], diy_config('user.alias_label'));
+			$this->form->tags('alias', $this->model_data->alias, ['placeholder' => diy_config('user.alias_placeholder')], diy_config('user.alias_label'));
 		}
 		
 		$this->form->openTab('User Status');

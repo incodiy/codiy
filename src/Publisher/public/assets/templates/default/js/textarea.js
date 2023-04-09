@@ -1,4 +1,4 @@
-$('.character-limit').maxlength({
+$('.limit-info').maxlength({
 	threshold         : 100,
 	alwaysShow        : false,
 	validate          : true,
