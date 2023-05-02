@@ -40,6 +40,7 @@ trait Scripts {
 						$scripts['js'][] = "vendor/ckeditor-4.10.1/ckeditor.js";
 						$scripts['js'][] = "vendor/ckeditor-4.10.1/config.js";
 						*/
+					    
 						$scripts['js'][] = "vendor/ckeditor/ckeditor.js";
 						$scripts['js'][] = "vendor/ckeditor/config.js";
 					}
