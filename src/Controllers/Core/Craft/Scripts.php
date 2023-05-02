@@ -35,9 +35,13 @@ trait Scripts {
 			if (count($this->form->element_plugins) >= 1) {
 				foreach (array_unique($this->form->element_plugins) as $_plugins) {
 					if ('ckeditor' === $_plugins) {
+						/* 
 						$scripts['js'][] = "{$this->scriptNode}$('.ckeditor').each(function(x, y) { $(this).attr('id', 'ckeditor_' + y.name); });";
 						$scripts['js'][] = "vendor/ckeditor-4.10.1/ckeditor.js";
 						$scripts['js'][] = "vendor/ckeditor-4.10.1/config.js";
+						*/
+						$scripts['js'][] = "vendor/ckeditor/ckeditor.js";
+						$scripts['js'][] = "vendor/ckeditor/config.js";
 					}
 				}
 			}

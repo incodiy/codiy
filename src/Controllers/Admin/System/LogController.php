@@ -42,7 +42,7 @@ class LogController extends Controller {
 		$this->table->searchable(['user_fullname', 'user_group_info', 'method', 'module_name']);
 		$this->table->clickable(false);
 		$this->table->sortable();
-		
+		$this->table->orderby('id', 'desc');
 		$this->table->filterGroups('user_fullname', 'selectbox', true);
 		$this->table->filterGroups('user_group_info', 'selectbox', true);
 		$this->table->filterGroups('method', 'selectbox', true);

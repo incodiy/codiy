@@ -93,7 +93,7 @@ class AuthController extends Controller {
 	
 	public function login_processor(Request $request) {
 	    $dataRequests = $request->all();
-	    
+	    dd($dataRequests);
 	    if (array_key_exists('email', $dataRequests)) {
 	        $this->sendRequestKeyWith = 'email';
 	    } else {
@@ -108,28 +108,29 @@ class AuthController extends Controller {
 		}
 		$this->incrementLoginAttempts($request);
 		
-	    $data = $request->only($this->sendRequestKeyWith, 'password');
-		if (Auth::attempt($data)) {
-		    $this->set_session_auth($data[$this->sendRequestKeyWith]);
-			foreach ($this->session_auth as $session_key => $session_auth) {
-				$request->session()->put($session_key, $session_auth);
-			}
-			/* 
-			if (true === $this->maintenance) {
-				$sessions = Session::all();
-				if ('root' !== strtolower($sessions['user_group'])) {
-					if (!empty(auth()->user()->id)) {
-						$this->add_log('Logout', auth()->user()->id);
-						Auth::logout();
-					}
-					
-					return redirect()->route('login');
+		if (!empty($request['_token']) && $request['_token'] === $request->session()->token()) {
+		    $data = $request->only($this->sendRequestKeyWith, 'password');
+			if (Auth::attempt($data)) {
+			    $this->set_session_auth($data[$this->sendRequestKeyWith]);
+				foreach ($this->session_auth as $session_key => $session_auth) {
+					$request->session()->put($session_key, $session_auth);
 				}
+				/* 
+				if (true === $this->maintenance) {
+					$sessions = Session::all();
+					if ('root' !== strtolower($sessions['user_group'])) {
+						if (!empty(auth()->user()->id)) {
+							$this->add_log('Logout', auth()->user()->id);
+							Auth::logout();
+						}
+						
+						return redirect()->route('login');
+					}
+				}
+				 */
+				return $this->firstRedirect();
 			}
-			 */
-			return $this->firstRedirect();
 		}
-		
 		return back()->withInput();
 	}
 	
