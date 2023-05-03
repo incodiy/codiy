@@ -93,7 +93,7 @@ class AuthController extends Controller {
 	
 	public function login_processor(Request $request) {
 	    $dataRequests = $request->all();
-	    dd($dataRequests);
+	    
 	    if (array_key_exists('email', $dataRequests)) {
 	        $this->sendRequestKeyWith = 'email';
 	    } else {
