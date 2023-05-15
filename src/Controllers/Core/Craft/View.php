@@ -65,12 +65,6 @@ trait View {
 			$chartElements = $this->chart->render($this->data['components']->chart->elements);
 		}
 		
-		// Chart Package From Laravel-Charts
-		$chartsElements = [];
-		if (!empty($this->data['components']->charts->elements)) {
-			$chartsElements = $this->charts->render($this->data['components']->charts->elements);
-		}
-		
 		$this->addScriptsFromElements();
 		
 		if (!empty($this->data['components']->table->method) && 'post' === strtolower($this->data['components']->table->method)) {
@@ -137,11 +131,11 @@ trait View {
 						$merge_data    = array_merge($this->data['content_page'], $data_contents);
 					}
 				}
-				$dataContent = array_merge($merge_data, $formElements, $tableElements, $chartsElements, $chartElements);
+				$dataContent = array_merge($merge_data, $formElements, $tableElements, $chartElements);
 				
 				$this->data['content_page'] = $dataContent;
 			} else {
-				$this->data['content_page'] = array_merge($formElements, $tableElements, $chartsElements, $chartElements);
+				$this->data['content_page'] = array_merge($formElements, $tableElements, $chartElements);
 			}
 		} else {
 			$this->data['breadcrumbs'] = null;

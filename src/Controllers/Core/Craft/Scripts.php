@@ -49,17 +49,16 @@ trait Scripts {
 		
 		if (!empty($this->table->elements)) {
 			if (!empty($this->table->filter_scripts)) {
-				if (!empty($this->table->filter_scripts['js']))		$scripts['js']		= $this->table->filter_scripts['js'];
-				if (!empty($this->table->filter_scripts['css']))	$scripts['css']	= $this->table->filter_scripts['css'];
+				if (!empty($this->table->filter_scripts['js']))  $scripts['js']  = $this->table->filter_scripts['js'];
+				if (!empty($this->table->filter_scripts['css'])) $scripts['css'] = $this->table->filter_scripts['css'];
 			}
 			$this->getScriptFromElements($this->table);
 		}
 		
 		if (!empty($this->chart->elements))  $this->getScriptFromElements($this->chart);
-		if (!empty($this->charts->elements)) $this->getScriptFromElements($this->charts);
 		
-		$this->setScriptUnique('js',	$scripts);
-		$this->setScriptUnique('css',	$scripts);
+		$this->setScriptUnique('js',  $scripts);
+		$this->setScriptUnique('css', $scripts);
 		
 		return false;
 	}
@@ -101,7 +100,10 @@ trait Scripts {
 		if (!empty($scripts[$type])) {
 			foreach (array_unique($scripts[$type]) as $script) {
 				if (!empty($script)) {
-					if (str_contains($script, 'last:')) {
+					if (str_contains($script, 'top:')) {
+					//	$scriptEnd[$type][] = str_replace('last:', '', $script);
+						$this->js(str_replace('top:', '', $script), 'top');
+					} else if (str_contains($script, 'last:')) {
 						$scriptEnd[$type][] = str_replace('last:', '', $script);
 					} else {
 						$scriptLists[$type][] = $script;

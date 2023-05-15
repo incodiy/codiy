@@ -37,6 +37,14 @@ class FormController extends Controller {
 	//	$this->setFileElements('file_field_alt', 'file', 'txt,xlx,xlxs,pdf', 2);
 	}
 	
+	public function index() {
+		$this->setPage();
+		
+		$this->chart->column('report_data_monthly_program_keren_pro_data', ['period', 'region', 'total_all_revenue'], 'name:period|data:total_all_revenue::sum', 'region', 'region::DESC, total_all_revenue::DESC', 'region, period');
+		
+		return $this->render();
+	}
+	
 	private $fieldsUser = [
 		'username',
 		'fullname',
@@ -72,7 +80,7 @@ class FormController extends Controller {
 		'active'
 	];
 	
-	public function index() {
+	public function index1t() {
 		$this->setPage();
 		
 		$this->table->method('POST');
@@ -91,7 +99,7 @@ class FormController extends Controller {
 		$this->nodeObject = $node;
 	}
 	private function setChartObject() {
-		return $this->chartClass = new \ConsoleTVs\Charts\Classes\Highcharts\Chart();
+	//	return $this->chartClass = new \ConsoleTVs\Charts\Classes\Highcharts\Chart();
 	}
 	private $chartData = [];
 	private function renderChart($name, $labels = [], $data = []) {

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
-#use Incodiy\Codiy\Controllers\Core\Craft\View;
+use Incodiy\Codiy\Controllers\Core\Craft\View;
 use Incodiy\Codiy\Controllers\Core\Craft\Action;
 use Incodiy\Codiy\Controllers\Core\Craft\Scripts;
 use Incodiy\Codiy\Controllers\Core\Craft\Session;
@@ -17,11 +17,9 @@ use Incodiy\Codiy\Controllers\Core\Craft\Components\Template;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Form;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Table;
 use Incodiy\Codiy\Controllers\Core\Craft\Components\Chart;
-use Incodiy\Codiy\Controllers\Core\Craft\Components\Charts;
 
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\FileUpload;
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
-use Incodiy\Codiy\Controllers\Core\Craft\View;
 
 /**
  * Bismillahirrahmanirrahiim
@@ -51,7 +49,6 @@ class Controller extends BaseController {
 	use Form, FileUpload, RouteInfo;
 	use Table;
 	use Chart;
-	use Charts;
 	
 	public $data         = [];
 	public $session_auth = [];
