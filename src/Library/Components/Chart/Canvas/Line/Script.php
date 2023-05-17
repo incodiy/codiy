@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Models\Column;
+namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Line;
 
 /**
- * Created on Oct 24, 2022
+ * Created on Oct 11, 2022
  * 
- * Time Created : 1:37:06 PM
+ * Time Created : 10:12:56 AM
  *
  * @filesource	Script.php
  *
@@ -13,10 +13,10 @@ namespace Incodiy\Codiy\Library\Components\Chart\Models\Column;
  * @email      wisnuwidi@incodiy.com
  */
 trait Script {
-	
-	private function column_script($identity, $data = []) {
+    
+	private function line_script($identity, $data = []) {
 		$chartData = $data['data'];
-		
+				
 		$series = null;
 		if (!empty($chartData['series'])) {
 			$series = static::drawJSON('series', $chartData);
@@ -58,6 +58,6 @@ trait Script {
 			$xAxis = static::drawJSON('xAxis', $chartData);
 		}
 		
-		$this->elements[$identity] .= self::scriptChart('column', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
+		$this->elements[$identity] .= self::scriptChart('line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 }

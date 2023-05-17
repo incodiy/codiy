@@ -2,10 +2,12 @@
 namespace Incodiy\Codiy\Library\Components\Chart;
 
 use Incodiy\Codiy\Library\Components\Chart\Includes\DataConstructions;
-use Incodiy\Codiy\Library\Components\Chart\Models\Line\Basic as Line;
-use Incodiy\Codiy\Library\Components\Chart\Models\Column\Basic as Column;
-use Incodiy\Codiy\Library\Components\Chart\Models\Combinations\DualAxesLineAndColumn as DualAxes;
 use Incodiy\Codiy\Library\Components\Chart\Includes\Scripts;
+use Incodiy\Codiy\Library\Components\Chart\Canvas\Column\Canvas as Column;
+use Incodiy\Codiy\Library\Components\Chart\Canvas\Bar\Canvas as Bar;
+use Incodiy\Codiy\Library\Components\Chart\Canvas\Line\Canvas as Line;
+use Incodiy\Codiy\Library\Components\Chart\Canvas\Area\Canvas as Area;
+use Incodiy\Codiy\Library\Components\Chart\Canvas\Combinations\DualAxesLineAndColumn as DualAxes;
 
 /**
  * Created on Oct 10, 2022
@@ -22,7 +24,7 @@ use Incodiy\Codiy\Library\Components\Chart\Includes\Scripts;
 class Objects extends Charts {
 	use DataConstructions, Scripts;
 	
-	use Line, Column;
+	use Column, Bar, Line, Area;
 	use DualAxes;
 	
 	public  $elements   = [];

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Models\Combinations;
+namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Combinations;
 
 /**
  * Created on Oct 24, 2022

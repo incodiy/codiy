@@ -1,23 +1,23 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Models\Line;
-
+namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Column;
 /**
- * Created on Oct 11, 2022
+ * Created on Oct 24, 2022
  * 
- * Time Created : 10:12:27 AM
+ * Time Created : 1:34:21 PM
  *
- * @filesource	Basic.php
+ * @filesource	Canvas.php
  *
  * @author     wisnuwidi@incodiy.com - 2022
  * @copyright  wisnuwidi
  * @email      wisnuwidi@incodiy.com
  */
-trait Basic {
+
+trait Canvas {
 	use Script;
 	
 	/**
-	 * Build Line Chart
-	 * 
+	 * Build Column Chart
+	 *
 	 * @param string $source
 	 * 	: table source name
 	 * @param array  $fieldsets
@@ -31,7 +31,7 @@ trait Basic {
 	 * @param string $group
 	 * 	: fieldname group
 	 */
-	public function line($source, $fieldsets = [], $format, $category = null, $order = null, $group = null) {
+	public function column($source, $fieldsets = [], $format, $category = null, $order = null, $group = null) {
 		$this->setParams(__FUNCTION__, $source, $fieldsets, $format, $category, $order, $group);
 		$this->construct($this->params);
 	}

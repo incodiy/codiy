@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Models\Line;
+namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Column;
 
 /**
- * Created on Oct 11, 2022
+ * Created on Oct 24, 2022
  * 
- * Time Created : 10:12:56 AM
+ * Time Created : 1:37:06 PM
  *
  * @filesource	Script.php
  *
@@ -13,39 +13,10 @@ namespace Incodiy\Codiy\Library\Components\Chart\Models\Line;
  * @email      wisnuwidi@incodiy.com
  */
 trait Script {
-	/* 
-	private static function drawJSON($name, $chartData, $setLabel = null) {
-		$label = $name;
-		if (!empty($setLabel)) $label = $setLabel;
-		
-		return "{$label}:" . json_encode($chartData[$name]) . ',';
-	}
 	
-	private static function scriptChart($type = 'line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
-		return diy_script_chart($type, $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
-	}
-	
-	private static function axisData($position = 'x', $data = []) {
-		$axisPos      = "{$position}Axis";
-		$axisCategory = false;
-		$axis         = null;
-		
-		if (!empty($data[$axisPos])) {
-			if (!empty($data[$axisPos]['category'])) {
-				$axisCategory = true;
-				unset($data[$axisPos]['category']);
-				$data[$axisPos]['categories'] = $data['category'];
-			}
-			
-			$axis = static::drawJSON($axisPos, $data);
-		}
-		
-		return ['data' => $axis, 'category' => $axisCategory];
-	}
-	 */
-	private function line_script($identity, $data = []) {
+	private function column_script($identity, $data = []) {
 		$chartData = $data['data'];
-				
+		
 		$series = null;
 		if (!empty($chartData['series'])) {
 			$series = static::drawJSON('series', $chartData);
@@ -87,6 +58,6 @@ trait Script {
 			$xAxis = static::drawJSON('xAxis', $chartData);
 		}
 		
-		$this->elements[$identity] .= self::scriptChart('line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
+		$this->elements[$identity] .= self::scriptChart('column', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 }
