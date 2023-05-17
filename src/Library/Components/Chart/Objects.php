@@ -29,10 +29,10 @@ class Objects extends Charts {
 	public  $params     = [];
 	
 	private $identities = [];
-	private $chartLib   = 'apex';//'highcharts';
+	private $chartInfo  = 'highcharts';
 	
 	public function __construct() {
-		$this->element_name['chart'] = $this->chartLib;
+		$this->element_name['chart'] = $this->chartInfo;
 		$this->charts = new Charts();
 	}
 	
@@ -46,7 +46,7 @@ class Objects extends Charts {
 	
 	private function setPrefix($function_name, $source) {
 		$prefix = 'codiy-charts';
-		$random = $prefix . '-' . $this->chartLib . '-' . diy_random_strings(50, false);
+		$random = $prefix . '-' . $this->chartInfo . '-' . diy_random_strings(50, false);
 		
 		$this->identities['prefix'][$function_name][$source] = $random;
 	}

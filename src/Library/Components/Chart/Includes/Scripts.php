@@ -27,9 +27,8 @@ trait Scripts {
 		return "{$label}:" . json_encode($data) . ',';
 	}
 	
-	private function scriptChart($type = 'line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
-		if ('highcharts' === $this->chartLib) return diy_script_highcharts($type, $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
-		if ('apex' === $this->chartLib)       return diy_script_apexcharts($type, $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);;
+	private static function scriptChart($type = 'line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
+		return diy_script_chart($type, $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 	
 	private static function axisData($position = 'x', $data = []) {

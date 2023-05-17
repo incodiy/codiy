@@ -58,6 +58,6 @@ trait Script {
 			$xAxis = static::drawJSON('xAxis', $chartData);
 		}
 		
-		$this->elements[$identity] .= $this->scriptChart('column', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
+		$this->elements[$identity] .= self::scriptChart('column', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 }

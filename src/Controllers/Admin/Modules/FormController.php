@@ -40,6 +40,7 @@ class FormController extends Controller {
 	public function index() {
 		$this->setPage();
 		
+		$this->chart->subtitle('Test');
 		$this->chart->column('report_data_monthly_program_keren_pro_data', ['period', 'region', 'total_all_revenue'], 'name:period|data:total_all_revenue::sum', 'region', 'region::DESC, total_all_revenue::DESC', 'region, period');
 		
 		return $this->render();
