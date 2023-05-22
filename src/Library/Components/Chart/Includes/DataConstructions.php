@@ -15,7 +15,7 @@ namespace Incodiy\Codiy\Library\Components\Chart\Includes;
 
 trait DataConstructions {
 	
-	private function construct() {
+    private function construct() {
 		if (!empty($this->params)) {
 			foreach ($this->params as $chartType => $chartData) {
 				foreach ($chartData as $identifier => $sourceConstruct) {
@@ -61,34 +61,70 @@ trait DataConstructions {
 						$data_format                      = explode('|', $sourceData['format']);
 						
 						foreach ($data_format as $format_info) {
-							if (!empty($format_info)) {
-								if (diy_string_contained($format_info, '::')) {
-									$slices = explode('::', $format_info);
-									if (!empty($slices)) {
-										foreach ($slices as $as_calc_format) {
-											if (diy_string_contained($as_calc_format, ':')) {
-												$slice = explode(':', $as_calc_format);
-												
-												$formatData['param_as'][$slice[1]] = $slice[0];
-												$sQueryData['un_group'][$slice[1]] = $slice[1];
-											} else {
-												$formatData['calculation_format']  = $as_calc_format;
-											}
-										}
-										
-										$slicesData = explode(':', $slices[0]);
-										$sQueryData['fields'][$slicesData[1]] = "{$slices[1]}({$slicesData[1]}) AS `{$slicesData[1]}`";
-									}
-								} else {
-									
-									$slice = explode(':', $format_info);
-									$formatData['param_as'][$slice[1]] = $slice[0];
-									$sQueryData['fields'][$slice[1]]   = $slice[1];
-								}
-							}
+						    if (!empty($format_info)) {
+						        if (empty(diy_string_contained($format_info, 'name:')) && empty(diy_string_contained($format_info, 'data:'))) {
+						            $format_info = explode(',', $format_info);
+						        }
+						        
+						        if (is_array($format_info)) {
+						            $sQueryData['fields']['type']         = 'multi_values';
+						            $formatData['param_as']['label']      = 'name';
+						            $formatData['param_as']['data_value'] = 'data';
+						            
+						            foreach ($format_info as $formatDataInfo) {
+						                $formatInfo = "data:{$formatDataInfo}";
+						                
+						                if (diy_string_contained($formatInfo, '::')) {
+						                    $mathSlices = explode('::', $formatInfo);
+						                    if (!empty($mathSlices)) {
+						                        foreach ($mathSlices as $as_calc_format) {
+						                            if (diy_string_contained($as_calc_format, ':')) {
+						                                $slice = explode(':', $as_calc_format);
+						                                $sQueryData['un_group'][$slice[1]] = $slice[1];
+						                            } else {
+						                                $formatData['calculation_format']  = $as_calc_format;
+						                            }
+						                        }
+						                        $slicesData = explode(':', $mathSlices[0]);
+						                        $sQueryData['fields'][$slicesData[1]] = "{$mathSlices[1]}({$slicesData[1]}) AS `data_value`";
+						                    }
+						                } else {
+						                    $slice = explode(':', $formatInfo);
+						                    $sQueryData['fields'][$slice[1]] = $slice[1];
+						                }
+						            }
+						            
+						        } else {
+						            if (diy_string_contained($format_info, '::')) {
+						                $mathSlices = explode('::', $format_info);
+						                if (!empty($mathSlices)) {
+						                    foreach ($mathSlices as $as_calc_format) {
+						                        if (diy_string_contained($as_calc_format, ':')) {
+						                            $slice = explode(':', $as_calc_format);
+						                            
+						                            $formatData['param_as'][$slice[1]] = $slice[0];
+						                            $sQueryData['un_group'][$slice[1]] = $slice[1];
+						                        } else {
+						                            $formatData['calculation_format']  = $as_calc_format;
+						                        }
+						                    }
+						                    
+						                    $slicesData = explode(':', $mathSlices[0]);
+						                    $sQueryData['fields'][$slicesData[1]] = "{$mathSlices[1]}({$slicesData[1]}) AS `{$slicesData[1]}`";
+						                }
+						            } else {
+						                
+						                $slice = explode(':', $format_info);
+						                $formatData['param_as'][$slice[1]] = $slice[0];
+						                $sQueryData['fields'][$slice[1]]   = $slice[1];
+						            }
+						        }
+						    }
 						}
 						
 						$fieldsets = [];
+						$multiValues  = false;
+						if (!empty($sQueryData['fields']['type']) && ('multi_values' === $sQueryData['fields']['type'])) $multiValues = true;
 						foreach ($sourceData['fieldsets'] as $fieldset) {
 							if (empty($sQueryData['fields'][$fieldset])) {
 								$fieldsets[$fieldset] = "`{$fieldset}`";
@@ -126,14 +162,56 @@ trait DataConstructions {
 						$str_group   = '';
 						$str_order   = '';
 						
+						if ($multiValues) {
+						    $fieldsetMultiValues               = [];
+						    $fieldsetMultiValues['for_fields'] = [];
+						    $fieldsetMultiValues['for_values'] = [];
+						    
+						    foreach ($fieldsets as $fieldLabel => $fieldset) {
+						        if (!diy_string_contained($fieldset, ') AS')) {
+						            $fieldsetMultiValues['for_fields'][str_replace('`', '', $fieldset)] = $fieldset;
+						        } else {
+						            $labelNames = [];
+						            foreach (explode('_', $fieldLabel) as $labelName) {
+						                $labelName = ucwords($labelName);
+						                if (strlen($labelName) <= 4) $labelName = strtoupper($labelName);
+						                $labelNames[] = $labelName;
+						            }
+						            
+						            $labelName = "'" . implode(' ', $labelNames) . "' AS `label`";
+						            
+						            $fieldsetMultiValues['for_values'][$fieldLabel]['label']  = $labelName;
+						            $fieldsetMultiValues['for_values'][$fieldLabel]['values'] = $fieldset;
+						        }
+						    }
+						    
+						    $str_field = [];
+						    foreach ($fieldsetMultiValues['for_values'] as $field_info => $field_data) {
+						        $str_field[$field_info] = implode(', ', array_merge($fieldsetMultiValues['for_fields'], $field_data));
+						    }
+						}
+						
 						if (!empty($sourceGroup)) $str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
 						if (!empty($sourceOrder)) $str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']);
 						/* 
 						$sourceFilters = ['region' => 'SOUTH CENTRAL JAVA'];
 						if (!empty($sourceFilters)) $str_filters = ' WHERE ' . array_keys($sourceFilters)[0] . '=' . "'" . array_values($sourceFilters)[0] . "'";
 						 */
+						
 						// DATA LINE HERE
-						$queryData          = diy_query("SELECT {$str_field} FROM {$sourceData['source']}{$str_filters}{$str_group}{$str_order};", 'SELECT');
+						if (!$multiValues) {
+						    $sql = "SELECT {$str_field} FROM {$sourceData['source']}{$str_filters}{$str_group}{$str_order};";
+						} else {
+						    $sqli = [];
+						    if (!empty($str_field) && is_array($str_field)) {
+						        foreach ($str_field as $str_field_info) {
+						            $sqli[] = "SELECT {$str_field_info} FROM {$sourceData['source']}{$str_filters}{$str_group}";
+						        }
+						    }
+						    $sql = implode(' UNION ALL ', $sqli) . "{$str_order};";
+						}
+						
+						$queryData          = diy_query($sql, 'SELECT');
 						$sQueryData['data'] = self::manipulate($chartType, $queryData, $formatData['param_as'], $sourceData['category']);
 						
 						$buffers            = [];
@@ -145,7 +223,7 @@ trait DataConstructions {
 				}
 			}
 		}
-	}
+    }
 	
 	private static function manipulate($type = 'line', $source, $parameters, $category) {
 		$combinedType = ['dualAxesLineAndColumn'];

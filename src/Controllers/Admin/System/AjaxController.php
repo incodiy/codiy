@@ -6,6 +6,7 @@ use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
 use Incodiy\Codiy\Library\Components\Table\Craft\Export;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Incodiy\Codiy\Library\Components\Chart\Charts;
 
 /**
  * Created on Sep 23, 2022
@@ -66,13 +67,14 @@ class AjaxController extends Controller {
 			} elseif (!empty($_GET['diyHostProcess'])) {
 				return $this->getHostProcess();
 			} elseif (!empty($_GET['filterDataTables'])) {
-				return $this->initFilterDatatables($_GET, $_POST);
+			    return $this->initFilterDatatables($_GET, $_POST);
+			} elseif (!empty($_GET['filterCharts'])) {
+			    return $this->initFilterCharts($_GET, $_POST);
 			}
 		}
 	}
 	
 	private function getHostProcess() {
-		$token           = $_POST['_token'];
 		unset($_POST['_token']);
 		
 		$sconnect        = $_POST['source_connection_name'];
@@ -212,6 +214,17 @@ class AjaxController extends Controller {
 			$this->datatableClass();
 			return $this->datatables->init_filter_datatables($_GET, $_POST, $this->ajaxConnection);
 		}
+	}
+	
+	private $charts = [];
+	private function chartClass() {
+	    $this->charts = new Charts();
+	}
+	private function initFilterCharts() {
+	    if (!empty($_GET['filterCharts'])) {
+	        $this->datatableClass();
+	        return $this->charts->init_filter_charts($_GET, $_POST, $this->ajaxConnection);
+	    }
 	}
 	
 	public function export() {
