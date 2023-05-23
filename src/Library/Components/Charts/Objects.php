@@ -21,13 +21,9 @@ class Objects extends Builder {
 	
 	public $elements      = [];
 	public $element_name  = [];
-	public $columns       = [];
-	public $labels        = [];
-	public $relations     = [];
+	public $params        = [];
 	public $connection;
 	
-	private $params       = [];
-	private $setDatatable = true;
 	private $chartLibrary = 'highcharts';
 	
 	/**
@@ -36,8 +32,7 @@ class Objects extends Builder {
 	private $opentabHTML  = '--[openTabHTMLForm]--';
 	
 	public function __construct() {
-		$this->element_name['table']    = $this->chartLibrary;
-		$this->variables['table_class'] = 'table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
+		$this->element_name['chart'] = $this->chartLibrary;
 	}
 	
 	public function method($method) {
@@ -45,7 +40,11 @@ class Objects extends Builder {
 	}
 	
 	private function draw($initial, $data = []) {
-		$this->elements[] = $initial;
+		if ($data) {
+			$this->elements[$initial] = $data;
+		} else {
+			$this->elements[] = $initial;
+		}
 	}
 	
 	public function render($object) {
@@ -59,8 +58,94 @@ class Objects extends Builder {
 		}
 	}
 	
-	public function column($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		dd($source, $fieldsets, $format, $category, $group, $order);
-		return $this->draw('column chart');
+	public $identities = [];
+	public function canvas($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		$identity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
+		$this->identities[$identity]         = $source;
+		
+		$this->params[$identity]['type']     = $type;
+		$this->params[$identity]['source']   = $source;
+		$this->params[$identity]['fields']   = $fieldsets;
+		$this->params[$identity]['format']   = $format;
+		$this->params[$identity]['category'] = $category;
+		$this->params[$identity]['group']    = $group;
+		$this->params[$identity]['order']    = $order;
+		
+		return $this->draw($identity, $this->chartCanvas($identity, $this->params));
+		
+		dd($type, $source, $fieldsets, $format, $category, $group, $order, $this->params);
+	}
+	
+	private function chartCanvas($identity, $parameters = []) {
+		$script = "Highcharts.chart('{$identity}', {
+  chart: {
+    type: 'column'
+  },
+  title: {
+    text: 'Monthly Average Rainfall'
+  },
+  subtitle: {
+    text: 'Source: WorldClimate.com'
+  },
+  xAxis: {
+    categories: [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ],
+    crosshair: true
+  },
+  yAxis: {
+    min: 0,
+    title: {
+      text: 'Rainfall (mm)'
+    }
+  },
+  tooltip: {
+    headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>',
+    pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' +
+      '<td style=\"padding:0\"><b>{point.y:.1f} mm</b></td></tr>',
+    footerFormat: '</table>',
+    shared: true,
+    useHTML: true
+  },
+  plotOptions: {
+    column: {
+      pointPadding: 0.2,
+      borderWidth: 0
+    }
+  },
+  series: [{
+    name: 'Tokyo',
+    data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+      194.1, 95.6, 54.4]
+
+  }, {
+    name: 'New York',
+    data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5,
+      106.6, 92.3]
+
+  }, {
+    name: 'London',
+    data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3,
+      51.2]
+
+  }, {
+    name: 'Berlin',
+    data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8,
+      51.1]
+
+  }]
+});";
+		return "<div id=\"{$identity}\">Un Drawn Canvas</div><script type=\"text/javascript\">{$script}</script>";
 	}
 }
