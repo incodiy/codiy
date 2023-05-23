@@ -35,7 +35,7 @@ class Objects extends Builder {
 	/**
 	 * --[openTabHTMLForm]--
 	 */
-	private $opentabHTML	 = '--[openTabHTMLForm]--';
+	private $opentabHTML  = '--[openTabHTMLForm]--';
 	
 	public function __construct() {
 		$this->element_name['table']    = $this->tableType;
@@ -47,8 +47,8 @@ class Objects extends Builder {
 	}
 	
 	public $labelTable = null;
-	public function label($lable) {
-		$this->labelTable = $lable;
+	public function label($label) {
+		$this->labelTable = $label;
 	}
 	
 	public $filter_scripts = [];

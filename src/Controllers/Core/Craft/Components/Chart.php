@@ -1,7 +1,7 @@
 <?php
 namespace Incodiy\Codiy\Controllers\Core\Craft\Components;
 
-use Incodiy\Codiy\Library\Components\Chart\Objects;
+use Incodiy\Codiy\Library\Components\Charts\Objects;
 
 /**
  * Created on Oct 10, 2022
