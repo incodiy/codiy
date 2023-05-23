@@ -170,8 +170,6 @@ trait View {
 		if (!empty($dataChart)) {
 		//	dd($this->chart);
 		}
-		
-	//	dd($dataChart);
 	}
 	
 	public $initRenderDatatablePost = [];
