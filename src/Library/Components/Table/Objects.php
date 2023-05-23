@@ -612,8 +612,8 @@ class Objects extends Builder {
 		$this->connection = null;
 	}
 	
-	public $tableName	= [];
-	public $tableID	= [];
+	public $tableName = [];
+	public $tableID   = [];
 	/**
 	 * Create List(s) Data Table
 	 * 

@@ -59,7 +59,8 @@ class Objects extends Builder {
 		}
 	}
 	
-	public function column() {
+	public function column($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		dd($source, $fieldsets, $format, $category, $group, $order);
 		return $this->draw('column chart');
 	}
 }
