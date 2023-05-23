@@ -21,7 +21,6 @@ class Objects extends Builder {
 	
 	public $elements      = [];
 	public $element_name  = [];
-	public $records       = [];
 	public $columns       = [];
 	public $labels        = [];
 	public $relations     = [];
