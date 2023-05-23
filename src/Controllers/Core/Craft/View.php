@@ -67,6 +67,7 @@ trait View {
 		
 		$this->addScriptsFromElements();
 		
+		// RENDER DATATABLES
 		if (!empty($this->data['components']->table->method) && 'post' === strtolower($this->data['components']->table->method)) {
 			// RENDER DATATABLES WITH METHOD POST
 			$filter_datatables = [];
@@ -91,6 +92,14 @@ trait View {
 				}
 				
 				return $this->initRenderDatatables($_GET, $this->data['components']->table, $filter_datatables);
+			}
+		}
+		
+		// RENDER CHARTS
+		if (!empty($this->data['components']->chart)) {
+			if (!empty($_GET['renderCharts']) && 'false' != $_GET['renderCharts']) {
+				$filter_charts = [];
+				return $this->initRenderCharts($_GET, $this->data['components']->chart, $filter_charts);
 			}
 		}
 		
@@ -149,6 +158,20 @@ trait View {
 		$this->checkIfAnyButtonRemoved();
 		
 		return view($this->pageView, $this->data, $this->dataOptions);
+	}
+	
+	public function initRenderCharts($method, $data = [], $model_filters = []) {
+		if (!empty($data)) {
+			$dataChart = $data;
+		} else {
+			$dataChart = $this->data['components']->chart;
+		}
+		
+		if (!empty($dataChart)) {
+		//	dd($this->chart);
+		}
+		
+	//	dd($dataChart);
 	}
 	
 	public $initRenderDatatablePost = [];
