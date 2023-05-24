@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Library\Components\Charts;
 
 use Incodiy\Codiy\Library\Components\Charts\Canvas\Builder;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
+use Incodiy\Codiy\Library\Components\Charts\Canvas\DataModel;
 
 /**
  * Created on May 23, 2023
@@ -17,7 +18,7 @@ use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
  * @email       wisnuwidi@gmail.com
  */
 class Objects extends Builder {
-	use Tab;
+	use Tab, DataModel;
 	
 	public $elements      = [];
 	public $element_name  = [];
@@ -94,13 +95,13 @@ class Objects extends Builder {
 		$this->params[$identity]['category'] = $category;
 		$this->params[$identity]['group']    = $group;
 		$this->params[$identity]['order']    = $order;
-		$this->params[$identity]['series']   = [];
+		$this->params[$identity]['series']   = [];/* 
 		
 		$this->setSeries($identity, 'Data 1', [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]);
 		$this->setSeries($identity, 'Data 2', [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]);
 		$this->setSeries($identity, 'Data 3', [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]);
 		$this->setSeries($identity, 'Target', [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2], 'line');
-		
+		 */
 		return $this->draw($identity, $this->chartCanvas($identity, $this->params));
 		
 		dd($type, $source, $fieldsets, $format, $category, $group, $order, $this->params);
@@ -112,6 +113,12 @@ class Objects extends Builder {
 		return $this->chartCanvas($this->sourceIdentity, $this->params);
 	}
 	
+	public function line($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		$this->setParams('line', $source, $fieldsets, $format, $category, $group, $order);
+		
+		return $this->chartCanvas($this->sourceIdentity, $this->params);
+	}
+	/* 
 	public function setSeries($identity, $name, $data, $type = 'column') {
 		$data = [
 			'name' => $name,
@@ -121,7 +128,7 @@ class Objects extends Builder {
 		
 		$this->params[$identity]['series'][] = json_encode($data);
 	}
-	
+	 */
 	private $canvas = [];
 	private function canvasBuilder($identity, $parameters = []) {
 		$this->canvas[$identity] = "
@@ -129,7 +136,9 @@ var {$this->identities[$identity]['string']} = new Highcharts.chart({
   chart: {
 	renderTo: '{$identity}',
     type: 'column',
-	events: {load: requestData}
+	events: {
+		load: requestData{$this->identities[$identity]['string']}
+	}
   },
   title: {
     text: 'Monthly Average Rainfall'
@@ -138,20 +147,7 @@ var {$this->identities[$identity]['string']} = new Highcharts.chart({
     text: 'Source: WorldClimate.com'
   },
   xAxis: {
-    categories: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ],
+    categories: [],
     crosshair: true
   },
   yAxis: {
@@ -173,22 +169,25 @@ var {$this->identities[$identity]['string']} = new Highcharts.chart({
       pointPadding: 0.2,
       borderWidth: 0
     }
-  }
+  },
+	series: {}
 });";
 	}
 	
 	private $post = [];
-	private $seriesLabel = 'diyChartSeries';
+	private $chartPostData = 'diyChartData';
 	public function process($post) {
-	//	dd($post, $this->params);
-		$this->post[$this->seriesLabel] = [];
-		$this->post[$this->seriesLabel] = [
+		$this->post[$this->chartPostData] = [];
+		$this->post[$this->chartPostData] = [
 			['name'=>'test', 'data'=>[1,2,3], 'type'=>'column'],
 			['name'=>'test 1', 'data'=>[15,14,18], 'type'=>'column'],
 			['name'=>'test 1', 'data'=>[5,4,8], 'type'=>'line']
 		];
 		
-		echo json_encode($this->post);
+		$postData = json_decode(diy_decrypt($post[$this->chartPostData]));
+		$this->construct($postData);
+		
+		echo json_encode(['category' => $this->category, 'series' => $this->series]);
 		exit;
 	}
 	
@@ -210,10 +209,10 @@ var {$this->identities[$identity]['string']} = new Highcharts.chart({
 		$dataAjax           = [];
 		$dataAjax['info']   = $this->identities[$identity];
 		$dataAjax['params'] = $this->params[$identity];
-		$methodValues       = json_encode($dataAjax);
+		$methodValues       = json_encode([$this->chartPostData => diy_encrypt(json_encode($dataAjax))]);
 		$token              = csrf_token();
 		$ajax               = "
-function requestData() {
+function requestData{$this->identities[$identity]['string']}() {
     $.ajax({
         url      : '{$chartURI}',
         type     : 'POST',
@@ -221,12 +220,15 @@ function requestData() {
         dataType : 'json',
         data     : {$methodValues},
         success  : function(data) {
-			$.each(data.diyChartSeries, function(i, chart) {
+			$.each(data.series.{$this->chartPostData}.series, function(i, chart) {
 				{$this->identities[$identity]['string']}.addSeries({
 					name : chart.name,
 					data : chart.data,
 					type : chart.type
 	            });
+			});
+			$.each(data.category.{$this->chartPostData}, function(i, chart) {
+				{$this->identities[$identity]['string']}.xAxis[0].setCategories(chart);
 			});
         },
         cache: false
