@@ -4,6 +4,7 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Incodiy\Codiy\Models\Admin\System\DynamicTables;
+use Incodiy\Codiy\Library\Components\Charts\Objects as Chart;
 
 /**
  * Created on 24 Mar 2021
@@ -136,15 +137,8 @@ trait Action {
 		// RENDER CHARTS
 		if (!empty($this->data['components']->chart)) {
 			if (!empty($_GET['renderCharts']) && 'false' != $_GET['renderCharts']) {
-				$data                   = [];
-				$data['diyChartSeries'] = [
-					['name'=>'test', 'data'=>[1,2,3], 'type'=>'column'],
-					['name'=>'test 1', 'data'=>[15,14,18], 'type'=>'column'],
-					['name'=>'test 1', 'data'=>[5,4,8], 'type'=>'line']
-				];
-				
-				echo json_encode($data);
-				exit;
+				$chart = new Chart();
+				return $chart->process($_POST);
 			}
 		}
 		

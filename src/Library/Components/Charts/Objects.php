@@ -64,16 +64,10 @@ class Objects extends Builder {
 	
 	public $identities = [];
 	private $sourceIdentity;
-	private function setIdentities($source) {
+	private function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		$this->sourceIdentity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
 		
-		$this->identities[$this->sourceIdentity]['source'] = $source;
-		$this->identities[$this->sourceIdentity]['string'] = str_replace('-', '', $this->sourceIdentity);
-	}
-	
-	private function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		$this->sourceIdentity                              = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
-		
+		$this->identities[$this->sourceIdentity]['code']   = $this->sourceIdentity;
 		$this->identities[$this->sourceIdentity]['source'] = $source;
 		$this->identities[$this->sourceIdentity]['string'] = str_replace('-', '', $this->sourceIdentity);
 		
@@ -183,6 +177,21 @@ var {$this->identities[$identity]['string']} = new Highcharts.chart({
 });";
 	}
 	
+	private $post = [];
+	private $seriesLabel = 'diyChartSeries';
+	public function process($post) {
+	//	dd($post, $this->params);
+		$this->post[$this->seriesLabel] = [];
+		$this->post[$this->seriesLabel] = [
+			['name'=>'test', 'data'=>[1,2,3], 'type'=>'column'],
+			['name'=>'test 1', 'data'=>[15,14,18], 'type'=>'column'],
+			['name'=>'test 1', 'data'=>[5,4,8], 'type'=>'line']
+		];
+		
+		echo json_encode($this->post);
+		exit;
+	}
+	
 	public function chartCanvas($identity = []) {
 		
 		$chartIdentity = str_replace('-', '', $identity);
@@ -195,11 +204,15 @@ var {$this->identities[$identity]['string']} = new Highcharts.chart({
 			}
 		}
 		
-		$sourceName   = $this->identities[$identity]['source'];
-		$chartURI     = url(diy_current_route()->uri) . "?renderCharts=true&difta[name]={$sourceName}&difta[source]=dynamics";
-		$methodValues = json_encode($this->params[$identity]);
-		$token        = csrf_token();
-		$ajax = "
+		$sourceName         = $this->identities[$identity]['source'];
+		$chartURI           = url(diy_current_route()->uri) . "?renderCharts=true&difta[name]={$sourceName}&difta[source]=dynamics";
+		
+		$dataAjax           = [];
+		$dataAjax['info']   = $this->identities[$identity];
+		$dataAjax['params'] = $this->params[$identity];
+		$methodValues       = json_encode($dataAjax);
+		$token              = csrf_token();
+		$ajax               = "
 function requestData() {
     $.ajax({
         url      : '{$chartURI}',
@@ -208,11 +221,11 @@ function requestData() {
         dataType : 'json',
         data     : {$methodValues},
         success  : function(data) {
-			$.each(data.diyChartSeries, function(i, charts) {
+			$.each(data.diyChartSeries, function(i, chart) {
 				{$this->identities[$identity]['string']}.addSeries({
-					name : charts.name,
-					data : charts.data,
-					type : charts.type
+					name : chart.name,
+					data : chart.data,
+					type : chart.type
 	            });
 			});
         },
