@@ -35,6 +35,10 @@ class Objects extends Builder {
 		$this->element_name['chart'] = $this->chartLibrary;
 	}
 	
+	public function connection($db_connection) {
+		$this->connection = $db_connection;
+	}
+	
 	public function method($method) {
 		$this->method = $method;
 	}
@@ -59,9 +63,35 @@ class Objects extends Builder {
 	}
 	
 	public $identities = [];
+	private $sourceIdentity;
+	private function setIdentities($source) {
+		$this->sourceIdentity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
+		
+		$this->identities[$this->sourceIdentity]['source'] = $source;
+		$this->identities[$this->sourceIdentity]['string'] = str_replace('-', '', $this->sourceIdentity);
+	}
+	
+	private function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		$this->sourceIdentity                              = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
+		
+		$this->identities[$this->sourceIdentity]['source'] = $source;
+		$this->identities[$this->sourceIdentity]['string'] = str_replace('-', '', $this->sourceIdentity);
+		
+		$this->params[$this->sourceIdentity]['type']       = $type;
+		$this->params[$this->sourceIdentity]['source']     = $source;
+		$this->params[$this->sourceIdentity]['fields']     = $fieldsets;
+		$this->params[$this->sourceIdentity]['format']     = $format;
+		$this->params[$this->sourceIdentity]['category']   = $category;
+		$this->params[$this->sourceIdentity]['group']      = $group;
+		$this->params[$this->sourceIdentity]['order']      = $order;
+		$this->params[$this->sourceIdentity]['series']     = [];
+	}
+	
 	public function canvas($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		$identity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
-		$this->identities[$identity]         = $source;
+		
+		$this->identities[$identity]['source'] = $source;
+		$this->identities[$identity]['string'] = str_replace('-', '', $identity);
 		
 		$this->params[$identity]['type']     = $type;
 		$this->params[$identity]['source']   = $source;
@@ -82,7 +112,13 @@ class Objects extends Builder {
 		dd($type, $source, $fieldsets, $format, $category, $group, $order, $this->params);
 	}
 	
-	private function setSeries($identity, $name, $data, $type = 'column') {
+	public function column($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		$this->setParams('column', $source, $fieldsets, $format, $category, $group, $order);
+		
+		return $this->chartCanvas($this->sourceIdentity, $this->params);
+	}
+	
+	public function setSeries($identity, $name, $data, $type = 'column') {
 		$data = [
 			'name' => $name,
 			'data' => $data,
@@ -92,12 +128,14 @@ class Objects extends Builder {
 		$this->params[$identity]['series'][] = json_encode($data);
 	}
 	
-	private function chartCanvas($identity, $parameters = []) {
-		
-		$chartIdentity = str_replace('-', '', $identity);
-		$scriptCore = "var {$chartIdentity} = new Highcharts.chart('{$identity}', {
+	private $canvas = [];
+	private function canvasBuilder($identity, $parameters = []) {
+		$this->canvas[$identity] = "
+var {$this->identities[$identity]['string']} = new Highcharts.chart({
   chart: {
-    type: 'column'
+	renderTo: '{$identity}',
+    type: 'column',
+	events: {load: requestData}
   },
   title: {
     text: 'Monthly Average Rainfall'
@@ -143,18 +181,53 @@ class Objects extends Builder {
     }
   }
 });";
+	}
+	
+	public function chartCanvas($identity = []) {
+		
+		$chartIdentity = str_replace('-', '', $identity);
+		$this->canvasBuilder($identity);
+		
 		$scriptSeries = '';
 		if (!empty($this->params[$identity]['series'])) {
 			foreach ($this->params[$identity]['series'] as $series) {
-				$scriptSeries .= "{$chartIdentity}.addSeries({$series}, false);";
+				$scriptSeries .= "{$this->identities[$identity]['string']}.addSeries({$series}, false);";
 			}
 		}
 		
-		return "
-<div id=\"{$identity}\">Un Drawn Canvas</div>
-<script type=\"text/javascript\">{$scriptCore}</script>
-<script type=\"text/javascript\">{$scriptSeries}</script>
-<script type=\"text/javascript\">{$chartIdentity}.redraw();</script>
+		$sourceName   = $this->identities[$identity]['source'];
+		$chartURI     = url(diy_current_route()->uri) . "?renderCharts=true&difta[name]={$sourceName}&difta[source]=dynamics";
+		$methodValues = json_encode($this->params[$identity]);
+		$token        = csrf_token();
+		$ajax = "
+function requestData() {
+    $.ajax({
+        url      : '{$chartURI}',
+        type     : 'POST',
+		headers  : {'X-CSRF-TOKEN': '{$token}'},
+        dataType : 'json',
+        data     : {$methodValues},
+        success  : function(data) {
+			$.each(data.diyChartSeries, function(i, charts) {
+				{$this->identities[$identity]['string']}.addSeries({
+					name : charts.name,
+					data : charts.data,
+					type : charts.type
+	            });
+			});
+        },
+        cache: false
+    });
+}
 		";
+		
+		return $this->draw("
+<div id=\"{$identity}\">IncoDIY Canvas</div>
+<script type=\"text/javascript\">{$ajax}</script>
+<script type=\"text/javascript\">{$this->canvas[$identity]}</script>
+
+<!-- script type=\"text/javascript\">{$scriptSeries}</script>
+<script type=\"text/javascript\">{$chartIdentity}.redraw();</script -->
+		");
 	}
 }

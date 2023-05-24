@@ -94,7 +94,7 @@ trait View {
 				return $this->initRenderDatatables($_GET, $this->data['components']->table, $filter_datatables);
 			}
 		}
-		
+		/* 
 		// RENDER CHARTS
 		if (!empty($this->data['components']->chart)) {
 			if (!empty($_GET['renderCharts']) && 'false' != $_GET['renderCharts']) {
@@ -102,7 +102,7 @@ trait View {
 				return $this->initRenderCharts($_GET, $this->data['components']->chart, $filter_charts);
 			}
 		}
-		
+		 */
 		if (!empty($_GET['ajaxfproc'])) {
 			return $this->form->ajaxProcessing();
 		}

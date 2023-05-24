@@ -132,6 +132,22 @@ trait Action {
 	}
 	
 	private function INSERT_DATA_PROCESSOR(Request $request, $routeback = true) {
+		
+		// RENDER CHARTS
+		if (!empty($this->data['components']->chart)) {
+			if (!empty($_GET['renderCharts']) && 'false' != $_GET['renderCharts']) {
+				$data                   = [];
+				$data['diyChartSeries'] = [
+					['name'=>'test', 'data'=>[1,2,3], 'type'=>'column'],
+					['name'=>'test 1', 'data'=>[15,14,18], 'type'=>'column'],
+					['name'=>'test 1', 'data'=>[5,4,8], 'type'=>'line']
+				];
+				
+				echo json_encode($data);
+				exit;
+			}
+		}
+		
 		$this->CHECK_DATATABLES_ACCESS_PROCESSOR();
 		if (!empty($this->exportRedirection) && true == $_POST['exportData']) {
 			echo redirect($this->exportRedirection);
