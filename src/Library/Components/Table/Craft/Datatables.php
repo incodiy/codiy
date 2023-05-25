@@ -388,7 +388,7 @@ class Datatables {
 				$action_data['action']['removed'] = $data->datatables->button_removed;
 			}
 		} else {
-			$action_data['action']['removed']    = $data->datatables->button_removed;
+			$action_data['action']['removed'] = $data->datatables->button_removed;
 		}
 		
 		$datatables->addColumn('action', function($model) use($action_data) {

@@ -21,8 +21,13 @@ trait DataModel {
 	
 	private function construct($data) {
 		if (!empty($data)) {
+			if (!empty($data->info->connection)) {
+				$this->connection = $data->info->connection;
+			} else {
+				$this->connection = 'mysql';
+			}
 			
-			$sourceData = $data->params;
+			$sourceData  = $data->params;
 			$sourceGroup = [];
 			if (!empty($sourceData->group)) {
 				if (diy_string_contained($sourceData->group, ',')) {
@@ -124,7 +129,7 @@ trait DataModel {
 					}
 				}
 				
-				$fieldsets = [];
+				$fieldsets    = [];
 				$multiValues  = false;
 				if (!empty($sQueryData['fields']['type']) && ('multi_values' === $sQueryData['fields']['type'])) $multiValues = true;
 				foreach ($sourceData->fields as $fieldset) {
@@ -202,7 +207,7 @@ trait DataModel {
 				
 				// DATA LINE HERE
 				if (!$multiValues) {
-					$sql = "SELECT {$str_field} FROM {$sourceData->source}{$str_filters}{$str_group}{$str_order};";
+					$sql  = "SELECT {$str_field} FROM {$sourceData->source}{$str_filters}{$str_group}{$str_order};";
 				} else {
 					$sqli = [];
 					if (!empty($str_field) && is_array($str_field)) {
@@ -210,10 +215,10 @@ trait DataModel {
 							$sqli[] = "SELECT {$str_field_info} FROM {$sourceData->source}{$str_filters}{$str_group}";
 						}
 					}
-					$sql = implode(' UNION ALL ', $sqli) . "{$str_order};";
+					$sql  = implode(' UNION ALL ', $sqli) . "{$str_order};";
 				}
 				
-				$queryData          = diy_query($sql, 'SELECT');
+				$queryData          = diy_query($sql, 'SELECT', $this->connection);
 				$sQueryData['data'] = self::manipulate($sourceData->type, $queryData, $formatData['param_as'], $sourceData->category);
 				
 				$this->chartData[$this->chartPostData]['data']    = $sQueryData;
