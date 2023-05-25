@@ -31,7 +31,18 @@ class Builder {
 		$htmlCanvas         = "<div id=\"{$identity}\">IncoDIY Chart Canvas</div>";
 		$chartscripts       = '<script type="text/javascript">';
 		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $chartURI, $methodValues, $this->chartPostData);
-		$chartscripts      .= $this->canvascipt($identity, $this->identities[$identity]['string'], $this->params[$identity], $this->attributes[$identity]);
+		
+		$params = [];
+		if (!empty($this->params[$identity])) {
+			$params = $this->params[$identity];
+		}
+		
+		$attributes = [];
+		if (!empty($this->attributes[$identity])) {
+			$attributes = $this->attributes[$identity];
+		}
+		
+		$chartscripts      .= $this->canvascipt($identity, $this->identities[$identity]['string'], $params, $attributes);
 		$chartscripts      .= '</script>';
 		$canvas             = $htmlCanvas . $chartscripts;
 		

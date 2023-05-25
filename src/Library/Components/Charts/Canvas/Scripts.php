@@ -101,7 +101,19 @@ trait Scripts {
 				title: {$axisTitle}
 			},
 			tooltip: {$tooltip},
-			plotOptions: {$plotOptions}
+			plotOptions: {$plotOptions},
+			responsive: {
+				rules: [{
+					condition: {
+						maxWidth: 500
+					},
+					chartOptions: {
+						legend: {
+							enabled: false
+						}
+					}
+				}]
+			}
 		});";
 		return $canvas;
 	}
