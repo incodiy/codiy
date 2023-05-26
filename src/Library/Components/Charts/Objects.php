@@ -34,15 +34,13 @@ class Objects extends Charts {
 	private $opentabHTML  = '--[openTabHTMLForm]--';
 	
 	public function __construct() {
+		parent::__construct();
+		
 		$this->element_name['chart'] = $this->chartLibrary;
 	}
 	
 	public function connection($db_connection) {
 		$this->connection = $db_connection;
-	}
-	
-	public function method($method) {
-		$this->method = $method;
 	}
 	
 	protected function draw($initial, $data = []) {
@@ -66,7 +64,7 @@ class Objects extends Charts {
 	
 	protected $identities = [];
 	protected $sourceIdentity;
-	public function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+	protected function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		$this->sourceIdentity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
 		
 		$this->identities[$this->sourceIdentity]['connection'] = $this->connection;
@@ -81,7 +79,13 @@ class Objects extends Charts {
 		$this->params[$this->sourceIdentity]['category']       = $category;
 		$this->params[$this->sourceIdentity]['group']          = $group;
 		$this->params[$this->sourceIdentity]['order']          = $order;
-		$this->params[$this->sourceIdentity]['series']         = [];
+		$this->params[$this->sourceIdentity]['filter']         = [];
+		
+		if (!empty($this->sync)) {
+			$sync = $this->sync;
+			unset($this->sync);
+			$this->params[$this->sourceIdentity]['filter']     = $sync['filter'];
+		}
 		
 		if (!empty($this->attributes)) {
 			$attributes = [];
@@ -89,6 +93,10 @@ class Objects extends Charts {
 			unset($this->attributes);
 			$this->attributes = $attributes;
 		}
+	}
+	
+	protected function setAttributes($function_name, $attributes) {
+		$this->attributes[$function_name] = $attributes;
 	}
 	
 	protected $post = [];

@@ -18,6 +18,8 @@ use Incodiy\Codiy\Library\Components\Charts\Canvas\Scripts;
 class Builder {
 	use Scripts;
 	
+	public function __construct() {}
+	
 	public $model;
 	
 	protected $canvas = [];

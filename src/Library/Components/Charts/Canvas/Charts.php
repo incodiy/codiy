@@ -15,9 +15,34 @@ namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
 class Charts extends Builder {
 	
 	public $attributes = [];
+	public $sync       = [];
 	
-	private function setAttributes($function_name, $attributes) {
-		$this->attributes[$function_name] = $attributes;
+	public function __construct() {
+		parent::__construct();
+	}
+	
+	public function syncWith($object = []) {		
+		if (!empty($object)) {
+			$this->sync['filter'] = $object->conditions;
+		}
+	}
+	
+	public function canvas($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		$this->setParams($type, $source, $fieldsets, $format, $category, $group, $order);
+		
+		return $this->chartCanvas($this->sourceIdentity);
+	}
+	
+	public function column($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
+	}
+	
+	public function line($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
+	}
+	
+	public function bar($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
 	}
 	
 	public function title($title, $options = []) {
@@ -53,23 +78,5 @@ class Charts extends Builder {
 		if (!empty($options)) $attributes = array_merge_recursive($attributes, $options);
 		
 		$this->setAttributes(__FUNCTION__, $attributes);
-	}
-	
-	public function canvas($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		$this->setParams($type, $source, $fieldsets, $format, $category, $group, $order);
-		
-		return $this->chartCanvas($this->sourceIdentity);
-	}
-	
-	public function column($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
-	}
-	
-	public function line($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
-	}
-	
-	public function bar($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
 	}
 }

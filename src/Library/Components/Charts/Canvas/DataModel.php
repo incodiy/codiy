@@ -200,10 +200,32 @@ trait DataModel {
 				
 				if (!empty($sourceGroup)) $str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
 				if (!empty($sourceOrder)) $str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']);
-				/*
-				 $sourceFilters = ['region' => 'SOUTH CENTRAL JAVA'];
-				 if (!empty($sourceFilters)) $str_filters = ' WHERE ' . array_keys($sourceFilters)[0] . '=' . "'" . array_values($sourceFilters)[0] . "'";
+				/* 
+				$sourceFilters = ['region' => 'SOUTH CENTRAL JAVA'];
+				if (!empty($sourceFilters)) $str_filters = ' WHERE ' . array_keys($sourceFilters)[0] . '=' . "'" . array_values($sourceFilters)[0] . "'";
+				
 				 */
+				$dataFilters = [];
+				if (!empty($data->params->filter)) {
+					foreach ($data->params->filter as $filterData) {
+						foreach ($filterData as $n => $filter) {
+							if (is_array($filter->value) && count($filter->value) > 1) {
+								$filter->operator = 'IN';
+								$filter->value    = "('" . implode("', '", $filter->value) . "')";
+							} else {
+								$filter->value    = "'{$filter->value}'";
+							}
+							
+							if ($n <= 0) {
+								$dataFilters[] = "WHERE {$filter->field_name} {$filter->operator} {$filter->value}";
+							} else {
+								$dataFilters[] = "AND {$filter->field_name} {$filter->operator} {$filter->value}";
+							}
+						}
+					}
+				}
+				
+				$str_filters = ' ' . implode(' ', $dataFilters);
 				
 				// DATA LINE HERE
 				if (!$multiValues) {
