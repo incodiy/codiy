@@ -200,11 +200,7 @@ trait DataModel {
 				
 				if (!empty($sourceGroup)) $str_group = ' GROUP BY ' . implode(', ', $sQueryData['group']);
 				if (!empty($sourceOrder)) $str_order = ' ORDER BY ' . implode(', ', $sQueryData['order']);
-				/* 
-				$sourceFilters = ['region' => 'SOUTH CENTRAL JAVA'];
-				if (!empty($sourceFilters)) $str_filters = ' WHERE ' . array_keys($sourceFilters)[0] . '=' . "'" . array_values($sourceFilters)[0] . "'";
 				
-				 */
 				$dataFilters = [];
 				if (!empty($data->params->filter)) {
 					foreach ($data->params->filter as $filterData) {

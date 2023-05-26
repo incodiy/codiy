@@ -21,9 +21,9 @@ class Charts extends Builder {
 		parent::__construct();
 	}
 	
-	public function syncWith($object = []) {		
-		if (!empty($object)) {
-			$this->sync['filter'] = $object->conditions;
+	public function syncWith($object = []) {
+		if (!empty($object) && !empty($object->conditions['where'])) {
+			$this->sync['filter']['where'] = $object->conditions['where'];
 		}
 	}
 	
