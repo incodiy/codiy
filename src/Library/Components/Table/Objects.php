@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Library\Components\Table;
 
 use Incodiy\Codiy\Library\Components\Table\Craft\Builder;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
+use Incodiy\Codiy\Library\Components\Charts\Objects as Chart;
 
 /**
  * Created on 12 Apr 2021
@@ -51,10 +52,49 @@ class Objects extends Builder {
 		$this->labelTable = $label;
 	}
 	
+	private $chartCanvas = false;
+	public function chart($chart_type, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		$chart             = new Chart();
+		$chart->connection = $this->connection;
+		$chart->syncWith($this);
+		$chart->{$chart_type}($this->tableName, $fieldsets, $format, $category, $group, $order);
+		
+		$this->element_name['chart']      = $chart->chartLibrary;
+		$tableIdentity                    = $this->tableID[$this->tableName];
+		$canvas                           = [];
+		$canvas['chart'][$tableIdentity]  = $chart->elements;
+		$initTable                        = [];
+		$initTable['chart']               = $this->tableID[$this->tableName];
+		
+		$tableElement  = $this->elements[$tableIdentity];
+		$canvasElement = $canvas['chart'][$tableIdentity];
+		$syncElements  = [];
+		$syncElements['chart'][$tableIdentity] = $tableElement . implode('', $canvasElement);
+		
+		$this->draw($initTable, $syncElements);
+	}
+	
 	public $filter_scripts = [];
 	private function draw($initial, $data = []) {
 		if ($data) {
-			$this->elements[$initial] = $data;
+			$multiElements = [];
+			if (is_array($initial)) {
+				foreach ($initial as $syncElements) {
+					if (is_array($data)) {
+						foreach ($data as $dataValue) {
+							$initData = $dataValue[$syncElements];
+							if (is_array($initData)) {
+								$multiElements[$syncElements] = implode('', $initData);
+							} else {
+								$multiElements[$syncElements] = $initData;
+							}
+						}
+					}
+					$this->elements[$syncElements] = $multiElements[$syncElements];
+				}
+			} else {
+				$this->elements[$initial] = $data;
+			}
 			
 			if (!empty($this->filter_object->add_scripts)) {
 				if (true === array_key_exists('add_js', $this->filter_object->add_scripts)) {
@@ -867,7 +907,7 @@ class Objects extends Builder {
 			$this->labelTable = null;
 		}
 		
-		return $this->draw($this->tableID[$name], $this->table($name, $columns, $attributes, $label));
+		$this->draw($this->tableID[$name], $this->table($name, $columns, $attributes, $label));
 	}
 	
 	private function renderGeneralTable($name, $columns = [], $attributes = []) {

@@ -26,7 +26,7 @@ class Objects extends Charts {
 	public $params        = [];
 	public $connection;
 	
-	private $chartLibrary = 'highcharts';
+	public $chartLibrary = 'highcharts';
 	
 	/**
 	 * --[openTabHTMLForm]--
@@ -43,7 +43,7 @@ class Objects extends Charts {
 		$this->connection = $db_connection;
 	}
 	
-	protected function draw($initial, $data = []) {
+	public function draw($initial, $data = []) {
 		if ($data) {
 			$this->elements[$initial] = $data;
 		} else {
