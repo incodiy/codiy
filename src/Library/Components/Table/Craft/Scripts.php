@@ -230,8 +230,8 @@ trait Scripts {
 						if ('prefix&suffix' === $condition['rule']) {
 							$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
 						}
-						if ('prefix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
-						if ('suffix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
+						if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
+						if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
 						if ('replace' === $condition['rule']) {
 							if ('integer' === $condition['action']) {
 								$js .= "$(cells[\"{$condition['node']}\"]).text(parseInt($(cells[\"{$condition['node']}\"]).text()));";
@@ -258,8 +258,8 @@ trait Scripts {
 					if ('prefix&suffix' === $condition['rule']) {
 						$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
 					}
-					if ('prefix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
-					if ('suffix' === $condition['rule'])	$js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
+					if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
+					if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
 					if ('replace' === $condition['rule']) {
 						if ('integer' === $condition['action']) {
 							$js .= "$(cells[\"{$condition['node']}\"]).text(parseInt($(cells[\"{$condition['node']}\"]).text()));";

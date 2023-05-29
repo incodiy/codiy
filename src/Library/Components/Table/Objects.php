@@ -52,7 +52,7 @@ class Objects extends Builder {
 		$this->labelTable = $label;
 	}
 	
-	private $chartCanvas = false;
+	private $syncElements = false;
 	public function chart($chart_type, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		$chart             = new Chart();
 		$chart->connection = $this->connection;
@@ -68,8 +68,13 @@ class Objects extends Builder {
 		
 		$tableElement  = $this->elements[$tableIdentity];
 		$canvasElement = $canvas['chart'][$tableIdentity];
+		
+		$this->syncElements[$tableIdentity]['chart_info']   = $chart->identities;
+		$this->syncElements[$tableIdentity]['filter_table'] = "{$tableIdentity}_cdyFILTERForm";
+		$chart->modifyFilterTable($this->syncElements[$tableIdentity]);
+		
 		$syncElements  = [];
-		$syncElements['chart'][$tableIdentity] = $tableElement . implode('', $canvasElement);
+		$syncElements['chart'][$tableIdentity] = $tableElement . $chart->script_chart['js'] . implode('', $canvasElement);
 		
 		$this->draw($initTable, $syncElements);
 	}
@@ -95,7 +100,7 @@ class Objects extends Builder {
 			} else {
 				$this->elements[$initial] = $data;
 			}
-			
+		//	dd($this->filter_object->add_scripts['add_js']);
 			if (!empty($this->filter_object->add_scripts)) {
 				if (true === array_key_exists('add_js', $this->filter_object->add_scripts)) {
 					$scriptCss = [];

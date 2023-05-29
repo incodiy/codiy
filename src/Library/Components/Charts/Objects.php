@@ -62,7 +62,7 @@ class Objects extends Charts {
 		}
 	}
 	
-	protected $identities = [];
+	public    $identities = [];
 	protected $sourceIdentity;
 	protected function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		$this->sourceIdentity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
@@ -106,5 +106,9 @@ class Objects extends Charts {
 		
 		echo json_encode(['category' => $this->category, 'series' => $this->series]);
 		exit;
+	}
+	
+	public function modifyFilterTable($data) {
+		return $this->filterTableInjectionScript($data);
 	}
 }

@@ -23,19 +23,16 @@ class Builder {
 	public $model;
 	
 	protected $canvas = [];
-	public function chartCanvas($identity = []) {
+	public function chartCanvas($identity = [], $filters = []) {
 		$chartURI           = url(diy_current_route()->uri) . "?renderCharts=true";
 		$dataAjax           = [];
 		$dataAjax['info']   = $this->identities[$identity];
 		$dataAjax['params'] = $this->params[$identity];
 		$methodValues       = json_encode([$this->chartPostData => diy_encrypt(json_encode($dataAjax))]);
 		
-		$htmlCanvas         = "<div id=\"{$identity}\">IncoDIY Chart Canvas</div>";
-		$chartscripts       = '<script type="text/javascript">';
-		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $chartURI, $methodValues, $this->chartPostData);
-		
 		$params = [];
 		if (!empty($this->params[$identity])) {
+			if (!empty($filters)) $this->params[$identity]['filter']['where'] = $filters;
 			$params = $this->params[$identity];
 		}
 		
@@ -44,9 +41,14 @@ class Builder {
 			$attributes = $this->attributes[$identity];
 		}
 		
+		$buttonChart        = "<button id=\"{$this->identities[$identity]['string']}\" class=\"btn btn-warning btn_create btn-slideright button-app action-button pull-right\">Filter Chart</button>";
+		$htmlCanvas         = "<div id=\"{$identity}\">IncoDIY Chart Canvas</div>";
+		$chartscripts       = '<script type="text/javascript">';
+	//	dd($this->identities[$identity]['string'], $chartURI, $methodValues, $this->chartPostData, $this->params[$identity]);
+		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $chartURI, $methodValues, $this->chartPostData);
 		$chartscripts      .= $this->canvascipt($identity, $this->identities[$identity]['string'], $params, $attributes);
 		$chartscripts      .= '</script>';
-		$canvas             = $htmlCanvas . $chartscripts;
+		$canvas             = $buttonChart . $htmlCanvas . $chartscripts;
 		
 		return $this->draw($canvas);
 	}

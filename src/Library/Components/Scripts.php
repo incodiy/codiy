@@ -48,6 +48,8 @@ class Scripts {
 				}
 			}
 		}
+		
+		return $this->scripts;
 	}
 	
 	/**
@@ -69,6 +71,8 @@ class Scripts {
 				$this->scripts [__FUNCTION__] [$position] [] = $this->check_css_strings($script, $as_script_code);
 			}
 		}
+		
+		return $this->scripts;
 	}
 	private function check_js_strings($string, $as_script_code = false) {
 		$containedType = 'type="text/javascript"';

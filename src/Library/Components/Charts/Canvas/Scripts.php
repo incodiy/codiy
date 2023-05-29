@@ -15,6 +15,31 @@ namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
  */
 trait Scripts {
 	
+	public $script_chart = [];
+	
+	protected function filterTableInjectionScript($data) {
+		$formIdentity  = $data['filter_table'];
+		$chartIdentity = $data['chart_info'];
+		
+		foreach ($chartIdentity as $chartInfo) {
+			unset($chartIdentity);
+			$chartIdentity[$formIdentity] = $chartInfo;
+		}
+		
+		$script = "
+<script type=\"text/javascript\">
+	$( document ).ready(function() {
+		$('#{$chartIdentity[$formIdentity]['string']}').hide();
+		$('#submitFilterButton').click(function(){
+			$('#{$chartIdentity[$formIdentity]['string']}').show();
+			alert('clicked');
+	    });
+	});
+</script>";
+		
+		$this->script_chart['js'] = $script;
+	}
+	
 	protected function ajaxProcess($identity, $url, $dataValues, $postData) {
 		$token  = csrf_token();
 		$script = "
