@@ -158,7 +158,7 @@ function firstResetRowButton(id, target_id, second_target, url, method = 'POST',
 function mappingPageButtonManipulation(node_btn, id, target_id, second_target, url, method = 'POST', onError = 'Error') {
 	var node_add      = 'role-add-' + target_id;
 	var baserowbox    = $('tr#row-box-' + target_id);
-	var tablecource   = baserowbox.parent('tbody').parent('table');
+	var tablesource   = baserowbox.parent('tbody').parent('table');
 	
 	var firstRemove   = $('span#remove-row' + target_id);
 	var fieldnamebox  = $('select#' + target_id);
@@ -193,7 +193,7 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 					.attr({'class': 'fa fa-minus-circle danger'});
 			}
 		});
-		clonerowbox.appendTo(tablecource);
+		clonerowbox.appendTo(tablesource);
 		mappingPageFieldnameValues(random_target_id, random_second_target, url, method, onError);
 		
 		if (clonerowbox.length >= 1) {
@@ -208,7 +208,7 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 		});
 	});
 	
-	tablecource.each(function(x, n) {
+	tablesource.each(function(x, n) {
 		var tr = $(this).children('tbody').children('tr').length;
 		if (tr > 1) {
 			$('#reset' + node_btn).fadeIn();
