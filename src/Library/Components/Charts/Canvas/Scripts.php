@@ -19,6 +19,7 @@ trait Scripts {
 	
 	protected function filterTableInjectionScript($data) {
 		$formIdentity  = $data['filter_table'];
+		$formIDString  = str_replace('-', '', $formIdentity);
 		$chartIdentity = $data['chart_info'];
 		
 		foreach ($chartIdentity as $chartInfo) {
@@ -26,13 +27,35 @@ trait Scripts {
 			$chartIdentity[$formIdentity] = $chartInfo;
 		}
 		
+		$submitFilterButton = str_replace('_cdyFILTERForm', '_submitFilterButton', "{$formIdentity}");
+		$chartFilterButton  = "{$chartIdentity[$formIdentity]['string']}submitChartFilter";
+		$chartFilterBox     = "{$chartIdentity[$formIdentity]['string']}filterChartBox";
+		
+		$urli  = $this->chartURI[$chartIdentity[$formIdentity]['code']] . '&diyChartDataFilter=' . $chartIdentity[$formIdentity]['string'];
+		$token = csrf_token();
+		
 		$script = "
 <script type=\"text/javascript\">
 	$( document ).ready(function() {
-		$('#{$chartIdentity[$formIdentity]['string']}').hide();
-		$('#submitFilterButton').click(function(){
-			$('#{$chartIdentity[$formIdentity]['string']}').show();
-			alert('clicked');
+		var ajaxFromTable{$formIDString} = {};
+		
+		$('#{$submitFilterButton}').click(function() {
+			var postFromTable{$chartIdentity[$formIdentity]['string']} = [];
+			ajaxFromTable{$formIDString}     = $('#{$formIdentity}').serializeArray();
+			
+			if ('_token' === ajaxFromTable{$formIDString}[0].name) {
+				$.each(ajaxFromTable{$formIDString}, function(index, item) {
+					if ('_token' !== item.name && '' != item.value) {
+						postFromTable{$chartIdentity[$formIdentity]['string']}.push({
+							name : item.name,
+							value: item.value
+						});
+					}
+				});
+			}
+
+			var filterData{$formIDString} = {postFromTable{$chartIdentity[$formIdentity]['string']}};
+			requestData{$chartIdentity[$formIdentity]['string']} ('{$urli}', filterData{$formIDString});
 	    });
 	});
 </script>";
@@ -41,18 +64,29 @@ trait Scripts {
 	}
 	
 	protected function ajaxProcess($identity, $url, $dataValues, $postData) {
+		$data               = [];
+		$data['identity']   = $identity;
+		$data['url']        = $url;
+		$data['dataValues'] = $dataValues;
+		$data['postData']   = $postData;
+		
 		$token  = csrf_token();
 		$script = "
-		function requestData{$identity} () {
+		function requestData{$data['identity']} (urliReq, dataValues) {
+			if ('object' == typeof urliReq) {
+				var urliReq    = '{$url}';
+				var dataValues = {$dataValues};
+			}
+			
 		    $.ajax({
-		        url      : '{$url}',
+		        url      : urliReq,
 		        type     : 'POST',
 				headers  : {'X-CSRF-TOKEN': '{$token}'},
 		        dataType : 'json',
-		        data     : {$dataValues},
+		        data     : dataValues,
 		        success  : function(data) {
 					$.each(data.series.{$postData}.series, function(i, chart) {
-						{$identity}.addSeries({
+						{$data['identity']}.addSeries({
 							name : chart.name,
 							data : chart.data,
 							type : chart.type
@@ -60,13 +94,13 @@ trait Scripts {
 					});
 					
 					$.each(data.category.{$postData}, function(i, chart) {
-						{$identity}.xAxis[0].setCategories(chart);
+						{$data['identity']}.xAxis[0].setCategories(chart);
 					});
 		        },
 		        cache: false
 		    });
 		}";
-				
+		
 		return $script;
 	}
 	
@@ -107,6 +141,7 @@ trait Scripts {
 		}
 		
 		$canvas = "
+		var filterData{$identity_string} = [];
 		var {$identity_string} = new Highcharts.chart({
 			chart: {
 				renderTo: '{$identity_chart}',
@@ -115,6 +150,9 @@ trait Scripts {
 					load: requestData{$identity_string}
 				}
 			},
+	        dataSource: {
+	            data: filterData{$identity_string}
+	        },
 			title: {$title},
 			subtitle: {$subtitle},
 			xAxis: {

@@ -71,6 +71,7 @@ class Objects extends Builder {
 		
 		$this->syncElements[$tableIdentity]['chart_info']   = $chart->identities;
 		$this->syncElements[$tableIdentity]['filter_table'] = "{$tableIdentity}_cdyFILTERForm";
+		
 		$chart->modifyFilterTable($this->syncElements[$tableIdentity]);
 		
 		$syncElements  = [];

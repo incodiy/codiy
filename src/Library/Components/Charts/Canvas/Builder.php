@@ -23,12 +23,13 @@ class Builder {
 	public $model;
 	
 	protected $canvas = [];
+	public $chartURI  = [];
 	public function chartCanvas($identity = [], $filters = []) {
-		$chartURI           = url(diy_current_route()->uri) . "?renderCharts=true";
-		$dataAjax           = [];
-		$dataAjax['info']   = $this->identities[$identity];
-		$dataAjax['params'] = $this->params[$identity];
-		$methodValues       = json_encode([$this->chartPostData => diy_encrypt(json_encode($dataAjax))]);
+		$this->chartURI[$identity] = url(diy_current_route()->uri) . "?renderCharts=true";
+		$dataAjax                  = [];
+		$dataAjax['info']          = $this->identities[$identity];
+		$dataAjax['params']        = $this->params[$identity];
+		$methodValues              = json_encode([$this->chartPostData => diy_encrypt(json_encode($dataAjax))]);
 		
 		$params = [];
 		if (!empty($this->params[$identity])) {
@@ -41,14 +42,23 @@ class Builder {
 			$attributes = $this->attributes[$identity];
 		}
 		
-		$buttonChart        = "<button id=\"{$this->identities[$identity]['string']}\" class=\"btn btn-warning btn_create btn-slideright button-app action-button pull-right\">Filter Chart</button>";
+		$filterFormID   = "{$this->identities[$identity]['string']}filterChartBox";
+		$buttonChart    = "<button id=\"{$this->identities[$identity]['string']}submitChartFilter\" class=\"btn btn-warning btn_create btn-slideright button-app action-button pull-right\">Filter Chart</button>";
+		
+		$chartFilterBox = "
+<form id=\"{$filterFormID}\">
+	<div id=\"{$filterFormID}Title\" class=\"title\">Filter Chart</div>
+	<div id=\"{$filterFormID}Body\" class=\"body\"></div>
+	<div id=\"{$filterFormID}Footer\" class=\"footer\">{$buttonChart}</div>
+</form>
+		";
+		
 		$htmlCanvas         = "<div id=\"{$identity}\">IncoDIY Chart Canvas</div>";
 		$chartscripts       = '<script type="text/javascript">';
-	//	dd($this->identities[$identity]['string'], $chartURI, $methodValues, $this->chartPostData, $this->params[$identity]);
-		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $chartURI, $methodValues, $this->chartPostData);
+		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $this->chartURI[$identity], $methodValues, $this->chartPostData);
 		$chartscripts      .= $this->canvascipt($identity, $this->identities[$identity]['string'], $params, $attributes);
 		$chartscripts      .= '</script>';
-		$canvas             = $buttonChart . $htmlCanvas . $chartscripts;
+		$canvas             = $chartFilterBox . $htmlCanvas . $chartscripts;
 		
 		return $this->draw($canvas);
 	}
