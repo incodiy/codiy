@@ -101,14 +101,16 @@ class Objects extends Charts {
 	
 	protected $post = [];
 	protected $chartPostData = 'diyChartData';
-	public function process($post) {dd(json_decode(diy_decrypt($post[$this->chartPostData])));
-		$postFilter = [];
+	public function process($post) {
 		if (!empty($_GET['diyChartDataFilter'])) {
-			$chartIdentityFilter = 'postFromTable' . $_GET['diyChartDataFilter'];dd(json_decode(diy_decrypt($post[$chartIdentityFilter])));
-			$postFilter = json_encode([$this->chartPostData => diy_encrypt(json_encode($post[$chartIdentityFilter]))]);
-		//	$postFilter = [$this->chartPostData => $post[$chartIdentityFilter]];
+			$postFilter          = [];
+			$chartIdentityFilter = 'postFromTable' . $_GET['diyChartDataFilter'];
+			$chartIdentityCode   = $_GET['diyChartData'];
+			$postFilter          = $post[$chartIdentityFilter][0][$chartIdentityCode];
 			unset($post);
-			$post = $postFilter;
+			
+			$post                       = [];
+			$post[$this->chartPostData] = diy_encrypt(json_encode($postFilter));
 		}
 		
 		$this->construct(json_decode(diy_decrypt($post[$this->chartPostData])));

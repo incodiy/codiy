@@ -18,47 +18,53 @@ trait Scripts {
 	public $script_chart = [];
 	
 	protected function filterTableInjectionScript($data) {
-		$formIdentity  = $data['filter_table'];
+		$formIdentity  = $data['identity']['filter_table'];
 		$formIDString  = str_replace('-', '', $formIdentity);
-		$chartIdentity = $data['chart_info'];
+		$chartIdentity = $data['identity']['chart_info'];
 		
 		foreach ($chartIdentity as $chartInfo) {
 			unset($chartIdentity);
 			$chartIdentity[$formIdentity] = $chartInfo;
 		}
 		
+		$chartIDCode        = $chartIdentity[$formIdentity]['code'];
+		$chartIDString      = $chartIdentity[$formIdentity]['string'];
 		$submitFilterButton = str_replace('_cdyFILTERForm', '_submitFilterButton', "{$formIdentity}");
-		$chartFilterButton  = "{$chartIdentity[$formIdentity]['string']}submitChartFilter";
-		$chartFilterBox     = "{$chartIdentity[$formIdentity]['string']}filterChartBox";
+		$urli               = $this->chartURI[$chartIdentity[$formIdentity]['code']] . '&diyChartDataFilter=' . $chartIDString . '&diyChartData=' . $chartIDCode;
 		
-		$urli  = $this->chartURI[$chartIdentity[$formIdentity]['code']] . '&diyChartDataFilter=' . $chartIdentity[$formIdentity]['string'];
-		$token = csrf_token();
+		$dataPosts = [];
+		$dataPosts[$chartIDCode]['info']                      = $chartIdentity[$formIdentity];
+		$dataPosts[$chartIDCode]['params']                    = $data['datatables'];
+		$dataPosts[$chartIDCode]['params']['filter']['where'] = [];
+		$jsonDataPosts                                        = json_encode($dataPosts);
 		
 		$script = "
-<script type=\"text/javascript\">
-	$( document ).ready(function() {
-		var ajaxFromTable{$formIDString} = {};
-		
-		$('#{$submitFilterButton}').click(function() {
-			var postFromTable{$chartIdentity[$formIdentity]['string']} = [];
-			ajaxFromTable{$formIDString}     = $('#{$formIdentity}').serializeArray();
-			
-			if ('_token' === ajaxFromTable{$formIDString}[0].name) {
-				$.each(ajaxFromTable{$formIDString}, function(index, item) {
-					if ('_token' !== item.name && '' != item.value) {
-						postFromTable{$chartIdentity[$formIdentity]['string']}.push({
-							name : item.name,
-							value: item.value
-						});
-					}
+			<script type=\"text/javascript\">
+				$(document).ready(function() {
+					var ajaxFromTable{$formIDString} = {};
+					$('#{$submitFilterButton}').click(function() {
+						var postFromTable{$chartIDString} = [ {$jsonDataPosts} ];
+						ajaxFromTable{$formIDString}      = $('#{$formIdentity}').serializeArray();
+						if ('_token' === ajaxFromTable{$formIDString}[0].name) {
+							$.each(postFromTable{$chartIDString}, function(i, chartObj) {
+								$.each(chartObj, function(i, chartObjData) {
+									$.each(ajaxFromTable{$formIDString}, function(index, item) {
+										if ('_token' !== item.name && '' != item.value) {
+											chartObjData.params.filter.where.push({
+												field_name : item.name,
+												operator   : '=',
+												value      : item.value
+											});
+										}
+									});
+								});
+							});
+						}
+						requestData{$chartIDString} ('{$urli}', { postFromTable{$chartIDString} });
+				    });
 				});
-			}
-
-			var filterData{$formIDString} = {postFromTable{$chartIdentity[$formIdentity]['string']}};
-			requestData{$chartIdentity[$formIdentity]['string']} ('{$urli}', filterData{$formIDString});
-	    });
-	});
-</script>";
+			</script>
+		";
 		
 		$this->script_chart['js'] = $script;
 	}
@@ -77,7 +83,7 @@ trait Scripts {
 				var urliReq    = '{$url}';
 				var dataValues = {$dataValues};
 			}
-			
+						
 		    $.ajax({
 		        url      : urliReq,
 		        type     : 'POST',
@@ -96,6 +102,8 @@ trait Scripts {
 					$.each(data.category.{$postData}, function(i, chart) {
 						{$data['identity']}.xAxis[0].setCategories(chart);
 					});
+					
+					{$data['identity']}.redraw();
 		        },
 		        cache: false
 		    });

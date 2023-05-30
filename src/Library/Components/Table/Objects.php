@@ -66,11 +66,19 @@ class Objects extends Builder {
 		$initTable                        = [];
 		$initTable['chart']               = $this->tableID[$this->tableName];
 		
-		$tableElement  = $this->elements[$tableIdentity];
-		$canvasElement = $canvas['chart'][$tableIdentity];
+		$tableElement                     = $this->elements[$tableIdentity];
+		$canvasElement                    = $canvas['chart'][$tableIdentity];
 		
-		$this->syncElements[$tableIdentity]['chart_info']   = $chart->identities;
-		$this->syncElements[$tableIdentity]['filter_table'] = "{$tableIdentity}_cdyFILTERForm";
+		$this->syncElements[$tableIdentity]['identity']['chart_info']   = $chart->identities;
+		$this->syncElements[$tableIdentity]['identity']['filter_table'] = "{$tableIdentity}_cdyFILTERForm";
+		
+		$this->syncElements[$tableIdentity]['datatables']['type']       = $chart_type;
+		$this->syncElements[$tableIdentity]['datatables']['source']     = $this->tableName;
+		$this->syncElements[$tableIdentity]['datatables']['fields']     = $fieldsets;
+		$this->syncElements[$tableIdentity]['datatables']['format']     = $format;
+		$this->syncElements[$tableIdentity]['datatables']['category']   = $category;
+		$this->syncElements[$tableIdentity]['datatables']['group']      = $group;
+		$this->syncElements[$tableIdentity]['datatables']['order']      = $order;
 		
 		$chart->modifyFilterTable($this->syncElements[$tableIdentity]);
 		
@@ -101,7 +109,7 @@ class Objects extends Builder {
 			} else {
 				$this->elements[$initial] = $data;
 			}
-		//	dd($this->filter_object->add_scripts['add_js']);
+			
 			if (!empty($this->filter_object->add_scripts)) {
 				if (true === array_key_exists('add_js', $this->filter_object->add_scripts)) {
 					$scriptCss = [];
