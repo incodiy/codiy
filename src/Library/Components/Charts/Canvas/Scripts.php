@@ -83,7 +83,7 @@ trait Scripts {
 				var urliReq    = '{$url}';
 				var dataValues = {$dataValues};
 			}
-						
+			
 		    $.ajax({
 		        url      : urliReq,
 		        type     : 'POST',
@@ -91,6 +91,10 @@ trait Scripts {
 		        dataType : 'json',
 		        data     : dataValues,
 		        success  : function(data) {
+					$.each({$data['identity']}.series, function(s, c){
+						c.remove();
+					});
+
 					$.each(data.series.{$postData}.series, function(i, chart) {
 						{$data['identity']}.addSeries({
 							name : chart.name,
@@ -99,11 +103,12 @@ trait Scripts {
 			            });
 					});
 					
+					/* 
 					$.each(data.category.{$postData}, function(i, chart) {
 						{$data['identity']}.xAxis[0].setCategories(chart);
 					});
 					
-					{$data['identity']}.redraw();
+					{$data['identity']}.redraw(); */
 		        },
 		        cache: false
 		    });
