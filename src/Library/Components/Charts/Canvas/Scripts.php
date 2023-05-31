@@ -43,8 +43,10 @@ trait Scripts {
 				$(document).ready(function() {
 					var ajaxFromTable{$formIDString} = {};
 					$('#{$submitFilterButton}').click(function() {
+						
 						var postFromTable{$chartIDString} = [ {$jsonDataPosts} ];
 						ajaxFromTable{$formIDString}      = $('#{$formIdentity}').serializeArray();
+						
 						if ('_token' === ajaxFromTable{$formIDString}[0].name) {
 							$.each(postFromTable{$chartIDString}, function(i, chartObj) {
 								$.each(chartObj, function(i, chartObjData) {
@@ -60,6 +62,10 @@ trait Scripts {
 								});
 							});
 						}
+						
+						// Remove All Series @https://stackoverflow.com/questions/48590737/how-to-efficiently-remove-all-series-from-highchart-highstock-and-then-add-many/48645230#48645230
+						for (var i = {$chartIDString}.series.length - 1; i >= 0; i--) { {$chartIDString}.series[i].remove(false); }
+						
 						requestData{$chartIDString} ('{$urli}', { postFromTable{$chartIDString} });
 				    });
 				});
@@ -91,10 +97,10 @@ trait Scripts {
 		        dataType : 'json',
 		        data     : dataValues,
 		        success  : function(data) {
-					$.each({$data['identity']}.series, function(s, c){
-						c.remove();
+					$.each(data.category.{$postData}, function(i, chart) {
+						{$data['identity']}.xAxis[0].setCategories(chart);
 					});
-
+					
 					$.each(data.series.{$postData}.series, function(i, chart) {
 						{$data['identity']}.addSeries({
 							name : chart.name,
@@ -103,12 +109,7 @@ trait Scripts {
 			            });
 					});
 					
-					/* 
-					$.each(data.category.{$postData}, function(i, chart) {
-						{$data['identity']}.xAxis[0].setCategories(chart);
-					});
-					
-					{$data['identity']}.redraw(); */
+					{$data['identity']}.redraw();
 		        },
 		        cache: false
 		    });
@@ -154,12 +155,12 @@ trait Scripts {
 		}
 		
 		$canvas = "
-		var filterData{$identity_string} = [];
+		var filterData{$identity_string} = {};
 		var {$identity_string} = new Highcharts.chart({
 			chart: {
 				renderTo: '{$identity_chart}',
-				type: '{$params['type']}',
-				events: {
+				type    : '{$params['type']}',
+				events  : {
 					load: requestData{$identity_string}
 				}
 			},
@@ -169,7 +170,6 @@ trait Scripts {
 			title: {$title},
 			subtitle: {$subtitle},
 			xAxis: {
-				categories: [],
 				crosshair: true
 			},
 			yAxis: {

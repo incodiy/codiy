@@ -42,23 +42,12 @@ class Builder {
 			$attributes = $this->attributes[$identity];
 		}
 		
-		$filterFormID   = "{$this->identities[$identity]['string']}filterChartBox";
-		$buttonChart    = "<button id=\"{$this->identities[$identity]['string']}submitChartFilter\" class=\"btn btn-warning btn_create btn-slideright button-app action-button pull-right\">Filter Chart</button>";
-		
-		$chartFilterBox = "
-<form id=\"{$filterFormID}\">
-	<div id=\"{$filterFormID}Title\" class=\"title\">Filter Chart</div>
-	<div id=\"{$filterFormID}Body\" class=\"body\"></div>
-	<div id=\"{$filterFormID}Footer\" class=\"footer\">{$buttonChart}</div>
-</form>
-		";
-		
 		$htmlCanvas         = "<div id=\"{$identity}\">IncoDIY Chart Canvas</div>";
 		$chartscripts       = '<script type="text/javascript">';
-		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $this->chartURI[$identity], $methodValues, $this->chartPostData);
 		$chartscripts      .= $this->canvascipt($identity, $this->identities[$identity]['string'], $params, $attributes);
+		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $this->chartURI[$identity], $methodValues, $this->chartPostData);
 		$chartscripts      .= '</script>';
-		$canvas             = $chartFilterBox . $htmlCanvas . $chartscripts;
+		$canvas             = $htmlCanvas . $chartscripts;
 		
 		return $this->draw($canvas);
 	}
