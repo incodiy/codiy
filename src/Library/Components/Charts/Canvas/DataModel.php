@@ -221,7 +221,35 @@ trait DataModel {
 					}
 				}
 				
-				$str_filters = ' ' . implode(' ', $dataFilters);
+				$pageFilters = [];
+				if (!empty($data->params->page_filter)) {
+					foreach ($data->params->page_filter as $pageFilterData) {
+						foreach ($pageFilterData as $nf => $pageFilter) {
+							if (is_array($pageFilter->value) && count($pageFilter->value) > 1) {
+								$pageFilter->operator = 'IN';
+								$pageFilter->value    = "('" . implode("', '", $pageFilter->value) . "')";
+							} else {
+								$pageFilter->value    = "'{$pageFilter->value}'";
+							}
+							
+							if ($nf <= 0) {
+								if (!empty($dataFilters)) {
+									$pageFilters[] = "AND {$pageFilter->field_name} {$pageFilter->operator} {$pageFilter->value}";
+								} else {
+									$pageFilters[] = "WHERE {$pageFilter->field_name} {$pageFilter->operator} {$pageFilter->value}";
+								}
+							} else {
+								$pageFilters[] = "AND {$pageFilter->field_name} {$pageFilter->operator} {$pageFilter->value}";
+							}
+						}
+					}
+				}
+				
+				if (!empty($pageFilters)) {
+					$str_filters = ' ' . implode(' ', $dataFilters) . ' ' . implode(' ', $pageFilters);
+				} else {
+					$str_filters = ' ' . implode(' ', $dataFilters);
+				}
 				
 				// DATA LINE HERE
 				if (!$multiValues) {

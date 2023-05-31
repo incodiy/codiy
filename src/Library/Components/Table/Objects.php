@@ -68,17 +68,19 @@ class Objects extends Builder {
 		
 		$tableElement                     = $this->elements[$tableIdentity];
 		$canvasElement                    = $canvas['chart'][$tableIdentity];
+		$defaultPageFilters               = $this->filter_contents[$tableIdentity]['conditions']['where'];
 		
-		$this->syncElements[$tableIdentity]['identity']['chart_info']   = $chart->identities;
-		$this->syncElements[$tableIdentity]['identity']['filter_table'] = "{$tableIdentity}_cdyFILTERForm";
+		$this->syncElements[$tableIdentity]['identity']['chart_info']    = $chart->identities;
+		$this->syncElements[$tableIdentity]['identity']['filter_table']  = "{$tableIdentity}_cdyFILTERForm";
 		
-		$this->syncElements[$tableIdentity]['datatables']['type']       = $chart_type;
-		$this->syncElements[$tableIdentity]['datatables']['source']     = $this->tableName;
-		$this->syncElements[$tableIdentity]['datatables']['fields']     = $fieldsets;
-		$this->syncElements[$tableIdentity]['datatables']['format']     = $format;
-		$this->syncElements[$tableIdentity]['datatables']['category']   = $category;
-		$this->syncElements[$tableIdentity]['datatables']['group']      = $group;
-		$this->syncElements[$tableIdentity]['datatables']['order']      = $order;
+		$this->syncElements[$tableIdentity]['datatables']['type']        = $chart_type;
+		$this->syncElements[$tableIdentity]['datatables']['source']      = $this->tableName;
+		$this->syncElements[$tableIdentity]['datatables']['fields']      = $fieldsets;
+		$this->syncElements[$tableIdentity]['datatables']['format']      = $format;
+		$this->syncElements[$tableIdentity]['datatables']['category']    = $category;
+		$this->syncElements[$tableIdentity]['datatables']['group']       = $group;
+		$this->syncElements[$tableIdentity]['datatables']['order']       = $order;
+		$this->syncElements[$tableIdentity]['datatables']['page_filter'] = ['where' => $defaultPageFilters];
 		
 		$chart->modifyFilterTable($this->syncElements[$tableIdentity]);
 		
