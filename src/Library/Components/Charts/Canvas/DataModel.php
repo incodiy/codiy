@@ -360,11 +360,20 @@ trait DataModel {
 			if (!empty($chartData['type'][$name])) {
 				$chartType = $chartData['type'][$name];
 			}
-			$buffers['series'][] = [
-				'name'  => $name,
-				'data'  => $data,
-				'type'  => $chartType
-			];
+			if (diy_string_contained($chartType, 'line')) {
+				$buffers['series'][] = [
+					'name'      => $name,
+					'data'      => $data,
+					'type'      => $chartType,
+					'dashStyle' => $dashCombined[array_rand($dashCombined)]
+				];
+			} else {
+				$buffers['series'][] = [
+					'name'  => $name,
+					'data'  => $data,
+					'type'  => $chartType
+				];
+			}
 		}
 		
 		if (!empty($chartData['combined'])) {
