@@ -77,6 +77,7 @@ trait DataModel {
 							$sQueryData['fields']['type']         = 'multi_values';
 							$formatData['param_as']['label']      = 'name';
 							$formatData['param_as']['data_value'] = 'data';
+							$formatData['param_as']['chart_type'] = 'type';
 							
 							foreach ($format_info as $formatDataInfo) {
 								$formatInfo = "data:{$formatDataInfo}";
@@ -129,10 +130,20 @@ trait DataModel {
 					}
 				}
 				
-				$fieldsets    = [];
-				$multiValues  = false;
+				$fieldsets      = [];
+				$multiValues    = false; // Query With UNION
 				if (!empty($sQueryData['fields']['type']) && ('multi_values' === $sQueryData['fields']['type'])) $multiValues = true;
+				$chartTypeField = [];
 				foreach ($sourceData->fields as $fieldset) {
+					$chartTypeField[$fieldset] = $sourceData->type;
+					if (diy_string_contained($fieldset, '::')) {
+						unset($chartTypeField[$fieldset]);
+						
+						$fieldsplits = explode('::', $fieldset);
+						$fieldset    = $fieldsplits[0];
+						$chartTypeField[$fieldset] = $fieldsplits[1];
+					}
+					
 					if (empty($sQueryData['fields'][$fieldset])) {
 						$fieldsets[$fieldset] = "`{$fieldset}`";
 					} else {
@@ -186,9 +197,11 @@ trait DataModel {
 							}
 							
 							$labelName = "'" . implode(' ', $labelNames) . "' AS `label`";
+							$chartType = "'{$chartTypeField[$fieldLabel]}' AS chart_type";
 							
-							$fieldsetMultiValues['for_values'][$fieldLabel]['label']  = $labelName;
-							$fieldsetMultiValues['for_values'][$fieldLabel]['values'] = $fieldset;
+							$fieldsetMultiValues['for_values'][$fieldLabel]['label']      = $labelName;
+							$fieldsetMultiValues['for_values'][$fieldLabel]['values']     = $fieldset;
+							$fieldsetMultiValues['for_values'][$fieldLabel]['chart_type'] = $chartType;
 						}
 					}
 					
@@ -295,13 +308,14 @@ trait DataModel {
 		}
 		
 		if (!empty($paramCharts['legend']) && 'true' == $paramCharts['legend']) {
-			$paramCharts['legend']  = true;
+			$paramCharts['legend'] = true;
 		} else {
-			$paramCharts['legend']  = false;
+			$paramCharts['legend'] = false;
 		}
 		
 		$chartData             = [];
 		$chartData['data']     = [];
+		$chartData['type']     = [];
 		$chartData['category'] = [];
 		$chartData['combined'] = [];
 		
@@ -312,6 +326,14 @@ trait DataModel {
 					$chartData['data'][$data->{$paramCharts['name']}][]     = intval($data->{$paramCharts['data']});
 				} else {
 					$chartData['data'][$data->{$paramCharts['name']}][null] = null;
+				}
+			}
+			
+			if (!empty($data->{$paramCharts['type']})) {
+				if (!empty($data->{$paramCharts['type']})) {
+					$chartData['type'][$data->{$paramCharts['name']}] = $data->{$paramCharts['type']};
+				} else {
+					$chartData['type'][$data->{$paramCharts['name']}] = $typeBasic;
 				}
 			}
 			
@@ -334,10 +356,14 @@ trait DataModel {
 		}
 		
 		foreach ($chartData['data'] as $name => $data) {
+			$chartType = $typeBasic;
+			if (!empty($chartData['type'][$name])) {
+				$chartType = $chartData['type'][$name];
+			}
 			$buffers['series'][] = [
 				'name'  => $name,
 				'data'  => $data,
-				'type'  => $typeBasic
+				'type'  => $chartType
 			];
 		}
 		
