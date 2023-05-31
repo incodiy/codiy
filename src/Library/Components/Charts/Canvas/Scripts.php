@@ -68,6 +68,7 @@ trait Scripts {
 						
 						requestData{$chartIDString} ('{$urli}', { postFromTable{$chartIDString} });
 				    });
+					
 				});
 			</script>
 		";
@@ -181,7 +182,7 @@ trait Scripts {
 			responsive: {
 				rules: [{
 					condition: {
-						maxWidth: 500
+						maxWidth: 1000
 					},
 					chartOptions: {
 						legend: {

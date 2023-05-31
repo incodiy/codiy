@@ -68,7 +68,10 @@ class Objects extends Builder {
 		
 		$tableElement                     = $this->elements[$tableIdentity];
 		$canvasElement                    = $canvas['chart'][$tableIdentity];
-		$defaultPageFilters               = $this->filter_contents[$tableIdentity]['conditions']['where'];
+		$defaultPageFilters               = [];
+		if (!empty($this->filter_contents[$tableIdentity]['conditions']['where'])) {
+			$defaultPageFilters           = $this->filter_contents[$tableIdentity]['conditions']['where'];
+		}
 		
 		$this->syncElements[$tableIdentity]['identity']['chart_info']    = $chart->identities;
 		$this->syncElements[$tableIdentity]['identity']['filter_table']  = "{$tableIdentity}_cdyFILTERForm";
@@ -84,7 +87,7 @@ class Objects extends Builder {
 		
 		$chart->modifyFilterTable($this->syncElements[$tableIdentity]);
 		
-		$syncElements  = [];
+		$syncElements = [];
 		$syncElements['chart'][$tableIdentity] = $tableElement . $chart->script_chart['js'] . implode('', $canvasElement);
 		
 		$this->draw($initTable, $syncElements);
