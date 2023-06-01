@@ -537,7 +537,7 @@ class Datatables {
 			}
 			$wheres = implode(' AND ', $wheres);
 			
-			$wherepPrefious = null;
+			$wherePrevious = null;
 			if ('#null' !== $prev) {
 				$previous  = explode("#", $prev);
 				$preFields = explode('|', $previous[0]);
@@ -563,13 +563,13 @@ class Datatables {
 					$previousdata[] = "`{$_field}` = '{$_value}'";
 				}
 				
-				$wherepPrefious = ' AND ' . implode(' AND ', $previousdata);
+				$wherePrevious = ' AND ' . implode(' AND ', $previousdata);
 			}
 			
 			if (!empty($fKeys)) {
-				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherepPrefious}";
+				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` {$fKeyQs} WHERE {$wheres}{$wherePrevious}";
 			} else {
-				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherepPrefious}";
+				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherePrevious}";
 			}
 			
 			return diy_query($sql, 'SELECT', $connection);
