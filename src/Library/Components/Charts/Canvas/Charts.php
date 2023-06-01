@@ -41,7 +41,15 @@ class Charts extends Builder {
 		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
 	}
 	
+	public function area($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
+	}
+	
 	public function bar($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
+	}
+	
+	public function pie($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
 	}
 	

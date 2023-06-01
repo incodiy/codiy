@@ -38,40 +38,42 @@ trait Scripts {
 		$dataPosts[$chartIDCode]['params']['filter']['where'] = [];
 		$jsonDataPosts                                        = json_encode($dataPosts);
 		
-		$script = "
-			<script type=\"text/javascript\">
-				$(document).ready(function() {
-					var ajaxFromTable{$formIDString} = {};
-					$('#{$submitFilterButton}').click(function() {
-						
-						var postFromTable{$chartIDString} = [ {$jsonDataPosts} ];
-						ajaxFromTable{$formIDString}      = $('#{$formIdentity}').serializeArray();
-						
-						if ('_token' === ajaxFromTable{$formIDString}[0].name) {
-							$.each(postFromTable{$chartIDString}, function(i, chartObj) {
-								$.each(chartObj, function(i, chartObjData) {
-									$.each(ajaxFromTable{$formIDString}, function(index, item) {
-										if ('_token' !== item.name && '' != item.value) {
-											chartObjData.params.filter.where.push({
-												field_name : item.name,
-												operator   : '=',
-												value      : item.value
-											});
-										}
-									});
-								});
-							});
-						}
-						
-						// Remove All Series @https://stackoverflow.com/questions/48590737/how-to-efficiently-remove-all-series-from-highchart-highstock-and-then-add-many/48645230#48645230
-						for (var i = {$chartIDString}.series.length - 1; i >= 0; i--) { {$chartIDString}.series[i].remove(false); }
-						
-						requestData{$chartIDString} ('{$urli}', { postFromTable{$chartIDString} });
-				    });
+		$script = "<script type=\"text/javascript\">";
+			$script .= "$(document).ready(function() {";
+			
+				$script .= "var ajaxFromTable{$formIDString} = {};";
+				$script .= "$('#{$submitFilterButton}').click(function() {";
+					$script .= "var postFromTable{$chartIDString} = [ {$jsonDataPosts} ];";
+					$script .= "ajaxFromTable{$formIDString}      = $('#{$formIdentity}').serializeArray();";
 					
-				});
-			</script>
-		";
+					$script .= "if ('_token' === ajaxFromTable{$formIDString}[0].name) {";
+						$script .= "$.each(postFromTable{$chartIDString}, function(i, chartObj) {";
+						
+							$script .= "$.each(chartObj, function(i, chartObjData) {";
+								$script .= "$.each(ajaxFromTable{$formIDString}, function(index, item) {";
+								
+									$script .= "if ('_token' !== item.name && '' != item.value) {";
+										$script .= "chartObjData.params.filter.where.push({";
+											$script .= "field_name : item.name,";
+											$script .= "operator   : '=',";
+											$script .= "value      : item.value";
+										$script .= "});";
+									$script .= "}";
+									
+								$script .= "});";
+							$script .= "});";
+						
+						$script .= "});";
+					$script .= "}";
+				
+					// Remove All Series @https://stackoverflow.com/questions/48590737/how-to-efficiently-remove-all-series-from-highchart-highstock-and-then-add-many/48645230#48645230
+					$script .= "for (var i = {$chartIDString}.series.length - 1; i >= 0; i--) { {$chartIDString}.series[i].remove(false); }";
+					
+					$script .= "requestData{$chartIDString} ('{$urli}', { postFromTable{$chartIDString} });";
+				$script .= "});";
+				
+			$script .= "});";
+		$script .= "</script>";
 		
 		$this->script_chart['js'] = $script;
 	}
@@ -84,37 +86,41 @@ trait Scripts {
 		$data['postData']   = $postData;
 		
 		$token  = csrf_token();
-		$script = "
-		function requestData{$data['identity']} (urliReq, dataValues) {
-			if ('object' == typeof urliReq) {
-				var urliReq    = '{$url}';
-				var dataValues = {$dataValues};
-			}
+		$script = "function requestData{$data['identity']} (urliReq, dataValues) {";
+		
+			$script .= "if ('object' == typeof urliReq) {";
+				$script .= "var urliReq    = '{$url}';";
+				$script .= "var dataValues = {$dataValues};";
+			$script .= "}";
 			
-		    $.ajax({
-		        url      : urliReq,
-		        type     : 'POST',
-				headers  : {'X-CSRF-TOKEN': '{$token}'},
-		        dataType : 'json',
-		        data     : dataValues,
-		        success  : function(data) {
-					$.each(data.category.{$postData}, function(i, chart) {
-						{$data['identity']}.xAxis[0].setCategories(chart);
-					});
+			$script .= "$.ajax({";
+				$script .= "url      : urliReq,";
+				$script .= "type     : 'POST',";
+				$script .= "headers  : {'X-CSRF-TOKEN': '{$token}'},";
+				$script .= "dataType : 'json',";
+				$script .= "data     : dataValues,";
+				
+				$script .= "success  : function(data) {";
+				
+					$script .= "$.each(data.category.{$postData}, function(i, chart) {";
+						$script .= "{$data['identity']}.xAxis[0].setCategories(chart);";
+					$script .= "});";
 					
-					$.each(data.series.{$postData}.series, function(i, chart) {
-						{$data['identity']}.addSeries({
-							name : chart.name,
-							data : chart.data,
-							type : chart.type
-			            });
-					});
+					$script .= "$.each(data.series.{$postData}.series, function(i, chart) {";
+						$script .= "{$data['identity']}.addSeries({";
+							$script .= "name : chart.name,";
+							$script .= "data : chart.data,";
+							$script .= "type : chart.type";
+						$script .= "});";
+					$script .= "});";
+				//	$script .= "{$data['identity']}.redraw();";
 					
-					{$data['identity']}.redraw();
-		        },
-		        cache: false
-		    });
-		}";
+				$script .= "},";
+				
+				$script .= "cache: false";
+			$script .= "});";
+			
+		$script .= "}";
 		
 		return $script;
 	}
@@ -133,19 +139,21 @@ trait Scripts {
 		$title       = json_encode(['text' => $this->setTitle($params['source'])]);
 		$subtitle    = '{}';
 		$axisTitle   = '{}';
-		$tooltip     = "{
-			headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>',
-			pointFormat : '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f} mm</b></td></tr>',
-			footerFormat: '</table>',
-			shared      : true,
-			useHTML     : true
-		}";
-		$plotOptions = "{
-			column: {
-				pointPadding: 0.2,
-				borderWidth : 0
-			}
-		}";
+		
+		$tooltip     = "{";
+			$tooltip .= "headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>',";
+			$tooltip .= "pointFormat : '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f} mm</b></td></tr>',";
+			$tooltip .= "footerFormat: '</table>',";
+			$tooltip .= "shared      : true,";
+			$tooltip .= "useHTML     : true";
+		$tooltip .= "}";
+		
+		$plotOptions = "{";
+			$plotOptions .= "column: {";
+				$plotOptions .= "pointPadding: 0.2,";
+				$plotOptions .= "borderWidth : 0";
+			$plotOptions .= "}";
+		$plotOptions .= "}";
 		
 		if (!empty($attributes)) {
 			if (!empty($attributes['title']))       $title       = json_encode($attributes['title']);
@@ -155,43 +163,57 @@ trait Scripts {
 			if (!empty($attributes['plotOptions'])) $plotOptions = json_encode($attributes['plotOptions']);
 		}
 		
-		$canvas = "
-		var filterData{$identity_string} = {};
-		var {$identity_string} = new Highcharts.chart({
-			chart: {
-				renderTo: '{$identity_chart}',
-				type    : '{$params['type']}',
-				events  : {
-					load: requestData{$identity_string}
-				}
-			},
-	        dataSource: {
-	            data: filterData{$identity_string}
-	        },
-			title: {$title},
-			subtitle: {$subtitle},
-			xAxis: {
-				crosshair: true
-			},
-			yAxis: {
-				min: 0,
-				title: {$axisTitle}
-			},
-			tooltip: {$tooltip},
-			plotOptions: {$plotOptions},
-			responsive: {
-				rules: [{
-					condition: {
-						maxWidth: 1000
-					},
-					chartOptions: {
-						legend: {
-							enabled: false
-						}
-					}
-				}]
-			}
-		});";
+		$canvas  = "var filterData{$identity_string} = [];";
+		$canvas .= "var {$identity_string} = new Highcharts.chart({";
+		
+			$canvas .= "chart: {";
+				$canvas .= "renderTo: '{$identity_chart}',";
+				$canvas .= "type: '{$params['type']}',";
+				$canvas .= "events: {";
+					$canvas .= "load: requestData{$identity_string}";
+				$canvas .= "}";
+			$canvas .= "},";
+			
+			$canvas .= "dataSource: {";
+				$canvas .= "data: filterData{$identity_string}";
+			$canvas .= "},";
+			
+			$canvas .= "title: {$title},";
+			$canvas .= "subtitle: {$subtitle},";
+			
+			$canvas .= "xAxis: {";
+				$canvas .= "categories: [],";
+				$canvas .= "crosshair: true";
+			$canvas .= "},";
+			
+			$canvas .= "yAxis: {";
+				$canvas .= "min: 0,";
+				$canvas .= "title: {$axisTitle}";
+			$canvas .= "},";
+			
+			$canvas .= "tooltip: {$tooltip},";
+			$canvas .= "plotOptions: {$plotOptions},";
+			
+			$canvas .= "responsive: {";
+			
+				$canvas .= "rules: [{";
+				
+					$canvas .= "condition: {";
+						$canvas .= "maxWidth: 500";
+					$canvas .= "},";
+					
+					$canvas .= "chartOptions: {";
+						$canvas .= "legend: {";
+							$canvas .= "enabled: false";
+						$canvas .= "}";
+					$canvas .= "}";
+					
+				$canvas .= "}]";
+				
+			$canvas .= "}";
+			
+		$canvas .= "});";
+		
 		return $canvas;
 	}
 }

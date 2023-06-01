@@ -289,7 +289,7 @@ trait DataModel {
 		}
 	}
 	
-	private static function manipulate($type = 'line', $source, $parameters, $category) {
+	private static function manipulate($type = 'column', $source, $parameters, $category) {
 		$combinedType = ['dualAxesLineAndColumn'];
 		$typeBasic    = $type;
 		$typeCombined = null;
