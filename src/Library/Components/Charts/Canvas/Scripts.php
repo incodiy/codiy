@@ -44,7 +44,7 @@ trait Scripts {
 				$script .= "var ajaxFromTable{$formIDString} = {};";
 				$script .= "$('#{$submitFilterButton}').click(function() {";
 					$script .= "var postFromTable{$chartIDString} = [ {$jsonDataPosts} ];";
-					$script .= "ajaxFromTable{$formIDString}      = $('#{$formIdentity}').serializeArray();";
+					$script .= "ajaxFromTable{$formIDString} = $('#{$formIdentity}').serializeArray();";
 					
 					$script .= "if ('_token' === ajaxFromTable{$formIDString}[0].name) {";
 						$script .= "$.each(postFromTable{$chartIDString}, function(i, chartObj) {";
@@ -54,9 +54,9 @@ trait Scripts {
 								
 									$script .= "if ('_token' !== item.name && '' != item.value) {";
 										$script .= "chartObjData.params.filter.where.push({";
-											$script .= "field_name : item.name,";
-											$script .= "operator   : '=',";
-											$script .= "value      : item.value";
+											$script .= "field_name: item.name,";
+											$script .= "operator: '=',";
+											$script .= "value: item.value";
 										$script .= "});";
 									$script .= "}";
 									
@@ -89,18 +89,18 @@ trait Scripts {
 		$script = "function requestData{$data['identity']} (urliReq, dataValues) {";
 		
 			$script .= "if ('object' == typeof urliReq) {";
-				$script .= "var urliReq    = '{$url}';";
+				$script .= "var urliReq = '{$url}';";
 				$script .= "var dataValues = {$dataValues};";
 			$script .= "}";
 			
 			$script .= "$.ajax({";
-				$script .= "url      : urliReq,";
-				$script .= "type     : 'POST',";
-				$script .= "headers  : {'X-CSRF-TOKEN': '{$token}'},";
-				$script .= "dataType : 'json',";
-				$script .= "data     : dataValues,";
+				$script .= "url: urliReq,";
+				$script .= "type: 'POST',";
+				$script .= "headers: {'X-CSRF-TOKEN': '{$token}'},";
+				$script .= "dataType: 'json',";
+				$script .= "data: dataValues,";
 				
-				$script .= "success  : function(data) {";
+				$script .= "success: function(data) {";
 				
 					$script .= "$.each(data.category.{$postData}, function(i, chart) {";
 						$script .= "{$data['identity']}.xAxis[0].setCategories(chart);";
@@ -108,9 +108,9 @@ trait Scripts {
 					
 					$script .= "$.each(data.series.{$postData}.series, function(i, chart) {";
 						$script .= "{$data['identity']}.addSeries({";
-							$script .= "name : chart.name,";
-							$script .= "data : chart.data,";
-							$script .= "type : chart.type";
+							$script .= "name: chart.name,";
+							$script .= "data: chart.data,";
+							$script .= "type: chart.type";
 						$script .= "});";
 					$script .= "});";
 				//	$script .= "{$data['identity']}.redraw();";
@@ -144,14 +144,14 @@ trait Scripts {
 			$tooltip .= "headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>',";
 			$tooltip .= "pointFormat : '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f} mm</b></td></tr>',";
 			$tooltip .= "footerFormat: '</table>',";
-			$tooltip .= "shared      : true,";
-			$tooltip .= "useHTML     : true";
+			$tooltip .= "shared: true,";
+			$tooltip .= "useHTML: true";
 		$tooltip .= "}";
 		
 		$plotOptions = "{";
 			$plotOptions .= "column: {";
 				$plotOptions .= "pointPadding: 0.2,";
-				$plotOptions .= "borderWidth : 0";
+				$plotOptions .= "borderWidth: 0";
 			$plotOptions .= "}";
 		$plotOptions .= "}";
 		
