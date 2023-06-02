@@ -323,9 +323,9 @@ trait DataModel {
 			if (!empty($data->{$category})) $chartData['category'][$data->{$category}] = $data->{$category};
 			if (!empty($data->{$paramCharts['name']})) {
 				if (!empty($data->{$paramCharts['data']})) {
-					$chartData['data'][$data->{$paramCharts['name']}][]     = intval($data->{$paramCharts['data']});
+					$chartData['data'][$data->{$paramCharts['name']}][] = intval($data->{$paramCharts['data']});
 				} else {
-					$chartData['data'][$data->{$paramCharts['name']}][null] = null;
+					$chartData['data'][$data->{$paramCharts['name']}][] = null;
 				}
 			}
 			
