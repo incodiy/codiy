@@ -27,8 +27,35 @@ class Charts extends Builder {
 		}
 	}
 	
+	protected $negativeValues = false;
+	/**
+	 * Detect Negative Value
+	 * 
+	 * @uses In chart with [ column, bar ] type
+	 */
+	public function detectNegativeValue($status = true, $stack = true) {
+		$this->negativeValues = $status;
+		$this->stack($status);
+	}
+	
+	protected $stackOption = false;
+	public function stack($status = true) {
+		$this->stackOption = $status;
+	}
+	
 	public function canvas($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		$this->setParams($type, $source, $fieldsets, $format, $category, $group, $order);
+		$options = [];
+		if (!empty($this->negativeValues) && true === $this->negativeValues) {
+			$options['negative_values'] = $this->negativeValues;
+			unset($this->negativeValues);
+		}
+		
+		if (!empty($this->stackOption) && false !== $this->stackOption) {
+			$options['stack'] = $this->stackOption;
+			unset($this->stackOption);
+		}
+		
+		$this->setParams($type, $source, $fieldsets, $format, $category, $group, $order, $options);
 		
 		return $this->chartCanvas($this->sourceIdentity);
 	}
@@ -41,7 +68,15 @@ class Charts extends Builder {
 		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
 	}
 	
+	public function spline($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
+	}
+	
 	public function area($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
+	}
+	
+	public function areaspline($source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
 		return $this->canvas(__FUNCTION__, $source, $fieldsets, $format, $category, $group, $order);
 	}
 	

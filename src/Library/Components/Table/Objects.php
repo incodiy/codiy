@@ -52,11 +52,28 @@ class Objects extends Builder {
 		$this->labelTable = $label;
 	}
 	
+	private function chartCanvas() {
+		return new Chart();
+	}
+	
+	private $chartOptions = [];
+	public function chartOptions($option_name, $option_values = []) {
+		$this->chartOptions[$option_name] = $option_values;
+	}
+	
 	private $syncElements = false;
 	public function chart($chart_type, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
-		$chart             = new Chart();
+		$chart             = $this->chartCanvas();
 		$chart->connection = $this->connection;
 		$chart->syncWith($this);
+		
+		if (!empty($this->chartOptions)) {
+			foreach ($this->chartOptions as $optName => $optValues) {
+				$chart->{$optName}($optValues);
+			}
+			unset($this->chartOptions);
+		}
+		
 		$chart->{$chart_type}($this->tableName, $fieldsets, $format, $category, $group, $order);
 		
 		$this->element_name['chart']      = $chart->chartLibrary;

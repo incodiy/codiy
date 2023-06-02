@@ -79,6 +79,7 @@ trait Scripts {
 	}
 	
 	protected function ajaxProcess($identity, $url, $dataValues, $postData) {
+		
 		$data               = [];
 		$data['identity']   = $identity;
 		$data['url']        = $url;
@@ -136,24 +137,48 @@ trait Scripts {
 	}
 	
 	protected function canvascipt($identity_chart, $identity_string, $params = [], $attributes = []) {
-		$title       = json_encode(['text' => $this->setTitle($params['source'])]);
-		$subtitle    = '{}';
-		$axisTitle   = '{}';
+		$title        = json_encode(['text' => $this->setTitle($params['source'])]);
+		$subtitle     = '{}';
+		$axisTitle    = '{}';
 		
-		$tooltip     = "{";
+		$yAxisMin     = "min: 0,";
+		if (!empty($params['options']['negative_values']) && true === $params['options']['negative_values']) {
+			$yAxisMin = '';
+		}
+		
+		$options = [];
+		$options['column']['pointPadding'] = 0.2;
+		$options['column']['borderWidth'] = 0;
+		if (!empty($params['options']['stack']) && false !== $params['options']['stack']) {
+			if (true === $params['options']['stack']) {
+				$options['series']['stacking'] = 'normal';
+			} else {
+				$options['series']['pointStart']      = -51003;
+				$options['area']['stacking']          = $params['options']['stack'];
+				$options['area']['marker']['enabled'] = false;
+			}
+		}
+		
+		if (!empty($options)) {
+			$opts = [];
+			foreach ($options as $optLabel => $optValues) {
+				$opts[$optLabel] = $optValues;
+			}
+			$jsonOptions = json_encode($opts);
+			unset($options);
+			$options = $jsonOptions;
+		}
+		
+		$tooltipFormatPoint = '';
+		$tooltip  = "{";
 			$tooltip .= "headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>',";
-			$tooltip .= "pointFormat : '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f} mm</b></td></tr>',";
+			$tooltip .= "pointFormat : '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y:.1f} {$tooltipFormatPoint}</b></td></tr>',";
 			$tooltip .= "footerFormat: '</table>',";
 			$tooltip .= "shared: true,";
 			$tooltip .= "useHTML: true";
 		$tooltip .= "}";
 		
-		$plotOptions = "{";
-			$plotOptions .= "column: {";
-				$plotOptions .= "pointPadding: 0.2,";
-				$plotOptions .= "borderWidth: 0";
-			$plotOptions .= "}";
-		$plotOptions .= "}";
+		$plotOptions = $options;
 		
 		if (!empty($attributes)) {
 			if (!empty($attributes['title']))       $title       = json_encode($attributes['title']);
@@ -182,12 +207,12 @@ trait Scripts {
 			$canvas .= "subtitle: {$subtitle},";
 			
 			$canvas .= "xAxis: {";
-				$canvas .= "categories: [],";
+			//	$canvas .= "categories: [],";
 				$canvas .= "crosshair: true";
 			$canvas .= "},";
 			
 			$canvas .= "yAxis: {";
-				$canvas .= "min: 0,";
+				$canvas .= $yAxisMin;
 				$canvas .= "title: {$axisTitle}";
 			$canvas .= "},";
 			

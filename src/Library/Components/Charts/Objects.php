@@ -64,7 +64,7 @@ class Objects extends Charts {
 	
 	public    $identities = [];
 	protected $sourceIdentity;
-	protected function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null) {
+	protected function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null, $options = []) {
 		$this->sourceIdentity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
 		
 		$this->identities[$this->sourceIdentity]['connection'] = $this->connection;
@@ -80,11 +80,18 @@ class Objects extends Charts {
 		$this->params[$this->sourceIdentity]['group']          = $group;
 		$this->params[$this->sourceIdentity]['order']          = $order;
 		$this->params[$this->sourceIdentity]['filter']         = [];
+		$this->params[$this->sourceIdentity]['options']        = [];
+		
+		if (!empty($options)) {
+			foreach ($options as $opt_label => $opt_values) {
+				$this->params[$this->sourceIdentity]['options'][$opt_label] = $opt_values;
+			}
+		}
 		
 		if (!empty($this->sync)) {
 			$sync = $this->sync;
 			unset($this->sync);
-			$this->params[$this->sourceIdentity]['filter']     = $sync['filter'];
+			$this->params[$this->sourceIdentity]['filter'] = $sync['filter'];
 		}
 		
 		if (!empty($this->attributes)) {
