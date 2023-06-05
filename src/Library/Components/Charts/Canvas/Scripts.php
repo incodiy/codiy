@@ -32,6 +32,13 @@ trait Scripts {
 		$submitFilterButton = str_replace('_cdyFILTERForm', '_submitFilterButton', "{$formIdentity}");
 		$urli               = $this->chartURI[$chartIdentity[$formIdentity]['code']] . '&diyChartDataFilter=' . $chartIDString . '&diyChartData=' . $chartIDCode;
 		
+		unset($chartIdentity[$formIdentity]['source']);
+		unset($chartIdentity[$formIdentity]['code']);
+		unset($chartIdentity[$formIdentity]['string']);
+		
+		$data['datatables']['source'] = 'diyChartDataFilter::' . diy_encrypt($data['datatables']['source']);
+		
+		
 		$dataPosts = [];
 		$dataPosts[$chartIDCode]['info']                      = $chartIdentity[$formIdentity];
 		$dataPosts[$chartIDCode]['params']                    = $data['datatables'];
@@ -49,7 +56,7 @@ trait Scripts {
 					$script .= "if ('_token' === ajaxFromTable{$formIDString}[0].name) {";
 						$script .= "$.each(postFromTable{$chartIDString}, function(i, chartObj) {";
 						
-							$script .= "$.each(chartObj, function(i, chartObjData) {";
+							$script .= "$.each(chartObj, function(i, chartObjData) {console.log(chartObjData);";
 								$script .= "$.each(ajaxFromTable{$formIDString}, function(index, item) {";
 								
 									$script .= "if ('_token' !== item.name && '' != item.value) {";

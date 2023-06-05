@@ -264,14 +264,20 @@ trait DataModel {
 					$str_filters = ' ' . implode(' ', $dataFilters);
 				}
 				
+				
+				$sourceTable = $sourceData->source;
+				if (diy_string_contained($sourceData->source, 'diyChartDataFilter::')) {
+					$sourceTable = diy_decrypt(str_replace('diyChartDataFilter::', '', $sourceData->source));
+				}
+				
 				// DATA LINE HERE
 				if (!$multiValues) {
-					$sql  = "SELECT {$str_field} FROM {$sourceData->source}{$str_filters}{$str_group}{$str_order};";
+					$sql  = "SELECT {$str_field} FROM {$sourceTable}{$str_filters}{$str_group}{$str_order};";
 				} else {
 					$sqli = [];
 					if (!empty($str_field) && is_array($str_field)) {
 						foreach ($str_field as $str_field_info) {
-							$sqli[] = "SELECT {$str_field_info} FROM {$sourceData->source}{$str_filters}{$str_group}";
+							$sqli[] = "SELECT {$str_field_info} FROM {$sourceTable}{$str_filters}{$str_group}";
 						}
 					}
 					$sql  = implode(' UNION ALL ', $sqli) . "{$str_order};";
