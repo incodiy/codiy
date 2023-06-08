@@ -164,7 +164,7 @@ class ImportAccountsController extends Controller {
 							}
 							$userAliases = [];
 							foreach ($aliases as $alsKey => $alsVal) {
-								$userAliases[] = ":{$alsKey}|" . implode(',', array_unique($alsVal));
+								$userAliases[] = ":{$alsKey}|" . implode(",{$alsKey}|", array_unique($alsVal));
 							}
 							
 							$alias = [];
