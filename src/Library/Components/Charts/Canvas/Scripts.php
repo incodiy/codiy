@@ -155,17 +155,26 @@ trait Scripts {
 		
 		$options = [];
 		$options['column']['pointPadding'] = 0.2;
-		$options['column']['borderWidth'] = 0;
+		$options['column']['borderWidth']  = 0;
+		
+		if ('area' === $params['type']) {
+			//	$options['area']['pointStart']        = 0;
+			$options['area']['marker']['enabled'] = false;
+			$options['area']['marker']['symbol']  = 'circle';
+			$options['area']['marker']['radius']  = 2;
+			$options['area']['marker']['states']['hover']['enabled'] = true;
+		}
+		
 		if (!empty($params['options']['stack']) && false !== $params['options']['stack']) {
 			if (true === $params['options']['stack']) {
 				$options['series']['stacking'] = 'normal';
 			} else {
-				$options['series']['pointStart']      = -51003;
+			//	$options['series']['pointStart']      = -51003;
 				$options['area']['stacking']          = $params['options']['stack'];
 				$options['area']['marker']['enabled'] = false;
 			}
 		}
-		
+	//	dd($options);
 		if (!empty($options)) {
 			$opts = [];
 			foreach ($options as $optLabel => $optValues) {

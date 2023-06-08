@@ -39,6 +39,10 @@ class Objects extends Charts {
 		$this->element_name['chart'] = $this->chartLibrary;
 	}
 	
+	public function use($chart) {
+		$this->chartLibrary = $chart;
+	}
+	
 	public function connection($db_connection) {
 		$this->connection = $db_connection;
 	}
