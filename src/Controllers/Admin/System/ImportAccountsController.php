@@ -150,9 +150,34 @@ class ImportAccountsController extends Controller {
 							$this->insertUsers[$n]['created_at'] = date('Y-m-d H:i:s');
 						}
 					}
+					
+					if ('maps' === $userField) {
+						unset($this->insertUsers[$n][$userField]);
+						if (!empty($userValue)) {
+							$aliases = [];
+							foreach (json_decode($userValue) as $alias) {
+								foreach ($alias as $aliasKey => $aliasValue) {
+									if ('all' !== strtolower($aliasValue)) {
+										$aliases[$aliasKey][] = $aliasValue;
+									}
+								}
+							}
+							$userAliases = [];
+							foreach ($aliases as $alsKey => $alsVal) {
+								$userAliases[] = ":{$alsKey}|" . implode(',', array_unique($alsVal));
+							}
+							
+							$alias = [];
+							foreach ($userAliases as $akey => $aVal) {
+								$alias[$akey] = $aVal;
+							}
+							
+							$this->insertUsers[$n]['alias'] = implode('', $alias);
+						}
+					}
 				}
 			}
-			dd($this->insertUsers);
+			
 			if (!empty($this->insertUsers)) {
 				
 				$checkEmail     = array_flip($this->userEmails);
@@ -267,7 +292,7 @@ class ImportAccountsController extends Controller {
 		}
 		
 		// INSERT NEW ROLES
-	#	$this->addGroups($contentFile['roles']);
+		$this->addGroups($contentFile['roles']);
 		// INSERT NEW USERS
 		$this->addUsers($contentFile['users']);
 		
