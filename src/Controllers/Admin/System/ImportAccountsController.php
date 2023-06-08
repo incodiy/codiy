@@ -152,7 +152,7 @@ class ImportAccountsController extends Controller {
 					}
 				}
 			}
-			
+			dd($this->insertUsers);
 			if (!empty($this->insertUsers)) {
 				
 				$checkEmail     = array_flip($this->userEmails);
@@ -202,7 +202,7 @@ class ImportAccountsController extends Controller {
 				$fieldvalue = $row;
 				
 				if (diy_string_contained($fieldname, 'username')) $fieldvalue = strtolower($row);
-				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias') || diy_string_contained($fieldname, 'info')) $fieldvalue = ucwords($row);
+				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias') || diy_string_contained($fieldname, 'info') || diy_string_contained($fieldname, 'maps')) $fieldvalue = ucwords($row);
 				
 				if (diy_string_contained($fieldname, 'role')) $contentFile['roles'][$n]['role']  = $fieldvalue;
 				if (diy_string_contained($fieldname, 'role')) {
@@ -267,7 +267,7 @@ class ImportAccountsController extends Controller {
 		}
 		
 		// INSERT NEW ROLES
-		$this->addGroups($contentFile['roles']);
+	#	$this->addGroups($contentFile['roles']);
 		// INSERT NEW USERS
 		$this->addUsers($contentFile['users']);
 		
