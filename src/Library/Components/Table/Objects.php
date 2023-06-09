@@ -4,6 +4,7 @@ namespace Incodiy\Codiy\Library\Components\Table;
 use Incodiy\Codiy\Library\Components\Table\Craft\Builder;
 use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
 use Incodiy\Codiy\Library\Components\Charts\Objects as Chart;
+use PhpParser\Node\Expr\BinaryOp\Identical;
 
 /**
  * Created on 12 Apr 2021
@@ -514,9 +515,17 @@ class Objects extends Builder {
 		$this->variables[$name] = [];
 	}
 	
+	
+	public $useFieldTargetURL = 'id';
+	public function setUrlValue($field = 'id') {
+		$this->variables['url_value'] = $field;
+		$this->useFieldTargetURL = $field;
+	}
+	
 	private $variables = [];
 	private function clear_all_variables() {
 		$this->variables['on_load']              = [];
+		$this->variables['url_value']            = [];
 		$this->variables['merged_columns']       = [];
 		$this->variables['text_align']           = [];
 		$this->variables['background_color']     = [];
@@ -736,7 +745,11 @@ class Objects extends Builder {
 			$fieldset_added = $fields;
 			
 			if (!empty($fields)) {
-				$fields = $this->check_column_exist($table_name, $fields, $this->connection);
+			
+				// If table was not view
+				if (!diy_string_contained($table_name, 'view_')) {
+					$fields = $this->check_column_exist($table_name, $fields, $this->connection);
+				}
 			} elseif (!empty($this->variables['table_fields'])) {
 				$fields = $this->check_column_exist($table_name, $this->variables['table_fields']);
 			} else {
@@ -744,9 +757,9 @@ class Objects extends Builder {
 			}
 			
 			// RELATIONAL PROCESS
-			$relations         = [];
-			$field_relations   = [];
-			$fieldset_changed  = [];
+			$relations        = [];
+			$field_relations  = [];
+			$fieldset_changed = [];
 			if (!empty($this->relational_data)) {
 				foreach ($this->relational_data as $relData) {
 					if (!empty($relData['field_target'])) {
@@ -843,6 +856,10 @@ class Objects extends Builder {
 		$this->params[$table_name]['server_side']['custom_url']       = $server_side_custom_url;
 		if (!empty($this->variables['column_width'])) {
 			$this->params[$table_name]['attributes']['column_width']  = $this->variables['column_width'];
+		}
+		
+		if (!empty($this->variables['url_value'])) {
+			$this->params[$table_name]['url_value']  = $this->variables['url_value'];
 		}
 		
 		if (!empty($this->variables['add_table_attributes'])) {

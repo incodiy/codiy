@@ -53,7 +53,7 @@ trait Scripts {
 			$fixedColumnData = json_encode($data_info['fixed_columns']);
 			$_fixedColumn    = 'scrollY:300,scrollX:true,scrollCollapse:true,fixedColumns:' . $fixedColumnData . ',';
 		}
-		$_scroller     = '"scroller"     :true,';
+	//	$_scroller     = '"scroller"     :true,';
 		$_searching    = '"searching"    :true,';
 		$_processing   = '"processing"   :true,';
 		$_retrieve     = '"retrieve"     :false,';

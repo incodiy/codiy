@@ -16,8 +16,8 @@ use Incodiy\Codiy\Models\Core\Model;
  */
  
 class Preference extends Model {
-	protected $table		= 'base_preference';
-	protected $guarded	= [];
+	protected $table   = 'base_preference';
+	protected $guarded = [];
 	
-	public $timestamps	= false;
+	public $timestamps = false;
 }

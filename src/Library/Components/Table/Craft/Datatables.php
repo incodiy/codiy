@@ -363,7 +363,7 @@ class Datatables {
 				});
 			}
 		}
-		
+	//	dd($model);
 		$rlp                     = false;
 		$row_attributes          = [];
 		$row_attributes['class'] = null;
@@ -391,8 +391,10 @@ class Datatables {
 			$action_data['action']['removed'] = $data->datatables->button_removed;
 		}
 		
-		$datatables->addColumn('action', function($model) use($action_data) {
-			return $this->setRowActionURLs($model, $action_data);
+		$urlTarget = $data->datatables->useFieldTargetURL;
+		
+		$datatables->addColumn('action', function($model) use($action_data, $urlTarget) {
+			return $this->setRowActionURLs($model, $action_data, $urlTarget);
 		});
 		
 		$tableData = [];
@@ -407,8 +409,8 @@ class Datatables {
 		return $tableData;
 	}
 	
-	private function setRowActionURLs($model, $data) {
-		return diy_table_action_button($model, $data['current_url'], $data['action']['data'], $data['action']['removed']);
+	private function setRowActionURLs($model, $data, $field_target = 'id') {
+		return diy_table_action_button($model, $field_target, $data['current_url'], $data['action']['data'], $data['action']['removed']);
 	}
 		
 	private function imageViewColumn($model, $datatables) {

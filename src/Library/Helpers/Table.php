@@ -226,7 +226,7 @@ if (!function_exists('diy_table_action_button')) {
 	 *
 	 * @return string
 	 */
-	function diy_table_action_button($row_data, $current_url, $action, $removed_button = null) {
+	function diy_table_action_button($row_data, $field_target = 'id', $current_url, $action, $removed_button = null) {
 		$privileges              = session()->all()['privileges']['role'];
 		$path                    = [];
 		$addActions              = [];
@@ -302,12 +302,13 @@ if (!function_exists('diy_table_action_button')) {
 		}
 		
 		// Default Action
-		$path['view'] = "{$current_url}/{$row_data->id}";
-		$path['edit'] = "{$current_url}/{$row_data->id}/edit";
+		$urlTarget = $row_data->{$field_target};
+		$path['view'] = "{$current_url}/{$urlTarget}";
+		$path['edit'] = "{$current_url}/{$urlTarget}/edit";
 		if (!empty($row_data->deleted_at)) {
-			$path['delete'] = "{$current_url}/{$row_data->id}/restore_deleted";
+			$path['delete'] = "{$current_url}/{$urlTarget}/restore_deleted";
 		} else {
-			$path['delete'] = "{$current_url}/{$row_data->id}/delete";
+			$path['delete'] = "{$current_url}/{$urlTarget}/delete";
 		}
 		
 		if (false === $enabledAction['read'])   $path['view']   = false;
@@ -317,12 +318,12 @@ if (!function_exists('diy_table_action_button')) {
 		if (count($addActions) >= 1) {
 			foreach ($addActions as $action_name => $action_values) {
 				if (!in_array($action_name, ['show', 'view', 'create', 'edit', 'delete'])) {
-					$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
+					$add_path[$action_name]['url'] = "{$current_url}/{$urlTarget}/{$action_name}";
 					if (is_array($action_values)) {
 						foreach ($action_values as $actionKey => $actionValue) {
 							if ($actionKey === $action_name) {
 								$add_path[$action_name]        = $actionValue;
-								$add_path[$action_name]['url'] = "{$current_url}/{$row_data->id}/{$action_name}";
+								$add_path[$action_name]['url'] = "{$current_url}/{$urlTarget}/{$action_name}";
 							} else {
 								$add_path[$action_name][$actionKey] = $actionValue;
 							}
