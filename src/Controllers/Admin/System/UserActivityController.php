@@ -21,43 +21,16 @@ class UserActivityController extends Controller {
 	use Handler;
 	
 	private $fields = [
-		'created_date',
+		'period',
 		'roles',
-		'role_location',
+		'region',
 		'username',
-		'user_fullname',
+		'fullname',
 		'user_email',
-		'module_name',
-		'route_path',
-		'page_info',
-		'ip_address',
-		'user_agent',
-		'datetime_start',
-		'datetime_end',
-		'time_start',
-		'time_end',
-		'time_hits',
-		'time_length',
-		'time_length_detail',
-		'datetime_refreshed',
-		'time_refreshed',
-		'user_status',
-		'user_info',
-		'insert_date',
-		'insert_time'
-	];
-	
-	private $fieldset = [
-		'user_fullname:User Name',
-		'user_group_info:Group Info',
-		'route_path',
-		'module_name',
-		'page_info',
-		'urli',
-		'method',
-		'ip_address',
-		'user_agent',
-		'created_at'
+		'last_access',
+		'hits',
+		'length_days',
+		'user_status'
 	];
 	
 	public function __construct() {
@@ -69,8 +42,21 @@ class UserActivityController extends Controller {
 		$this->removeActionButtons(['add']);
 		
 		$this->table->setUrlValue('user_id');
-	//	$this->table->lists($this->model_table, $this->fields, ['new_button', 'button_name|warning|tags']);
-		$this->table->lists($this->model_table, $this->fields);
+	
+		$this->table->searchable(['period', 'roles', 'region', 'username']);
+		$this->table->clickable();
+		$this->table->sortable();
+		 
+		$this->table->orderby('period', 'desc');
+		
+		$this->table->filterGroups('period', 'selectbox', true);
+		$this->table->filterGroups('roles', 'selectbox', true);
+		$this->table->filterGroups('region', 'selectbox', true);
+		$this->table->filterGroups('username', 'selectbox', false);
+		
+		$this->table->columnCondition('hits', 'cell', '<=', 10, 'background-color', 'rgb(255, 242, 204)');
+		
+		$this->table->lists($this->model_table, $this->fields, ['action_check|warning|power-off']);
 		
 		return $this->render();
 	}

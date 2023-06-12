@@ -193,7 +193,7 @@ class BaseTables extends Config {
 			$table->timestamps();
 			
 			$table->softDeletes();
-			$table->smallInteger('active')->default(0);
+			$table->smallInteger('user_status')->default(0);
 			
 			$table->index('username');
 			$table->index('email');

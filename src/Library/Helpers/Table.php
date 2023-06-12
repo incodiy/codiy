@@ -364,18 +364,18 @@ if (!function_exists('diy_add_action_button_by_string')) {
 			$actionAttr = [];
 			
 			if (count($str_action) >= 2) {
-				$actionAttr['color']    = false;
+				$actionAttr['color'] = false;
 				if (isset($str_action[1])) {
 					$actionAttr['color'] = $str_action[1];
 				}
 				
 				$actionAttr['icon'] = false;
 				if (isset($str_action[2])) {
-					$actionAttr['icon']  = $str_action[2];
+					$actionAttr['icon'] = $str_action[2];
 				}
 				$addActions[$str_name]  = $actionAttr;
 			} else {
-				$addActions[$action]	   = $action;
+				$addActions[$action]    = $action;
 			}
 		}
 		
@@ -676,20 +676,19 @@ if (!function_exists('diy_generate_table')) {
 			$_body = null;
 		}
 		
-		
 		$table = "<table{$attributes}>{$_header}{$_body}</table>";
 		
 		return $table;
 	}
 	
 	function tableColumn($header, $hIndex, $hList) {
-		$hNumber   = false;
-		$hCheck    = false;
-		$hEmpty    = false;
-		$_header   = false;
+		$hNumber = false;
+		$hCheck  = false;
+		$hEmpty  = false;
+		$_header = false;
 		
-		$HKEY       = false;
-		$HVAL       = false;
+		$HKEY    = false;
+		$HVAL    = false;
 		if (is_array($hList)) {
 			$keyList = array_keys($hList);
 			$HKEY    = $keyList[0];
@@ -698,8 +697,8 @@ if (!function_exists('diy_generate_table')) {
 			$HKEY    = $hList;
 			$HVAL    = trim(ucwords(str_replace('_', ' ', $HKEY)));
 		}
-		$hList      = $HKEY;
-		$hLabel     = $HVAL;
+		$hList       = $HKEY;
+		$hLabel      = $HVAL;
 		
 		$hListFields = $hList;
 		if (true === str_contains($hList, '|')) {

@@ -146,6 +146,7 @@ class ImportAccountsController extends Controller {
 					if ('username' === $userField) {
 						if (!isset($this->userEmails[$userValue])) {
 							$this->insertUsers[$n]['password']   = "{$this->passPrefix}{$userValue}{$this->passSuffix}";
+							$this->insertUsers[$n]['active']     = 1;
 							$this->insertUsers[$n]['created_by'] = Auth::id();
 							$this->insertUsers[$n]['created_at'] = date('Y-m-d H:i:s');
 						}

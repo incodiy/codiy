@@ -392,7 +392,7 @@ if (!function_exists('diy_form_set_active_value')) {
 	 */
 	function diy_form_set_active_value($value) {
 		$val = 'No';
-		if (1 == $value) $val = 'Yes';
+		if (1 === $value) $val = 'Yes';
 		
 		return $val;
 	}

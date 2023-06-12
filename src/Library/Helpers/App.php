@@ -1468,7 +1468,7 @@ if (!function_exists('active_box')) {
 	 */
 	function active_box($en = true) {
 		if (true === $en) {
-			return [null => ''] + ['No', 'Yes'];
+			return [null => ''] + ['Off, Non Active', 'Active'];
 		} else {
 			return [null => ''] + ['Tidak Aktif', 'Aktif'];
 		}

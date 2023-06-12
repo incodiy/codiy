@@ -96,10 +96,11 @@ class Datatables {
 		
 		if (!empty($column_data[$table_name]['actions']) || is_array($column_data[$table_name]['actions'])) {
 			
+			$action_default = ['view', 'insert', 'edit', 'delete'];
 			if (true === $column_data[$table_name]['actions']) {
-				$action_list = ['view', 'insert', 'edit', 'delete'];
+				$action_list = $action_default;
 			} else {				
-				$action_list = $column_data[$table_name]['actions'];
+				$action_list = array_merge_recursive_distinct($action_default, $column_data[$table_name]['actions']);
 			}
 			
 			$actions = null;
