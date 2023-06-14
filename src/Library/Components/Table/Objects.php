@@ -584,11 +584,14 @@ class Objects extends Builder {
 	 * @param string $rule
 	 *       : [ css style, prefix, suffix, prefix&suffix, replace, integer, float [ code: float or float|2 ] ]
 	 * @param string|array $action
+	 *       : string can be used to replace url button with set $rule with replace and $action with this format
+	 *       	=> Format: url::url-info|color-info|icon-info
 	 *       : array used for "prefix&suffix" rule type.
 	 *         First array should be prefix value and second/last array should be suffix value.
 	 * @example
 	 *       : $this->table->columnCondition('text_field', 'cell', '!==', 'Testing', 'prefix', '! ');
 	 *       : $this->table->columnCondition('text_field', 'row', '!==', 'Testing', 'background-color', '#F1F7CB');
+	 *       : $this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'url::action_check|danger|volume-off');
 	 */
 	public function columnCondition(string $field_name, string $target, string $logic_operator = null, string $value = null, string $rule, $action) {
 		$this->conditions['columns'][] = [
@@ -874,7 +877,7 @@ class Objects extends Builder {
 				$this->conditions[$table_name]['formula'] = $this->formula[$table_name];
 			}
 			if (!empty($this->conditions['where'])) {
-				$whereConds = [];//$this->conditions['where'];
+				$whereConds = [];
 				foreach ($this->conditions['where'] as $where_conds) {
 					$whereConds[$where_conds['field_name']][$where_conds['operator']]['field_name'][$where_conds['field_name']] = $where_conds['field_name'];
 					$whereConds[$where_conds['field_name']][$where_conds['operator']]['operator'][$where_conds['operator']]     = $where_conds['operator'];

@@ -16,6 +16,7 @@ use Incodiy\Codiy\Models\Core\Model;
  * @email       wisnuwidi@gmail.com
  */
 class UserActivity extends Model {
+//	protected $table   = 'report_user_activity_monthly';
 	protected $table   = 'view_report_user_activity_monthly';
 	protected $guarded = [];
 }

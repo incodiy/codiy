@@ -454,6 +454,7 @@ if (!function_exists('create_action_buttons')) {
 		if (true === is_array($add_action)) {
 			if (count($add_action) >= 1) {
 				foreach ($add_action as $new_action_name => $new_action_values) {
+					$btn_name  = $new_action_name;
 					$row_name  = camel_case($new_action_name);
 					$row_url   = $new_action_values['url'];
 					$row_color = null;
@@ -464,7 +465,7 @@ if (!function_exists('create_action_buttons')) {
 					if (true === $restoreDeleted) {
 						$actionVisibilityAttr = ' readonly disabled class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="' . $row_name . '"';
 					} else {
-						$actionVisibilityAttr = ' href="' . $row_url . '" class="btn btn-' . $row_color. ' btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="' . $row_name . '"';
+						$actionVisibilityAttr = ' href="' . $row_url . '" class="btn ' . $btn_name . ' btn-' . $row_color. ' btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="' . $row_name . '"';
 					}
 					$buttonNew       .= '<a' . $actionVisibilityAttr . '><i class="fa fa-' . $row_icon . '"></i></a>';
 					$buttonNewMobile .= '<li><a href="' . $row_url . '" class="tooltip-error" data-rel="tooltip" title="' . $row_name . '"><span class="red"><i class="fa fa-' . $row_icon . ' bigger-120"></i></span></a></li>';

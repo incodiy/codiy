@@ -10,7 +10,7 @@ class User extends Authenticatable {
 	use Notifiable;
 	use SoftDeletes;
 	
-	protected $table = 'users';
+	protected $table   = 'users';
 	
 	public $groupInfo;
 	

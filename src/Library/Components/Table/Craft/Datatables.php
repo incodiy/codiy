@@ -364,7 +364,7 @@ class Datatables {
 				});
 			}
 		}
-	//	dd($model);
+		
 		$rlp                     = false;
 		$row_attributes          = [];
 		$row_attributes['class'] = null;

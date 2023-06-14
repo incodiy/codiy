@@ -98,7 +98,7 @@ trait Scripts {
 		
 		$js_conditional = null;
 		if (!empty($data_info['conditions']['columns'])) {
-			$js_conditional = $this->conditionalColumns($data_info['conditions']['columns'], $data_info['columns']);
+			$js_conditional = $this->conditionalColumns("cody_{$varTableID}_dt", $data_info['conditions']['columns'], $data_info['columns']);
 		}
 		
 		$filter_button = false;
@@ -118,7 +118,6 @@ trait Scripts {
 			
 			$scriptURI    = "{$current_url}?{$link_url}";
 			$colDefs      = ",columnDefs:[{target:[1],visible:false,searchable:false,className:'control hidden-column'}";
-		//	$colDefs      = ",columnDefs:[";
 			$orderColumn  = ",order:[[1,'desc']]{$colDefs}]";
 			$columns      = ",columns:{$columns}{$orderColumn}";
 			$url_path     = url(diy_current_route()->uri);
@@ -181,14 +180,19 @@ trait Scripts {
 		if (false == $match) return ":not(:contains(\"{$data}\"))";		
 	}
 	
-	private function conditionalColumns($data, $columns) {
+	private function conditionalColumns($tableIdentity, $data, $columns) {
 		$icols = [];
 		foreach ($columns as $i => $v) {
 			$icols[$v] = $i;
 		}
 		
 		foreach ($data as $idx => $_data) {
-			$data[$idx]['node'] = $icols[$_data['field_name']];
+			$data[$idx]['node']['field_name']   = $icols[$_data['field_name']];
+			if (!empty($icols[$_data['field_target']])) {
+				$data[$idx]['node']['field_target'] = $icols[$_data['field_target']];
+			} else {
+				$data[$idx]['node']['field_target'] = null;
+			}
 		}
 		
 		$js = null;
@@ -225,27 +229,94 @@ trait Scripts {
 					
 					if ('cell' === $condition['field_target']) {
 						if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule'] && 'prefix&suffix' !== $condition['rule']) {
-							$js .= "$(cells[\"{$condition['node']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
+							$js .= "$(cells[\"{$condition['node']['field_name']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
 						}
 						if ('prefix&suffix' === $condition['rule']) {
-							$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
+							$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
 						}
-						if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
-						if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
+						if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
+						if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
 						if ('replace' === $condition['rule']) {
 							if ('integer' === $condition['action']) {
-								$js .= "$(cells[\"{$condition['node']}\"]).text(parseInt($(cells[\"{$condition['node']}\"]).text()));";
+								$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseInt($(cells[\"{$condition['node']['field_name']}\"]).text()));";
 							} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
 								if (diy_string_contained($condition['action'], '|')) {
 									$condAcFloat = explode('|', $condition['action']);
-									$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed({$condAcFloat[1]}));";
+									$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_name']}\"]).text()).toFixed({$condAcFloat[1]}));";
 								} else {
-									$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed(2));";
+									$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_name']}\"]).text()).toFixed(2));";
 								}
 							} else {
-								$js .= "$(cells[\"{$condition['node']}\"]).text('{$condition['action']}');";
+								$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text('{$condition['action']}');";
 							}
 						}
+					}
+					
+					if ($condition['field_target'] !== 'row' && $condition['field_target'] !== 'cell') {
+						// NEW CODE PLAN HERE
+						if (!empty($condition['node']['field_target'])) {
+							if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule'] && 'prefix&suffix' !== $condition['rule']) {
+								$js .= "$(cells[\"{$condition['node']['field_target']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
+							}
+						}
+						
+						if ('replace' === $condition['rule']) {
+							if ('integer' === $condition['action']) {
+								$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text(parseInt($(cells[\"{$condition['node']['field_target']}\"]).text()));";
+							} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
+								if (diy_string_contained($condition['action'], '|')) {
+									$condAcFloat = explode('|', $condition['action']);
+									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_target']}\"]).text()).toFixed({$condAcFloat[1]}));";
+								} else {
+									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_target']}\"]).text()).toFixed(2));";
+								}
+							} else {
+								if (diy_string_contained($condition['action'], 'url::') || diy_string_contained($condition['action'], 'ajax::')) {
+									$node_buttons    = explode('::', $condition['action']);
+									$action_buttons  = explode('|', $node_buttons[1]);
+									
+									$button          = [];
+									$button['name']  = $action_buttons[0];
+									$button['class'] = "btn {$button['name']} btn-{$action_buttons[1]} btn-xs";
+									$button['icon']  = "fa fa-{$action_buttons[2]}";
+									$button['token'] = csrf_token();
+									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).each(function() {";
+										$js .= "var anchorNode = $(this).children().find('.action-buttons').find('.{$button['name']}');";
+										if ('ajax' === $node_buttons[0]) {
+											$js .= "
+var dataURLi    = anchorNode.attr('href').split('/');
+var anchorValue = dataURLi[dataURLi.length-2];
+var dataValue   = {'_token':'{$button['token']}',data:anchorValue};
+var anchorUrl   = anchorNode.attr('href').replace(anchorValue + '/' + dataURLi[dataURLi.length-1], dataURLi[dataURLi.length-1]);
+
+anchorNode.removeAttr('href');
+anchorNode.click(function() {
+	
+	$.ajax({
+		url: anchorUrl,
+        type: 'post',
+        data: dataValue,
+        success: function (response) {
+			{$tableIdentity}.draw();
+			console.log({$tableIdentity});
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+           console.log(textStatus, errorThrown);
+        }
+	});
+	
+});
+";
+										}
+										$js .= "anchorNode.removeClass().addClass('{$button['class']}').find('i.fa').removeClass().addClass('{$button['icon']}');";
+									$js .= "});";
+									
+								} else {
+									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text('{$condition['action']}');";
+								}
+							}
+						}
+					//	$js .= "console.log(data);";
 					}
 					
 					$js .= "}";
@@ -253,25 +324,25 @@ trait Scripts {
 				
 				if ('column' === $condition['field_target']) {
 					if ('prefix' !== $condition['rule'] && 'suffix' !== $condition['rule'] && 'prefix&suffix' !== $condition['rule']) {
-						$js .= "$(cells[\"{$condition['node']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
+						$js .= "$(cells[\"{$condition['node']['field_name']}\"]).css({'{$condition['rule']}': '{$condition['action']}'});";
 					}
 					if ('prefix&suffix' === $condition['rule']) {
-						$js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
+						$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(\"{$condition['action'][0]}\" + data.{$condition['field_name']} + \"{$condition['action'][1]}\");";
 					}
-					if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
-					if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
+					if ('prefix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(\"{$condition['action']}\" + data.{$condition['field_name']});";
+					if ('suffix' === $condition['rule']) $js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(data.{$condition['field_name']} + \"{$condition['action']}\");";
 					if ('replace' === $condition['rule']) {
 						if ('integer' === $condition['action']) {
-							$js .= "$(cells[\"{$condition['node']}\"]).text(parseInt($(cells[\"{$condition['node']}\"]).text()));";
+							$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseInt($(cells[\"{$condition['node']['field_name']}\"]).text()));";
 						} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
 							if (diy_string_contained($condition['action'], '|')) {
 								$condAcFloat = explode('|', $condition['action']);
-								$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed({$condAcFloat[1]}));";
+								$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_name']}\"]).text()).toFixed({$condAcFloat[1]}));";
 							} else {
-								$js .= "$(cells[\"{$condition['node']}\"]).text(parseFloat($(cells[\"{$condition['node']}\"]).text()).toFixed(2));";
+								$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_name']}\"]).text()).toFixed(2));";
 							}
 						} else {
-							$js .= "$(cells[\"{$condition['node']}\"]).text('{$condition['action']}');";
+							$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text('{$condition['action']}');";
 						}
 					}
 				}
