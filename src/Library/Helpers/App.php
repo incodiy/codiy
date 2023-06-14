@@ -273,6 +273,22 @@ if (!function_exists('diy_query')) {
 	}
 }
 
+if (!function_exists('diy_temp_table')) {
+	
+	/**
+	 * Create Temporary Table
+	 * 
+	 * @param string $table_name
+	 * @param string $sql
+	 */
+	function diy_temp_table($table_name, $sql) {
+		diy_query($sql, 'SELECT');
+		
+		Illuminate\Support\Facades\DB::unprepared("DROP TABLE IF EXISTS {$table_name}");
+		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE {$table_name} {$sql}");
+	}
+}
+
 if (!function_exists('diy_get_table_name_from_sql')) {
 	
 	function diy_get_table_name_from_sql($sql) {

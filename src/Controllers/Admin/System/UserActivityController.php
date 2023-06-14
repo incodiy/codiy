@@ -31,7 +31,7 @@ class UserActivityController extends Controller {
 		'fullname',
 	//	'user_email',
 	//	'last_access',
-		'hits',
+		'time_hits',
 	//	'length_days',
 		'user_status'
 	];
@@ -52,7 +52,7 @@ class UserActivityController extends Controller {
 		$this->table->clickable(false);
 		$this->table->sortable();
 		/* 
-		$this->table->orderby('hits', 'asc');
+		$this->table->orderby('time_hits', 'asc');
 		$this->table->orderby('period', 'desc'); */
 		
 		$this->table->filterGroups('period', 'selectbox', true);
@@ -60,13 +60,15 @@ class UserActivityController extends Controller {
 		$this->table->filterGroups('region', 'selectbox', true);
 		$this->table->filterGroups('username', 'selectbox', false);
 		
-		$this->table->columnCondition('hits', 'cell', '<=', 10, 'background-color', 'rgb(255, 242, 204)');
+		$this->table->columnCondition('time_hits', 'cell', '<=', 10, 'background-color', 'rgb(255, 242, 204)');
 	//	$this->table->columnCondition('user_status', 'length_days', '==', 'Disabled', 'replace', 'aaa');
 		$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
 		$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
 		$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
 		
+		$this->callModel('montly_activity');
 		$this->table->lists($this->model_table, $this->fields, ['manage']);
+	//	$this->table->lists('temp_user_activity_monthly', $this->fields, ['manage']);
 		
 		return $this->render();
 	}
