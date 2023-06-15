@@ -272,6 +272,7 @@ trait Scripts {
 								}
 							} else {
 								if (diy_string_contained($condition['action'], 'url::') || diy_string_contained($condition['action'], 'ajax::')) {
+									$node_table      = explode('_', $tableIdentity)[1];
 									$node_buttons    = explode('::', $condition['action']);
 									$action_buttons  = explode('|', $node_buttons[1]);
 									
@@ -281,34 +282,31 @@ trait Scripts {
 									$button['icon']  = "fa fa-{$action_buttons[2]}";
 									$button['token'] = csrf_token();
 									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).each(function() {";
-										$js .= "var anchorNode = $(this).children().find('.action-buttons').find('.{$button['name']}');";
+										$js .= "var anchorNode{$node_table} = $(this).children().find('.action-buttons').find('.{$button['name']}');";
+										
 										if ('ajax' === $node_buttons[0]) {
-											$js .= "
-var dataURLi    = anchorNode.attr('href').split('/');
-var anchorValue = dataURLi[dataURLi.length-2];
-var dataValue   = {'_token':'{$button['token']}',data:anchorValue};
-var anchorUrl   = anchorNode.attr('href').replace(anchorValue + '/' + dataURLi[dataURLi.length-1], dataURLi[dataURLi.length-1]);
-
-anchorNode.removeAttr('href');
-anchorNode.click(function() {
-	
-	$.ajax({
-		url: anchorUrl,
-        type: 'post',
-        data: dataValue,
-        success: function (response) {
-			{$tableIdentity}.draw();
-			console.log({$tableIdentity});
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-           console.log(textStatus, errorThrown);
-        }
-	});
-	
-});
-";
+											$js .= "var dataURLi{$node_table} = anchorNode{$node_table}.attr('href').split('/');";
+											$js .= "var anchorValue{$node_table} = dataURLi{$node_table}[dataURLi{$node_table}.length-2];";
+											$js .= "var dataValue{$node_table} = {'_token':'{$button['token']}',data:anchorValue{$node_table}};";
+											$js .= "var anchorUrl{$node_table} = anchorNode{$node_table}.attr('href').replace(anchorValue{$node_table} + '/' + dataURLi{$node_table}[dataURLi{$node_table}.length-1], dataURLi{$node_table}[dataURLi{$node_table}.length-1]);";
+											
+											$js .= "anchorNode{$node_table}.removeAttr('href');";
+											$js .= "anchorNode{$node_table}.click(function() {";
+												$js .= "$.ajax({";
+													$js .= "url: anchorUrl{$node_table},";
+													$js .= "type: 'post',";
+													$js .= "data: dataValue{$node_table},";
+													$js .= "success: function (response) {";
+														$js .= "{$tableIdentity}.draw();";
+													$js .= "},";
+													$js .= "error: function(jqXHR, textStatus, errorThrown) {";
+														$js .= "console.log(textStatus, errorThrown);";
+													$js .= "}";
+												$js .= "});";
+											$js .= "});";
 										}
-										$js .= "anchorNode.removeClass().addClass('{$button['class']}').find('i.fa').removeClass().addClass('{$button['icon']}');";
+										
+										$js .= "anchorNode{$node_table}.removeClass().addClass('{$button['class']}').find('i.fa').removeClass().addClass('{$button['icon']}');";
 									$js .= "});";
 									
 								} else {

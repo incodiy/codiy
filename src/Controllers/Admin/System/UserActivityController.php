@@ -25,14 +25,14 @@ class UserActivityController extends Controller {
 	
 	private $fields = [
 		'period',
-	//	'roles',
+		'roles',
 	//	'region',
-		'username',
+	//	'username',
 		'fullname',
 	//	'user_email',
-	//	'last_access',
+		'last_access',
 		'time_hits',
-	//	'length_days',
+		'length_days',
 		'user_status'
 	];
 	
@@ -44,7 +44,7 @@ class UserActivityController extends Controller {
 	public function index() {
 		$this->setPage();
 		$this->sessionFilters();
-	//	$this->removeActionButtons(['add']);
+		$this->removeActionButtons(['add']);
 		
 		$this->table->setUrlValue('user_id');
 	
@@ -67,6 +67,9 @@ class UserActivityController extends Controller {
 		$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
 		
 		$this->callModel('montly_activity');
+		
+	//	$this->table->removeButtons(['view', 'edit', 'delete']);
+		$this->table->setActions(['manage'], ['view', 'edit', 'delete']);
 		$this->table->lists($this->model_table, $this->fields, ['manage']);
 	//	$this->table->lists('temp_user_activity_monthly', $this->fields, ['manage']);
 		

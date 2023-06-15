@@ -39,6 +39,7 @@ trait RouteInfo {
 		$this->route_page = $route;
 	}
 	
+	private $controllerPathName;
 	/**
 	 * Get Current Page Information Data
 	 *
@@ -59,8 +60,9 @@ trait RouteInfo {
 			$this->pageInfo    = $slice_controller[1];
 		}
 		
-		$slice_controller     = explode('\\', $slice_controller[0]);
-		$this->controllerName = last($slice_controller);
+		$slice_controller         = explode('\\', $slice_controller[0]);
+		$this->controllerName     = last($slice_controller);
+		$this->controllerPathName = explode('@', $controller_path)[0];
 	}
 	
 	/**
@@ -88,7 +90,7 @@ trait RouteInfo {
 			$actionPage['edit']    = [];
 			$actionPage['delete']  = [];
 			
-			$action_page = [];
+			$action_page                = [];
 			$action_page['action_page'] = [];
 			
 			if (!empty($this->module_privilege['actions'])) {
@@ -102,10 +104,14 @@ trait RouteInfo {
 				if (!empty($this->page_name)) $buttonLabel = $this->page_name;
 				
 				if ('index' === $this->pageInfo && true === $action_role['create']) {
-					$action_page['action_page'] = ["warning|add {$buttonLabel}" => $this->routeReplaceURL('index', 'create')];
+					if (in_array('index', get_class_methods($this->controllerPathName))) {
+						$action_page['action_page'] = ["warning|add {$buttonLabel}" => $this->routeReplaceURL('index', 'create')];
+					}
 					
 				} elseif ('create' === $this->pageInfo && true === $action_role['create']) {
-					$action_page['action_page'] = ["info|back to {$buttonLabel} lists" => $this->routeReplaceURL('create', 'index')];
+					if (in_array('create', get_class_methods($this->controllerPathName))) {
+						$action_page['action_page'] = ["info|back to {$buttonLabel} lists" => $this->routeReplaceURL('create', 'index')];
+					}
 					
 				} elseif ('edit' === $this->pageInfo) {
 					
@@ -117,21 +123,32 @@ trait RouteInfo {
 						}
 					}
 					if (true === $action_role['create']) {
-						$actionPage['create'] = ["warning|add {$buttonLabel}" => $this->routeReplaceURL('edit', 'create')];
+						if (in_array('create', get_class_methods($this->controllerPathName))) {
+							$actionPage['create'] = ["warning|add {$buttonLabel}" => $this->routeReplaceURL('edit', 'create')];
+						}
 					}
 					if (true === $action_role['show']) {
-						$actionPage['edit'] = ["success|view this {$buttonLabel}"  => str_replace('/edit', '', url()->current())];
-						$actionPage['show'] = ["info|back to {$buttonLabel} lists" => $this->routeReplaceURL('edit', 'index')];
+						if (in_array('edit', get_class_methods($this->controllerPathName))) {
+							$actionPage['edit'] = ["success|view this {$buttonLabel}"  => str_replace('/edit', '', url()->current())];
+						}
+						
+						if (in_array('index', get_class_methods($this->controllerPathName))) {
+							$actionPage['show'] = ["info|back to {$buttonLabel} lists" => $this->routeReplaceURL('edit', 'index')];
+						}
 					}
 					
 					$action_page['action_page'] = array_merge_recursive($actionPage['delete'], $actionPage['create'], $actionPage['edit'], $actionPage['show']);
 					
 				} elseif ('show' === $this->pageInfo && true === $action_role['show']) {
-					$action_page['action_page'] = [
-						"warning|add {$buttonLabel}"        => $this->routeReplaceURL('show', 'create'),
-						"success|edit this {$buttonLabel}"  => url()->current() . '/edit',
-						"info|back to {$buttonLabel} lists" => $this->routeReplaceURL('show', 'index')
-					];
+					if (in_array('create', get_class_methods($this->controllerPathName))) {
+						$action_page['action_page']["warning|add {$buttonLabel}"]        = $this->routeReplaceURL('show', 'create');
+					}
+					if (in_array('edit', get_class_methods($this->controllerPathName))) {
+						$action_page['action_page']["success|edit this {$buttonLabel}"]  = url()->current() . '/edit';
+					}
+					if (in_array('index', get_class_methods($this->controllerPathName))) {
+						$action_page['action_page']["info|back to {$buttonLabel} lists"] = $this->routeReplaceURL('show', 'index');
+					}
 				}
 			}
 			

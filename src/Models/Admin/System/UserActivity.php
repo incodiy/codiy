@@ -108,7 +108,7 @@ class UserActivity extends Model {
 				TIMESTAMPDIFF(SECOND, MIN(a.created_at), MAX(a.created_at)) AS time_length,
 				
 				CONCAT (
-					FLOOR(MOD (TIMESTAMPDIFF(SECOND, MIN(a.created_at), MAX(a.created_at)), 60) / 3600 / 24), ' Days, ',
+				#	FLOOR(MOD (TIMESTAMPDIFF(SECOND, MIN(a.created_at), MAX(a.created_at)), 60) / 3600 / 24), ' Days, ',
 					FLOOR(MOD (TIMESTAMPDIFF(SECOND, MIN(a.created_at), MAX(a.created_at)), 3600*24) / 3600), ' Hours, ',
 					FLOOR(MOD (TIMESTAMPDIFF(SECOND, MIN(a.created_at), MAX(a.created_at)), 3600) / 60), ' Minutes, ',
 					FLOOR(MOD (TIMESTAMPDIFF(SECOND, MIN(a.created_at), MAX(a.created_at)), 60)), ' Seconds'

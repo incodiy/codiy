@@ -204,10 +204,6 @@ class Objects extends Builder {
 		$this->model('sql');
 	}
 	
-	public function setActions($action = true) {
-		$this->variables['table_actions'] = $action;
-	}
-	
 	public function setServerSide($server_side = true) {
 		$this->variables['table_server_side'] = $server_side;
 	}
@@ -664,12 +660,26 @@ class Objects extends Builder {
 	}
 	
 	public $button_removed = [];
-	public function destroyButton($remove = null) {
+	public function removeButtons($remove) {
 		if (!empty($remove)) {
 			if (is_array($remove)) {
 				$this->button_removed = $remove;
 			} else {
 				$this->button_removed = [$remove];
+			}
+		}
+	}
+	
+	private $defaultButtons = ['view', 'edit', 'delete'];
+	public function setActions($actions = [], $default_actions = true) {
+		if (true === $default_actions) {
+			$defaultButtons = $this->defaultButtons;
+		} else {
+			$defaultButtons = $default_actions;
+			if (is_array($default_actions)) {
+				$this->removeButtons($default_actions);
+			} else {
+				$this->removeButtons($this->defaultButtons);
 			}
 		}
 	}
@@ -853,6 +863,7 @@ class Objects extends Builder {
 		
 		$this->params[$table_name]['actions']                         = $actions;
 		$this->params[$table_name]['buttons_removed']                 = $this->button_removed;
+		
 		$this->params[$table_name]['numbering']                       = $numbering;
 		$this->params[$table_name]['attributes']                      = $attributes;
 		$this->params[$table_name]['server_side']['status']           = $server_side;

@@ -252,7 +252,7 @@ if (!function_exists('diy_table_action_button')) {
 			$actionType['default'] = $actions[routelists_info()['base_info']];
 			
 			foreach ($action as $ai => $actval) {
-				if (in_array($actval, ['show', 'view', 'create', 'edit', 'delete', 'insert'])) {
+				if (in_array($actval, ['index', 'show', 'view', 'create', 'insert', 'add', 'edit', 'update', 'modify', 'delete', 'destroy'])) {
 					unset($action[$ai]);
 				} else {
 					$actionType['custom'][] = $actval;
@@ -263,15 +263,35 @@ if (!function_exists('diy_table_action_button')) {
 		
 		if (!empty($removed_button)) {
 			if (is_array($removed_button)) {
+				$actionNode = array_flip($action);
 				foreach ($removed_button as $remove) {
-					if (in_array($remove, ['show', 'view', 'index'])) {
+					if (in_array($remove, ['index', 'show', 'view'])) {
 						$enabledAction['read']   = false;
-					} elseif (in_array($remove, ['insert'])) {
+						
+						if (!empty($actionNode['view']))  unset($action[$actionNode['view']]);
+						if (!empty($actionNode['index'])) unset($action[$actionNode['index']]);
+						if (!empty($actionNode['show']))  unset($action[$actionNode['show']]);
+						
+					} elseif (in_array($remove, ['create', 'insert', 'add'])) {
 						$enabledAction['insert'] = false;
-					} elseif (in_array($remove, ['edit', 'modify'])) {
+						
+						if (!empty($actionNode['create'])) unset($action[$actionNode['create']]);
+						if (!empty($actionNode['insert'])) unset($action[$actionNode['insert']]);
+						if (!empty($actionNode['add']))    unset($action[$actionNode['add']]);
+						
+					} elseif (in_array($remove, ['edit', 'update', 'modify'])) {
 						$enabledAction['modify'] = false;
+						
+						if (!empty($actionNode['edit']))   unset($action[$actionNode['edit']]);
+						if (!empty($actionNode['update'])) unset($action[$actionNode['update']]);
+						if (!empty($actionNode['modify'])) unset($action[$actionNode['modify']]);
+						
 					} elseif (in_array($remove, ['delete', 'destroy'])) {
 						$enabledAction['delete'] = false;
+						
+						if (!empty($actionNode['delete']))  unset($action[$actionNode['delete']]);
+						if (!empty($actionNode['destroy'])) unset($action[$actionNode['destroy']]);
+						
 					} else {
 						$enabledAction[$removed_button] = false;
 					}
