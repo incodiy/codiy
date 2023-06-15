@@ -87,6 +87,11 @@ class Datatables {
 		$_action_lists      = [];
 		$removed_privileges = [];
 		
+		$buttonsRemoval     = [];
+		if (!empty($data->datatables->columns[$table_name]['button_removed'])) {
+			$buttonsRemoval = $data->datatables->columns[$table_name]['button_removed'];
+		}
+		
 		$firstField = 'id';
 		$blacklists = ['password', 'action', 'no'];
 		if (!in_array('id', $data->datatables->columns[$table_name]['lists'])) {
@@ -113,7 +118,7 @@ class Datatables {
 							if (diy_string_contained($roles, routelists_info()['base_info'])) {
 								
 								$routename = routelists_info($roles)['last_info'];
-								if (in_array($routename, ['index', 'show'])) {
+								if (in_array($routename, ['index', 'show', 'view'])) {
 									$actions[routelists_info()['base_info']]['view']   = 'view';
 									
 								} elseif (in_array($routename, ['create', 'insert'])) {
@@ -390,6 +395,12 @@ class Datatables {
 			}
 		} else {
 			$action_data['action']['removed'] = $data->datatables->button_removed;
+		}
+		
+		if (!empty($buttonsRemoval)) {
+			$removeActions = $action_data['action']['removed'];
+			unset($action_data['action']['removed']);
+			$action_data['action']['removed'] = array_merge_recursive_distinct($buttonsRemoval, $removeActions);
 		}
 		
 		$urlTarget = $data->datatables->useFieldTargetURL;

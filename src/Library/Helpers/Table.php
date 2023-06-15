@@ -265,7 +265,7 @@ if (!function_exists('diy_table_action_button')) {
 			if (is_array($removed_button)) {
 				$actionNode = array_flip($action);
 				foreach ($removed_button as $remove) {
-					if (in_array($remove, ['index', 'show', 'view'])) {
+					if (in_array($remove, ['index', 'show', 'view', 'read'])) {
 						$enabledAction['read']   = false;
 						
 						if (!empty($actionNode['view']))  unset($action[$actionNode['view']]);

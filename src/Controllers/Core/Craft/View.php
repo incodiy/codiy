@@ -255,7 +255,7 @@ trait View {
 		}
 	}
 	
-	public $is_root     = false;	
+	public $is_root     = false;
 	public $filter_page = [];
 	public $page_name   = null;
 	/**

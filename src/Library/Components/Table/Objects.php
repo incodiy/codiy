@@ -847,6 +847,9 @@ class Objects extends Builder {
 			$this->columns[$table_name]['hidden_columns'] =  $this->variables['hidden_columns'];
 			$this->variables['hidden_columns']            =  [];
 		}
+		if (!empty($this->button_removed)) {
+			$this->columns[$table_name]['button_removed'] = $this->button_removed;
+		}
 		
 		$this->tableID[$table_name] = diy_clean_strings("CoDIY_{$this->tableType}_" . $table_name . '_' . diy_random_strings(50, false));
 		$attributes['table_id']     = $this->tableID[$table_name];

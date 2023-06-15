@@ -69,7 +69,7 @@ class UserActivityController extends Controller {
 		$this->callModel('montly_activity');
 		
 	//	$this->table->removeButtons(['view', 'edit', 'delete']);
-		$this->table->setActions(['manage'], ['view', 'edit', 'delete']);
+		$this->table->setActions(['manage'], ['view', 'insert', 'edit', 'delete']);
 		$this->table->lists($this->model_table, $this->fields, ['manage']);
 	//	$this->table->lists('temp_user_activity_monthly', $this->fields, ['manage']);
 		

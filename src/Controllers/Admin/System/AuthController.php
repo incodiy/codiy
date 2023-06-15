@@ -110,7 +110,9 @@ class AuthController extends Controller {
 		
 		if (!empty($request['_token']) && $request['_token'] === $request->session()->token()) {
 		    $data = $request->only($this->sendRequestKeyWith, 'password');
+		    
 			if (Auth::attempt($data)) {
+				
 			    $this->set_session_auth($data[$this->sendRequestKeyWith]);
 				foreach ($this->session_auth as $session_key => $session_auth) {
 					$request->session()->put($session_key, $session_auth);
@@ -200,12 +202,16 @@ class AuthController extends Controller {
 			$userData['cryptcode']            = $user->cryptcode;
 			$userData['active']               = $user->active;
 		}
-	//	dd($userData);
-		if (false === $return_data) {
-			$this->session_auth = $userData;
-		//	$this->add_log('Login', $this->session_auth['id']);
+		
+		if ($userData['active'] >= 1) {
+			if (false === $return_data) {
+				$this->session_auth = $userData;
+			//	$this->add_log('Login', $this->session_auth['id']);
+			} else {
+				return $userData;
+			}
 		} else {
-			return $userData;
+			$this->logout();
 		}
 	}
 	
