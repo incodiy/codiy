@@ -19,6 +19,150 @@ class UserActivity extends Model {
 	protected $table     = 'temp_user_activity_monthly';
 	protected $guarded   = [];
 	
+	public function __construct() {
+		parent::__construct();
+	}
+	
+	private function dailyActivityQuery() {
+		return "
+			# GET DAILY ACTIVITY
+			SELECT
+				LEFT(log.created_at, 7) date_activity,
+				log.user_group_id group_id,
+				log.user_id,
+				
+				# MODULES INFO
+				MAX(log.route_path) last_path_opened,
+				MAX(log.page_info) last_page_opened,
+				CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.route_path) ORDER BY log.route_path DESC), ']') path_refreshed,
+				CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.page_info) ORDER BY log.page_info DESC), ']') page_refreshed,
+				
+				# CLIENT INFO
+				MAX(log.ip_address) last_ip,
+				MAX(log.user_agent) last_user_agent,
+				CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.ip_address) ORDER BY log.ip_address DESC), ']') ip_refreshed,
+				CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.user_agent) ORDER BY log.user_agent DESC), ']') user_agent_refreshed,
+					
+				# TIMING
+				MIN(log.created_at) start_login,
+				MAX(log.created_at) last_login,
+				TIMESTAMPDIFF(SECOND, MIN(log.created_at), MAX(log.created_at)) AS active_duration,
+				TIMESTAMPDIFF(SECOND, MAX(log.created_at), NOW()) AS offline_duration,
+				
+				# HITS
+				COUNT(DISTINCT log.created_at) total_hits,
+				CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', LEFT(log.created_at, 19)) ORDER BY log.created_at DESC), ']') datetime_refreshed,
+				CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', RIGHT(log.created_at, 8)) ORDER BY RIGHT(log.created_at, 8) DESC), ']') time_refreshed
+				
+			FROM (
+				# BASE LOG ACTIVITY DATA
+				SELECT
+					a.user_group_id,
+					a.user_id,
+					a.created_at,
+					a.route_path,
+					a.page_info,
+					a.ip_address,
+					a.user_agent
+				FROM `log_activities` a
+			) log
+			GROUP BY LEFT(log.created_at, 7), log.user_group_id, log.user_id
+			ORDER BY LEFT(log.created_at, 7) DESC, log.user_group_id ASC, log.user_id ASC
+		";
+	}
+	
+	private function monthlyActivityQuery() {
+		return "
+			SELECT 
+				monthly.date_activity,
+				monthly.group_id,
+				monthly.user_id,
+				
+				monthly.last_path_opened,
+				monthly.last_page_opened,
+				monthly.path_refreshed,
+				monthly.page_refreshed,
+				
+				monthly.last_ip,
+				monthly.last_user_agent,
+				monthly.ip_refreshed,
+				monthly.user_agent_refreshed,
+				
+				monthly.start_login,
+				monthly.last_login,
+				monthly.active_duration,
+				monthly.offline_duration,
+				CONCAT (
+					TIMESTAMPDIFF(DAY, monthly.start_login, monthly.last_login), ' Days, ',
+					FLOOR(MOD (monthly.active_duration, 3600*24) / 3600), ' Hours, ',
+					FLOOR(MOD (monthly.active_duration, 3600) / 60), ' Minutes, ',
+					FLOOR(MOD (monthly.active_duration, 60)), ' Seconds'
+				) AS active_duration_info,
+				CONCAT (
+					TIMESTAMPDIFF(DAY, monthly.last_login, NOW()), ' Days, ',
+					FLOOR(MOD (monthly.offline_duration, 3600*24) / 3600), ' Hours, ',
+					FLOOR(MOD (monthly.offline_duration, 3600) / 60), ' Minutes, ',
+					FLOOR(MOD (monthly.offline_duration, 60)), ' Seconds'
+				) AS offline_duration_info,
+				
+				monthly.total_hits,
+				monthly.datetime_refreshed,
+				monthly.time_refreshed
+			FROM (
+				# GET DAILY ACTIVITY
+				SELECT
+					LEFT(log.created_at, 7) date_activity,
+					log.user_group_id group_id,
+					log.user_id,
+					
+					# MODULES INFO
+					MAX(log.route_path) last_path_opened,
+					MAX(log.page_info) last_page_opened,
+					CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.route_path) ORDER BY log.route_path DESC), ']') path_refreshed,
+					CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.page_info) ORDER BY log.page_info DESC), ']') page_refreshed,
+					
+					# CLIENT INFO
+					MAX(log.ip_address) last_ip,
+					MAX(log.user_agent) last_user_agent,
+					CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.ip_address) ORDER BY log.ip_address DESC), ']') ip_refreshed,
+					CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', log.user_agent) ORDER BY log.user_agent DESC), ']') user_agent_refreshed,
+						
+					# TIMING
+					MIN(log.created_at) start_login,
+					MAX(log.created_at) last_login,
+					TIMESTAMPDIFF(SECOND, MIN(log.created_at), MAX(log.created_at)) AS active_duration,
+					TIMESTAMPDIFF(SECOND, MAX(log.created_at), NOW()) AS offline_duration,
+					
+					# HITS
+					COUNT(DISTINCT log.created_at) total_hits,
+					CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', LEFT(log.created_at, 19)) ORDER BY log.created_at DESC), ']') datetime_refreshed,
+					CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('data', RIGHT(log.created_at, 8)) ORDER BY RIGHT(log.created_at, 8) DESC), ']') time_refreshed
+					
+				FROM (
+					# BASE LOG ACTIVITY DATA
+					SELECT
+						a.user_group_id,
+						a.user_id,
+						a.created_at,
+						a.route_path,
+						a.page_info,
+						a.ip_address,
+						a.user_agent
+					FROM `log_activities` a
+				) log
+				GROUP BY LEFT(log.created_at, 7), log.user_group_id, log.user_id
+				ORDER BY LEFT(log.created_at, 7) DESC, log.user_group_id ASC, log.user_id ASC
+			) monthly 
+		";
+	}
+	
+	public function monthly_activity() {
+		$sql = "
+		
+		";
+		diy_temp_table($this->table, $sql);
+	}
+	
 	public function daily_activity() {
 		$sql = "
 			SELECT
@@ -78,7 +222,7 @@ class UserActivity extends Model {
 		return diy_query($sql, 'SELECT');
 	}
 	
-	public function montly_activity() {
+	public function montly_activityx() {
 		$sql = "
 			SELECT
 				LEFT(a.created_at, 7) period,
