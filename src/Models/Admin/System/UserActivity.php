@@ -23,11 +23,11 @@ class UserActivity extends Model {
 		parent::__construct();
 	}
 	
-	private function dailyActivityQuery() {
+	private function baseActivityQuery($setDateNode = 10) {
 		return "
 			# GET DAILY ACTIVITY
 			SELECT
-				LEFT(log.created_at, 7) date_activity,
+				LEFT(log.created_at, {$setDateNode}) date_activity,
 				log.user_group_id group_id,
 				log.user_id,
 				
@@ -66,8 +66,8 @@ class UserActivity extends Model {
 					a.user_agent
 				FROM `log_activities` a
 			) log
-			GROUP BY LEFT(log.created_at, 7), log.user_group_id, log.user_id
-			ORDER BY LEFT(log.created_at, 7) DESC, log.user_group_id ASC, log.user_id ASC
+			GROUP BY LEFT(log.created_at, {$setDateNode}), log.user_group_id, log.user_id
+			ORDER BY LEFT(log.created_at, {$setDateNode}) DESC, log.user_group_id ASC, log.user_id ASC
 		";
 	}
 	
