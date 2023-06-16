@@ -106,6 +106,7 @@ class UserActivity extends Model {
 				) AS offline_duration_info,
 				
 				monthly.total_hits,
+				COUNT(DISTINCT monthly.start_login) total_login,
 				monthly.datetime_refreshed,
 				monthly.time_refreshed
 			FROM (
@@ -158,7 +159,54 @@ class UserActivity extends Model {
 	
 	public function monthly_activity() {
 		$sql = "
-		
+		# LOGIN
+SELECT
+	log_activities.user_id,
+	log_activities.username,
+	log_activities.user_fullname,
+	log_activities.user_email,
+	log_activities.user_group_id,
+	log_activities.user_group_name,
+	log_activities.user_group_info,
+	'login_processor' route_path,
+	'Login' module_name,
+	'login_processor' page_info,
+	'https://mantra.smartfren.com/login' urli,
+	log_activities.method,
+	log_activities.ip_address,
+	log_activities.user_agent,
+	log_activities.sql_dump,
+	MIN(log_activities.created_at) created_at,
+	log_activities.updated_at
+FROM `log_activities`
+#WHERE user_id = 1
+GROUP BY LEFT(created_at, 10), user_id
+#ORDER BY LEFT(created_at, 10) ASC, user_id
+
+# LOGOUT
+UNION ALL
+SELECT
+	log_activities.user_id,
+	log_activities.username,
+	log_activities.user_fullname,
+	log_activities.user_email,
+	log_activities.user_group_id,
+	log_activities.user_group_name,
+	log_activities.user_group_info,
+	'logout' route_path,
+	'Logout' module_name,
+	'logout' page_info,
+	'https://mantra.smartfren.com/logout' urli,
+	log_activities.method,
+	log_activities.ip_address,
+	log_activities.user_agent,
+	log_activities.sql_dump,
+	MAX(log_activities.created_at) created_at,
+	log_activities.updated_at
+FROM `log_activities`
+#WHERE user_id = 1
+GROUP BY LEFT(created_at, 10), user_id
+ORDER BY LEFT(created_at, 10) ASC, user_id;
 		";
 		diy_temp_table($this->table, $sql);
 	}

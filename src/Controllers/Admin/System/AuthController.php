@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Incodiy\Codiy\Models\Admin\System\User;
 use Incodiy\Codiy\Controllers\Core\Controller;
 use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
+use Illuminate\Support\Facades\Route;
 //use App\Models\Admin\System\Maintenance;
 
 /**
@@ -25,6 +26,23 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
 class AuthController extends Controller {
 	use Privileges;
 	use AuthenticatesUsers;
+	
+	private $authRouteInfo = [];
+	
+	public function __construct() {
+		parent::__construct();
+		
+		$this->authRouteInfo['current_path'] = Route::getCurrentRoute()->getName();
+		if ('login_processor' === strtolower(Route::getCurrentRoute()->getName())) {
+			$this->authRouteInfo['module_name'] = 'Login';
+		} else {
+			$this->authRouteInfo['module_name'] = ucwords(Route::getCurrentRoute()->getName());
+		}
+		
+		$this->authRouteInfo['page_info']  = strtolower(Route::getCurrentRoute()->getName());
+		$this->authRouteInfo['controller'] = 'AuthController';
+		
+	}
 	
 	public function login() {
 	//	$this->get_maintenance_content();
@@ -117,6 +135,7 @@ class AuthController extends Controller {
 				foreach ($this->session_auth as $session_key => $session_auth) {
 					$request->session()->put($session_key, $session_auth);
 				}
+				
 				/* 
 				if (true === $this->maintenance) {
 					$sessions = Session::all();
@@ -204,6 +223,7 @@ class AuthController extends Controller {
 		}
 		
 		if ($userData['active'] >= 1) {
+			diy_log_activity($this->authRouteInfo, $userData);
 			if (false === $return_data) {
 				$this->session_auth = $userData;
 			//	$this->add_log('Login', $this->session_auth['id']);
@@ -243,7 +263,8 @@ class AuthController extends Controller {
 	public function logout() {
 		if (!empty(auth()->user()->id)) {
 	    //	$this->add_log('Logout', auth()->user()->id);
-		    
+			
+			diy_log_activity($this->authRouteInfo, $this->session);
 		    Session::flush();
 		    Auth::logout();
 		}

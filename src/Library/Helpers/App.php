@@ -793,23 +793,32 @@ if (!function_exists('diy_log_activity')) {
 	/**
 	 * Create Data User Log Activity
 	 */
-	function diy_log_activity() {
-		$configuration              = diy_config('log_activity');
+	function diy_log_activity($routeInfo = [], $data = []) {
+		$configuration = diy_config('log_activity');
 		if (!empty($configuration) && in_array($configuration['run_status'], [true, 'unexceptions'])) {
-			$sessions                = session()->all();
+			
+			$sessions = session()->all();
+			if(!empty($data)) $sessions = $data;
+			
 			if (!empty($sessions['user_group'])) {
-				$routes                  = diy_current_route();
-				$requests                = Illuminate\Support\Facades\Request::class;
-				$group_exceptions        = ['root'];
+				if (empty($routeInfo)) {
+					$routes       = diy_current_route();
+				}
+				$requests         = Illuminate\Support\Facades\Request::class;
+				$group_exceptions = ['root'];
 				if (!empty($configuration['exceptions']['groups'])) {
-					$group_exceptions     = array_merge_recursive(['root'], $configuration['exceptions']['groups']);
+					$group_exceptions = array_merge_recursive(['root'], $configuration['exceptions']['groups']);
 				}
 				if ('unexceptions' === $configuration['run_status']) {
-					$group_exceptions     = [];
+					$group_exceptions = [];
 				}
 				
 				if (!in_array($sessions['user_group'], $group_exceptions)) {
-					$current_controller = explode('@', $routes->action['controller']);
+					if (empty($routeInfo)) {
+						$current_controller = explode('@', $routes->action['controller']);
+					} else {
+						$current_controller = explode('@', $routeInfo['controller']);
+					}
 					
 					if (!in_array($current_controller[0], $configuration['exceptions']['controllers'])) {
 						$logs                    = [];
@@ -823,9 +832,15 @@ if (!function_exists('diy_log_activity')) {
 						$logs['user_group_name'] = $sessions['user_group'];
 						$logs['user_group_info'] = $sessions['group_info'];
 						
-						$logs['route_path']      = $routes->controller->data['route_info']->current_path;
-						$logs['module_name']     = $routes->controller->data['route_info']->module_name;
-						$logs['page_info']       = $routes->controller->data['route_info']->page_info;
+						if (empty($routeInfo)) {
+							$logs['route_path']  = $routes->controller->data['route_info']->current_path;
+							$logs['module_name'] = $routes->controller->data['route_info']->module_name;
+							$logs['page_info']   = $routes->controller->data['route_info']->page_info;
+						} else {
+							$logs['route_path']  = $routeInfo['current_path'];
+							$logs['module_name'] = $routeInfo['module_name'];
+							$logs['page_info']   = $routeInfo['page_info'];
+						}
 						$logs['urli']            = $requests::fullUrl();
 						$logs['method']          = $requests::method();
 						
@@ -883,7 +898,7 @@ if (!function_exists('minify_code')) {
 		 * (6) Remove unwanted HTML comments /**
 		 */
 		
-		$search  = [
+		$search = [
 			'/\>[^\S ]+/s', 
 			'/[^\S ]+\</s', 
 			'/(\s)+/s', 
@@ -892,7 +907,7 @@ if (!function_exists('minify_code')) {
 			'~^\s*//.*$\s*~m'
 		];
 		$replace = ['>', '<', '\\1', '><', '', ''];
-		$search = ['/ {2,}/', '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'];
+		$search  = ['/ {2,}/', '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'];
 		$replace = [' ', ''];
 		return set_break_line_html("\n", 1986) . preg_replace($search, $replace, $buffer);
 	}
