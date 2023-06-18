@@ -83,12 +83,16 @@ class Controller extends BaseController {
 	 * 	: Can be used when we would create temp table and render it (before) $this->table->list() function
 	 * 
 	 * @param string $function_name
+	 * @param bool $strict
+	 * @param string $connection
 	 * 
 	 * @return object
 	 */
-	public function callModel($function_name) {
+	public function callModel($function_name, $strict = true, $connection = 'mysql') {
 		$model = new $this->modelObject();
-		
+	//	if (false === $strict) {
+			config()->set("database.connections.{$connection}.strict", $strict);
+	//	}
 		return $model->{$function_name}();
 	}
 	

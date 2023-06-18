@@ -280,12 +280,27 @@ if (!function_exists('diy_temp_table')) {
 	 * 
 	 * @param string $table_name
 	 * @param string $sql
+	 * @param boolean $strict
+	 * @param string $conn
 	 */
-	function diy_temp_table($table_name, $sql) {
+	function diy_temp_table($table_name, $sql, $strict = true, $conn = 'mysql') {
+		$strictConfig = config("database.connections.{$conn}.strict");
+		$table_name   = str_replace('temp_', '', $table_name);
+		
+		if (false === $strict) {
+			Illuminate\Support\Facades\DB::reconnect();
+			config()->set("database.connections.{$conn}.strict", $strict);
+		}
+		
 		diy_query($sql, 'SELECT');
 		
-		Illuminate\Support\Facades\DB::unprepared("DROP TABLE IF EXISTS {$table_name}");
-		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE {$table_name} {$sql}");
+		Illuminate\Support\Facades\DB::unprepared("DROP TABLE IF EXISTS temp_{$table_name}");
+		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");
+		
+		if (false === $strict) {
+			config()->set("database.connections.{$conn}.strict", $strictConfig);
+			Illuminate\Support\Facades\DB::reconnect();
+		}
 	}
 }
 

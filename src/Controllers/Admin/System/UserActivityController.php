@@ -24,15 +24,16 @@ class UserActivityController extends Controller {
 	use Handler;
 	
 	private $fields = [
-		'period',
-		'roles',
-	//	'region',
-	//	'username',
+		'monthly_activity: Period',
+		'role_group:Role',
+		'role_location:Region',
 		'fullname',
-	//	'user_email',
+		'first_access',
 		'last_access',
-		'time_hits',
-		'length_days',
+		'online_duration',
+		'offline_duration',
+		'login_counters',
+		'hit_activity',
 		'user_status'
 	];
 	
@@ -48,30 +49,42 @@ class UserActivityController extends Controller {
 		
 		$this->table->setUrlValue('user_id');
 	
-		$this->table->searchable(['period', 'roles', 'region', 'username']);
+		$this->table->searchable(['user_status', 'monthly_activity', 'role_group', 'role_location', 'fullname']);
 		$this->table->clickable(false);
 		$this->table->sortable();
 		/* 
 		$this->table->orderby('time_hits', 'asc');
 		$this->table->orderby('period', 'desc'); */
 		
-		$this->table->filterGroups('period', 'selectbox', true);
-		$this->table->filterGroups('roles', 'selectbox', true);
-		$this->table->filterGroups('region', 'selectbox', true);
-		$this->table->filterGroups('username', 'selectbox', false);
+		$this->table->filterGroups('user_status', 'selectbox', false);
+		$this->table->filterGroups('monthly_activity', 'selectbox', true);
+		$this->table->filterGroups('role_group', 'selectbox', true);
+		$this->table->filterGroups('role_location', 'selectbox', true);
+		$this->table->filterGroups('fullname', 'selectbox', false);
 		
-		$this->table->columnCondition('time_hits', 'cell', '<=', 10, 'background-color', 'rgb(255, 242, 204)');
+	//	$this->table->columnCondition('time_hits', 'cell', '<=', 10, 'background-color', 'rgb(255, 242, 204)');
 	//	$this->table->columnCondition('user_status', 'length_days', '==', 'Disabled', 'replace', 'aaa');
 		$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
 		$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
 		$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
 		
-		$this->callModel('montly_activity');
+		$this->callModel('montly_activity', false);
 		
 	//	$this->table->removeButtons(['view', 'edit', 'delete']);
 		$this->table->setActions(['manage'], ['view', 'insert', 'edit', 'delete']);
+		$this->table->addTabContent('
+			<p style="margin-bottom: 1px !important;"><i><b>Information Table</b></i></p>
+			<div style="background-color: #fbf2f2; margin: 0; padding: 10px; border: #fdd1d1 solid 1px; border-radius: 4px;">
+				<p style="margin-bottom: 1px !important;"><i><b>First Access: </b>First time user login every month</i></p>
+				<p style="margin-bottom: 1px !important;"><i><b>Last Access: </b>Last time user logout every month</i></p>
+				<p style="margin-bottom: 1px !important;"><i><b>Online Duration: </b>Duration time user online calculated by First and Last User Access</i></p>
+				<p style="margin-bottom: 1px !important;"><i><b>Offline Duration: </b>Duration time user offline till now time in current month or every end of month</i></p>
+				<p style="margin-bottom: 1px !important;"><i><b>Login Counter: </b>Total user login activity calculated every month</i></p>
+				<p style="margin-bottom: 1px !important;"><i><b>Hit Activity: </b>Total user time hit in all module/pages calculated every month</i></p>
+			</div>
+			<br />
+		');
 		$this->table->lists($this->model_table, $this->fields, ['manage']);
-	//	$this->table->lists('temp_user_activity_monthly', $this->fields, ['manage']);
 		
 		return $this->render();
 	}
