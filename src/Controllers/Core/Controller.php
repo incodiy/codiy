@@ -89,11 +89,16 @@ class Controller extends BaseController {
 	 * @return object
 	 */
 	public function callModel($function_name, $strict = true, $connection = 'mysql') {
+		$model = [];
 		$model = new $this->modelObject();
-	//	if (false === $strict) {
+		
+		if (false === $strict) {
+			diy_db('purge', $connection);
 			config()->set("database.connections.{$connection}.strict", $strict);
-	//	}
-		return $model->{$function_name}();
+			diy_db('reconnect');
+		}
+		
+		$model->{$function_name}();
 	}
 	
 	private function init_model($model = false) {

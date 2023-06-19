@@ -37,18 +37,29 @@ class UserActivityController extends Controller {
 		'user_status'
 	];
 	
+	private $field_2 = [
+		'group_info',
+		'group_alias',
+		'username',
+		'fullname',
+		'email',
+		'user_status',
+		'registered_date',
+		'offline_duration'
+	];
+	
 	public function __construct() {
 		parent::__construct(UserActivity::class, 'system.managements.user_activity');
-		
 	}
 	
 	public function index() {
 		$this->setPage();
 		$this->sessionFilters();
 		$this->removeActionButtons(['add']);
+		$this->callModel('montly_activity', false);
 		
 		$this->table->setUrlValue('user_id');
-	
+		
 		$this->table->searchable(['user_status', 'monthly_activity', 'role_group', 'role_location', 'fullname']);
 		$this->table->clickable(false);
 		$this->table->sortable();
@@ -67,9 +78,7 @@ class UserActivityController extends Controller {
 		$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
 		$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
 		$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
-		
-		$this->callModel('montly_activity', false);
-		
+				
 	//	$this->table->removeButtons(['view', 'edit', 'delete']);
 		$this->table->setActions(['manage'], ['view', 'insert', 'edit', 'delete']);
 		$this->table->addTabContent('
@@ -84,8 +93,26 @@ class UserActivityController extends Controller {
 			</div>
 			<br />
 		');
-		$this->table->lists($this->model_table, $this->fields, ['manage']);
 		
+		$this->table->lists($this->model_table, $this->fields, ['manage']);
+		$this->table->clear();
+		
+		if (1 === $this->session['group_id']) {
+			
+			$this->table->searchable(['user_status', 'username']);
+			$this->table->clickable(false);
+			$this->table->sortable();
+			
+			$this->table->filterGroups('user_status', 'selectbox', false);
+			$this->table->filterGroups('username', 'selectbox', true);
+			
+			$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
+			$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
+			$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
+			
+			$this->callModel('user_never_login', false);
+			$this->table->lists('temp_user_never_login', $this->field_2, ['manage']);
+		}
 		return $this->render();
 	}
 	

@@ -273,6 +273,17 @@ if (!function_exists('diy_query')) {
 	}
 }
 
+if (!function_exists('diy_db')) {
+	
+	function diy_db($param, $data = null) {
+		if (!empty($data)) {
+			return Illuminate\Support\Facades\DB::{$param}($data);
+		} else {
+			return Illuminate\Support\Facades\DB::{$param}();
+		}
+	}
+}
+
 if (!function_exists('diy_temp_table')) {
 	
 	/**
@@ -287,17 +298,28 @@ if (!function_exists('diy_temp_table')) {
 		$strictConfig = config("database.connections.{$conn}.strict");
 		$table_name   = str_replace('temp_', '', $table_name);
 		
+		if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
+			Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
+		}
+		
 		if (false === $strict) {
-			Illuminate\Support\Facades\DB::reconnect();
+			Illuminate\Support\Facades\DB::purge($conn);
 			config()->set("database.connections.{$conn}.strict", $strict);
+			Illuminate\Support\Facades\DB::reconnect();
+			
+			if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
+				Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
+			}
 		}
 		
 		diy_query($sql, 'SELECT');
-		
-		Illuminate\Support\Facades\DB::unprepared("DROP TABLE IF EXISTS temp_{$table_name}");
+		if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
+			Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
+		}
 		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");
 		
 		if (false === $strict) {
+			Illuminate\Support\Facades\DB::purge($conn);
 			config()->set("database.connections.{$conn}.strict", $strictConfig);
 			Illuminate\Support\Facades\DB::reconnect();
 		}
