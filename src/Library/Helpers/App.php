@@ -107,7 +107,11 @@ if (!function_exists('diy_redirect')) {
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	function diy_redirect($to, $message = null, $status = false) {
-		$redirect = Illuminate\Support\Facades\Redirect::to(url()->current() . '/' . $to);
+		if (diy_string_contained($to, 'http://') || diy_string_contained($to, 'https://')) {
+			$redirect = $to;
+		} else {
+			$redirect = Illuminate\Support\Facades\Redirect::to(url()->current() . '/' . $to);
+		}
 		
 		if (!empty($message)) $redirect = $redirect->with('message', $message);
 		if (!empty($status))  $redirect = $redirect->with($status, true);
@@ -306,16 +310,10 @@ if (!function_exists('diy_temp_table')) {
 			Illuminate\Support\Facades\DB::purge($conn);
 			config()->set("database.connections.{$conn}.strict", $strict);
 			Illuminate\Support\Facades\DB::reconnect();
-			
-			if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
-				Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
-			}
 		}
+	//	dump(microtime(true));
 		
 		diy_query($sql, 'SELECT');
-		if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
-			Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
-		}
 		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");
 		
 		if (false === $strict) {

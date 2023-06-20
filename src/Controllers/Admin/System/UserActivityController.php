@@ -56,7 +56,6 @@ class UserActivityController extends Controller {
 		$this->setPage();
 		$this->sessionFilters();
 		$this->removeActionButtons(['add']);
-		$this->callModel('montly_activity', false);
 		
 		$this->table->setUrlValue('user_id');
 		
@@ -74,7 +73,6 @@ class UserActivityController extends Controller {
 		$this->table->filterGroups('fullname', 'selectbox', false);
 		
 	//	$this->table->columnCondition('time_hits', 'cell', '<=', 10, 'background-color', 'rgb(255, 242, 204)');
-	//	$this->table->columnCondition('user_status', 'length_days', '==', 'Disabled', 'replace', 'aaa');
 		$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
 		$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
 		$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
@@ -94,9 +92,10 @@ class UserActivityController extends Controller {
 			<br />
 		');
 		
+		$this->table->runModel($this->model, 'montly_activity::temp', false);
 		$this->table->lists($this->model_table, $this->fields, ['manage']);
 		$this->table->clear();
-		
+		/* 
 		if (1 === $this->session['group_id']) {
 			
 			$this->table->searchable(['user_status', 'username']);
@@ -110,9 +109,10 @@ class UserActivityController extends Controller {
 			$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
 			$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
 			
-			$this->callModel('user_never_login', false);
+			$this->table->runModel($this->model, 'user_never_login::temp', false);
 			$this->table->lists('temp_user_never_login', $this->field_2, ['manage']);
-		}
+		} */
+		
 		return $this->render();
 	}
 	

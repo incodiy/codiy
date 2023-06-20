@@ -199,6 +199,36 @@ class Objects extends Builder {
 		$this->variables['table_data_model'] = $model;
 	}
 	
+	/**
+	 * Call Model Function
+	 * 	: Can be used when we would create temp table and render it (before) $this->table->list() function
+	 *
+	 * @param object $model_object
+	 * @param string $function_name
+	 * @param bool $strict
+	 *
+	 * @return object
+	 */
+	public function runModel($model_object, $function_name, $strict) {
+		$connection = 'mysql';
+		if (null !== $this->connection) $connection = $this->connection;
+		
+		$modelFunction = $function_name;
+		$tableFunction = $function_name;
+		if (diy_string_contained($function_name, '::')) {
+			$split = explode('::', $function_name);
+			$modelFunction = $split[0];
+			$tableFunction = "$split[1]_$split[0]";
+		}
+		
+		$this->variables['model_processing']               = [];
+		$this->variables['model_processing']['model']      = $model_object;
+		$this->variables['model_processing']['function']   = $modelFunction;
+		$this->variables['model_processing']['connection'] = $connection;
+		$this->variables['model_processing']['table']      = $tableFunction;
+		$this->variables['model_processing']['strict']     = $strict;
+	}
+	
 	public function query($sql) {
 		$this->variables['query'] = $sql;
 		$this->model('sql');
@@ -710,6 +740,7 @@ class Objects extends Builder {
 		$this->connection = null;
 	}
 	
+	public $modelProcessing = [];
 	public $tableName = [];
 	public $tableID   = [];
 	/**
@@ -726,6 +757,14 @@ class Objects extends Builder {
 	 * @param boolean $server_side_custom_url
 	 */
 	public function lists(string $table_name = null, $fields = [], $actions = true, $server_side = true, $numbering = true, $attributes = [], $server_side_custom_url = false) {
+		if (!empty($this->variables['model_processing'])) {
+			if ($table_name !== $this->variables['model_processing']['table']) {
+				$table_name = $this->variables['model_processing']['table'];
+			}
+			
+			$this->modelProcessing[$table_name] = $this->variables['model_processing'];
+		}
+		
 		if (null === $table_name) {
 			if (!empty($this->variables['table_data_model'])) {
 				if ('sql' === $this->variables['table_data_model']) {
@@ -960,6 +999,12 @@ class Objects extends Builder {
 	}
 	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
+		if (!empty($this->modelProcessing[$name])) {
+			if (!\Illuminate\Support\Facades\Schema::hasTable($name)) {
+				$this->modelProcess($this->modelProcessing[$name]);
+			}
+		}
+		
 		if (!empty($this->variables['table_data_model'])) {
 			$attributes[$name]['model'] = $this->variables['table_data_model'];
 			asort($attributes[$name]);
@@ -982,5 +1027,20 @@ class Objects extends Builder {
 	
 	private function renderGeneralTable($name, $columns = [], $attributes = []) {
 		dd($columns);
+	}
+	
+	private function modelProcess($data) {
+		if (!empty($data)) {
+			$model = $data['model'];
+			
+			if (false === $data['strict']) {
+				diy_db('purge', $data['connection']);
+				config()->set("database.connections.{$data['connection']}.strict", $data['strict']);
+				diy_db('reconnect');
+			}
+						
+			$model->{$data['function']}();
+			diy_redirect(request()->url());
+		}
 	}
 }

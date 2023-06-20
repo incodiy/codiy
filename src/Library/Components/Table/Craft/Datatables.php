@@ -79,6 +79,25 @@ class Datatables {
 				$model_data = new DynamicTables($model_source);
 			}
 		}
+		/* 
+		if (!empty($data->datatables->modelProcessing)) {
+			if (!empty($data->datatables->modelProcessing[$table_name])) {
+				$modelDataProcess = $data->datatables->modelProcessing[$table_name];
+				
+				if (!empty($modelDataProcess)) {
+					$model = $modelDataProcess['model'];
+					
+					if (false === $modelDataProcess['strict']) {
+						diy_db('purge', $modelDataProcess['connection']);
+						config()->set("database.connections.{$modelDataProcess['connection']}.strict", $modelDataProcess['strict']);
+						diy_db('reconnect');
+					}
+					
+					$model->{$modelDataProcess['function']}();
+				}
+			}
+		} */
+		dd($data->datatables->modelProcessing, $model_source, $table_name);
 		
 		$privileges         = $this->set_module_privileges();
 		$index_lists        = $data->datatables->records['index_lists'];

@@ -57,7 +57,6 @@ class Controller extends BaseController {
 	public $adminPage    = 'dashboard';
 	public $connection;
 	
-	private $modelObject;
 	private $plugins     = [];
 	private $model_class = null;
 	
@@ -71,34 +70,10 @@ class Controller extends BaseController {
 	public function __construct($model = false, $route_page = false) {
 		diy_memory(false);
 		
-		$this->modelObject = $model;
 		$this->init_model($model);
 		$this->dataCollections();
 		
 		if (false !== $route_page) $this->set_route_page($route_page);
-	}
-	
-	/**
-	 * Call Model Set In Construct
-	 * 	: Can be used when we would create temp table and render it (before) $this->table->list() function
-	 * 
-	 * @param string $function_name
-	 * @param bool $strict
-	 * @param string $connection
-	 * 
-	 * @return object
-	 */
-	public function callModel($function_name, $strict = true, $connection = 'mysql') {
-		$model = [];
-		$model = new $this->modelObject();
-		
-		if (false === $strict) {
-			diy_db('purge', $connection);
-			config()->set("database.connections.{$connection}.strict", $strict);
-			diy_db('reconnect');
-		}
-		
-		$model->{$function_name}();
 	}
 	
 	private function init_model($model = false) {
