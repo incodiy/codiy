@@ -277,6 +277,17 @@ if (!function_exists('diy_query')) {
 	}
 }
 
+if (!function_exists('diy_schema')) {
+	
+	function diy_schema($param, $data = null) {
+		if (!empty($data)) {
+			return Illuminate\Support\Facades\Schema::{$param}($data);
+		} else {
+			return Illuminate\Support\Facades\Schema::{$param}();
+		}
+	}
+}
+
 if (!function_exists('diy_db')) {
 	
 	function diy_db($param, $data = null) {
@@ -311,7 +322,6 @@ if (!function_exists('diy_temp_table')) {
 			config()->set("database.connections.{$conn}.strict", $strict);
 			Illuminate\Support\Facades\DB::reconnect();
 		}
-	//	dump(microtime(true));
 		
 		diy_query($sql, 'SELECT');
 		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");

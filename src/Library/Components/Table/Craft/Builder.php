@@ -58,6 +58,12 @@ class Builder {
 			$this->customURL  = $attributes[$name]['server_side']['custom_url'];
 		}
 		
+		// Check if any $this->table->runModel() called
+		if (!empty($this->modelProcessing)) {
+			if (!diy_schema('hasTable', $name))  diy_redirect(request()->url());
+			if (empty($columns[$name]['lists'])) $columns[$name]['lists'] = diy_get_table_columns($name);
+		}
+		
 		$data[$name]['name']       = $name;
 		$data[$name]['columns']    = $columns[$name];
 		$data[$name]['attributes'] = $attributes[$name];
@@ -137,7 +143,7 @@ class Builder {
 	private function header($data = []) {
 		$columns     = $data['columns'];
 		$attributes  = $data['attributes'];
-		
+		/* 
 		$check = \Illuminate\Support\Facades\Schema::hasTable($data['name']);
 		if (!empty($this->modelProcessing)) {
 			if (!\Illuminate\Support\Facades\Schema::hasTable($data['name'])) {dump($check);
@@ -149,7 +155,7 @@ class Builder {
 			$data['columns']['lists'] = diy_get_table_columns($data['name']);
 			$columns = $data['columns']['lists'];
 		}
-		
+		 */
 		$sortable	 = false;
 		if (!empty($data['columns']['sortable'])) $sortable = $data['columns']['sortable'];
 		

@@ -106,6 +106,30 @@ if (!function_exists('diy_get_table_column_type')) {
 	}
 }
 
+if (!function_exists('diy_model_processing_table')) {
+	
+	/**
+	 * Call Model Process Data Table
+	 *
+	 * @param array $data
+	 *
+	 * @return object
+	 */
+	function diy_model_processing_table($data) {
+		if (!empty($data)) {
+			$model = $data['model'];
+			
+			if (false === $data['strict']) {
+				diy_db('purge', $data['connection']);
+				config()->set("database.connections.{$data['connection']}.strict", $data['strict']);
+				diy_db('reconnect');
+			}
+			
+			$model->{$data['function']}();
+		}
+	}
+}
+
 if (!function_exists('diy_set_formula_columns')) {
 	
 	function diy_set_formula_columns($columns, $data) {
@@ -499,8 +523,6 @@ if (!function_exists('create_action_buttons')) {
 		return '<div class="action-buttons-box"><div class="hidden-sm hidden-xs action-buttons">' . $buttons . '</div><div class="hidden-md hidden-lg"><div class="inline pos-rel"><button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto"><i class="fa fa-caret-down icon-only bigger-120"></i></button><ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">' . $buttonsMobile . '</ul></div></div></div>';
 	}
 }
-
-
 
 if (!function_exists('diy_table_row_attr')) {
 	/**

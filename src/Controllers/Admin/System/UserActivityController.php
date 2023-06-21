@@ -95,7 +95,7 @@ class UserActivityController extends Controller {
 		$this->table->runModel($this->model, 'montly_activity::temp', false);
 		$this->table->lists($this->model_table, $this->fields, ['manage']);
 		$this->table->clear();
-		/* 
+		
 		if (1 === $this->session['group_id']) {
 			
 			$this->table->searchable(['user_status', 'username']);
@@ -111,7 +111,7 @@ class UserActivityController extends Controller {
 			
 			$this->table->runModel($this->model, 'user_never_login::temp', false);
 			$this->table->lists('temp_user_never_login', $this->field_2, ['manage']);
-		} */
+		}
 		
 		return $this->render();
 	}

@@ -1000,8 +1000,8 @@ class Objects extends Builder {
 	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
 		if (!empty($this->modelProcessing[$name])) {
-			if (!\Illuminate\Support\Facades\Schema::hasTable($name)) {
-				$this->modelProcess($this->modelProcessing[$name]);
+			if (!diy_schema('hasTable', $name)) {
+				diy_model_processing_table($this->modelProcessing[$name]);
 			}
 		}
 		
@@ -1028,7 +1028,7 @@ class Objects extends Builder {
 	private function renderGeneralTable($name, $columns = [], $attributes = []) {
 		dd($columns);
 	}
-	
+	/* 
 	private function modelProcess($data) {
 		if (!empty($data)) {
 			$model = $data['model'];
@@ -1040,7 +1040,6 @@ class Objects extends Builder {
 			}
 						
 			$model->{$data['function']}();
-			diy_redirect(request()->url());
 		}
-	}
+	} */
 }
