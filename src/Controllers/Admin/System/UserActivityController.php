@@ -24,7 +24,7 @@ class UserActivityController extends Controller {
 	use Handler;
 	
 	private $fields = [
-		'monthly_activity: Period',
+		'monthly_activity:Period',
 		'role_group:Role',
 		'role_location:Region',
 		'fullname',

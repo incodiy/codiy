@@ -299,41 +299,6 @@ if (!function_exists('diy_db')) {
 	}
 }
 
-if (!function_exists('diy_temp_table')) {
-	
-	/**
-	 * Create Temporary Table
-	 * 
-	 * @param string $table_name
-	 * @param string $sql
-	 * @param boolean $strict
-	 * @param string $conn
-	 */
-	function diy_temp_table($table_name, $sql, $strict = true, $conn = 'mysql') {
-		$strictConfig = config("database.connections.{$conn}.strict");
-		$table_name   = str_replace('temp_', '', $table_name);
-		
-		if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
-			Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
-		}
-		
-		if (false === $strict) {
-			Illuminate\Support\Facades\DB::purge($conn);
-			config()->set("database.connections.{$conn}.strict", $strict);
-			Illuminate\Support\Facades\DB::reconnect();
-		}
-		
-		diy_query($sql, 'SELECT');
-		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");
-		
-		if (false === $strict) {
-			Illuminate\Support\Facades\DB::purge($conn);
-			config()->set("database.connections.{$conn}.strict", $strictConfig);
-			Illuminate\Support\Facades\DB::reconnect();
-		}
-	}
-}
-
 if (!function_exists('diy_get_table_name_from_sql')) {
 	
 	function diy_get_table_name_from_sql($sql) {

@@ -58,12 +58,6 @@ class Builder {
 			$this->customURL  = $attributes[$name]['server_side']['custom_url'];
 		}
 		
-		// Check if any $this->table->runModel() called
-		if (!empty($this->modelProcessing)) {
-			if (!diy_schema('hasTable', $name))  diy_redirect(request()->url());
-			if (empty($columns[$name]['lists'])) $columns[$name]['lists'] = diy_get_table_columns($name);
-		}
-		
 		$data[$name]['name']       = $name;
 		$data[$name]['columns']    = $columns[$name];
 		$data[$name]['attributes'] = $attributes[$name];

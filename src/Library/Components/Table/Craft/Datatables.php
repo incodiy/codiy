@@ -82,7 +82,7 @@ class Datatables {
 		
 		// Check if any $this->table->runModel() called
 		if (!empty($data->datatables->modelProcessing[$table_name])) {
-			diy_model_processing_table($data->datatables->modelProcessing[$table_name]);
+			diy_model_processing_table($data->datatables->modelProcessing, $table_name);
 		}
 		
 		$privileges         = $this->set_module_privileges();

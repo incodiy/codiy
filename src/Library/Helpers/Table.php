@@ -102,7 +102,42 @@ if (!function_exists('diy_get_table_column_type')) {
     function diy_get_table_column_type($table_name, $field_name, $db_connection = 'mysql') {
         $connection = DB::connection($db_connection);
         return $connection->getSchemaBuilder()->getColumnType($table_name, $field_name);
-      //  return $connection->getSchemaBuilder()->getColumnListing($table_name, $field_name);
+	}
+}
+
+if (!function_exists('diy_temp_table')) {
+	
+	/**
+	 * Create Temporary Table
+	 *
+	 * @param string $table_name
+	 * @param string $sql
+	 * @param boolean $strict
+	 * @param string $conn
+	 */
+	function diy_temp_table($table_name, $sql, $strict = true, $conn = 'mysql') {
+		$strictConfig = config("database.connections.{$conn}.strict");
+		$table_name   = str_replace('temp_', '', $table_name);
+		
+		if (Illuminate\Support\Facades\Schema::hasTable("temp_{$table_name}")) {
+			Illuminate\Support\Facades\Schema::dropIfExists("temp_{$table_name}");
+		}
+		
+		if (false === $strict) {
+			Illuminate\Support\Facades\DB::purge($conn);
+			config()->set("database.connections.{$conn}.strict", $strict);
+			Illuminate\Support\Facades\DB::reconnect();
+		}
+	//	dump(microtime(true));
+		
+		diy_query($sql, 'SELECT');
+		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");
+		
+		if (false === $strict) {
+			Illuminate\Support\Facades\DB::purge($conn);
+			config()->set("database.connections.{$conn}.strict", $strictConfig);
+			Illuminate\Support\Facades\DB::reconnect();
+		}
 	}
 }
 
@@ -115,17 +150,17 @@ if (!function_exists('diy_model_processing_table')) {
 	 *
 	 * @return object
 	 */
-	function diy_model_processing_table($data) {
-		if (!empty($data)) {
-			$model = $data['model'];
+	function diy_model_processing_table($data, $name) {
+		if (!empty($data[$name])) {
+			$model = $data[$name]['model'];
 			
-			if (false === $data['strict']) {
-				diy_db('purge', $data['connection']);
-				config()->set("database.connections.{$data['connection']}.strict", $data['strict']);
+			if (false === $data[$name]['strict']) {
+				diy_db('purge', $data[$name]['connection']);
+				config()->set("database.connections.{$data[$name]['connection']}.strict", $data[$name]['strict']);
 				diy_db('reconnect');
 			}
 			
-			$model->{$data['function']}();
+			$model->{$data[$name]['function']}();
 		}
 	}
 }
@@ -776,7 +811,7 @@ if (!function_exists('diy_generate_table')) {
 		} else if ($hCheck === $hIndex) {
 			$_header     .= "<th width=\"50\">{$hList}</th>";
 		} else if ($hEmpty === $hIndex) {
-			$_header		.= "<th class=\"center\" width=\"120\">{$hList}</th>";
+			$_header     .= "<th class=\"center\" width=\"120\">{$hList}</th>";
 		} else if ('Action' === $hList) {
 			$_header    .= "<th class=\"center\" width=\"120\">{$hList}</th>";
 		} else if ('Active' === $hList) {

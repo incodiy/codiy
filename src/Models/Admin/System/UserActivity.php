@@ -120,7 +120,7 @@ class UserActivity extends Model {
 						) logout_counters,
 					COUNT(a.page_info) hit_activity
 					FROM `log_activities` a
-					WHERE user_id = 4
+					WHERE user_id = 4 AND LEFT(a.created_at, 7) = '2023-06'
 					GROUP BY LEFT(a.created_at, 10), a.user_id, a.user_group_id, a.user_email
 					ORDER BY LEFT(a.created_at, 10) DESC, a.user_id, a.user_group_id
 					# GET DAILY DATA ACTIVITY

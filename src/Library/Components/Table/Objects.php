@@ -18,8 +18,7 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
  * @copyright wisnuwidi
  * @email     wisnuwidi@incodiy.com
  */
- 
-class Objects extends Builder {
+ class Objects extends Builder {
 	use Tab;
 	
 	public $elements      = [];
@@ -702,10 +701,7 @@ class Objects extends Builder {
 	
 	private $defaultButtons = ['view', 'edit', 'delete'];
 	public function setActions($actions = [], $default_actions = true) {
-		if (true === $default_actions) {
-			$defaultButtons = $this->defaultButtons;
-		} else {
-			$defaultButtons = $default_actions;
+		if (true !== $default_actions) {
 			if (is_array($default_actions)) {
 				$this->removeButtons($default_actions);
 			} else {
@@ -797,17 +793,46 @@ class Objects extends Builder {
 			$fieldset_added = $fields;
 			
 			if (!empty($fields)) {
-			
 				// If table was not view
 				if (!diy_string_contained($table_name, 'view_')) {
 					$fields = $this->check_column_exist($table_name, $fields, $this->connection);
+					
+					// Check if any $this->table->runModel() called
+					if (empty($fields) && !empty($this->modelProcessing)) {
+						if (!empty($recola)) $fields = $recola;
+						if (!diy_schema('hasTable', $table_name)) {
+							diy_model_processing_table($this->modelProcessing, $table_name);
+						}
+						
+						diy_redirect(request()->url());
+						$fields = diy_get_table_columns($table_name);
+						/* 
+						else {
+							if (!diy_schema('hasTable', $table_name)) {
+								diy_model_processing_table($this->modelProcessing[$table_name]);
+							}
+							
+							diy_redirect(request()->url());
+							$fields = diy_get_table_columns($table_name);
+						} */
+					}
+					
 				}
 			} elseif (!empty($this->variables['table_fields'])) {
 				$fields = $this->check_column_exist($table_name, $this->variables['table_fields']);
 			} else {
 				$fields = diy_get_table_columns($table_name, $this->connection);
+				
+				if (empty($fields) && !empty($this->modelProcessing)) {
+					if (!diy_schema('hasTable', $table_name)) {
+						diy_model_processing_table($this->modelProcessing, $table_name);
+					}
+					
+					diy_redirect(request()->url());
+					$fields = diy_get_table_columns($table_name);
+				}
 			}
-			
+		//	dd($fields);
 			// RELATIONAL PROCESS
 			$relations        = [];
 			$field_relations  = [];
@@ -999,12 +1024,13 @@ class Objects extends Builder {
 	}
 	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
+		/* 
 		if (!empty($this->modelProcessing[$name])) {
 			if (!diy_schema('hasTable', $name)) {
-				diy_model_processing_table($this->modelProcessing[$name]);
+				diy_model_processing_table($this->modelProcessing, $name);
 			}
 		}
-		
+		 */
 		if (!empty($this->variables['table_data_model'])) {
 			$attributes[$name]['model'] = $this->variables['table_data_model'];
 			asort($attributes[$name]);
@@ -1028,18 +1054,4 @@ class Objects extends Builder {
 	private function renderGeneralTable($name, $columns = [], $attributes = []) {
 		dd($columns);
 	}
-	/* 
-	private function modelProcess($data) {
-		if (!empty($data)) {
-			$model = $data['model'];
-			
-			if (false === $data['strict']) {
-				diy_db('purge', $data['connection']);
-				config()->set("database.connections.{$data['connection']}.strict", $data['strict']);
-				diy_db('reconnect');
-			}
-						
-			$model->{$data['function']}();
-		}
-	} */
 }
