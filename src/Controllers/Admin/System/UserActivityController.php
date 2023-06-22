@@ -59,6 +59,27 @@ class UserActivityController extends Controller {
 		
 		$this->table->setUrlValue('user_id');
 		
+		if (1 === $this->session['group_id']) {
+			
+			$this->table->openTab('User Never Login');
+			$this->table->searchable(['user_status', 'username']);
+			$this->table->clickable(false);
+			$this->table->sortable();
+			
+			$this->table->filterGroups('user_status', 'selectbox', false);
+			$this->table->filterGroups('username', 'selectbox', true);
+			
+			$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
+			$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
+			$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
+			
+			$this->table->runModel($this->model, 'user_never_login::temp', false);
+			$this->table->lists('temp_user_never_login', $this->field_2, ['manage']);
+			$this->table->clear();
+			
+			$this->table->openTab('Monthly Activity');
+		}
+		
 		$this->table->searchable(['user_status', 'monthly_activity', 'role_group', 'role_location', 'fullname']);
 		$this->table->clickable(false);
 		$this->table->sortable();
@@ -97,20 +118,7 @@ class UserActivityController extends Controller {
 		$this->table->clear();
 		
 		if (1 === $this->session['group_id']) {
-			
-			$this->table->searchable(['user_status', 'username']);
-			$this->table->clickable(false);
-			$this->table->sortable();
-			
-			$this->table->filterGroups('user_status', 'selectbox', false);
-			$this->table->filterGroups('username', 'selectbox', true);
-			
-			$this->table->columnCondition('user_status', 'cell', '==', 'Disabled', 'background-color', 'rgb(255, 242, 204)');
-			$this->table->columnCondition('user_status', 'action', '==', 'Active', 'replace', 'ajax::manage|warning|check-square-o');
-			$this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'ajax::manage|danger|power-off');
-			
-			$this->table->runModel($this->model, 'user_never_login::temp', false);
-			$this->table->lists('temp_user_never_login', $this->field_2, ['manage']);
+			$this->table->closeTab();
 		}
 		
 		return $this->render();

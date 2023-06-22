@@ -52,8 +52,39 @@ class Search {
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
 		if (!empty($filterQuery)) {
-			$this->filters['filter_query'] = $filterQuery;
+			$this->normalizeFilters($filterQuery);
+		//	$this->filters['filter_query'] = $filterQuery;
 		}
+	}
+	
+	private function normalizeFilters($filters = []) {
+		$filterData = [];
+		
+		foreach ($filters as $filter_data) {
+			if (is_array($filter_data['value'])) {
+				foreach ($filter_data['value'] as $filterValues) {
+					$filterData[$filter_data['field_name']]['value'][][] = $filterValues;
+				}
+			} else {
+				$filterData[$filter_data['field_name']]['value'][][] = $filter_data['value'];
+			}
+		}
+		
+		$_filters = [];
+		foreach ($filterData as $node => $nodeValues) {
+			$_filters[$node]['field_name']  = $node;
+			$_filters[$node]['operator']    = '=';
+			foreach ($nodeValues['value'] as $values) {
+				$_filters[$node]['value'][] = $values[0];
+			}
+		}
+		unset($filterData);
+		
+		foreach ($_filters as $dataFilters) {
+			$filterData[] = $dataFilters;
+		}
+		
+		$this->filters['filter_query'] = $filterData;
 	}
 	
 	public function render($info, string $table, array $fields) {
@@ -150,6 +181,7 @@ class Search {
 			
 			$where = implode(' ', $mf_where);
 		}
+		
 		if (!empty($this->filters['filter_query'])) {	
 			$filterQueries = [];
 			foreach ($this->filters['filter_query'] as $i => $fqData) {

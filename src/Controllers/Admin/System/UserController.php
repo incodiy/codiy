@@ -73,7 +73,7 @@ class UserController extends Controller {
 		$this->table->filterGroups('username', 'selectbox', true);
 		$this->table->filterGroups('group_info', 'selectbox', true);
 		
-		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'user_status']);
+		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'active']);
 		
 		return $this->render();
 	}
@@ -87,7 +87,7 @@ class UserController extends Controller {
 		$this->form->text('fullname', null);
 		$this->form->text('email', null);
 		$this->form->password('password');
-		$this->form->selectbox('user_status', active_box(), false);
+		$this->form->selectbox('active', active_box(), false);
 		
 		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
 			$this->form->openTab('User Group');
@@ -157,7 +157,7 @@ class UserController extends Controller {
 		$this->form->text('fullname', $this->model_data->fullname, ['required']);
 		$this->form->text('email', $this->model_data->email, ['required', 'readonly']);
 		$this->form->password('password', ['placeholder' => '********']);
-		$this->form->selectbox('user_status', active_box(), $this->model_data->user_status);
+		$this->form->selectbox('active', active_box(), $this->model_data->active);
 		
 		$this->form->openTab('User Info');
 		$this->form->file('photo', ['imagepreview']);

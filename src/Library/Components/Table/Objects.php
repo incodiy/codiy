@@ -18,7 +18,7 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
  * @copyright wisnuwidi
  * @email     wisnuwidi@incodiy.com
  */
- class Objects extends Builder {
+class Objects extends Builder {
 	use Tab;
 	
 	public $elements      = [];
@@ -461,7 +461,7 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 				$filter_columns = $this->all_columns;
 			}
 		} else {
-			$filter_columns    = $columns;
+			$filter_columns = $columns;
 		}
 		
 		$this->search_columns = $filter_columns;
@@ -564,6 +564,7 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 		$this->variables['format_data']          = [];
 		$this->variables['add_table_attributes'] = [];
 		$this->variables['fixed_columns']        = [];
+		$this->variables['model_processing']     = [];
 	}
 	
 	public $conditions = [];
@@ -803,18 +804,7 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 						if (!diy_schema('hasTable', $table_name)) {
 							diy_model_processing_table($this->modelProcessing, $table_name);
 						}
-						
-						diy_redirect(request()->url());
 						$fields = diy_get_table_columns($table_name);
-						/* 
-						else {
-							if (!diy_schema('hasTable', $table_name)) {
-								diy_model_processing_table($this->modelProcessing[$table_name]);
-							}
-							
-							diy_redirect(request()->url());
-							$fields = diy_get_table_columns($table_name);
-						} */
 					}
 					
 				}
@@ -827,12 +817,10 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 					if (!diy_schema('hasTable', $table_name)) {
 						diy_model_processing_table($this->modelProcessing, $table_name);
 					}
-					
-					diy_redirect(request()->url());
 					$fields = diy_get_table_columns($table_name);
 				}
 			}
-		//	dd($fields);
+			
 			// RELATIONAL PROCESS
 			$relations        = [];
 			$field_relations  = [];
@@ -1024,13 +1012,6 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 	}
 	
 	private function renderDatatable($name, $columns = [], $attributes = [], $label = null) {
-		/* 
-		if (!empty($this->modelProcessing[$name])) {
-			if (!diy_schema('hasTable', $name)) {
-				diy_model_processing_table($this->modelProcessing, $name);
-			}
-		}
-		 */
 		if (!empty($this->variables['table_data_model'])) {
 			$attributes[$name]['model'] = $this->variables['table_data_model'];
 			asort($attributes[$name]);

@@ -137,19 +137,7 @@ class Builder {
 	private function header($data = []) {
 		$columns     = $data['columns'];
 		$attributes  = $data['attributes'];
-		/* 
-		$check = \Illuminate\Support\Facades\Schema::hasTable($data['name']);
-		if (!empty($this->modelProcessing)) {
-			if (!\Illuminate\Support\Facades\Schema::hasTable($data['name'])) {dump($check);
-				diy_redirect(request()->url());
-			}
-		}
 		
-		if (!empty($this->modelProcessing) && empty($data['columns']['lists'])) {
-			$data['columns']['lists'] = diy_get_table_columns($data['name']);
-			$columns = $data['columns']['lists'];
-		}
-		 */
 		$sortable	 = false;
 		if (!empty($data['columns']['sortable'])) $sortable = $data['columns']['sortable'];
 		

@@ -26,6 +26,36 @@ class Export {
 		return $this->process('csv', $path, $link);
 	}
 	
+	private function normalizeFilters($filters = []) {
+		$filterData = [];
+		
+		foreach ($filters as $filter_data) {
+			if (is_array($filter_data['value'])) {
+				foreach ($filter_data['value'] as $filterValues) {
+					$filterData[$filter_data['field_name']]['value'][][] = $filterValues;
+				}
+			} else {
+				$filterData[$filter_data['field_name']]['value'][][] = $filter_data['value'];
+			}
+		}
+		
+		$_filters = [];
+		foreach ($filterData as $node => $nodeValues) {
+			$_filters[$node]['field_name']  = $node;
+			$_filters[$node]['operator']    = '=';
+			foreach ($nodeValues['value'] as $values) {
+				$_filters[$node]['value'][] = $values[0];
+			}
+		}
+		unset($filterData);
+		
+		foreach ($_filters as $dataFilters) {
+			$filterData[] = $dataFilters;
+		}
+		
+		return $filterData;
+	}
+	
 	private function process($type = 'csv', $path = null, $link = null) {
 		if (empty($path)) {
 			$path = $this->export_path;
@@ -41,6 +71,11 @@ class Export {
 				unset($_POST['exportData']);
 				
 				$filterPage = [];
+				
+				$filterPage = $this->normalizeFilters($_POST['ftrExp']);
+				unset($_POST['ftrExp']);
+				
+				/* 
 				if (!empty($_POST['ftrExp'])) {
 					foreach ($_POST['ftrExp'] as $fpage) {
 						if (!is_array($fpage['value'])) {
@@ -48,14 +83,14 @@ class Export {
 						} else {
 							foreach ($fpage['value'] as $n => $fval) {
 								if (!empty($fval)) {
-									$filterPage[$fpage['field_name']][$n] = $fval;
+									$filterPage[$fpage['field_name']] = $fval;
 								}
 							}
 						}
 					}
 				}
 				unset($_POST['ftrExp']);
-				
+				 */
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
 				$token        = $_POST['_token'];
@@ -65,7 +100,7 @@ class Export {
 				if (!empty($filterPage)) {
 					$postsInitPage = [];
 					foreach ($filterPage as $fpageName => $fpageValues) {
-						$postsInitPage[$fpageName]    = $fpageValues;
+						$postsInitPage[$fpageName] = $fpageValues;
 						if (!empty($_POST[$fpageName])) {
 							$postsInitPage[$fpageName] = $_POST[$fpageName];
 							unset($_POST[$fpageName]);
@@ -74,7 +109,7 @@ class Export {
 					
 					$filters = array_merge_recursive($postsInitPage, $_POST);
 				}
-				
+			//	dd($filterPage, $filters);
 				if ('dynamics' === $model_source) {
 					$model = new DynamicTables(null, $link);
 					$model->setTable($table_source);
