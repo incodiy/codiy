@@ -942,6 +942,7 @@ class Objects extends Builder {
 				unset($this->conditions['formula']);
 				$this->conditions[$table_name]['formula'] = $this->formula[$table_name];
 			}
+			
 			if (!empty($this->conditions['where'])) {
 				$whereConds = [];
 				foreach ($this->conditions['where'] as $where_conds) {
@@ -949,6 +950,7 @@ class Objects extends Builder {
 					$whereConds[$where_conds['field_name']][$where_conds['operator']]['operator'][$where_conds['operator']]     = $where_conds['operator'];
 					$whereConds[$where_conds['field_name']][$where_conds['operator']]['values'][]                               = $where_conds['value'];
 				}
+				
 				$whereConditions = [];
 				foreach ($whereConds as $whereFields => $whereFieldValues) {
 					foreach ($whereFieldValues as $whereOperators => $whereOperatorValues) {
