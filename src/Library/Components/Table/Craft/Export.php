@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Response;
  * @copyright  wisnuwidi
  * @email      wisnuwidi@incodiy.com
  */
- 
 class Export {
 	
 	public  $delimeter   = '|';
@@ -72,25 +71,15 @@ class Export {
 				
 				$filterPage = [];
 				
-				$filterPage = $this->normalizeFilters($_POST['ftrExp']);
+				$fDataPost  = diy_filter_data_normalizer($_POST['ftrExp']);
 				unset($_POST['ftrExp']);
 				
-				/* 
-				if (!empty($_POST['ftrExp'])) {
-					foreach ($_POST['ftrExp'] as $fpage) {
-						if (!is_array($fpage['value'])) {
-							$filterPage[$fpage['field_name']] = $fpage['value'];
-						} else {
-							foreach ($fpage['value'] as $n => $fval) {
-								if (!empty($fval)) {
-									$filterPage[$fpage['field_name']] = $fval;
-								}
-							}
-						}
+				if (!empty($fDataPost)) {
+					foreach ($fDataPost as $filterPostData) {
+						$filterPage[$filterPostData['field_name']] = $filterPostData['value'];
 					}
 				}
-				unset($_POST['ftrExp']);
-				 */
+				
 				$table_source = $_GET['difta']['name'];
 				$model_source = $_GET['difta']['source'];
 				$token        = $_POST['_token'];
@@ -109,7 +98,7 @@ class Export {
 					
 					$filters = array_merge_recursive($postsInitPage, $_POST);
 				}
-			//	dd($filterPage, $filters);
+				
 				if ('dynamics' === $model_source) {
 					$model = new DynamicTables(null, $link);
 					$model->setTable($table_source);

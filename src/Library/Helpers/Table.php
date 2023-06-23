@@ -12,6 +12,46 @@ use Illuminate\Support\Facades\DB;
  * @email     wisnuwidi@incodiy.com
  */
  
+if (!function_exists('diy_filter_data_normalizer')) {
+	
+	/**
+	 * Normalizing Data Filters
+	 * 
+	 * @param array $filters
+	 * 
+	 * @return array
+	 */
+	function diy_filter_data_normalizer($filters = []) {
+		$filterData = [];
+		
+		foreach ($filters as $filter_data) {
+			if (is_array($filter_data['value'])) {
+				foreach ($filter_data['value'] as $filterValues) {
+					$filterData[$filter_data['field_name']]['value'][][] = $filterValues;
+				}
+			} else {
+				$filterData[$filter_data['field_name']]['value'][][] = $filter_data['value'];
+			}
+		}
+		
+		$_filters = [];
+		foreach ($filterData as $node => $nodeValues) {
+			$_filters[$node]['field_name']  = $node;
+			$_filters[$node]['operator']    = '=';
+			foreach ($nodeValues['value'] as $values) {
+				$_filters[$node]['value'][] = $values[0];
+			}
+		}
+		unset($filterData);
+		
+		foreach ($_filters as $dataFilters) {
+			$filterData[] = $dataFilters;
+		}
+		
+		return $filterData;
+	}
+}
+
 if (!function_exists('diy_get_model_table')) {
 	
 	/**

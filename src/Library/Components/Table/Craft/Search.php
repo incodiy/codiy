@@ -31,9 +31,7 @@ class Search {
 	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null, $filterQuery = []) {
 		if (!empty($connection)) $this->searchConnection = $connection;
 		
-		if (diy_string_contained($filters['table_name'], 'view_')) {
-		    $this->tableFromView = true;
-		}
+		if (diy_string_contained($filters['table_name'], 'view_'))  $this->tableFromView = true;
 		
 		$this->info = $info;
 		if (!empty($model)) $model = new $model();
@@ -51,40 +49,7 @@ class Search {
 		$this->sql          = $sql;
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
-		if (!empty($filterQuery)) {
-			$this->normalizeFilters($filterQuery);
-		//	$this->filters['filter_query'] = $filterQuery;
-		}
-	}
-	
-	private function normalizeFilters($filters = []) {
-		$filterData = [];
-		
-		foreach ($filters as $filter_data) {
-			if (is_array($filter_data['value'])) {
-				foreach ($filter_data['value'] as $filterValues) {
-					$filterData[$filter_data['field_name']]['value'][][] = $filterValues;
-				}
-			} else {
-				$filterData[$filter_data['field_name']]['value'][][] = $filter_data['value'];
-			}
-		}
-		
-		$_filters = [];
-		foreach ($filterData as $node => $nodeValues) {
-			$_filters[$node]['field_name']  = $node;
-			$_filters[$node]['operator']    = '=';
-			foreach ($nodeValues['value'] as $values) {
-				$_filters[$node]['value'][] = $values[0];
-			}
-		}
-		unset($filterData);
-		
-		foreach ($_filters as $dataFilters) {
-			$filterData[] = $dataFilters;
-		}
-		
-		$this->filters['filter_query'] = $filterData;
+		if (!empty($filterQuery)) $this->filters['filter_query'] = diy_filter_data_normalizer($filterQuery);
 	}
 	
 	public function render($info, string $table, array $fields) {
@@ -187,28 +152,19 @@ class Search {
 			foreach ($this->filters['filter_query'] as $i => $fqData) {
 				$fqFieldName = $fqData['field_name'];
 				$fqDataValue = $fqData['value'];
-				$fqCond      = 'AND ';
-				if ($i <= 0) {
-					if (!empty($mf_where)) {
-						$fqCond = 'AND ';
-					} else if (!empty($condition)) {
-						$fqCond = 'AND ';
-					} else {
-						$fqCond = 'WHERE ';
-					}
-				}
 				
 				if (is_array($fqData['value'])) {
 					if (count($fqData['value']) >= 2) {
 						$fQdataValue = implode("', '", $fqDataValue);
-						$filterQueries[$i] = "{$fqCond} `{$fqFieldName}` IN ('{$fQdataValue}')";
+						$filterQueries[$i] = "`{$fqFieldName}` IN ('{$fQdataValue}')";
 					}
 				} else {
-					$filterQueries[$i] = "{$fqCond} `{$fqFieldName}` = '{$fqDataValue}'";
+					$filterQueries[$i] = "`{$fqFieldName}` = '{$fqDataValue}'";
 				}
 			}
 			
-			$where = implode(' ', $filterQueries);
+			$filterQuery = implode(' AND ', $filterQueries);
+			$where       = "WHERE {$filterQuery}";
 		}
 		
 		if (!empty($this->relations)) {
@@ -241,8 +197,8 @@ class Search {
 	}
 	
 	private function set_first_selectbox($name, $field_value, $field) {
-		$values[$field]       = null;
-		$field_value[$field]  = $this->selections($name, [$field]);
+		$values[$field]      = null;
+		$field_value[$field] = $this->selections($name, [$field]);
 		if (!empty($field_value[$field]->selections[$field])) {
 			if (!empty($field_value[$field]->selections[$field])) {
 				$values[$field] = $field_value[$field]->selections[$field];
