@@ -154,9 +154,11 @@ class Search {
 				$fqDataValue = $fqData['value'];
 				
 				if (is_array($fqData['value'])) {
+					$fQdataValue = implode("', '", $fqDataValue);
 					if (count($fqData['value']) >= 2) {
-						$fQdataValue = implode("', '", $fqDataValue);
 						$filterQueries[$i] = "`{$fqFieldName}` IN ('{$fQdataValue}')";
+					} else {
+						$filterQueries[$i] = "`{$fqFieldName}` = '{$fQdataValue}'";
 					}
 				} else {
 					$filterQueries[$i] = "`{$fqFieldName}` = '{$fqDataValue}'";
