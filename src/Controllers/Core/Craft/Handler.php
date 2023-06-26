@@ -38,13 +38,21 @@ trait Handler {
 				if (!empty($this->roleInfo) && !in_array($this->session['group_alias'], $this->roleInfo)) {
 					$this->customHandler();
 				}
+				
 				$this->sessionConfig();
 			}
 		}
 	}
 	
 	private function sessionConfig() {
-		$user_session_alias = diy_config('user.alias_session_name');
+		$user_group_session_key   = diy_config('user.group_alias_key');
+		$user_group_session_field = diy_config('user.group_alias_field');
+		$user_session_alias       = diy_config('user.alias_session_name');
+		
+		if (!empty($this->session[$user_group_session_field])) {
+			$this->filterPage([$user_group_session_key => $this->session[$user_group_session_field]], '=');
+		}
+		
 		if (!empty($this->session[$user_session_alias])) {
 			foreach ($this->session[$user_session_alias] as $fieldset => $fieldvalues) {
 				$this->filterPage([$fieldset => $fieldvalues], '=');
