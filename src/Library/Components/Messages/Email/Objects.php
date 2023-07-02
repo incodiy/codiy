@@ -66,7 +66,7 @@ class Objects {
 		if (!empty($this->bcc)) $mail->bcc($this->bcc);
 		
 		$mail->to($this->to)->send(new Email($this->data));
-		
+		 
 		dd("Email is sent successfully.");
 	}
 }

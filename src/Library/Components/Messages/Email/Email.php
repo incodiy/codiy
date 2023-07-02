@@ -22,7 +22,7 @@ class Email extends Mailable {
 	use Queueable, SerializesModels;
 	
 	public $mailData;
-	public $subject = 'Mantra Information Programs';
+	public $subject = 'IncoDIY Information Programs';
 	
 	public function __construct($mailData) {
 		$this->mailData = $mailData;
