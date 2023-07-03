@@ -27,24 +27,45 @@ class Objects {
 	private $cc;
 	private $bcc;
 	
-	public function from($address) {
-		$this->from = $address;
+	public function __construct() {
+	//	$this->mail = new Mail();
 	}
 	
-	public function to($address) {
-		$this->to = $address;
-	}
-	
-	public function cc($address) {
-		if (!is_array($address)) $address = [$address];
+	private function setAddress($address, $address_name = []) {
+		if (!is_array($address)) {
+			$address = [$address];
+		}
 		
-		$this->cc = $address;
+		$email          = [];
+		$email['email'] = [];
+		$email['name']  = [];
+		
+		foreach ($address as $mailAddress) {
+			if (!is_array($mailAddress)) {
+				$splitMail                   = explode('@', $mailAddress);
+				$email['name'][$mailAddress] = ucwords(str_replace('-', ' ', diy_clean_strings($splitMail[0])));
+				$email['email'][]            = $mailAddress;
+			}
+		}
+		unset($address);
+		
+		return $email;
 	}
 	
-	public function bcc($address) {
-		if (!is_array($address)) $address = [$address];
-		
-		$this->bcc = $address;
+	public function from($address, $address_name = []) {
+		$this->from = $this->setAddress($address, $address_name);
+	}
+	
+	public function to($address, $address_name = []) {
+		$this->to = $this->setAddress($address, $address_name);
+	}
+	
+	public function cc($address, $address_name = []) {
+		$this->cc = $this->setAddress($address, $address_name);
+	}
+	
+	public function bcc($address, $address_name = []) {
+		$this->bcc = $this->setAddress($address, $address_name);
 	}
 	
 	public function subject($string) {
@@ -64,15 +85,12 @@ class Objects {
 	public function send($mailData = []) {
 		if (!empty($mailData)) $this->data = $mailData;
 		
-		$mail = new Mail();
-		$this->mail = $mail::to($this->to);
+		$mail       = new Mail();
+		$this->mail = $mail::to($this->to['email'], $this->to['name']);
 		
+		if (!empty($this->cc))  $this->mail->cc($this->cc['email'], $this->cc['name']);
+		if (!empty($this->bcc)) $this->mail->bcc($this->bcc['email'], $this->bcc['name']);
 		
-		if (!empty($this->cc)) $this->mail->cc($this->cc);
-		if (!empty($this->bcc)) $this->mail->bcc($this->bcc);
-		dump($this);
 		$this->mail->send(new Email($this->data));
-		 
-		dd("Email is sent successfully.", $mail);
 	}
 }
