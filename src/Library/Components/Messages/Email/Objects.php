@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Mail;
  */
 class Objects {
 	
+	private $mail;
 	private $data;
-	private $subject;
 	private $title;
 	private $message;
 	private $from;
@@ -27,24 +27,28 @@ class Objects {
 	private $cc;
 	private $bcc;
 	
-	public function from($string) {
-		$this->from = $string;
+	public function from($address) {
+		$this->from = $address;
 	}
 	
-	public function to($string) {
-		$this->to = $string;
+	public function to($address) {
+		$this->to = $address;
 	}
 	
-	public function cc($string) {
-		$this->cc = $string;
+	public function cc($address) {
+		if (!is_array($address)) $address = [$address];
+		
+		$this->cc = $address;
 	}
 	
-	public function bcc($string) {
-		$this->bcc = $string;
+	public function bcc($address) {
+		if (!is_array($address)) $address = [$address];
+		
+		$this->bcc = $address;
 	}
 	
 	public function subject($string) {
-		$this->subject = $string;
+		$this->data['subject'] = $string;
 	}
 	
 	public function title($string) {
@@ -61,12 +65,14 @@ class Objects {
 		if (!empty($mailData)) $this->data = $mailData;
 		
 		$mail = new Mail();
+		$this->mail = $mail::to($this->to);
 		
-		if (!empty($this->cc)) $mail->cc($this->cc);
-		if (!empty($this->bcc)) $mail->bcc($this->bcc);
 		
-		$mail->to($this->to)->send(new Email($this->data));
+		if (!empty($this->cc)) $this->mail->cc($this->cc);
+		if (!empty($this->bcc)) $this->mail->bcc($this->bcc);
+		dump($this);
+		$this->mail->send(new Email($this->data));
 		 
-		dd("Email is sent successfully.");
+		dd("Email is sent successfully.", $mail);
 	}
 }

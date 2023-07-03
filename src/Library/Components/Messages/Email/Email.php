@@ -25,6 +25,11 @@ class Email extends Mailable {
 	public $subject = 'IncoDIY Information Programs';
 	
 	public function __construct($mailData) {
+		if (!empty($mailData['subject'])) {
+			$this->subject = $mailData['subject'];
+			unset($mailData['subject']);
+		}
+		
 		$this->mailData = $mailData;
 	}
 	
