@@ -70,13 +70,14 @@ class Export {
 				unset($_POST['exportData']);
 				
 				$filterPage = [];
-				
-				$fDataPost  = diy_filter_data_normalizer($_POST['ftrExp']);
-				unset($_POST['ftrExp']);
-				
-				if (!empty($fDataPost)) {
-					foreach ($fDataPost as $filterPostData) {
-						$filterPage[$filterPostData['field_name']] = $filterPostData['value'];
+				if (!empty($_POST['ftrExp'])) {
+					$fDataPost  = diy_filter_data_normalizer($_POST['ftrExp']);
+					unset($_POST['ftrExp']);
+					
+					if (!empty($fDataPost)) {
+						foreach ($fDataPost as $filterPostData) {
+							$filterPage[$filterPostData['field_name']] = $filterPostData['value'];
+						}
 					}
 				}
 				
