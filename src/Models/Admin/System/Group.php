@@ -17,12 +17,12 @@ use Incodiy\Codiy\Models\Core\Model;
  */
 class Group extends Model {
 	use SoftDeletes;
-	protected $dates		= ['deleted_at'];
 	
-	protected $table		= 'base_group';
-	protected $guarded	= [];
+	protected $dates   = ['deleted_at'];
+	protected $table   = 'base_group';
+	protected $guarded = [];
 	
-	public $timestamps	= false;
+	public $timestamps = false;
 	
 	public function relation() {
 		if (true === is_multiplatform()) {

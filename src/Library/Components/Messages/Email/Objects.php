@@ -78,8 +78,10 @@ class Objects {
 	}
 	
 	public function message($string) {
-		$this->message      = $string;
-		$this->data['body'] = $string;
+		$message = $string . '<br /><p>' . diy_config('email.feet.text') . ',</p><p>' . diy_config('email.feet.signature') . '.</p>';
+		
+		$this->message      = $message;
+		$this->data['body'] = $message;
 	}
 	
 	public function send($mailData = []) {

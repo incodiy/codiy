@@ -10,7 +10,7 @@ class User extends Authenticatable {
 	use Notifiable;
 	use SoftDeletes;
 	
-	protected $table   = 'users';
+	protected $table = 'users';
 	
 	public $groupInfo;
 	
@@ -102,6 +102,12 @@ class User extends Authenticatable {
 		} else {
 			return $user_info;
 		}
+	}
+	
+	public static function getGroupIdentity($id) {
+		$group = diy_query("SELECT group_name, group_alias, group_info FROM base_group WHERE active = 1 AND id = {$id}", 'SELECT');
+
+		return $group[0];
 	}
 	
 	public static function sqlFirstRoute() {

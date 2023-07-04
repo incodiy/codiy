@@ -72,6 +72,7 @@ class UserController extends Controller {
 		
 		$this->table->filterGroups('username', 'selectbox', true);
 		$this->table->filterGroups('group_info', 'selectbox', true);
+		$this->table->orderby('id', 'DESC');
 		
 		$this->table->lists($this->model_table, ['username:User', 'email', 'group_info', 'group_name', 'address', 'phone', 'expire_date', 'active']);
 		
@@ -118,13 +119,18 @@ class UserController extends Controller {
 	}
 	
 	private function sendEmail($to, $subject, $title, $message, $cc = []) {
-		$this->email->to($to);
-		$this->email->subject($subject);
-		$this->email->title($title);
-		$this->email->message($message);
-		if (!empty($cc)) $this->email->cc($cc);
-		
-		$this->email->send();
+		if (!empty(diy_config('email.from.address'))) {
+			$this->email->to($to);
+			$this->email->subject($subject);
+			$this->email->title($title);
+			$this->email->message($message);
+			if (!empty($cc)) {
+				$ccMail = array_merge_recursive($cc, [diy_config('email.cc.address')]);
+				$this->email->cc($ccMail);
+			}
+			
+			$this->email->send();
+		}
 	}
 	
 	private function credential_info($data) {
@@ -142,25 +148,15 @@ class UserController extends Controller {
 		}
 		
 		if (!empty($dataAlias)) {
-			$aliasMessages                   = [];
-			$aliasMessages['head'][]         = '<thead><tr>';
-			$aliasMessages['body'][]         = '<tbody><tr>';
+			$aliasMessages = [];
 			foreach ($dataAlias as $key => $values) {
-				$aliasMessages['head'][]     = "<td>{$key}</td>";
-				
-				foreach ($values as $value) {
-					$aliasMessages['body'][] = "<tr>";
-					$aliasMessages['body'][] = "<td>{$value}</td>";
-					$aliasMessages['body'][] = "</tr>";
-				}
+				$aliasName       = ucwords($key);
+				$value           = implode(', ', $values);
+				$aliasMessages[] = "<tr><td style='border-right:black solid 1px;border-bottom:black solid 1px;font-weight:bold;padding:10px 20px'>{$aliasName}</td><td style='border-right:black solid 1px;border-bottom:black solid 1px;padding:10px 20px'>{$value}</td></tr>";
 			}
-			$aliasMessages['body'][]         = '</tr></tbody>';
-			$aliasMessages['head'][]         = '</tr></thead>';
 			
-			$tableHead = implode('', $aliasMessages['head']);
-			$tableBody = implode('', $aliasMessages['body']);
-			
-			$aliasMessage = "<table border='1'>{$tableHead}{$tableBody}</table>";
+			$tableMessage = implode('', $aliasMessages);
+			$aliasMessage = "<table cellspacing='0' cellpadding='0' style='border-top:black solid 1px;border-left:black solid 1px'><tbody>{$tableMessage}</tbody></table>";
 		}
 		
 		return $aliasMessage;
@@ -172,8 +168,8 @@ class UserController extends Controller {
 		
 		$this->set_data_before_post($request);
 		
-		$reqData = $request->all();
-		
+		$reqData                   = $request->all();
+		$roleInfo                  = null;
 		$email['created_by']       = $this->session['fullname'];
 		$email['created_by_email'] = $this->session['email'];
 		$email['credential_email'] = $reqData['email'];
@@ -185,13 +181,23 @@ class UserController extends Controller {
 		$this->insert_data($request, false);
 		$this->set_data_after_post($this->group_id);
 		
-		$message  = "Hi {$email['credential_name']},<br /><br />";
-		$message .= "This is your user credential access as <strong>{$this->group_id['group_id']}</strong> role group:<hr /><br />";
-		$message .= "Username: {$email['credential_user']}<br />";
-		$message .= "Password: {$email['credential_pwd']}<br /><br />";
-		$message .= "User Info<br />{$email['credential_info']}<br />Best Regards,<br />IncoDIY Development";
+		if (!empty($this->group_id)) {
+			$user_group     = User::getGroupIdentity($this->group_id['group_id']);
+			$group_identity = [];
+			if (diy_string_contained(diy_config('role.group.formatIdentity.view'), '|')) {
+				foreach (explode('|', diy_config('role.group.formatIdentity.view')) as $formatRole) {
+					$group_identity[] = $user_group->{$formatRole};
+				}
+				$group_identity = implode(diy_config('role.group.formatIdentity.separator'), $group_identity);
+				$roleInfo       = " as <strong>{$group_identity}</strong> role group";
+			}
+		}
+		$message  = "<p>This is your user credential access{$roleInfo}:</p>";
+		$message .= "<p>Username: {$email['credential_user']}</p>";
+		$message .= "<p>Password: {$email['credential_pwd']}</p><br />";
+		$message .= "<p><strong>User Info</strong></p><br />{$email['credential_info']}";
 		
-		$this->sendEmail($email['credential_email'], 'Mantra User Registration', "Mantra Information", $message, [$email['created_by_email'], 'wisnuwidi@gmail.com']);
+		$this->sendEmail($email['credential_email'], 'Mantra User Registration', "Hi, {$email['credential_name']}", $message, [$email['created_by_email']]);
 		
 		return self::redirect("{$this->stored_id}/edit", $request);
 		

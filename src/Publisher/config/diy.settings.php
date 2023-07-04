@@ -8,7 +8,8 @@
  *
  * @author		wisnuwidi @Incodiy - 2017
  * @copyright	wisnuwidi, incodiy
- * @email		wisnuwidi@incodiy.com, wisnuwidi@incodiy.com
+ * @email		wisnuwidi@incodiy.com,
+ *              wisnuwidi@incodiy.com
  */
 
 $multiPlatform		     = false;
@@ -50,12 +51,12 @@ return [
 	// so, the application will be read based on this file set.
 		
 	// PLATFORM
-	'platform_type'       => $platform['type'],	// ['single', 'multiple']
-	'platform_table'      => $platform['table'],	// if single = false
-	'platform_key'        => $platform['key'],	// if single = false
-	'platform_name'       => $platform['name'],	// if single = false
-	'platform_label'      => $platform['label'],	// if single = false
-	'platform_route'      => $platform['route'],	// if single = false
+	'platform_type'       => $platform['type'],	 // ['single', 'multiple']
+	'platform_table'      => $platform['table'], // if single = false
+	'platform_key'        => $platform['key'],	 // if single = false
+	'platform_name'       => $platform['name'],  // if single = false
+	'platform_label'      => $platform['label'], // if single = false
+	'platform_route'      => $platform['route'], // if single = false
 	
 	// COPYRIGHT INFO
 	'copyrights'          => 'CoDIY & All Muslim in the world',
@@ -63,7 +64,7 @@ return [
 	'location_abbr'       => 'ID',
 	'created_at'          => '2017 - ' . date('Y'),
 	'email'               => 'wisnuwidi@incodiy.com',
-	'website'             => 'codiy.co.id',
+	'website'             => 'incodiy.com',
 
 	// Meta Tags
 	'meta_author'         => 'Wisnu Widiantoko',
@@ -88,6 +89,30 @@ return [
 			],
 			'groups'      => [
 				'admin'
+			]
+		]
+	],
+	
+	'email' => [
+		'from' => [
+			'address' => env('MAIL_FROM_ADDRESS', 'wisnuwidi@incodiy.com'),
+			'name'    => env('MAIL_FROM_NAME', 'IncoDIY')
+		],
+		'cc' => [
+			'address' => 'dev@incodiy.com',
+			'name'    => 'IncoDIY Developer'
+		],
+		'feet' => [
+			'text'      => 'Best Regards',
+			'signature' => 'IncoDIY'
+		]
+	],
+		
+	'role' => [
+		'group' => [
+			'formatIdentity' => [
+				'view' => 'group_info|group_alias',
+				'separator' => ', '
 			]
 		]
 	]
