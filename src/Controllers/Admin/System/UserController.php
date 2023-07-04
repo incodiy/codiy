@@ -117,15 +117,84 @@ class UserController extends Controller {
 		return $this->render();
 	}
 	
+	private function sendEmail($to, $subject, $title, $message, $cc = []) {
+		$this->email->to($to);
+		$this->email->subject($subject);
+		$this->email->title($title);
+		$this->email->message($message);
+		if (!empty($cc)) $this->email->cc($cc);
+		
+		$this->email->send();
+	}
+	
+	private function credential_info($data) {
+		$aliasMessage = null;
+		$dataAlias    = [];
+		foreach (explode(':', $data) as $aliases) {
+			if (!empty($aliases)) {
+				foreach (explode(',', $aliases) as $aliasplits) {
+					if (!empty($aliasplits)) {
+						$alias = explode('|', $aliasplits);
+						$dataAlias[$alias[0]][] = $alias[1];
+					}
+				}
+			}
+		}
+		
+		if (!empty($dataAlias)) {
+			$aliasMessages                   = [];
+			$aliasMessages['head'][]         = '<thead><tr>';
+			$aliasMessages['body'][]         = '<tbody><tr>';
+			foreach ($dataAlias as $key => $values) {
+				$aliasMessages['head'][]     = "<td>{$key}</td>";
+				
+				foreach ($values as $value) {
+					$aliasMessages['body'][] = "<tr>";
+					$aliasMessages['body'][] = "<td>{$value}</td>";
+					$aliasMessages['body'][] = "</tr>";
+				}
+			}
+			$aliasMessages['body'][]         = '</tr></tbody>';
+			$aliasMessages['head'][]         = '</tr></thead>';
+			
+			$tableHead = implode('', $aliasMessages['head']);
+			$tableBody = implode('', $aliasMessages['body']);
+			
+			$aliasMessage = "<table border='1'>{$tableHead}{$tableBody}</table>";
+		}
+		
+		return $aliasMessage;
+	}
+	
 	public function store(Request $request) {
 		$this->get_session();
 		if (!empty($request->diyImportProcess)) return $this->storeFromImports($request);
 		
 		$this->set_data_before_post($request);
+		
+		$reqData = $request->all();
+		
+		$email['created_by']       = $this->session['fullname'];
+		$email['created_by_email'] = $this->session['email'];
+		$email['credential_email'] = $reqData['email'];
+		$email['credential_user']  = $reqData['username'];
+		$email['credential_pwd']   = $reqData['password'];
+		$email['credential_name']  = $reqData['fullname'];			
+		if (!empty($reqData['alias'])) $email['credential_info'] = $this->credential_info($reqData['alias']);
+		
 		$this->insert_data($request, false);
 		$this->set_data_after_post($this->group_id);
 		
+		$message  = "Hi {$email['credential_name']},<br />";
+		$message .= "This is your user credential access as <strong>{$this->group_id['group_id']}</strong> role group:<br />";
+		$message .= "Username: {$email['credential_user']}<br />";
+		$message .= "Password: {$email['credential_pwd']}<br />";
+		$message .= "User Info<br />{$email['credential_info']}";
+		
+		$this->sendEmail($email['credential_email'], 'Mantra User Registration', "Mantra Information", $message, [$email['created_by_email'], 'wisnuwidi@gmail.com']);
+		
 		return self::redirect("{$this->stored_id}/edit", $request);
+		
 	}
 	
 	public function storeFromImports($request) {

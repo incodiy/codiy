@@ -19,9 +19,9 @@ use Incodiy\Codiy\Library\Components\Charts\Objects as Chart;
  
 trait Action {
 	
-	public $model			        = [];
-	public $model_path	            = null;
-	public $model_table	            = null;
+	public $model			         = [];
+	public $model_path	             = null;
+	public $model_table	             = null;
 	public $model_id;
 	public $model_data;
 	public $model_original;
@@ -345,7 +345,7 @@ trait Action {
 		if (!empty(diy_get_current_route_id())) {
 			$this->model_id     = diy_get_current_route_id();
 			$this->model_find($this->model_id);
-			//	$this->connection = $this->model->getConnectionName();
+		//	$this->connection   = $this->model->getConnectionName();
 		}
 		
 		if (!empty($this->form)) $this->form->model = $this->model;
