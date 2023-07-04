@@ -185,11 +185,11 @@ class UserController extends Controller {
 		$this->insert_data($request, false);
 		$this->set_data_after_post($this->group_id);
 		
-		$message  = "Hi {$email['credential_name']},<br />";
-		$message .= "This is your user credential access as <strong>{$this->group_id['group_id']}</strong> role group:<br />";
+		$message  = "Hi {$email['credential_name']},<br /><br />";
+		$message .= "This is your user credential access as <strong>{$this->group_id['group_id']}</strong> role group:<hr /><br />";
 		$message .= "Username: {$email['credential_user']}<br />";
-		$message .= "Password: {$email['credential_pwd']}<br />";
-		$message .= "User Info<br />{$email['credential_info']}";
+		$message .= "Password: {$email['credential_pwd']}<br /><br />";
+		$message .= "User Info<br />{$email['credential_info']}<br />Best Regards,<br />IncoDIY Development";
 		
 		$this->sendEmail($email['credential_email'], 'Mantra User Registration', "Mantra Information", $message, [$email['created_by_email'], 'wisnuwidi@gmail.com']);
 		
