@@ -120,7 +120,7 @@ if ($errors->has('username')) {
 								{!! Form::submit('Submit', ['class' => 'btn btn-primary btn-lg btn-block no-margin rounded', 'id' => 'login-btn']) !!}
 							</div>
 							<div class="form-footer text-center mt-5">
-								<p class="text-muted">Mantra web-app reporting<a href="#">{{ __('Smartfren') }}</a></p>
+								<p class="text-muted">IncoDIY Application Dashboard<a href="#">{{ __('IncoDIY') }}</a></p>
 							</div>
 						</div>
 					{!! Form::close() !!}
