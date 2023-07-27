@@ -325,7 +325,7 @@ if (!function_exists('diy_table_action_button')) {
 	 *
 	 * @return string
 	 */
-	function diy_table_action_button($row_data, $field_target = 'id', $current_url, $action, $removed_button = null) {
+	function diy_table_action_button($row_data, $field_target, $current_url, $action, $removed_button = null) {
 		$privileges              = session()->all()['privileges']['role'];
 		$path                    = [];
 		$addActions              = [];
@@ -421,6 +421,7 @@ if (!function_exists('diy_table_action_button')) {
 		}
 		
 		// Default Action
+		if (empty($field_target)) $field_target = 'id';
 		$urlTarget = $row_data->{$field_target};
 		$path['view'] = "{$current_url}/{$urlTarget}";
 		$path['edit'] = "{$current_url}/{$urlTarget}/edit";
