@@ -3,6 +3,7 @@ namespace Incodiy\Codiy\Database\Migrations;
 
 use Incodiy\Codiy\Database\Migrations\Tables\BaseTables;
 use Incodiy\Codiy\Database\Migrations\Tables\ShopTables;
+use Incodiy\Codiy\Database\Migrations\Tables\MasjidTables;
 /**
  * Created on Dec 17, 2022
  * 
@@ -16,15 +17,34 @@ use Incodiy\Codiy\Database\Migrations\Tables\ShopTables;
  * @email      wisnuwidi@incodiy.com
  */
 class Process extends Config {
-	
-	public function __construct() {
-		$this->init();
-	}
+	public $exclude      = [];
 	
 	private $initialize;
+	private $initializer = ['base', 'platforms', 'shop'];
+	private $queryObject = [];
+	
+	public function __construct() {
+		$this->queryObject = [
+			'base'      => new BaseTables(),
+			'platforms' => new MasjidTables(),
+			'shop'      => new ShopTables(),
+		];
+		
+		$this->init($this->exclude);
+	}
+	
 	private function init() {
-		$this->initialize['base'] = new BaseTables();
-		$this->initialize['shop'] = new ShopTables();
+		
+		if (!empty($this->exclude)) {
+			$process = array_diff($this->initializer, $this->exclude);
+			foreach ($process as $initialize) {
+				$this->initialize[$initialize] = $this->queryObject[$initialize];
+			}
+		} else {
+			$this->initialize['base']      = new BaseTables();
+			$this->initialize['platforms'] = new MasjidTables();
+			$this->initialize['shop']      = new ShopTables();
+		}
 	}
 	
 	/**
@@ -33,8 +53,16 @@ class Process extends Config {
 	 * @return void
 	 */
 	public function up() {
-		$this->initialize['base']->up();
-		$this->initialize['shop']->up();
+		if (!empty($this->exclude)) {
+			$process = array_diff($this->initializer, $this->exclude);
+			foreach ($process as $initialize) {
+				$this->initialize[$initialize]->up();
+			}
+		} else {
+			$this->initialize['base']->up();
+			$this->initialize['platforms']->up();
+			$this->initialize['shop']->up();
+		}
 	}
 	
 	/**
@@ -43,8 +71,18 @@ class Process extends Config {
 	 * @return void
 	 */
 	public function down() {
-		$this->initialize['base']->drop();
-		$this->initialize['shop']->drop();
-		$this->initialize['base']->last_drop();
+		if (!empty($this->exclude)) {
+			$process = array_diff($this->initializer, $this->exclude);
+			foreach ($process as $initialize) {
+				$this->initialize[$initialize]->drop();
+			}
+			$this->initialize['base']->last_drop();
+			
+		} else {
+			$this->initialize['base']->drop();
+			$this->initialize['platforms']->drop();
+			$this->initialize['shop']->drop();
+			$this->initialize['base']->last_drop();
+		}
 	}
 }

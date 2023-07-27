@@ -60,14 +60,6 @@ Route::group(['middleware' => ['web']], function() {
 				Route::resource('form', 'App\Http\Controllers\Admin\Modules\FormController', ['as' => 'modules.development']);
 			});
 			
-			Route::group(['prefix' => 'programs'], function() {
-				Route::resource('program_keren',           'App\Http\Controllers\Admin\Modules\Programs\ProgramKerenControllers',          ['as' => 'modules.programs']);
-				Route::resource('program_merapi',          'App\Http\Controllers\Admin\Modules\Programs\ProgramMerapiControllers',         ['as' => 'modules.programs']);
-				Route::resource('program_low_denom',       'App\Http\Controllers\Admin\Modules\Programs\ProgramLowDenomControllers',       ['as' => 'modules.programs']);
-			#	Route::resource('program_natuna_anambas',  'App\Http\Controllers\Admin\Modules\Programs\ProgramNatunaAnambasControllers',  ['as' => 'modules.programs']);
-			#	Route::resource('program_trikom_wireless', 'App\Http\Controllers\Admin\Modules\Programs\ProgramTrikomWirelessControllers', ['as' => 'modules.programs']);
-			});
-			
 			Route::group(['prefix' => 'shop'], function() {
 				Route::resource('product', 'App\Http\Controllers\Admin\Modules\Shop\ProductController',   ['as' => 'modules.shop']);
 				Route::resource('category', 'App\Http\Controllers\Admin\Modules\Shop\CategoryController', ['as' => 'modules.shop']);

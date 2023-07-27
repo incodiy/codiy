@@ -10,4 +10,6 @@ use Incodiy\Codiy\Database\Migrations\Process;
  * @copyright	wisnuwidi
  * @email		wisnuwidi@incodiy.com
  */
-class CreateBaseTable extends Process {}
+class CreateBaseTable extends Process {
+	public $exclude = ['platforms', 'shop'];
+}
