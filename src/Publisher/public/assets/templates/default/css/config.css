@@ -33,6 +33,13 @@ div.dataTables_wrapper div.dataTables_processing {
 div.dataTables_processing > div:last-child {
 	display: none;
 }
+.modal-content > div.dataTables_processing {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+}
 /* FORCE DATATABLE LOAD PROCESSING VIEW */
 
 .diy-wrapper-table {
@@ -5658,7 +5665,7 @@ div.dataTables_paginate ul.pagination {
 }
 div.dt-buttons {
 	margin: 0.1% 1.5% 0% 1.5%;
-	width: calc(100% - 486px);
+	width: 60%;/* calc(100% - 486px); */
 	text-align: center;
 	font-weight: lighter;
 }
