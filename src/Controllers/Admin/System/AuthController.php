@@ -201,7 +201,9 @@ class AuthController extends Controller {
 			$userData['id']                   = $user->id;
 			$userData['group_id']             = $group_info->id;
 			$userData['user_group']           = $group_info->group_name;
-			$userData['group_alias']          = $group_info->group_alias;
+			if (!empty($group_info->group_alias)) {
+				$userData['group_alias']      = $group_info->group_alias;
+			}
 			$userData[$user_alias]            = $this->filterUserAliases($user->alias);
 			$userData['group_info']           = $group_info->group_info;
 			$userData['privileges']           = $this->set_module_privileges($group_info->id);
