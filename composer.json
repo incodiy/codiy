@@ -1,7 +1,7 @@
 {
     "name": "incodiy/codiy",
-    "description": "Content Management System Code from DIY",
-    "type": "project",
+    "description": "Laravel Library Code from DIY",
+    "type": "Library",
     "require": {
         "laravel/ui": "^4.0",
         "laravelcollective/html": "^6.3",
