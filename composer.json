@@ -1,7 +1,9 @@
 {
     "name": "incodiy/codiy",
+    "type": "library",
     "description": "Laravel Library Code from DIY",
-    "type": "Library",
+    "keywords": ["incodiy", "library"],
+    "license": "MIT",
     "require": {
         "laravel/ui": "^4.0",
         "laravelcollective/html": "^6.3",
@@ -10,7 +12,6 @@
         "yajra/laravel-datatables": "^9.0",
         "jlawrence/eos": "^3.2"
     },
-    "license": "MIT",
     "authors": [
         {
             "name": "wisnuwidi",
