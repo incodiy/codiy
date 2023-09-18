@@ -26,28 +26,28 @@ class UserActivity extends Model {
 	public function montly_activity() {
 		$sql = "
 			SELECT
-			monthly_activity.monthly_activity,
-			monthly_activity.group_id,
-			monthly_activity.user_id,
-			
-			d.group_info role_group,
-			d.group_alias role_location,
-			
-			b.username,
-			b.fullname,
-			monthly_activity.user_email,
-			
-			monthly_activity.first_access,
-			monthly_activity.last_access,
-			monthly_activity.online_duration,
-			monthly_activity.offline_duration,
-			monthly_activity.login_counters,
-			monthly_activity.logout_counters,
-			monthly_activity.hit_activity,
-			CASE
-				WHEN b.active = 0 THEN 'Disabled'
-				ELSE 'Active'
-			END user_status
+				monthly_activity.monthly_activity,
+				monthly_activity.group_id,
+				monthly_activity.user_id,
+				
+				d.group_info role_group,
+				d.group_alias role_location,
+				
+				b.username,
+				b.fullname,
+				monthly_activity.user_email,
+				
+				monthly_activity.first_access,
+				monthly_activity.last_access,
+				monthly_activity.online_duration,
+				monthly_activity.offline_duration,
+				monthly_activity.login_counters,
+				monthly_activity.logout_counters,
+				monthly_activity.hit_activity,
+				CASE
+					WHEN b.active = 0 THEN 'Disabled'
+					ELSE 'Active'
+				END user_status
 			FROM (
 				SELECT
 					LEFT(daily_activity, 7) monthly_activity,
