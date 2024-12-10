@@ -7,14 +7,6 @@
 		"library"
 	],
 	"license" : "MIT",
-	"require" : {
-		"laravel/ui" : "^4.0",
-		"laravelcollective/html" : "^6.4",
-		"doctrine/dbal" : "^3.4",
-		"intervention/image" : "^3.9",
-		"yajra/laravel-datatables" : "^9.0",
-		"jlawrence/eos" : "^3.2"
-	},
 	"authors" : [{
 			"name" : "wisnuwidi",
 			"email" : "wisnuwidi@gmail.com"
