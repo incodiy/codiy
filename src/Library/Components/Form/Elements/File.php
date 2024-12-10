@@ -154,7 +154,9 @@ trait File {
 			}
 		}
 		
-		return "{$baseIndexFolder}{$basePathURL[1]}/{$folder}";
+		$endBasePathURL = end($basePathURL);
+		
+		return "{$baseIndexFolder}{$endBasePathURL}/{$folder}";
 	}
 	
 	/**
