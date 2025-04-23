@@ -12,8 +12,6 @@
 			"email" : "wisnuwidi@gmail.com"
 		}
 	],
-	"minimum-stability" : "dev",
-	"prefer-stable": true,
 	"autoload" : {
 		"psr-4" : {
 			"Incodiy\\Codiy\\" : "src/"
@@ -34,5 +32,7 @@
 				"Incodiy\\Codiy\\IncodiyServiceProvider"
 			]
 		}
-	}
+	},
+	"minimum-stability" : "dev",
+	"prefer-stable": true
 }
