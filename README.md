@@ -14,9 +14,9 @@ Alhamdulillah because of Allah SWT, this code successfully created piece by piec
 This library used for simplifying some code with Laravel framework, hopefully can help us all to build web-app. This code inspired by Muntilan-CMS code developed by [.::bit](https://www.limabit.com), by the way.
 
 
-1). INSTALL LARAVEL
+1). INSTALL LARAVEL (Max : Version 10)
 --------------------------------------------------------------------------------
-	composer create-project --prefer-dist laravel/laravel incodiy (webappname)
+	composer create-project --prefer-dist laravel/laravel:10.0 incodiy (webappname)
  	cd incodiy/ [cd webappname/]
 
 
