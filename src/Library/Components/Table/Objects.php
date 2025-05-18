@@ -236,7 +236,26 @@ class Objects extends Builder {
 	public function setServerSide($server_side = true) {
 		$this->variables['table_server_side'] = $server_side;
 	}
+
 	
+    
+	/**
+	* Merge Columns
+	*
+	* Digunakan untuk menggabungkan beberapa kolom menjadi satu kolom, maka
+	* kolom tersebut akan memiliki label gabungan dan value dari gabungan
+	* kolom-kolom yang di merge.
+	*
+	* @param string $label : Kolom gabungan yang akan digunakan sebagai label
+	* @param array $merged_columns : Kolom-kolom yang akan di merge
+	* @param string $label_position : Posisi label (top, bottom, left, right)
+	*
+	* Contoh :
+	* $this->mergeColumns('Nama', ['first_name', 'last_name'], 'top');
+	* maka kolom 'first_name' dan kolom 'last_name' akan digabungkan menjadi
+	* satu kolom dengan label 'Nama' dan value gabungan dari 2 kolom tersebut
+	* dan posisi labelnya di atas.
+	*/
 	public function mergeColumns($label, $merged_columns = [], $label_position = 'top') {
 		$this->variables['merged_columns'][$label] = ['position' => $label_position, 'counts' => count($merged_columns), 'columns' => $merged_columns];
 	}
@@ -245,57 +264,216 @@ class Objects extends Builder {
 	public function setHiddenColumns($fields = []) {
 		$this->variables['hidden_columns'] = $fields;
 	}
-	
+
+	/**
+	* Menentukan kolom mana yang akan di set fixed (tetap)
+	*
+	* Fungsi ini digunakan untuk menentukan kolom mana yang akan di set fixed
+	* (tetap) di dalam datatable. Kolom yang di set fixed akan tetap di posisi
+	* yang sama meskipun di scroll horisontal.
+	*
+	* @param int $left_pos : Kolom yang akan di set fixed di sebelah kiri
+	*                        Jika di set maka kolom akan tetap di posisi yang
+	*                        sama meskipun di scroll horisontal.
+	*                        Nilai 0 berarti kolom pertama, 1 berarti kolom
+	*                        kedua, dan seterusnya.
+	* @param int $right_pos : Kolom yang akan di set fixed di sebelah kanan
+	*                        Jika di set maka kolom akan tetap di posisi yang
+	*                        sama meskipun di scroll horisontal.
+	*                        Nilai 0 berarti kolom pertama, 1 berarti kolom
+	*                        kedua, dan seterusnya.
+	*
+	* Contoh :
+	* $this->fixedColumns(0, 1);
+	* maka kolom pertama dan kolom terakhir akan di set fixed.
+	*/
 	public function fixedColumns($left_pos = null, $right_pos = null) {
 		if (!empty($left_pos))  $this->variables['fixed_columns']['left']  = $left_pos;
 		if (!empty($right_pos)) $this->variables['fixed_columns']['right'] = $right_pos;
 	}
 	
+	/**
+	* Hapus fixed columns yang sebelumnya di set
+	*
+	* Fungsi ini digunakan untuk menghapus fixed columns yang sebelumnya di set
+	* melalui fungsi fixedColumns. Jika fungsi ini di panggil maka fixed columns
+	* akan di hapus dan tidak akan di render di datatable.
+	*
+	* Contoh :
+	* $this->fixedColumns(0, 1);
+	* $this->clearFixedColumns();
+	* maka fixed columns akan di hapus dan tidak akan di render di datatable.
+	*/
 	public function clearFixedColumns() {
 		if (!empty($this->variables['fixed_columns'])) unset($this->variables['fixed_columns']);
 	}
 	
 	/**
-	 * Set Column Alignment
-	 *
-	 * @param string $align ['right', 'center', 'left']
-	 * @param array $columns
-	 * @param boolean $header
-	 * @param boolean $body
-	 */
+	* Fungsi ini digunakan untuk mengatur align kolom di dalam datatable.
+	*
+	* @param string $align : Nilai align yang di inginkan, bisa berupa "left",
+	*                        "center", atau "right".
+	* @param array  $columns : Kolom mana yang akan di set align, jika di kosongkan
+	*                          maka akan di set ke semua kolom.
+	* @param boolean $header : Jika true maka akan di set ke header kolom.
+	* @param boolean $body : Jika true maka akan di set ke body kolom.
+	*
+	* Contoh :
+	* $this->setAlignColumns('center', ['name', 'address'], true, false);
+	* maka kolom "name" dan "address" akan di set align center di header saja.
+	*/
 	public function setAlignColumns(string $align, $columns = [], $header = true, $body = true) {
 		$this->variables['text_align'][$align] = ['columns' => $columns, 'header' => $header, 'body' => $body];
 	}
-	
+
+	/**
+	* Fungsi ini digunakan untuk mengatur align kolom di dalam datatable menjadi right/kanan.
+	*
+	* @param array  $columns : Kolom mana yang akan di set align right/kanan, jika di kosongkan maka semua kolom akan di set align right/kanan.
+	* @param boolean $header : Jika true maka akan di set ke header kolom.
+	* @param boolean $body : Jika true maka akan di set ke body kolom.
+	*
+	* Contoh :
+	* $this->setRightColumns(['name', 'address'], true, false);
+	* maka kolom "name" dan "address" akan di set align right/kanan di header saja.
+	*/
 	public function setRightColumns($columns = [], $header = true, $body = true) {
 		$this->setAlignColumns('right', $columns, $header, $body);
 	}
-	
+
+	/**
+	* Fungsi ini digunakan untuk mengatur align kolom di dalam datatable menjadi center/tengah.
+	*
+	* @param array  $columns : Kolom mana yang akan di set align center/tengah, jika di kosongkan maka semua kolom akan di set align center/tengah.
+	* @param boolean $header : Jika true maka akan di set ke header kolom. Default true.
+	* @param boolean $body : Jika true maka akan di set ke body kolom. Default false.
+	*
+	* Contoh :
+	* $this->setCenterColumns(['name', 'address'], true, false);
+	* maka kolom "name" dan "address" akan di set align center/tengah di header saja.
+	*/
 	public function setCenterColumns($columns = [], $header = true, $body = true) {
 		$this->setAlignColumns('center', $columns, $header, $body);
 	}
 	
+	/**
+	* Fungsi ini digunakan untuk mengatur align kolom di dalam datatable menjadi left/kiri.
+	*
+	* @param array  $columns : Kolom mana yang akan di set align left/kiri, jika di kosongkan maka semua kolom akan di set align left/kiri.
+	* @param boolean $header : Jika true maka akan di set ke header kolom. Default true.
+	* @param boolean $body : Jika true maka akan di set ke body kolom. Default true.
+	*
+	* Contoh :
+	* $this->setLeftColumns(['name', 'address'], true, false);
+	* maka kolom "name" dan "address" akan di set align left/kiri di header saja.
+	*/
 	public function setLeftColumns($columns = [], $header = true, $body = true) {
 		$this->setAlignColumns('left', $columns, $header, $body);
 	}
-	
+
+	/**
+	* Fungsi ini digunakan untuk mengatur warna background kolom di dalam datatable.
+	*
+	* @param string $color : Nilai warna yang di inginkan dalam format hex (cth: #ffffff).
+	* @param string $text_color : Nilai warna teks yang di inginkan dalam format hex (cth: #000000).
+	* @param array  $columns : Kolom mana yang akan di set warna background, jika di kosongkan maka semua kolom akan di set warna background.
+	* @param boolean $header : Jika true maka akan di set ke header kolom. Default true.
+	* @param boolean $body : Jika true maka akan di set ke body kolom. Default false.
+	*
+	* Contoh :
+	* $this->setBackgroundColor('#f5f5f5', '#000000', ['name', 'address'], true, false);
+	* maka kolom "name" dan "address" akan di set warna background #f5f5f5 dan teks #000000 di header saja.
+	*/
 	public function setBackgroundColor($color, $text_color = null, $columns = null, $header = true, $body = false) {
 		$this->variables['background_color'][$color] = ['code' => $color, 'text' => $text_color, 'columns' => $columns, 'header' => $header, 'body' => $body];
 	}
-	
+
+	/**
+	* Fungsi ini digunakan untuk mengatur lebar kolom di dalam datatable.
+	*
+	* @param string $field_name : Nama kolom yang akan di set lebar.
+	* @param int $width : Nilai lebar kolom yang di inginkan dalam satuan pixel (px).
+	*                    Jika di kosongkan maka lebar kolom akan di set secara otomatis.
+	*
+	* Contoh :
+	* $this->setColumnWidth('name', 200);
+	* maka kolom "name" akan di set lebar 200px.
+	*/
 	public function setColumnWidth($field_name, $width = false) {
 		$this->variables['column_width'][$field_name] = $width;
 	}
-	
+
+	/**
+	* Menambahkan atribut khusus ke dalam tabel.
+	*
+	* Fungsi ini digunakan untuk menambahkan atribut HTML ke dalam elemen tabel,
+	* seperti 'class', 'style', atau atribut lainnya yang diperlukan.
+	*
+	* @param array $attributes : Array berisi pasangan kunci dan nilai dari atribut
+	*                            yang akan ditambahkan ke dalam tabel.
+	*                            Contoh: ['class' => 'my-class', 'style' => 'width:100%;']
+	*
+	* Contoh penggunaan:
+	* $this->addAttributes(['class' => 'table-striped', 'style' => 'width:100%;']);
+	* Maka, atribut 'class' dan 'style' akan ditambahkan ke elemen tabel.
+	*/
 	public function addAttributes($attributes = []) {
 		$this->variables['add_table_attributes'] = $attributes;
 	}
-	
+
+	/**
+	* Mengatur lebar elemen tabel secara keseluruhan.
+	*
+	* Fungsi ini digunakan untuk mengatur lebar elemen tabel secara keseluruhan
+	* dengan menggunakan satuan pengukuran yang diinginkan.
+	*
+	* @param int $width : Lebar elemen tabel yang diinginkan dalam satuan pengukuran
+	*                    yang diinginkan. Misal: 100, 200, 300, dst.
+	* @param string $measurement : Satuan pengukuran yang diinginkan. Misal: 'px', '%', 'em', dst.
+	*
+	* Contoh penggunaan:
+	* $this->setWidth(1000, 'px');
+	* Maka lebar elemen tabel akan diatur menjadi 1000px.
+	*/
 	public function setWidth(int $width, string $measurement = 'px') {
 		return $this->addAttributes(['style' => "min-width:{$width}{$measurement};"]);
 	}
 	
+	/**
+	* Semua kolom
+	*
+	* Properti ini digunakan untuk mengindikasikan bahwa fungsi sebelumnya
+	* akan dijalankan untuk semua kolom yang ada di dalam tabel.
+	*
+	* Contoh penggunaan:
+	* $this->setBackgroundColor('#f5f5f5', '#000000', $this->all_columns, true, false);
+	* maka semua kolom akan di set warna background #f5f5f5 dan teks #000000 di header saja.
+	*/
 	private $all_columns = 'all::columns';
+
+	/**
+	* Memeriksa dan mengatur set kolom.
+	*
+	* Fungsi ini digunakan untuk memeriksa apakah parameter kolom kosong atau tidak.
+	* Jika kolom kosong, maka akan mengembalikan nilai default berdasarkan kondisi.
+	* Jika kolom tidak kosong, maka akan mengembalikan kolom tersebut.
+	*
+	* @param mixed $columns : Kolom yang akan diperiksa. Bisa berisi array kolom
+	*                         tertentu atau kosong.
+	*
+	* @return array Mengembalikan array dengan kunci 'all::columns' yang bernilai true
+	*               atau false jika kolom kosong, atau mengembalikan kolom yang diberikan.
+	*
+	* Contoh penggunaan:
+	*
+	* // Menggunakan semua kolom
+	* $hasil = $this->checkColumnSet(null);
+	* // $hasil akan berisi ['all::columns' => true]
+	*
+	* // Menggunakan kolom tertentu
+	* $hasil = $this->checkColumnSet(['nama', 'alamat']);
+	* // $hasil akan berisi ['nama', 'alamat']
+	*/
 	private function checkColumnSet($columns) {
 		if (empty($columns)) {
 			if (false === $columns) {
@@ -309,8 +487,65 @@ class Objects extends Builder {
 		
 		return $value;
 	}
-	
+
+	/**
+	* Relational Data
+	*
+	* Properti ini digunakan untuk menyimpan data hasil relasi antara tabel.
+	* Data yang disimpan berupa array associative yang berisi kunci relasi
+	* dan nilai berupa array yang berisi data relasi.
+	*
+	* Contoh penggunaan:
+	*
+	* // Misal kita memiliki relasi antara tabel users dan tabel roles
+	* // dengan nama relasi "user_roles"
+	* $this->relational_data = [
+	*     'user_roles' => [
+	*         'user_id' => 1,
+	*         'role_id' => 1,
+	*         'role_name' => 'Admin',
+	*     ],
+	* ];
+	*
+	* // Maka kita dapat mengakses data relasi dengan cara berikut:
+	* $role_name = $this->relational_data['user_roles']['role_name'];
+	*/
 	public $relational_data = [];
+	
+	/**
+	* Menyimpan data hasil relasi antara tabel.
+	*
+	* Fungsi ini digunakan untuk menyimpan data hasil relasi antara tabel.
+	* Data yang disimpan berupa array associative yang berisi kunci relasi
+	* dan nilai berupa array yang berisi data relasi.
+	*
+	* Properti yang digunakan:
+	*
+	* - $relation_function : Nama relasi yang digunakan.
+	* - $fieldname : Nama kolom yang akan di gunakan sebagai target.
+	* - $label : Label yang akan di gunakan untuk nama kolom.
+	*
+	* Contoh penggunaan:
+	*
+	* // Misal kita memiliki relasi antara tabel users dan tabel roles
+	* // dengan nama relasi "user_roles"
+	* $this->setRelationData('user_roles', 'users:id', 'role_name');
+	*
+	* // Maka kita dapat mengakses data relasi dengan cara berikut:
+	* $role_name = $this->relational_data['user_roles']['field_target']['role_name']['relation_data'][$user_id]['field_value'];
+	*
+	* @param object $model
+	* @param string $relation_function
+	* @param string $field_display
+	* @param array  $filter_foreign_keys :[
+	*			'base_user_group:user_id' => 'users:id',
+	*			'base_group:id'           => 'base_user_group:group_id'
+	*	]
+	* @param string $label
+	* @param string $field_connect
+	*
+	* @return array
+	*/
 	private function relation_draw($relation, $relation_function, $fieldname, $label) {
 		if (!empty($relation->{$relation_function})) {
 			$dataRelate = $relation->{$relation_function}->getAttributes();
@@ -446,11 +681,30 @@ class Objects extends Builder {
 	}
 	
 	public $search_columns = false;
+	
 	/**
-	 * Set Seachable Column(s)
-	 * 
-	 * @param string|array $columns
-	 */
+	* Menentukan kolom mana yang dapat dicari di dalam datatable.
+	*
+	* Fungsi ini digunakan untuk mengatur kolom-kolom yang dapat digunakan sebagai filter pencarian.
+	* Jika parameter kolom tidak diisi, maka secara default semua kolom akan digunakan.
+	*
+	* @param string|array $columns : Kolom yang ingin diatur sebagai kolom pencarian. Bisa berisi nama kolom atau array nama-nama kolom.
+	*
+	* Properti:
+	* - $this->variables['searchable_columns'] : Menyimpan daftar kolom yang dapat dicari.
+	* - $this->search_columns : Menyimpan kolom yang akan digunakan untuk filter pencarian.
+	* - $this->all_columns : Menandakan semua kolom di dalam tabel.
+	*
+	* Contoh penggunaan:
+	*
+	* // Menggunakan semua kolom untuk pencarian
+	* $this->searchable();
+	* // atau
+	* $this->searchable(null);
+	*
+	* // Menggunakan kolom tertentu untuk pencarian
+	* $this->searchable(['nama', 'alamat']);
+	*/
 	public function searchable($columns = null) {
 		$this->variables['searchable_columns'] = [];
 		$this->variables['searchable_columns'] = $this->checkColumnSet($columns);
@@ -493,7 +747,26 @@ class Objects extends Builder {
 		
 		$this->variables['filter_groups'][] = $filters;
 	}
-	
+
+	/**
+	* Mengatur batasan jumlah baris yang akan ditampilkan saat pemuatan awal.
+	*
+	* Fungsi ini digunakan untuk mengatur jumlah baris yang ditampilkan ketika tabel
+	* pertama kali dimuat. Pengguna dapat menentukan jumlah baris dalam bentuk angka
+	* atau menggunakan string '*' atau 'all' untuk menampilkan semua baris.
+	*
+	* @param mixed $limit : Batasan jumlah baris yang akan ditampilkan. Bisa berupa
+	*                       integer untuk jumlah baris tertentu atau string '*'/'all'
+	*                       untuk menampilkan semua baris.
+	*
+	* Contoh penggunaan:
+	*
+	* // Menampilkan 10 baris pada pemuatan awal
+	* $this->displayRowsLimitOnLoad(10);
+	*
+	* // Menampilkan semua baris pada pemuatan awal
+	* $this->displayRowsLimitOnLoad('all');
+	*/
 	public function displayRowsLimitOnLoad($limit = 10) {
 		if (is_string($limit)) {
 			if (in_array(strtolower($limit), ['*', 'all'])) {
@@ -599,26 +872,40 @@ class Objects extends Builder {
 	}
 	
 	/**
-	 * Set Data Condition By Column
-	 * 
-	 * @param string $field_name
-	 * @param string $target
-	 *       : [ row, cell, field_name ]
-	 * @param string $logic_operator
-	 *       : [ =, != ] { dev:contains, !contain }
-	 * @param string $value
-	 * @param string $rule
-	 *       : [ css style, prefix, suffix, prefix&suffix, replace, integer, float [ code: float or float|2 ] ]
-	 * @param string|array $action
-	 *       : string can be used to replace url button with set $rule with replace and $action with this format
-	 *       	=> Format: url::url-info|color-info|icon-info
-	 *       : array used for "prefix&suffix" rule type.
-	 *         First array should be prefix value and second/last array should be suffix value.
-	 * @example
-	 *       : $this->table->columnCondition('text_field', 'cell', '!==', 'Testing', 'prefix', '! ');
-	 *       : $this->table->columnCondition('text_field', 'row', '!==', 'Testing', 'background-color', '#F1F7CB');
-	 *       : $this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'url::action_check|danger|volume-off');
-	 */
+	* Buat Kondisi Kolom Berdasarkan Nilai Tertentu
+	*
+	* Fungsi ini digunakan untuk membuat kondisi kolom berdasarkan nilai tertentu.
+	* Kondisi ini berguna untuk mengatur tampilan kolom berdasarkan nilai yang di dapat dari database.
+	*
+	* @param string $field_name
+	* 		: Nama kolom yang akan di set kondisi.
+	* @param string $target
+	* 		: Target kolom yang akan di set kondisi. Bisa berupa 'row', 'cell', atau 'field_name'.
+	* 		: Jika target adalah 'row', maka kondisi akan di set ke baris yang berisi data kolom tersebut.
+	* 		: Jika target adalah 'cell', maka kondisi akan di set ke kolom yang berisi data tersebut.
+	* 		: Jika target adalah 'field_name', maka kondisi akan di set ke kolom yang berisi data tersebut.
+	* @param string $logic_operator
+	* 		: Operator logika yang digunakan untuk membandingkan nilai kolom dengan nilai yang di set.
+	* 		: Bisa berupa '==', '!=', '===', '!==', '>', '<', '>=', '<='.
+	* @param string $value
+	* 		: Nilai yang di set sebagai perbandingan dengan nilai kolom.
+	* @param string $rule
+	* 		: Aturan yang digunakan untuk mengatur tampilan kolom berdasarkan nilai yang di dapat.
+	* 		: Bisa berupa 'css style', 'prefix', 'suffix', 'prefix&suffix', 'replace', 'integer', 'float', 'float|2'.
+	* @param string|array $action
+	* 		: Aksi yang akan di lakukan jika kondisi terpenuhi.
+	* 		: Jika di set sebagai string, maka akan menggantikan url button dengan url yang di set.
+	* 		: Jika di set sebagai array, maka akan di gunakan untuk aturan 'prefix&suffix'.
+	* 		: Array pertama akan di set sebagai prefix dan array terakhir akan di set sebagai suffix.
+	*
+	* Contoh penggunaan:
+	* $this->table->columnCondition('text_field', 'cell', '!==', 'Testing', 'prefix', '! ');
+	* maka kolom "text_field" akan di set dengan prefix "!" jika nilai kolom tidak sama dengan "Testing".
+	*
+	* Contoh lain:
+	* $this->table->columnCondition('user_status', 'action', '==', 'Disabled', 'replace', 'url::action_check|danger|volume-off');
+	* maka kolom "user_status" akan di set dengan menggantikan url button dengan url "action_check" jika nilai kolom sama dengan "Disabled".
+	*/
 	public function columnCondition(string $field_name, string $target, string $logic_operator = null, string $value = null, string $rule, $action) {
 		$this->conditions['columns'][] = [
 			'field_name'     => $field_name,
@@ -632,15 +919,35 @@ class Objects extends Builder {
 	
 	public $formula = [];
 	/**
-	 * Create Formula For Calculate Each Data Column
-	 * 
-	 * @param string $name
-	 * @param string $label
-	 * @param array $field_lists
-	 * @param string $logic
-	 * @param string $node_location
-	 * @param bool $node_after_node_location
-	 */
+	* Membuat Formula Untuk Menghitung Nilai Kolom
+	*
+	* Fungsi ini digunakan untuk membuat formula yang dapat digunakan untuk menghitung nilai kolom tertentu.
+	* Formula ini dapat digunakan untuk menghitung nilai kolom yang dihitung berdasarkan beberapa kolom lainnya.
+	*
+	* @param string $name
+	* 		: Nama dari formula yang akan dibuat.
+	* 		: Nama ini akan digunakan sebagai nama kolom yang dihitung.
+	* @param string $label
+	* 		: Label dari formula yang akan dibuat.
+	* 		: Label ini akan digunakan sebagai nama tampilan dari kolom yang dihitung.
+	* @param array $field_lists
+	* 		: Daftar kolom yang akan digunakan untuk menghitung nilai formula.
+	* 		: Kolom-kolom ini harus berupa array yang berisi nama-nama kolom yang diinginkan.
+	* @param string $logic
+	* 		: Operator logika yang digunakan untuk menghitung nilai formula.
+	* 		: Operator logika ini dapat berupa '+', '-', '*', '/', '%', '||', '&&'.
+	* @param string $node_location
+	* 		: Lokasi node yang akan di isi dengan hasil perhitungan formula.
+	* 		: Jika di set, maka hasil perhitungan formula akan di isi ke node yang di set.
+	* 		: Jika tidak di set, maka hasil perhitungan formula akan di isi ke node yang sama dengan nama formula.
+	* @param bool $node_after_node_location
+	* 		: Jika true, maka hasil perhitungan formula akan di isi setelah node yang di set.
+	* 		: Jika false, maka hasil perhitungan formula akan di isi sebelum node yang di set.
+	*
+	* Contoh penggunaan:
+	* $this->table->formula('total', 'Total', ['harga', 'jumlah'], '*', 'tbody', true);
+	* maka akan membuat formula dengan nama 'total' yang akan menghitung nilai kolom 'harga' dan 'jumlah' dengan operator '*' dan akan di isi ke node 'tbody' setelah node yang sama dengan nama formula.
+	*/
 	public function formula(string $name, string $label = null, array $field_lists, string $logic, string $node_location = null, bool $node_after_node_location = true) {
 		$this->labels[$name]           = $label;
 		$this->conditions['formula'][] = [
@@ -654,16 +961,32 @@ class Objects extends Builder {
 	}
 	
 	/**
-	 * Format Data
-	 *
-	 * @param string|array $fields
-	 * @param int $decimal_endpoint
-	 * 	: Specifies how many decimals
-	 * @param string $separator
-	 * 	: [,], [.]
-	 * @param string $format
-	 * 	: number, boolean
-	 */
+	* Format Data
+	*
+	* Fungsi ini digunakan untuk mengatur format penampilan data di dalam tabel.
+	* Fungsi ini dapat digunakan untuk mengatur format penampilan data berupa angka, boolean, atau string.
+	*
+	* @param string|array $fields
+	* 		: Nama kolom yang akan di format.
+	* 		: Jika di set sebagai string, maka hanya kolom dengan nama yang di set yang akan di format.
+	* 		: Jika di set sebagai array, maka beberapa kolom dengan nama yang di set akan di format.
+	* @param int $decimal_endpoint
+	* 		: Jumlah desimal yang akan di tampilkan.
+	* 		: Jika di set maka akan menampilkan jumlah desimal yang di set.
+	* 		: Jika tidak di set maka akan menampilkan jumlah desimal sesuai dengan default.
+	* @param string $separator
+	* 		: Pemisah desimal yang akan di gunakan.
+	* 		: Jika di set maka akan menggunakan pemisah desimal yang di set.
+	* 		: Jika tidak di set maka akan menggunakan pemisah desimal yang default (".").
+	* @param string $format
+	* 		: Tipe format yang akan di gunakan.
+	* 		: Jika di set maka akan menggunakan tipe format yang di set.
+	* 		: Jika tidak di set maka akan menggunakan tipe format yang default ("number").
+	*
+	* Contoh penggunaan:
+	* $this->table->format('harga', 2, ',', 'number');
+	* maka kolom "harga" akan di format dengan menggunakan 2 desimal, pemisah desimal "," dan tipe format "number".
+	*/
 	public function format($fields, int $decimal_endpoint = 0, $separator = '.', $format = 'number') {
 		if (is_array($fields)) {
 			foreach ($fields as $field) {
@@ -690,6 +1013,25 @@ class Objects extends Builder {
 	}
 	
 	public $button_removed = [];
+	/**
+	* Menghapus tombol dari daftar tombol yang tersedia.
+	*
+	* Fungsi ini digunakan untuk menghapus tombol-tombol tertentu dari daftar tombol
+	* yang tersedia. Tombol yang dihapus akan disimpan dalam properti $button_removed.
+	*
+	* @param mixed $remove : Tombol yang akan dihapus. Bisa berupa string untuk satu tombol
+	*                        atau array untuk beberapa tombol.
+	*
+	* Contoh penggunaan:
+	*
+	* // Menghapus satu tombol
+	* $this->removeButtons('edit');
+	*
+	* // Menghapus beberapa tombol
+	* $this->removeButtons(['view', 'delete']);
+	*
+	* Maka tombol 'edit' atau tombol 'view' dan 'delete' akan dihapus dari daftar tombol yang tersedia.
+	*/
 	public function removeButtons($remove) {
 		if (!empty($remove)) {
 			if (is_array($remove)) {
@@ -701,6 +1043,24 @@ class Objects extends Builder {
 	}
 	
 	private $defaultButtons = ['view', 'edit', 'delete'];
+	/**
+	* Mengatur aksi tombol untuk tabel.
+	*
+	* Fungsi ini digunakan untuk mengatur aksi tombol yang tersedia dalam tabel.
+	* Jika parameter $default_actions tidak diatur ke true, maka tombol default akan dihapus.
+	*
+	* @param array $actions : Daftar aksi tombol yang ingin ditetapkan.
+	* @param boolean|array $default_actions : Jika diatur ke false, tombol default akan dihapus.
+	*                                        Jika diatur ke array, tombol yang sesuai dalam array akan dihapus.
+	*
+	* Contoh penggunaan:
+	*
+	* // Mengatur aksi tombol tanpa tombol default
+	* $this->setActions(['custom_action1', 'custom_action2'], false);
+	*
+	* // Mengatur aksi tombol dengan menghapus tombol default 'edit' dan 'delete'
+	* $this->setActions(['custom_action1'], ['edit', 'delete']);
+	*/
 	public function setActions($actions = [], $default_actions = true) {
 		if (true !== $default_actions) {
 			if (is_array($default_actions)) {
@@ -741,18 +1101,45 @@ class Objects extends Builder {
 	public $tableName = [];
 	public $tableID   = [];
 	/**
-	 * Create List(s) Data Table
-	 * 
-	 * @param string $table_name
-	 * @param array $fields
-	 * @param boolean|string|array $actions
-	 * 	: format => string = 'button_name|button_color|button_icon'
-	 * 	: format => array  = ['view', 'edit', 'delete', 'new_button', 'button_name|button_color|button_icon']
-	 * @param boolean $server_side
-	 * @param boolean $numbering
-	 * @param array $attributes
-	 * @param boolean $server_side_custom_url
-	 */
+	* Buat List(s) Data Table
+	*
+	* Fungsi ini digunakan untuk membuat list data table, yang dapat digunakan untuk menampilkan data dari database.
+	* Fungsi ini juga dapat digunakan untuk membuat list data table dengan fitur server side, yaitu dengan mengirimkan data melalui AJAX.
+	*
+	* @param string $table_name
+	* 	: Nama tabel yang akan di tampilkan dalam list data table.
+	* 	: Jika nama tabel tidak di set maka akan menggunakan nama tabel yang di set melalui fungsi model().
+	* @param array $fields
+	* 	: Daftar kolom yang akan di tampilkan dalam list data table.
+	* 	: Jika kolom tidak di set maka akan menampilkan semua kolom yang ada di tabel.
+	* @param boolean|string|array $actions
+	* 	: Tombol aksi yang akan di tampilkan dalam list data table.
+	* 	: Jika di set sebagai boolean true maka akan menampilkan tombol aksi default yaitu view, edit, delete.
+	* 	: Jika di set sebagai string maka akan menampilkan tombol aksi custom.
+	* 	: Jika di set sebagai array maka akan menampilkan tombol aksi custom yang di definisikan dalam array.
+	* 	: Contoh penggunaan:
+	* 	: $this->lists('users', [], ['view', 'edit', 'delete']);
+	* 	: $this->lists('users', [], 'view|primary|fa-eye');
+	* @param boolean $server_side
+	* 	: Jika di set sebagai true maka akan menggunakan server side untuk mengirimkan data.
+	* 	: Jika di set sebagai false maka akan menggunakan client side untuk mengirimkan data.
+	* @param boolean $numbering
+	* 	: Jika di set sebagai true maka akan menampilkan nomor urut dalam list data table.
+	* 	: Jika di set sebagai false maka tidak akan menampilkan nomor urut dalam list data table.
+	* @param array $attributes
+	* 	: Atribut yang akan di tambahkan dalam list data table.
+	* 	: Contoh penggunaan:
+	* 	: $this->lists('users', [], [], [], [], ['class' => 'table-striped']);
+	* @param boolean $server_side_custom_url
+	* 	: Jika di set sebagai true maka akan menggunakan URL custom untuk mengirimkan data dalam server side.
+	* 	: Jika di set sebagai false maka akan menggunakan URL default untuk mengirimkan data dalam server side.
+	*
+	* Contoh penggunaan:
+	*
+	* $this->lists('users', ['nama', 'alamat'], true, true, true, [], false);
+	*
+	* Maka akan menampilkan list data table dengan nama tabel 'users', kolom 'nama' dan 'alamat', tombol aksi view, edit, delete, server side, dan nomor urut.
+	*/
 	public function lists(string $table_name = null, $fields = [], $actions = true, $server_side = true, $numbering = true, $attributes = [], $server_side_custom_url = false) {
 		if (!empty($this->variables['model_processing'])) {
 			if ($table_name !== $this->variables['model_processing']['table']) {
