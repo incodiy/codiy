@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Components;
+namespace Canvastack\Origin\Controllers\Core\Craft\Components;
 
-use Incodiy\Codiy\Library\Components\Table\Objects;
+use Canvastack\Origin\Library\Components\Table\Objects;
 
 /**
  * Created on 12 Apr 2021
@@ -11,9 +11,9 @@ use Incodiy\Codiy\Library\Components\Table\Objects;
  *
  * @filesource	Table.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Table {

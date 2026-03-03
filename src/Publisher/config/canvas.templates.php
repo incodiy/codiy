@@ -2,9 +2,9 @@
 /**
  * Created on Nov 2, 2018
  * Time Created	: 11:51:34 PM
- * Filename		: diy.templates.php
+ * Filename		: canvas.templates.php
  *
- * @filesource	diy.templates.php
+ * @filesource	canvas.templates.php
  *
  * @author		wisnuwidi@gmail.com - 2018
  * @copyright	wisnuwidi
@@ -45,7 +45,7 @@ return [
 						'js'	=> [
 							'js/plugins.js',
 							'js/scripts.js',
-							'js/diyscripts.js'
+							'js/canvascripts.js'
 						],
 						'css'	=> ['css/app.css']
 					]

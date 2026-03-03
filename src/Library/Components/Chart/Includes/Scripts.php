@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Includes;
+namespace Canvastack\Origin\Library\Components\Chart\Includes;
 
 /**
  * Created on Oct 24, 2022
@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart\Includes;
  *
  * @filesource	Scripts.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait Scripts {
@@ -28,7 +28,7 @@ trait Scripts {
 	}
 	
 	private static function scriptChart($type = 'line', $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series) {
-		return diy_script_chart($type, $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
+		return canvas_script_chart($type, $identity, $title, $subtitle, $xAxis, $yAxis, $tooltips, $legends, $series);
 	}
 	
 	private static function axisData($position = 'x', $data = []) {

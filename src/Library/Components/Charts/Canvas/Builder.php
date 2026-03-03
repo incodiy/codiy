@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
+namespace Canvastack\Origin\Library\Components\Charts\Canvas;
 
-use Incodiy\Codiy\Library\Components\Charts\Canvas\Scripts;
+use Canvastack\Origin\Library\Components\Charts\Canvas\Scripts;
 
 /**
  * Created on May 23, 2023
@@ -12,7 +12,7 @@ use Incodiy\Codiy\Library\Components\Charts\Canvas\Scripts;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 class Builder {
@@ -25,11 +25,11 @@ class Builder {
 	protected $canvas = [];
 	public $chartURI  = [];
 	public function chartCanvas($identity = [], $filters = []) {
-		$this->chartURI[$identity] = url(diy_current_route()->uri) . "?renderCharts=true";
+		$this->chartURI[$identity] = url(canvas_current_route()->uri) . "?renderCharts=true";
 		$dataAjax                  = [];
 		$dataAjax['info']          = $this->identities[$identity];
 		$dataAjax['params']        = $this->params[$identity];
-		$methodValues              = json_encode([$this->chartPostData => diy_encrypt(json_encode($dataAjax))]);
+		$methodValues              = json_encode([$this->chartPostData => canvas_encrypt(json_encode($dataAjax))]);
 		
 		$params = [];
 		if (!empty($this->params[$identity])) {
@@ -42,7 +42,7 @@ class Builder {
 			$attributes = $this->attributes[$identity];
 		}
 		
-		$htmlCanvas         = "<div id=\"{$identity}\">IncoDIY Chart Canvas</div>";
+		$htmlCanvas         = "<div id=\"{$identity}\">CanvaStack Chart Canvas</div>";
 		$chartscripts       = '<script type="text/javascript">';
 		$chartscripts      .= $this->canvascipt($identity, $this->identities[$identity]['string'], $params, $attributes);
 		$chartscripts      .= $this->ajaxProcess($this->identities[$identity]['string'], $this->chartURI[$identity], $methodValues, $this->chartPostData);

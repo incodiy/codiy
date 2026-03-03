@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Admin\System\ImportAccountsController as ImportAccounts;
+use Canvastack\Origin\Controllers\Admin\System\ImportAccountsController as ImportAccounts;
 
 /**
  * Created on Dec 13, 2022
@@ -10,8 +10,8 @@ use Incodiy\Codiy\Controllers\Admin\System\ImportAccountsController as ImportAcc
  *
  * @filesource	ImportAccountsController.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class ImportAccountsController extends ImportAccounts {}

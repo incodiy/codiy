@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 
-use Incodiy\Codiy\Models\Admin\System\DynamicTables;
-use Incodiy\Codiy\Library\Components\Table\Craft\Method\Post;
+use Canvastack\Origin\Models\Admin\System\DynamicTables;
+use Canvastack\Origin\Library\Components\Table\Craft\Method\Post;
 
 /**
  * Created on 21 Apr 2021
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Library\Components\Table\Craft\Method\Post;
  *
  * @filesource	Builder.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 class Builder {
@@ -72,7 +72,7 @@ class Builder {
 		// RENDER DATA TABLE
 		if (false !== $name) {
 			$list = null;
-			if (diy_string_contained($label, ':setLabelTable')) {
+			if (canvas_string_contained($label, ':setLabelTable')) {
 				$list = null;
 				$label = str_replace(':setLabelTable', '', $label);
 			} else {
@@ -104,9 +104,9 @@ class Builder {
 		$html  = '<div class="row">';
 		$html .= '<div class="col-md-12">';
 		$html .= '<div class="panel">' . $tableTitle . '<br />';
-		$html .= '<div class="relative diy-table-box-' . $tableID . '">';
+		$html .= '<div class="relative canvas-table-box-' . $tableID . '">';
 		if (!empty($this->filter_contents[$tableID]['id']) && $tableID === $this->filter_contents[$tableID]['id']) {
-			$html .= '<span class="diy-dt-search-box hide" id="diy-' . $tableID . '-search-box">' . $this->filterButton($this->filter_contents[$tableID]) . '</span>';
+			$html .= '<span class="canvas-dt-search-box hide" id="canvas-' . $tableID . '-search-box">' . $this->filterButton($this->filter_contents[$tableID]) . '</span>';
 			$html .= $this->filterModalbox($this->filter_contents[$tableID]);
 		}
 		$html .= $table . $datatable_columns;
@@ -241,16 +241,16 @@ class Builder {
 					// If no one set field(s) merged
 					foreach ($columns as $column) {						
 						if (!empty($dataColumns)) {
-							$id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+							$id = $this->setAttributes(['id' => canvas_decrypt(canvas_encrypt($dataColumns[$column]))]);
 						} else {
-							$id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($column))]);
+							$id = $this->setAttributes(['id' => canvas_decrypt(canvas_encrypt($column))]);
 						}
 						$class           = null;
 						$classAttributes = null;
 						
-						if (in_array($column, $hiddenColumn))        $classAttributes .= ' diy-hide-column';
+						if (in_array($column, $hiddenColumn))        $classAttributes .= ' canvas-hide-column';
 						if (!empty($alignColumn['header'][$column])) $classAttributes .= $alignColumn['header'][$column];
-						if ('action' === strtolower($column))        $classAttributes .= ' diy-column-action';						
+						if ('action' === strtolower($column))        $classAttributes .= ' canvas-column-action';						
 						if (!empty($classAttributes))                $class = $this->setAttributes(['class' => $classAttributes]);
 						
 						$headerLabel = ucwords(str_replace('_', ' ', $column));
@@ -312,7 +312,7 @@ class Builder {
 					foreach ($mergeColumn as $mergeLabel => $mergeData) {
 						foreach ($mergeData['columns'] as $merge_column) {
 							if ($column === $merge_column) {
-								if (!empty($dataColumns[$column])) $id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+								if (!empty($dataColumns[$column])) $id = $this->setAttributes(['id' => canvas_decrypt(canvas_encrypt($dataColumns[$column]))]);
 								if (!empty($attributes['attributes']['column']['class'][$merge_column])) {
 									$columnClass = $this->setAttributes(['class' => $attributes['attributes']['column']['class'][$merge_column]]);
 									
@@ -347,7 +347,7 @@ class Builder {
 				$columnClass = null;
 				$headerLabel = ucwords(str_replace('_', ' ', str_replace($setMergeText, '', $column)));
 				
-				if (!empty($dataColumns[$column])) $id = $this->setAttributes(['id' => diy_decrypt(diy_encrypt($dataColumns[$column]))]);
+				if (!empty($dataColumns[$column])) $id = $this->setAttributes(['id' => canvas_decrypt(canvas_encrypt($dataColumns[$column]))]);
 				if (str_contains($column, $setMergeText)) {
 					$merge_label  = explode($setMergeText, $column);
 					$colspan      = intval($merge_label[1]);
@@ -363,7 +363,7 @@ class Builder {
 					} else {
 						$classAttributes = null;
 						if (!empty($attributes['attributes']['column']['class'][$column])) $classAttributes .= $attributes['attributes']['column']['class'][$column];						
-						if ('action' === strtolower($column))                              $classAttributes .= ' diy-column-action';						
+						if ('action' === strtolower($column))                              $classAttributes .= ' canvas-column-action';						
 						if (!empty($classAttributes))                                      $columnClass = $this->setAttributes(['class' => $classAttributes]);
 						
 						$width_column = null;
@@ -408,7 +408,7 @@ class Builder {
 	}
 	
 	private function setFormulaColumns($columns, $data) {
-		return diy_set_formula_columns($columns, $data['attributes']['conditions']['formula']);
+		return canvas_set_formula_columns($columns, $data['attributes']['conditions']['formula']);
 	}
 	
 	public $filter_contents  = [];
@@ -483,7 +483,7 @@ class Builder {
 			$jsonData['class']      = 'auto-cut-text';
 			$jsonData['onclick']    = 'return false';
 			
-			if (in_array($column, $hiddenColumn)) $jsonData['class'] = 'auto-cut-text diy-hide-column';
+			if (in_array($column, $hiddenColumn)) $jsonData['class'] = 'auto-cut-text canvas-hide-column';
 			
 			$formula_column = null;
 			if (!empty($formula_fields[$column])) {
@@ -633,7 +633,7 @@ class Builder {
 			$filter_data = $this->getFilterDataTables();
 		}
 		
-		$dt_columns = diy_clear_json(json_encode($dt_columns));
+		$dt_columns = canvas_clear_json(json_encode($dt_columns));
 		
 		if ('GET' === $this->method) {
 			$datatable = $this->datatables($tableID, $dt_columns, $dt_info, true, $filter_data);

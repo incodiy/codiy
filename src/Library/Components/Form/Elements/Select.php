@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 /**
  * Created on 19 Mar 2021
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components\Form\Elements;
  *
  * @filesource	Select.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Select {
@@ -25,7 +25,7 @@ trait Select {
 	 * 		: if !false = [null => 'Select All'] or you can set the other array value
 	 */
 	public function selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => '']) {
-		$attributes   = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');
+		$attributes   = canvas_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');
 		$optionValues = $set_first_value;
 		
 		if (isset($values[0]) && true === empty($values[0])) {
@@ -52,7 +52,7 @@ trait Select {
 	 * @param boolean $label
 	 */
 	public function month($name, $value = null, $attributes = [], $label = true) {
-		$attributes = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');
+		$attributes = canvas_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox');
 		
 		$this->setParams('selectMonth', $name, $value, $attributes, $label);
 		$this->inputDraw('selectMonth', $name);

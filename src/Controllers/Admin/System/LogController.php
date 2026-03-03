@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\Log as LogActivity;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\Log as LogActivity;
 
 /**
  * Created on Jan 16, 2018
@@ -11,9 +11,9 @@ use Incodiy\Codiy\Models\Admin\System\Log as LogActivity;
  *
  * @filesource	LogController.php
  *
- * @author		wisnuwidi@IncoDIY - 2018
+ * @author		wisnuwidi@CanvaStack - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class LogController extends Controller {
 	

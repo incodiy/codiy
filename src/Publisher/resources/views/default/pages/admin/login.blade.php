@@ -8,7 +8,7 @@
  *
  * @author		wisnuwidi @gmail.com - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 $config               = [];
 $config['title']      = __('Admin Login');
@@ -51,8 +51,8 @@ if ($errors->has('username')) {
 						</div>
 						<div class="login-form-body">
 							<div class="form-gp">
-								<label class="IncoDIY-input-login" for="IncoDIY-input-login-key">{{ __('Username') }}</label>
-								{!! Form::text('username', old('username'), ['id' => 'IncoDIY-input-login-key', 'required', 'autofocus']) !!}
+								<label class="CanvaStack-input-login" for="CanvaStack-input-login-key">{{ __('Username') }}</label>
+								{!! Form::text('username', old('username'), ['id' => 'CanvaStack-input-login-key', 'required', 'autofocus']) !!}
 								<i id="info-login" class="ti-user"></i>
 								
 								@if ($errors->has('username')) 
@@ -68,8 +68,8 @@ if ($errors->has('username')) {
 								@endif
 							</div>
 							<div class="form-gp">
-								<label for="IncoDIY-input-login-password">{{ __('Password') }}</label>
-								{!! Form::password('password', ['id' => 'IncoDIY-input-login-password', 'required']) !!}
+								<label for="CanvaStack-input-login-password">{{ __('Password') }}</label>
+								{!! Form::password('password', ['id' => 'CanvaStack-input-login-password', 'required']) !!}
 								<i class="ti-lock"></i>
 								
 								@if ($errors->has('password'))
@@ -90,14 +90,14 @@ if ($errors->has('username')) {
                                 	return outPut;
                                 }
 								$(document).ready(function() {
-                                    $("#IncoDIY-input-login-key").focusout(function(){
+                                    $("#CanvaStack-input-login-key").focusout(function(){
     									if (true == validateEmail($(this))) {
-    										$('label.IncoDIY-input-login').text('E-Mail Address');
+    										$('label.CanvaStack-input-login').text('E-Mail Address');
     										$(this).attr('name', 'email');
     										$(this).attr('class', ${!! $mailErrorClass !!} );
     										$('i#info-login').attr('class', 'ti-email');
     									} else {
-    										$('label.IncoDIY-input-login').text('Username');
+    										$('label.CanvaStack-input-login').text('Username');
     										$(this).attr('name', 'username');
     										$(this).attr('class', {!! $usernameErrorClass !!} );
     										$('i#info-login').attr('class', 'ti-user');
@@ -120,7 +120,7 @@ if ($errors->has('username')) {
 								{!! Form::submit('Submit', ['class' => 'btn btn-primary btn-lg btn-block no-margin rounded', 'id' => 'login-btn']) !!}
 							</div>
 							<div class="form-footer text-center mt-5">
-								<p class="text-muted">IncoDIY Application Dashboard<a href="#">{{ __('IncoDIY') }}</a></p>
+								<p class="text-muted">CanvaStack Application Dashboard<a href="#">{{ __('CanvaStack') }}</a></p>
 							</div>
 						</div>
 					{!! Form::close() !!}

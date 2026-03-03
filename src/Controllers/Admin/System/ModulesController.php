@@ -1,11 +1,11 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
 use Illuminate\Http\Request;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\Modules;
-use Incodiy\Codiy\Models\Admin\System\Icon;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\Modules;
+use Canvastack\Origin\Models\Admin\System\Icon;
 
 /**
  * Created on Jan 11, 2018
@@ -14,9 +14,9 @@ use Incodiy\Codiy\Models\Admin\System\Icon;
  *
  * @filesource	ModulesController.php
  *
- * @author		wisnuwidi@IncoDIY - 2018
+ * @author		wisnuwidi@CanvaStack - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class ModulesController extends Controller {
 	public $data;
@@ -58,15 +58,15 @@ class ModulesController extends Controller {
 				foreach ($base_model as $model_name => $data_model) {
 					foreach ($data_model as $model => $value) {
 						if ('route_data' === $model) {
-							$option_data[ucwords($base_group)][$value->route_base] = $pointer . diy_underscore_to_camelcase($model_name);
+							$option_data[ucwords($base_group)][$value->route_base] = $pointer . canvas_underscore_to_camelcase($model_name);
 						} else {
 							foreach ($value as $next_model => $next_val) {
 								if ('route_data' === $next_model) {
-									$option_data[ucwords($base_group) . ' / ' . ucwords($model_name)][$next_val->route_base] = $pointer . diy_underscore_to_camelcase($model);
+									$option_data[ucwords($base_group) . ' / ' . ucwords($model_name)][$next_val->route_base] = $pointer . canvas_underscore_to_camelcase($model);
 								} else {
 									foreach ($next_val as $vKey => $val) {
 										if ('route_data' === $vKey) {
-											$option_data[ucwords($base_group) . ' / ' . ucwords($model_name) . ' / ' . ucwords($model)][$val->route_base] = $pointer . diy_underscore_to_camelcase($next_model);
+											$option_data[ucwords($base_group) . ' / ' . ucwords($model_name) . ' / ' . ucwords($model)][$val->route_base] = $pointer . canvas_underscore_to_camelcase($next_model);
 										}
 									}
 								}
@@ -78,7 +78,7 @@ class ModulesController extends Controller {
 				foreach ($base_model as $model_name => $data_model) {
 					foreach ($data_model as $model => $value) {
 						if ('route_data' === $model) {
-							$option_data[$value->route_base] = diy_underscore_to_camelcase($model_name);
+							$option_data[$value->route_base] = canvas_underscore_to_camelcase($model_name);
 						}
 					}
 				}
@@ -102,9 +102,9 @@ class ModulesController extends Controller {
 			$module_name	= $module_parent;
 		}
 		
-		$module_name = diy_underscore_to_camelcase($module_name);
+		$module_name = canvas_underscore_to_camelcase($module_name);
 		
-		diy_merge_request($request, [
+		canvas_merge_request($request, [
 			'parent_name'	=> ucwords($module_parent),
 			'module_name'	=> ucwords($module_name)
 		]);
@@ -118,7 +118,7 @@ class ModulesController extends Controller {
 	}
 	
 	private function input_icons() {
-		return diy_combobox_data(Icon::all(), 'class', 'label');
+		return canvas_combobox_data(Icon::all(), 'class', 'label');
 	}
 	
 	private function check_session($redirect) {

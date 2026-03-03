@@ -3,14 +3,14 @@
  * Created on 12 Mar 2021
  * Time Created	: 13:48:55
  *
- * @filesource	Scripts.php diy_config("baseURL") . '/' . diy_config("template_folder")
+ * @filesource	Scripts.php canvas_config("baseURL") . '/' . canvas_config("template_folder")
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
-if (!function_exists('diy_script_html_element_value')) {
+if (!function_exists('canvas_script_html_element_value')) {
     
     /**
      * Find Match HTML Elements to get string Value and all HTML Tag
@@ -24,7 +24,7 @@ if (!function_exists('diy_script_html_element_value')) {
      *
      * @return string
      */
-    function diy_script_html_element_value($string, $tagname, $elm, $asHTML = true) {
+    function canvas_script_html_element_value($string, $tagname, $elm, $asHTML = true) {
         $match = false;
         preg_match("/<{$tagname}\s.*?\b{$elm}=\"(.*?)\".*?>/si", $string, $match);
         
@@ -39,19 +39,19 @@ if (!function_exists('diy_script_html_element_value')) {
     }
 }
 
-if (!function_exists('diy_script_asset_path')) {
+if (!function_exists('canvas_script_asset_path')) {
     
     /**
      * Get Asset Path
      * 
      * @return string
      */
-    function diy_script_asset_path() {
-    	return diy_config("baseURL") . '/' . diy_config("base_template") . '/' . diy_config("template");
+    function canvas_script_asset_path() {
+    	return canvas_config("baseURL") . '/' . canvas_config("base_template") . '/' . canvas_config("template");
     }
 }
 
-if (!function_exists('diy_script_check_string_path')) {
+if (!function_exists('canvas_script_check_string_path')) {
     
     /**
      * Check string path
@@ -60,15 +60,15 @@ if (!function_exists('diy_script_check_string_path')) {
      * 
      * @return string
      */
-    function diy_script_check_string_path($string, $exist_check = false) {
+    function canvas_script_check_string_path($string, $exist_check = false) {
         if ((str_contains($string, 'https://') || str_contains($string, 'http://'))) {
             $path = $string;
         } else {
-            $path = diy_script_asset_path() . "/{$string}";
+            $path = canvas_script_asset_path() . "/{$string}";
         }
         
         if (true === $exist_check) {
-            if (diy_exist_url($path)) return $path;
+            if (canvas_exist_url($path)) return $path;
         } else {
             return $path;
         }

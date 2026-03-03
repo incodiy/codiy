@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 
-use Incodiy\Codiy\Models\Admin\System\DynamicTables;
+use Canvastack\Origin\Models\Admin\System\DynamicTables;
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Response;
  *
  * @filesource Export.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class Export {
 	
@@ -65,13 +65,13 @@ class Export {
 		$data = [];
 		if (!empty($_GET['exportDataTables'])) {
 			if (true == $_GET['exportDataTables']) {
-				if (!empty($_POST['lurExp'])) $link = diy_decrypt($_POST['lurExp']);
+				if (!empty($_POST['lurExp'])) $link = canvas_decrypt($_POST['lurExp']);
 				unset($_POST['lurExp']);
 				unset($_POST['exportData']);
 				
 				$filterPage = [];
 				if (!empty($_POST['ftrExp'])) {
-					$fDataPost  = diy_filter_data_normalizer($_POST['ftrExp']);
+					$fDataPost  = canvas_filter_data_normalizer($_POST['ftrExp']);
 					unset($_POST['ftrExp']);
 					
 					if (!empty($fDataPost)) {
@@ -156,10 +156,10 @@ class Export {
 		}
 	}
 	
-	private function generate($type = 'csv', $data = [], $path = null, $filename = 'diyExportData') {
+	private function generate($type = 'csv', $data = [], $path = null, $filename = 'canvasExportData') {
 		$pathFile = public_path();
 		if (!file_exists($pathFile."/{$path}")) {
-			diy_make_dir($pathFile . "/{$path}", 0777, true, true);
+			canvas_make_dir($pathFile . "/{$path}", 0777, true, true);
 		}
 		
 		$filepath = str_replace('\/', '/', $pathFile . "/{$path}/{$filename}.{$type}");
@@ -182,15 +182,15 @@ class Export {
 		
 		if ('csv' === $type) self::createFileCSV($filepath, $columns, $rows);
 		
-		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
-			$uri = url(diy_config('baseURL') . '/' . $path . '/' . $filename . '.' . $type);
+		if (false === canvas_string_contained(canvas_config('baseURL'), 'public')) {
+			$uri = url(canvas_config('baseURL') . '/' . $path . '/' . $filename . '.' . $type);
 		} else {
 			$uri = url()->asset(str_replace('\\', '/', explode('public', $filepath)[1]));
 		}
 		
 		Response::streamDownload($uri, "{$filename}.{$type}", $headers);
 		
-		return json_encode(['diyExportStreamPath' => $uri]);
+		return json_encode(['canvasExportStreamPath' => $uri]);
 	}
 	
 	private static function createFileCSV($filepath, $columns, $rows) {
@@ -208,7 +208,7 @@ class Export {
 		fclose($handle);
 	}
 	
-	private function exportCSV($data, $path = null, $filename = 'diyExportDataCSV') {
+	private function exportCSV($data, $path = null, $filename = 'canvasExportDataCSV') {
 		return $this->generate('csv', $data, $path, $filename);
 	}
 }

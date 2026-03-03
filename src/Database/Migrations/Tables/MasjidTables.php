@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Database\Migrations\Tables;
+namespace Canvastack\Origin\Database\Migrations\Tables;
 
 use Illuminate\Database\Schema\Blueprint;
-use Incodiy\Codiy\Database\Migrations\Config;
+use Canvastack\Origin\Database\Migrations\Config;
 /**
  * Created on Jul 27, 2023
  * 
@@ -12,7 +12,7 @@ use Incodiy\Codiy\Database\Migrations\Config;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 class MasjidTables extends Config {

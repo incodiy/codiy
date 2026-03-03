@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Messages\Email;
+namespace Canvastack\Origin\Library\Components\Messages\Email;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Mail;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  */
 class Objects {
 	
@@ -43,7 +43,7 @@ class Objects {
 		foreach ($address as $mailAddress) {
 			if (!is_array($mailAddress)) {
 				$splitMail                   = explode('@', $mailAddress);
-				$email['name'][$mailAddress] = ucwords(str_replace('-', ' ', diy_clean_strings($splitMail[0])));
+				$email['name'][$mailAddress] = ucwords(str_replace('-', ' ', canvas_clean_strings($splitMail[0])));
 				$email['email'][]            = $mailAddress;
 			}
 		}
@@ -78,7 +78,7 @@ class Objects {
 	}
 	
 	public function message($string) {
-		$message = $string . '<br /><p>' . diy_config('email.feet.text') . ',</p><p>' . diy_config('email.feet.signature') . '.</p>';
+		$message = $string . '<br /><p>' . canvas_config('email.feet.text') . ',</p><p>' . canvas_config('email.feet.signature') . '.</p>';
 		
 		$this->message      = $message;
 		$this->data['body'] = $message;

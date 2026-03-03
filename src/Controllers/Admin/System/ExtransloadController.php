@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\Extransload;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\Extransload;
 use Illuminate\Http\Request;
 
 /**
@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
  *
  * @filesource ExtransloadController.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 class ExtransloadController extends Controller {
@@ -45,7 +45,7 @@ class ExtransloadController extends Controller {
 	
 	private static $etls = [];
 	private static function source_connections() {
-		self::$connection_sources = diy_config("sources", 'connections');
+		self::$connection_sources = canvas_config("sources", 'connections');
 		foreach (self::$connection_sources as $connection_name => $connection_data) {
 			self::$etls['sources']['label'][$connection_name] = $connection_data['label'];
 		}
@@ -120,16 +120,16 @@ class ExtransloadController extends Controller {
 		
 		$this->form->close('Process ' . $this->page_label);
 		
-		$ajaxURL = diy_get_ajax_urli('diyHostProcess');
-		$this->form->draw(diy_script("
+		$ajaxURL = canvas_get_ajax_urli('canvasHostProcess');
+		$this->form->draw(canvas_script("
 jQuery(document).ready(function() {
 	$('form[name=\"{$this->form->identity}\"]').on('submit', function(e) {
-		var submitButtonBox = $('div.diy-action-box>input.btn');
+		var submitButtonBox = $('div.canvas-action-box>input.btn');
 		submitButtonBox.css({
 			'width': '220px',
 			'text-align': 'left',
 			'text-indent': '10px'
-		}).wrap('<div class=\"diy_submitbox\" style=\"position:relative;width:220px;text-align:left;float:right\"></div>');
+		}).wrap('<div class=\"canvas_submitbox\" style=\"position:relative;width:220px;text-align:left;float:right\"></div>');
 		
 		$('<span class=\"inputloader loader\" style=\"right:8px;width:20px;height:20px;top:7px;background-size:20px\"></span>')
 			.insertAfter(submitButtonBox);
@@ -144,8 +144,8 @@ jQuery(document).ready(function() {
 			},			
 			complete : function() {
 				submitButtonBox.removeAttr('style').detach();
-				$('div.diy-action-box').append(submitButtonBox);
-				$('div.diy_submitbox').remove();
+				$('div.canvas-action-box').append(submitButtonBox);
+				$('div.canvas_submitbox').remove();
 				$('span.inputloader').remove();
 			}
 		});
@@ -167,8 +167,8 @@ jQuery(document).ready(function() {
 		$syncs['selected']    = encrypt($selected);
 		
 		$data                 = json_encode($syncs);
-		$ajaxURL              = diy_get_ajax_urli('diyHostConn', $connections);
+		$ajaxURL              = canvas_get_ajax_urli('canvasHostConn', $connections);
 		
-		$this->form->draw(diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL}', '{$data}');"));
+		$this->form->draw(canvas_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL}', '{$data}');"));
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
+namespace Canvastack\Origin\Library\Components\Charts\Canvas;
 
 /**
  * Created on May 23, 2023
@@ -10,7 +10,7 @@ namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 trait Scripts {
@@ -30,13 +30,13 @@ trait Scripts {
 		$chartIDCode        = $chartIdentity[$formIdentity]['code'];
 		$chartIDString      = $chartIdentity[$formIdentity]['string'];
 		$submitFilterButton = str_replace('_cdyFILTERForm', '_submitFilterButton', "{$formIdentity}");
-		$urli               = $this->chartURI[$chartIdentity[$formIdentity]['code']] . '&diyChartDataFilter=' . $chartIDString . '&diyChartData=' . $chartIDCode;
+		$urli               = $this->chartURI[$chartIdentity[$formIdentity]['code']] . '&canvasChartDataFilter=' . $chartIDString . '&canvasChartData=' . $chartIDCode;
 		
 		unset($chartIdentity[$formIdentity]['source']);
 		unset($chartIdentity[$formIdentity]['code']);
 		unset($chartIdentity[$formIdentity]['string']);
 		
-		$data['datatables']['source'] = 'diyChartDataFilter::' . diy_encrypt($data['datatables']['source']);
+		$data['datatables']['source'] = 'canvasChartDataFilter::' . canvas_encrypt($data['datatables']['source']);
 		
 		
 		$dataPosts = [];
@@ -134,7 +134,7 @@ trait Scripts {
 	}
 	
 	private function setTitle($title = null) {
-		if (diy_string_contained($title, 't_view')) {
+		if (canvas_string_contained($title, 't_view')) {
 			$setTitle = ucwords(str_replace('_', ' ', str_replace('t_view_', '', $title)));
 		} else {
 			$setTitle = ucwords(str_replace('_', ' ', $title));

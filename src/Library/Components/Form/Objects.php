@@ -1,17 +1,17 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form;
+namespace Canvastack\Origin\Library\Components\Form;
 
 use Collective\Html\FormFacade as Form;
 use Collective\Html\HtmlFacade as Html;
 
-use Incodiy\Codiy\Library\Components\Form\Elements\Text;
-use Incodiy\Codiy\Library\Components\Form\Elements\DateTime;
-use Incodiy\Codiy\Library\Components\Form\Elements\Select;
-use Incodiy\Codiy\Library\Components\Form\Elements\File;
-use Incodiy\Codiy\Library\Components\Form\Elements\Check;
-use Incodiy\Codiy\Library\Components\Form\Elements\Radio;
-use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
-use Incodiy\Codiy\Controllers\Admin\System\AjaxController;
+use Canvastack\Origin\Library\Components\Form\Elements\Text;
+use Canvastack\Origin\Library\Components\Form\Elements\DateTime;
+use Canvastack\Origin\Library\Components\Form\Elements\Select;
+use Canvastack\Origin\Library\Components\Form\Elements\File;
+use Canvastack\Origin\Library\Components\Form\Elements\Check;
+use Canvastack\Origin\Library\Components\Form\Elements\Radio;
+use Canvastack\Origin\Library\Components\Form\Elements\Tab;
+use Canvastack\Origin\Controllers\Admin\System\AjaxController;
 
 /**
  * Created on 16 Mar 2021
@@ -19,9 +19,9 @@ use Incodiy\Codiy\Controllers\Admin\System\AjaxController;
  *
  * @filesource	Objects.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 class Objects {
@@ -72,7 +72,7 @@ class Objects {
 		$tabObj = "";
 		if (true === is_array($object)) $tabObj = implode('', $object);
 		
-		if (true === diy_string_contained($tabObj, $this->opentabHTML)) {
+		if (true === canvas_string_contained($tabObj, $this->opentabHTML)) {
 			return $this->renderTab($object);
 		} else {
 			return $object;
@@ -173,7 +173,7 @@ class Objects {
 		$this->alert_message();
 		if ('show' !== $this->currentRouteName) {
 			if (str_contains(current_route(), 'edit')) {
-				$sliceURL		= explode('/', diy_current_url());
+				$sliceURL		= explode('/', canvas_current_url());
 				unset($sliceURL[array_key_last ($sliceURL)]);
 				$row_selected	= intval($sliceURL[array_key_last ($sliceURL)]);
 			}
@@ -201,7 +201,7 @@ class Objects {
 				$path = $this->setActionRoutePath();
 			}
 			
-			$model_path = diy_random_strings();
+			$model_path = canvas_random_strings();
 			if ('Collection' === class_basename($model)) {
 				foreach ($model as $items) {
 					$model_path = get_class($items);
@@ -212,7 +212,7 @@ class Objects {
 				$model_path = get_class($model->getModel());
 			}
 			
-			$model_uri  = diy_random_strings() . '___' . str_replace('\\', '.', $model_path) . '___' . diy_random_strings();
+			$model_uri  = canvas_random_strings() . '___' . str_replace('\\', '.', $model_path) . '___' . canvas_random_strings();
 			$model_enc  = encrypt($model_uri);
 			$model_name = $model_enc;
 			
@@ -281,7 +281,7 @@ class Objects {
 			}
 			$object .= Form::close();
 			
-			$this->draw('<div class="diy-action-box">' . $prefix . $object . $suffix . '</div>');
+			$this->draw('<div class="canvas-action-box">' . $prefix . $object . $suffix . '</div>');
 		}
 	}
 	
@@ -329,9 +329,9 @@ class Objects {
 		$syncs['selected'] = encrypt($selected);
 		$syncs['query']    = encrypt(trim(preg_replace('/\s\s+/', ' ', $query)));
 		$data              = json_encode($syncs);
-		$ajaxURL           = diy_get_ajax_urli();
+		$ajaxURL           = canvas_get_ajax_urli();
 		
-		$this->draw(diy_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL}', '{$data}');"));
+		$this->draw(canvas_script("ajaxSelectionBox('{$source_field}', '{$target_field}', '{$ajaxURL}', '{$data}');"));
 	}
 	
 	private function getModelValue($field_name, $function_name) {
@@ -342,14 +342,14 @@ class Objects {
 			$model = [];
 			if (!empty($this->model)) {
 				
-				if (true === diy_is_softdeletes($this->model)) {
+				if (true === canvas_is_softdeletes($this->model)) {
 					$model	= $this->model::withTrashed()->get();
 				} else {
 					$model	= $this->model->get();
 				}
 				
-				$curRoute	= diy_get_current_route_id();
-				if ('show' === $this->currentRouteName) $curRoute = diy_get_current_route_id(false);
+				$curRoute	= canvas_get_current_route_id();
+				if ('show' === $this->currentRouteName) $curRoute = canvas_get_current_route_id(false);
 				
 				$model = $model->find($curRoute);
 				if (!is_null($model->{$field_name})) {
@@ -449,7 +449,7 @@ class Objects {
 	private function setParams($function_name, $name, $value, $attributes, $label, $selected = false) {
 		if (true === $label)                                $label      = ucwords( str_replace('-', ' ', ucwords(str_replace('_', ' ', $name)) ));
 		if (!empty($this->added_attributes))                $attributes = array_merge_recursive($attributes, $this->added_attributes);
-		if (!diy_string_contained(current_route(), 'show')) $attributes = self::checkValidationAttributes($name, $attributes);
+		if (!canvas_string_contained(current_route(), 'show')) $attributes = self::checkValidationAttributes($name, $attributes);
 		
 		$this->setModelValueAndSelectedToParams($function_name, $name, $value, $selected);
 		$this->params[$function_name][$name] = [
@@ -476,7 +476,7 @@ class Objects {
 		
 		if (in_array($name, $this->hideFields)) {
 			$hideClass	= ' hide';
-			$attributes = diy_form_change_input_attribute($attributes, 'class', trim($hideClass));
+			$attributes = canvas_form_change_input_attribute($attributes, 'class', trim($hideClass));
 		}
 		
 		$paramData = $this->params[$function_name][$name];
@@ -489,7 +489,7 @@ class Objects {
 			}
 			$attributes = $paramData['attributes'];
 		}
-		$attributes    = diy_form_change_input_attribute($attributes, 'class', 'form-control');
+		$attributes    = canvas_form_change_input_attribute($attributes, 'class', 'form-control');
 		
 		if (true === in_array('required', $attributes) || true === in_array('required', array_keys($attributes))) {
 			$req_symbol = ' <font class="required" title="This Required Field cannot be Leave Empty!"><sup>(</sup><strong>*</strong><sup>)</sup></font>';
@@ -553,7 +553,7 @@ class Objects {
 	 */
 	private function alert_message($data = []) {
 		if (!empty($this->validations)) {
-			$checkRequired = diy_array_contained_string($this->validations, 'required', true);
+			$checkRequired = canvas_array_contained_string($this->validations, 'required', true);
 			if (!empty($checkRequired)) {
 				self::$validation_attributes = $checkRequired;
 			}
@@ -562,15 +562,15 @@ class Objects {
 		$current_data     = [];
 		if (!empty($data)) $current_data = ['current_data' => $data->getAttributes()];
 		$session_messages = [];
-		if (!is_empty(diy_sessions('get', 'message'))) $session_messages = diy_sessions('get', 'message');		
+		if (!is_empty(canvas_sessions('get', 'message'))) $session_messages = canvas_sessions('get', 'message');		
 		$session_status   = null;
-		if (!is_empty(diy_sessions('get', 'status')))  $session_status   = diy_sessions('get', 'status');
+		if (!is_empty(canvas_sessions('get', 'status')))  $session_status   = canvas_sessions('get', 'status');
 		
 		$param_method     = null;
 		if (!empty($current_data)) {
 			if (!empty($session_messages['message']['_method'])) {
 				$param_method = $session_messages['message']['_method'];
-				diy_sessions($param_method, $current_data);
+				canvas_sessions($param_method, $current_data);
 			}
 		}
 		
@@ -583,7 +583,7 @@ class Objects {
 		$status['label']   = ucwords($status['type']);
 		
 		if (!empty($session_messages)) {
-			$this->draw(diy_form_alert_message($status['message'], $status['type'], $status['label'], $status['prefix'], false));
+			$this->draw(canvas_form_alert_message($status['message'], $status['type'], $status['label'], $status['prefix'], false));
 		}
 	}
 }

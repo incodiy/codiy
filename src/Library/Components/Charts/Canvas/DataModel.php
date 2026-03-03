@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
+namespace Canvastack\Origin\Library\Components\Charts\Canvas;
 
 /**
  * Created on May 24, 2023
@@ -10,9 +10,9 @@ namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  */
 trait DataModel {
 	private $chartData = [];
@@ -30,7 +30,7 @@ trait DataModel {
 			$sourceData  = $data->params;
 			$sourceGroup = [];
 			if (!empty($sourceData->group)) {
-				if (diy_string_contained($sourceData->group, ',')) {
+				if (canvas_string_contained($sourceData->group, ',')) {
 					$sourceGroup = explode(',', str_replace(' ', '', $sourceData->group));
 				} else {
 					$sourceGroup = [$sourceData->group];
@@ -38,14 +38,14 @@ trait DataModel {
 			}
 			
 			if (!empty($sourceData->order)) {
-				if (diy_string_contained($sourceData->order, ',')) {
+				if (canvas_string_contained($sourceData->order, ',')) {
 					$dataOrders  = explode(',', str_replace(' ', '', $sourceData->order));
 				} else {
 					$dataOrders  = [$sourceData->order];
 				}
 				
 				foreach ($dataOrders as $orderData) {
-					if (diy_string_contained($orderData, '::')) {
+					if (canvas_string_contained($orderData, '::')) {
 						$splitOrder = explode('::', $orderData);
 						$sourceOrder[$splitOrder[0]] = "`{$splitOrder[0]}` {$splitOrder[1]}";
 					}
@@ -69,7 +69,7 @@ trait DataModel {
 				
 				foreach ($data_format as $format_info) {
 					if (!empty($format_info)) {
-						if (empty(diy_string_contained($format_info, 'name:')) && empty(diy_string_contained($format_info, 'data:'))) {
+						if (empty(canvas_string_contained($format_info, 'name:')) && empty(canvas_string_contained($format_info, 'data:'))) {
 							$format_info = explode(',', $format_info);
 						}
 						
@@ -82,11 +82,11 @@ trait DataModel {
 							foreach ($format_info as $formatDataInfo) {
 								$formatInfo = "data:{$formatDataInfo}";
 								
-								if (diy_string_contained($formatInfo, '::')) {
+								if (canvas_string_contained($formatInfo, '::')) {
 									$mathSlices = explode('::', $formatInfo);
 									if (!empty($mathSlices)) {
 										foreach ($mathSlices as $as_calc_format) {
-											if (diy_string_contained($as_calc_format, ':')) {
+											if (canvas_string_contained($as_calc_format, ':')) {
 												$slice = explode(':', $as_calc_format);
 												$sQueryData['un_group'][$slice[1]] = $slice[1];
 											} else {
@@ -103,11 +103,11 @@ trait DataModel {
 							}
 							
 						} else {
-							if (diy_string_contained($format_info, '::')) {
+							if (canvas_string_contained($format_info, '::')) {
 								$mathSlices = explode('::', $format_info);
 								if (!empty($mathSlices)) {
 									foreach ($mathSlices as $as_calc_format) {
-										if (diy_string_contained($as_calc_format, ':')) {
+										if (canvas_string_contained($as_calc_format, ':')) {
 											$slice = explode(':', $as_calc_format);
 											
 											$formatData['param_as'][$slice[1]] = $slice[0];
@@ -136,7 +136,7 @@ trait DataModel {
 				$chartTypeField = [];
 				foreach ($sourceData->fields as $fieldset) {
 					$chartTypeField[$fieldset] = $sourceData->type;
-					if (diy_string_contained($fieldset, '::')) {
+					if (canvas_string_contained($fieldset, '::')) {
 						unset($chartTypeField[$fieldset]);
 						
 						$fieldsplits = explode('::', $fieldset);
@@ -164,7 +164,7 @@ trait DataModel {
 					
 					if (!empty($sourceOrder)) {
 						foreach ($sourceOrder as $field_order => $order) {
-							if (!diy_string_contained($order, '`')) {
+							if (!canvas_string_contained($order, '`')) {
 								$str_order = "`{$order}`";
 							} else {
 								$str_order = $order;
@@ -186,7 +186,7 @@ trait DataModel {
 					$fieldsetMultiValues['for_values'] = [];
 					
 					foreach ($fieldsets as $fieldLabel => $fieldset) {
-						if (!diy_string_contained($fieldset, ') AS')) {
+						if (!canvas_string_contained($fieldset, ') AS')) {
 							$fieldsetMultiValues['for_fields'][str_replace('`', '', $fieldset)] = $fieldset;
 						} else {
 							$labelNames = [];
@@ -266,8 +266,8 @@ trait DataModel {
 				
 				
 				$sourceTable = $sourceData->source;
-				if (diy_string_contained($sourceData->source, 'diyChartDataFilter::')) {
-					$sourceTable = diy_decrypt(str_replace('diyChartDataFilter::', '', $sourceData->source));
+				if (canvas_string_contained($sourceData->source, 'canvasChartDataFilter::')) {
+					$sourceTable = canvas_decrypt(str_replace('canvasChartDataFilter::', '', $sourceData->source));
 				}
 				
 				// DATA LINE HERE
@@ -283,7 +283,7 @@ trait DataModel {
 					$sql  = implode(' UNION ALL ', $sqli) . "{$str_order};";
 				}
 				
-				$queryData          = diy_query($sql, 'SELECT', $this->connection);
+				$queryData          = canvas_query($sql, 'SELECT', $this->connection);
 				$sQueryData['data'] = self::manipulate($sourceData->type, $queryData, $formatData['param_as'], $sourceData->category);
 				
 				$this->chartData[$this->chartPostData]['data']    = $sQueryData;
@@ -366,7 +366,7 @@ trait DataModel {
 			if (!empty($chartData['type'][$name])) {
 				$chartType = $chartData['type'][$name];
 			}
-			if (diy_string_contained($chartType, 'line')) {
+			if (canvas_string_contained($chartType, 'line')) {
 				$buffers['series'][] = [
 					'name'      => $name,
 					'data'      => $data,

@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\Modules\Shop;
+namespace Canvastack\Origin\Models\Admin\Modules\Shop;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 /**
  * Created on Dec 17, 2022
  * 
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource ProductCategory.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class ProductCategory extends Model {
 	protected $table	 = 'shop_product_category';

@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\Modules;
+namespace Canvastack\Origin\Controllers\Admin\Modules;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\Modules\Form;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\Modules\Form;
 
 /**
  * Created on 23 Mar 2021
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\Modules\Form;
  *
  * @filesource FormController.php
  *
- * @author     wisnuwidi@incodiy.com - 2021
+ * @author     wisnuwidi@canvastack.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
  
 class FormController extends Controller {

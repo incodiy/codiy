@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Components;
+namespace Canvastack\Origin\Controllers\Core\Craft\Components;
 
-use Incodiy\Codiy\Library\Components\Messages\Email\Objects;
+use Canvastack\Origin\Library\Components\Messages\Email\Objects;
 /**
  * Created on Jul 1, 2023
  * 
@@ -11,9 +11,9 @@ use Incodiy\Codiy\Library\Components\Messages\Email\Objects;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  */
 trait Email {
 	public $email;

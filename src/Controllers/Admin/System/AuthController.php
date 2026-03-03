@@ -1,14 +1,14 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-use Incodiy\Codiy\Models\Admin\System\User;
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
+use Canvastack\Origin\Models\Admin\System\User;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Core\Craft\Includes\Privileges;
 use Illuminate\Support\Facades\Route;
 //use App\Models\Admin\System\Maintenance;
 
@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Route;
  *
  * @filesource	AuthController.php
  *
- * @author		wisnuwidi @IncoDIY - 2017
+ * @author		wisnuwidi @CanvaStack - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class AuthController extends Controller {
 	use Privileges;
@@ -167,11 +167,11 @@ class AuthController extends Controller {
 	private function filterUserAliases($alias = null) {
 		$filterAliases = $alias;
 		
-		if (diy_string_contained($alias, ':')) {
+		if (canvas_string_contained($alias, ':')) {
 			$filterAliases = [];
 			$filterAlias   = str_replace(':', '', $alias);
 			
-			if (diy_string_contained($filterAlias, ',')) {
+			if (canvas_string_contained($filterAlias, ',')) {
 				$_filterAliases = explode(',', $filterAlias);
 				foreach ($_filterAliases as $filterAliasData) {
 					$filterAliasArray = explode('|', $filterAliasData);
@@ -194,8 +194,8 @@ class AuthController extends Controller {
 			$user_info	= User::find($user->id);
 			$group_info	= (object) $user_info->groupInfo();
 			$user_alias = 'user_alias';
-			if (!empty(diy_config('user.alias_session_name'))) {
-				$user_alias = diy_config('user.alias_session_name');
+			if (!empty(canvas_config('user.alias_session_name'))) {
+				$user_alias = canvas_config('user.alias_session_name');
 			}
 			
 			$userData['id']                   = $user->id;
@@ -225,7 +225,7 @@ class AuthController extends Controller {
 		}
 		
 		if ($userData['active'] >= 1) {
-			diy_log_activity($this->authRouteInfo, $userData);
+			canvas_log_activity($this->authRouteInfo, $userData);
 			if (false === $return_data) {
 				$this->session_auth = $userData;
 			//	$this->add_log('Login', $this->session_auth['id']);
@@ -266,7 +266,7 @@ class AuthController extends Controller {
 		if (!empty(auth()->user()->id)) {
 	    //	$this->add_log('Logout', auth()->user()->id);
 			
-			diy_log_activity($this->authRouteInfo, $this->session);
+			canvas_log_activity($this->authRouteInfo, $this->session);
 		    Session::flush();
 		    Auth::logout();
 		}

@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 
 /**
  * Created on Mar 14, 2018
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource	Preference.php
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@canvastack.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 class Preference extends Model {

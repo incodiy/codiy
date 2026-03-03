@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Front\Modules;
+namespace Canvastack\Origin\Controllers\Front\Modules;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Core\Controller;
 
 /**
  * Created on 10 Mar 2021
@@ -9,9 +9,9 @@ use Incodiy\Codiy\Controllers\Core\Controller;
  *
  * @filesource	HomeController.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 class HomeController extends Controller {

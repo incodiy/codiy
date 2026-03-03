@@ -1,28 +1,28 @@
 <?php
-namespace Incodiy\Codiy\Database\Seeders;
+namespace Canvastack\Origin\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Incodiy\Codiy\Models\Admin\System\User;
+use Canvastack\Origin\Models\Admin\System\User;
 
-use Incodiy\Codiy\Database\Seeders\Includes\Timezone;
-use Incodiy\Codiy\Database\Seeders\Includes\Languages;
-use Incodiy\Codiy\Database\Seeders\Includes\Icons;
-use Incodiy\Codiy\Database\Seeders\Includes\App\Groups;
-use Incodiy\Codiy\Database\Seeders\Includes\App\Users;
+use Canvastack\Origin\Database\Seeders\Includes\Timezone;
+use Canvastack\Origin\Database\Seeders\Includes\Languages;
+use Canvastack\Origin\Database\Seeders\Includes\Icons;
+use Canvastack\Origin\Database\Seeders\Includes\App\Groups;
+use Canvastack\Origin\Database\Seeders\Includes\App\Users;
 
 /**
  * Created on Mar 6, 2017
  * Time Created : 1:31:32 PM
- * Filename     : IncodiyTableSeeder.php
+ * Filename     : CanvastackTableSeeder.php
  *
- * @filesource	IncodiyTableSeeder.php
+ * @filesource	CanvastackTableSeeder.php
  *
- * @author		wisnuwidi @IncoDIY - 2017
+ * @author		wisnuwidi @CanvaStack - 2017
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
-class IncodiyTableSeeder extends Seeder {
+class CanvastackTableSeeder extends Seeder {
 	use Timezone, Languages, Icons;
 	use Groups, Users;
 	
@@ -36,7 +36,7 @@ class IncodiyTableSeeder extends Seeder {
 			'session_lifetime' => 1800,
 			'meta_author'      => 'Wisnu Widiantoko',
 			'email_person'     => 'wisnuwidi',
-			'email_address'    => 'wisnuwidi@incodiy.com',
+			'email_address'    => 'wisnuwidi@canvastack.com',
 			'login_attempts'   => 8,
 			'debug'            => false,
 			'maintenance'      => false
@@ -49,8 +49,8 @@ class IncodiyTableSeeder extends Seeder {
 		
 		// USER TABLE
 		DB::table('users')->delete();
-		User::create(['username' => 'eclipsync', 'fullname' => 'Eclip Sync'   , 'email' => 'wisnuwidi@incodiy.com', 'password' => bcrypt('@eclipsync'), 'cryptcode' => diy_user_cryptcode('eclipsync', 'wisnuwidi@incodiy.com'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
-		User::create(['username' => 'admin'    , 'fullname' => 'Administrator', 'email' => 'admin@gmail.com',       'password' => bcrypt('@admin'),     'cryptcode' => diy_user_cryptcode('admin',     'admin@gmail.com'),       'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
+		User::create(['username' => 'eclipsync', 'fullname' => 'Eclip Sync'   , 'email' => 'wisnuwidi@canvastack.com', 'password' => bcrypt('@eclipsync'), 'cryptcode' => canvas_user_cryptcode('eclipsync', 'wisnuwidi@canvastack.com'), 'active' => 1, 'created_by' => 0, 'updated_by' => 0]);
+		User::create(['username' => 'admin'    , 'fullname' => 'Administrator', 'email' => 'admin@gmail.com',       'password' => bcrypt('@admin'),     'cryptcode' => canvas_user_cryptcode('admin',     'admin@gmail.com'),       'active' => 1, 'created_by' => 1, 'updated_by' => 1]);
 		
 		// USER RELATION GROUP TABLE
 		DB::table('base_user_group')->delete();

@@ -5,12 +5,12 @@
  *
  * @filesource	Template.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
-if (!function_exists('diy_template_config')) {
+if (!function_exists('canvas_template_config')) {
 	
 	/**
 	 * Get Template Config Data
@@ -22,12 +22,12 @@ if (!function_exists('diy_template_config')) {
 	 *
 	 * @return string
 	 */
-	function diy_template_config($string) {
-		return diy_config("{$string}", 'templates');
+	function canvas_template_config($string) {
+		return canvas_config("{$string}", 'templates');
 	}
 }
 
-if (!function_exists('diy_current_template')) {
+if (!function_exists('canvas_current_template')) {
 	
 	/**
 	 * Get Current Used Template
@@ -37,30 +37,30 @@ if (!function_exists('diy_current_template')) {
 	 *
 	 * @return string
 	 */
-	function diy_current_template() {
-		return diy_config('template');
+	function canvas_current_template() {
+		return canvas_config('template');
 	}
 }
 
-if (!function_exists('diy_js')) {
+if (!function_exists('canvas_js')) {
 	
-	function diy_js($scripts, $position = 'bottom', $as_script_code = false) {
-		$template = new Incodiy\Codiy\Library\Components\Template();
+	function canvas_js($scripts, $position = 'bottom', $as_script_code = false) {
+		$template = new Canvastack\Origin\Library\Components\Template();
 		
 		return $template->js($scripts, $position, $as_script_code);
 	}
 }
 
-if (!function_exists('diy_css')) {
+if (!function_exists('canvas_css')) {
 	
-	function diy_css($scripts, $position = 'top', $as_script_code = false) {
-		$template = new Incodiy\Codiy\Library\Components\Template();
+	function canvas_css($scripts, $position = 'top', $as_script_code = false) {
+		$template = new Canvastack\Origin\Library\Components\Template();
 		
 		return $template->js($scripts, $position, $as_script_code);
 	}
 }
 
-if (!function_exists('diy_gird')) {
+if (!function_exists('canvas_gird')) {
 	
 	/**
 	 * Draw HTML Gird Container
@@ -73,7 +73,7 @@ if (!function_exists('diy_gird')) {
 	 * @param bool|string|mixed $addHTML
 	 * @param bool $single
 	 */
-	function diy_gird($name = 'start', $set_column = false, $addHTML = false, $single = false) {
+	function canvas_gird($name = 'start', $set_column = false, $addHTML = false, $single = false) {
 		$numberColumn = 12;
 		if (!empty($set_column)) {
 			$numberColumn = intval(12 - $set_column);
@@ -106,7 +106,7 @@ if (!function_exists('diy_gird')) {
 	}
 }
 
-if (!function_exists('diy_set_gird_column')) {
+if (!function_exists('canvas_set_gird_column')) {
 	
 	/**
 	 * Draw HTML With Gird Column Setting
@@ -119,7 +119,7 @@ if (!function_exists('diy_set_gird_column')) {
 	 *
 	 * @return string
 	 */
-	function diy_set_gird_column($html, $set_column = false) {
+	function canvas_set_gird_column($html, $set_column = false) {
 		$numberColumn = 12;
 		if (!empty($set_column)) {
 			$numberColumn = intval(12 / $set_column);
@@ -130,7 +130,7 @@ if (!function_exists('diy_set_gird_column')) {
 	}
 }
 
-if (!function_exists('diy_breadcrumb')) {
+if (!function_exists('canvas_breadcrumb')) {
     
     /**
      * Create Breadcrumb Tag
@@ -142,7 +142,7 @@ if (!function_exists('diy_breadcrumb')) {
      *
      * @return string
      */
-    function diy_breadcrumb($title, $links = [], $icon_title = false, $icon_links = false, $type = false) {
+    function canvas_breadcrumb($title, $links = [], $icon_title = false, $icon_links = false, $type = false) {
         if ('blankon' === $type) {
             $n = 0;
             $linkIcons = false;
@@ -166,7 +166,7 @@ if (!function_exists('diy_breadcrumb')) {
                     $n++;
                     
                     $index		= $n - 1;
-                    $linkTitle	= diy_underscore_to_camelcase($link_title);
+                    $linkTitle	= canvas_underscore_to_camelcase($link_title);
                     
                     $o .= "<li>";
                     if ($linkIcons[$index]) $o .= $linkIcons[$index];
@@ -205,7 +205,7 @@ if (!function_exists('diy_breadcrumb')) {
                     $n++;
                     
                     $index     = $n - 1;
-                    $linkTitle = diy_underscore_to_camelcase($link_title);
+                    $linkTitle = canvas_underscore_to_camelcase($link_title);
                     
                     $o .= "<li>";
                     if (0 !== $link_title) {
@@ -226,7 +226,7 @@ if (!function_exists('diy_breadcrumb')) {
     }
 }
 
-if (!function_exists('diy_sidebar_content')) {
+if (!function_exists('canvas_sidebar_content')) {
 	
 	/**
 	 * Create Sidebar Content
@@ -235,8 +235,8 @@ if (!function_exists('diy_sidebar_content')) {
 	 * @param string $media_heading
 	 * @param string $media_sub_heading
 	 */
-	function diy_sidebar_content($media_title, $media_heading = false, $media_sub_heading = false, $type = true) {
-		$base_url = diy_config('baseURL');
+	function canvas_sidebar_content($media_title, $media_heading = false, $media_sub_heading = false, $type = true) {
+		$base_url = canvas_config('baseURL');
 		if (false === $type) {
 			$mediaHeading		= false;
 			$mediaSubHeading	= false;
@@ -254,7 +254,7 @@ if (!function_exists('diy_sidebar_content')) {
 			$o .= "</div>";
 			$o .= "</div>";
 		} else {
-			$sessions = diy_sessions();
+			$sessions = canvas_sessions();
 			$o  = "<div class=\"relative\">";
 			$o .= "<a data-toggle=\"collapse\" href=\"#userInfoBox\" role=\"button\" aria-expanded=\"false\" aria-controls=\"userInfoBox\" class=\"btn-sets btn-sets-sm absolute sets-right-bottom sets-top btn-primary shadow1 collapsed\"><i class=\"ti-settings\"></i></a>";
 			$o .= "<div class=\"user-panel light\">";
@@ -276,7 +276,7 @@ if (!function_exists('diy_sidebar_content')) {
 	}
 }
 
-if (!function_exists('diy_sidebar_menu_open')) {
+if (!function_exists('canvas_sidebar_menu_open')) {
 	
 	/**
 	 * Sidebar Open
@@ -287,7 +287,7 @@ if (!function_exists('diy_sidebar_menu_open')) {
 	 * @param boolean $class_name
 	 * @return string
 	 */
-	function diy_sidebar_menu_open($class_name = false) {
+	function canvas_sidebar_menu_open($class_name = false) {
 		$class = 'main-menu';//'sidebar-menu'
 		if (false !== $class_name) $class = $class_name;
 		
@@ -295,7 +295,7 @@ if (!function_exists('diy_sidebar_menu_open')) {
 	}
 }
 
-if (!function_exists('diy_sidebar_menu')) {
+if (!function_exists('canvas_sidebar_menu')) {
 	
 	/**
 	 * Create Sidebar Menu
@@ -310,8 +310,8 @@ if (!function_exists('diy_sidebar_menu')) {
 	    'E-Commerce' => 'dashboard-ecommerce.html'
 	   ], 'home');
 	 */
-	function diy_sidebar_menu($label, $links, $icon = [], $selected = false) {
-		$o = '<li id="' . diy_clean_strings($label) . '" class="submenu">';
+	function canvas_sidebar_menu($label, $links, $icon = [], $selected = false) {
+		$o = '<li id="' . canvas_clean_strings($label) . '" class="submenu">';
 		
 		$icons					= [];
 		$icons['before']		= $icon;
@@ -325,7 +325,7 @@ if (!function_exists('diy_sidebar_menu')) {
 				$o .= '<span class="icon">' . $icon['icon'] . '</span>';
 			}
 			
-			$o .= '<span class="text">' . diy_underscore_to_camelcase($label) . '</span>';
+			$o .= '<span class="text">' . canvas_underscore_to_camelcase($label) . '</span>';
 			$o .= '<span' . $icons['after'] . '">' . $icons['after_label'] . '</span>';
 			if (true === $selected) {
 				$o .= '<span class="selected"></span>';
@@ -336,16 +336,16 @@ if (!function_exists('diy_sidebar_menu')) {
 			foreach ($links as $child_title => $child_url) {
 				if (is_array($child_url)) {
 					$o .= '<li class="submenu"><a href="javascript:void(0);">';
-					$o .= '<span class="text">' . diy_underscore_to_camelcase($child_title) . '</span>';
+					$o .= '<span class="text">' . canvas_underscore_to_camelcase($child_title) . '</span>';
 					$o .= '<span class="arrow open fa-angle-double-down"></span></a>';
 					$o .= '<ul>';
 					foreach ($child_url as $thirdChild => $thirdURL) {
-						$o .= '<li id="' . clean_strings($label) . '-' . $child_title . '-' . diy_underscore_to_camelcase($thirdChild) . '"><a class="menu-url" href="' . $thirdURL . '">' . diy_underscore_to_camelcase($thirdChild) . '</a></li>';
+						$o .= '<li id="' . clean_strings($label) . '-' . $child_title . '-' . canvas_underscore_to_camelcase($thirdChild) . '"><a class="menu-url" href="' . $thirdURL . '">' . canvas_underscore_to_camelcase($thirdChild) . '</a></li>';
 					}
 					$o .= '</ul>';
 					$o .= '</li>';
 				} else {
-					$o .= '<li class="menu-active-pointer"><a class="menu-url" href="' . $child_url . '">' . diy_underscore_to_camelcase($child_title) . '</a></li>';
+					$o .= '<li class="menu-active-pointer"><a class="menu-url" href="' . $child_url . '">' . canvas_underscore_to_camelcase($child_title) . '</a></li>';
 				}
 			}
 			$o .= '</ul>';
@@ -358,7 +358,7 @@ if (!function_exists('diy_sidebar_menu')) {
 					$o .= '<span class="icon"><i class="fa fa-tags"></i></span>';
 				}
 			}
-			$o .= '<span class="text">' . diy_underscore_to_camelcase($label) . '</span>';
+			$o .= '<span class="text">' . canvas_underscore_to_camelcase($label) . '</span>';
 			if (true === $selected) {
 				$o .= '<span class="selected"></span>';
 			}
@@ -371,7 +371,7 @@ if (!function_exists('diy_sidebar_menu')) {
 	}
 }
 
-if (!function_exists('diy_sidebar_category')) {
+if (!function_exists('canvas_sidebar_category')) {
 	
 	/**
 	 * Create Sidebar Title
@@ -382,7 +382,7 @@ if (!function_exists('diy_sidebar_category')) {
 	 *
 	 * @return string
 	 */
-	function diy_sidebar_category($title, $icon = false, $icon_position = false) {
+	function canvas_sidebar_category($title, $icon = false, $icon_position = false) {
 		$o  = '<li class="sidebar-category">';
 		$o .= '<span>' . $title . '</span>';
 		if (false !== $icon) {
@@ -398,7 +398,7 @@ if (!function_exists('diy_sidebar_category')) {
 	}
 }
 
-if (!function_exists('diy_sidebar_menu_close')) {
+if (!function_exists('canvas_sidebar_menu_close')) {
 	
 	/**
 	 * Sidebar Close Menu
@@ -408,12 +408,12 @@ if (!function_exists('diy_sidebar_menu_close')) {
 	 *
 	 * @return string
 	 */
-	function diy_sidebar_menu_close() {
+	function canvas_sidebar_menu_close() {
 		return '</ul>';
 	}
 }
 
-if (!function_exists('diy_set_avatar')) {
+if (!function_exists('canvas_set_avatar')) {
 	
 	/**
 	 * Create User Image Link
@@ -423,7 +423,7 @@ if (!function_exists('diy_set_avatar')) {
 	 * @param string $image_src
 	 * @param string $user_status : online[default]/offline
 	 */
-	function diy_set_avatar($username, $link_url = false, $image_src = false, $user_status = 'online', $type_old = false) {
+	function canvas_set_avatar($username, $link_url = false, $image_src = false, $user_status = 'online', $type_old = false) {
 		if (false === $image_src || null === $image_src) {
 			$src = asset('assets/templates/default/images/user-m.png');
 		} else {

@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\Modules\Shop;
+namespace Canvastack\Origin\Models\Admin\Modules\Shop;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @filesource Category.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class Category extends Model {
 	use SoftDeletes;

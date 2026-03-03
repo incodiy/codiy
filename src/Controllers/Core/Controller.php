@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core;
+namespace Canvastack\Origin\Controllers\Core;
 
 use Illuminate\Routing\Controller as BaseController;
 
@@ -7,20 +7,20 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
-use Incodiy\Codiy\Controllers\Core\Craft\View;
-use Incodiy\Codiy\Controllers\Core\Craft\Action;
-use Incodiy\Codiy\Controllers\Core\Craft\Scripts;
-use Incodiy\Codiy\Controllers\Core\Craft\Session;
+use Canvastack\Origin\Controllers\Core\Craft\View;
+use Canvastack\Origin\Controllers\Core\Craft\Action;
+use Canvastack\Origin\Controllers\Core\Craft\Scripts;
+use Canvastack\Origin\Controllers\Core\Craft\Session;
 
-use Incodiy\Codiy\Controllers\Core\Craft\Components\MetaTags;
-use Incodiy\Codiy\Controllers\Core\Craft\Components\Template;
-use Incodiy\Codiy\Controllers\Core\Craft\Components\Form;
-use Incodiy\Codiy\Controllers\Core\Craft\Components\Table;
-use Incodiy\Codiy\Controllers\Core\Craft\Components\Chart;
-use Incodiy\Codiy\Controllers\Core\Craft\Components\Email;
+use Canvastack\Origin\Controllers\Core\Craft\Components\MetaTags;
+use Canvastack\Origin\Controllers\Core\Craft\Components\Template;
+use Canvastack\Origin\Controllers\Core\Craft\Components\Form;
+use Canvastack\Origin\Controllers\Core\Craft\Components\Table;
+use Canvastack\Origin\Controllers\Core\Craft\Components\Chart;
+use Canvastack\Origin\Controllers\Core\Craft\Components\Email;
 
-use Incodiy\Codiy\Controllers\Core\Craft\Includes\FileUpload;
-use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
+use Canvastack\Origin\Controllers\Core\Craft\Includes\FileUpload;
+use Canvastack\Origin\Controllers\Core\Craft\Includes\RouteInfo;
 
 /**
  * Bismillahirrahmanirrahiim
@@ -38,9 +38,9 @@ use Incodiy\Codiy\Controllers\Core\Craft\Includes\RouteInfo;
  *
  * @filesource Controller.php
  *            
- * @author    wisnuwidi@incodiy.com - 2021
+ * @author    wisnuwidi@canvastack.com - 2021
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
 class Controller extends BaseController {
 	
@@ -70,7 +70,7 @@ class Controller extends BaseController {
 	 * @param array $filters
 	 */
 	public function __construct($model = false, $route_page = false) {
-		diy_memory(false);
+		canvas_memory(false);
 		
 		$this->init_model($model);
 		$this->dataCollections();
@@ -110,16 +110,16 @@ class Controller extends BaseController {
 	/**
 	 * Initiate All Registered Plugin Components 
 	 * 		=> from app\Http\Controllers\Core\Craft\Components
-	 * 		=> data collection setting in config\diy.registers
+	 * 		=> data collection setting in config\canvas.registers
 	 */
 	private function components() {
-		if (!empty(diy_config('plugins', 'registers'))) {
-			foreach (diy_config('plugins', 'registers') as $plugin) {
+		if (!empty(canvas_config('plugins', 'registers'))) {
+			foreach (canvas_config('plugins', 'registers') as $plugin) {
 				$initiate = "init{$plugin}";
 				$this->{$initiate}();
 			}
 			
-			$this->setDataValues('components', diy_array_to_object_recursive($this->plugins));
+			$this->setDataValues('components', canvas_array_to_object_recursive($this->plugins));
 		}
 	}
 	

@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Admin\System\AjaxController as Ajax;
+use Canvastack\Origin\Controllers\Admin\System\AjaxController as Ajax;
 
 /**
  * Created on Sep 23, 2022
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Controllers\Admin\System\AjaxController as Ajax;
  *
  * @filesource	AjaxController.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 class AjaxController extends Ajax {}

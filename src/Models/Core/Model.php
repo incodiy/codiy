@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Models\Core;
+namespace Canvastack\Origin\Models\Core;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;
 /**
@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Model as BaseModel;
  *
  * @filesource Model.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
  
 class Model extends BaseModel {}

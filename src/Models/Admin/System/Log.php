@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 /**
  * Created on Jan 15, 2018
  * Time Created	: 2:53:49 PM
@@ -9,9 +9,9 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource	Log.php
  *
- * @author		wisnuwidi@IncoDIY - 2018
+ * @author		wisnuwidi@CanvaStack - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class Log extends Model {
 	protected $table	   = 'log_activities';

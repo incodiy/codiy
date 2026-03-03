@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Components;
+namespace Canvastack\Origin\Controllers\Core\Craft\Components;
 
-use Incodiy\Codiy\Library\Components\Form\Objects;
+use Canvastack\Origin\Library\Components\Form\Objects;
 
 /**
  * Created on 26 Mar 2021
@@ -9,9 +9,9 @@ use Incodiy\Codiy\Library\Components\Form\Objects;
  *
  * @filesource	Form.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Form {

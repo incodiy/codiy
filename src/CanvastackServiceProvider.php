@@ -1,21 +1,21 @@
 <?php
-namespace Incodiy\Codiy;
+namespace Canvastack\Origin;
 
 use Illuminate\Support\ServiceProvider;
-use Incodiy\Codiy\Controllers\Core\Controller as Codiy;
+use Canvastack\Origin\Controllers\Core\Controller as CanvaStack;
 
 /**
  * Created on Mar 22, 2018
  * Time Created : 4:52:52 PM
- * Filename :  Incodiy\IncodiyServiceProvider.php
+ * Filename :  Canvastack\CanvastackServiceProvider.php
  *
- * @filesource Incodiy\IncodiyServiceProvider.php
+ * @filesource Canvastack\CanvastackServiceProvider.php
  *            
- * @author    wisnuwidi@incodiy.com - 2018
+ * @author    wisnuwidi@canvastack.com - 2018
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
-class IncodiyServiceProvider extends ServiceProvider {
+class CanvastackServiceProvider extends ServiceProvider {
 
 	/**
 	 * Bootstrap the application services.
@@ -27,7 +27,7 @@ class IncodiyServiceProvider extends ServiceProvider {
 			require_once __DIR__ . '/routes/web.php';
 		}
 
-		$this->loadViewsFrom(base_path('resources/views'), 'Codiy');
+		$this->loadViewsFrom(base_path('resources/views'), 'CanvaStack');
 		$publish_path = __DIR__ . '/Publisher/';
 		
 		if ($this->app->runningInConsole()) {
@@ -38,11 +38,11 @@ class IncodiyServiceProvider extends ServiceProvider {
 				"{$publish_path}routes"              => base_path('routes'),
 				"{$publish_path}app"                 => base_path('app'),
 				"{$publish_path}resources/views"     => base_path('resources/views')
-			], 'Codiy');
+			], 'CanvaStack');
 			
 			$this->publishes([ 
 				"{$publish_path}public" => base_path('public')
-			], 'IncoDIY Public Folder');
+			], 'CanvaStack Public Folder');
 		}
 	}
 
@@ -52,8 +52,8 @@ class IncodiyServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function register() {
-		$this->app->singleton(Codiy::class, function ($app) {
-			return new Codiy();
+		$this->app->singleton(CanvaStack::class, function ($app) {
+			return new CanvaStack();
 		});
 	}
 }

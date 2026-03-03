@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 use Collective\Html\FormFacade as Form;
 /**
@@ -8,9 +8,9 @@ use Collective\Html\FormFacade as Form;
  *
  * @filesource	Radio.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Radio {
@@ -26,7 +26,7 @@ trait Radio {
 		$radio_type    = ' col-sm-3 rdio-primary';
 		
 		foreach ($value as $radio_key => $radio_label) {
-			$attr_id         = ['id' => "diy{$radio_key}:rdo" . diy_random_strings(8, false)];
+			$attr_id         = ['id' => "canvas{$radio_key}:rdo" . canvas_random_strings(8, false)];
 			$radio_attr      = array_merge_recursive($attr_id, $attributes);
 			$_selected_radio = false;
 			if (false !== $selected) {

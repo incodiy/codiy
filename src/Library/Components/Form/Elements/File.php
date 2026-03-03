@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 use Collective\Html\FormFacade as Form;
 use Intervention\Image\Facades\Image;
@@ -10,9 +10,9 @@ use Intervention\Image\Facades\Image;
  *
  * @filesource	File.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait File {
@@ -119,7 +119,7 @@ trait File {
 	 * @return string
 	 */
 	private function setUploadPath($folder_name) {
-		$baseFileUpload = diy_config('base_resources');
+		$baseFileUpload = canvas_config('base_resources');
 		
 		return public_path("{$baseFileUpload}/{$folder_name}");
 	}
@@ -133,17 +133,17 @@ trait File {
 	 * @return string
 	 */
 	private function setAssetPath($path, $folder) {
-		$baseIndexFolder = diy_config('index_folder');
+		$baseIndexFolder = canvas_config('index_folder');
 		$basePathURL     = explode($baseIndexFolder, str_replace('\\', '/', $path));
 		/* 
-		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
+		if (false === canvas_string_contained(canvas_config('baseURL'), 'public')) {
 			$baseIndexFolder = null;
 			$basePathURLi    = explode('/', $basePathURL[1]);
 			unset($basePathURLi[0]);
 			$basePathURL[1]  = implode('/', $basePathURLi);
 		}
 		 */
-		if (false === diy_string_contained(diy_config('baseURL'), 'public')) {
+		if (false === canvas_string_contained(canvas_config('baseURL'), 'public')) {
 			$baseIndexFolder = null;
 			if (!empty($basePathURL[2])) {
 				$basePathURL[1]  = str_replace('/assets/', 'assets/', $basePathURL[2]);
@@ -207,7 +207,7 @@ trait File {
 				if ($request->hasfile($inputname)) {
 					if (!empty($elements['file_validation'])) $this->validationFile($request, $inputname, $elements['file_validation']);
 					
-					diy_make_dir($filePath, 0777, true, true);
+					canvas_make_dir($filePath, 0777, true, true);
 					if (is_array($request->file($inputname))) {
 						//foreach ($request->file($inputname) as $file) {dump($file);}
 					} else {
@@ -257,7 +257,7 @@ trait File {
 			$thumb_time = 'tnail_';
 			$datePath   = date('Y') . '/' . date('m') . '/' . date('d');
 			$thumbPath  = $this->setUploadPath($upload_path . '/' . $datePath . '/' . $this->thumbFolder);
-			diy_make_dir($thumbPath, 0777, true, true);
+			canvas_make_dir($thumbPath, 0777, true, true);
 			
 			$thumbname  = $thumb_time . $fileNameInfo;
 			$thumbfile  = Image::make($request->file($inputname)->getRealPath());

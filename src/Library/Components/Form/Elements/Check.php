@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 use Collective\Html\FormFacade as Form;
 
@@ -9,9 +9,9 @@ use Collective\Html\FormFacade as Form;
  *
  * @filesource	Check.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Check {
@@ -45,7 +45,7 @@ trait Check {
 		
 		if (is_array($values)) {
 			foreach ($values as $check_key => $check_label) {
-				$attr_id         = ['id' => "diy{$check_key}:chx" . diy_random_strings(8, false)];
+				$attr_id         = ['id' => "canvas{$check_key}:chx" . canvas_random_strings(8, false)];
 				$check_attr      = array_merge_recursive($attr_id, $attributes);
 				$_selected_check = false;
 				

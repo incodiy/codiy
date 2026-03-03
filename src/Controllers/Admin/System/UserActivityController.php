@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Controllers\Core\Craft\Handler;
-use Incodiy\Codiy\Models\Admin\System\UserActivity;
-use Incodiy\Codiy\Models\Admin\System\User as User;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Core\Craft\Handler;
+use Canvastack\Origin\Models\Admin\System\UserActivity;
+use Canvastack\Origin\Models\Admin\System\User as User;
 
 use Illuminate\Http\Request;
 
@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 class UserActivityController extends Controller {
@@ -139,7 +139,7 @@ class UserActivityController extends Controller {
 			$request = new Request();
 			$request->merge($new_array);
 			
-			diy_update($user->find($id), $request, true);
+			canvas_update($user->find($id), $request, true);
 		}
 	}
 }

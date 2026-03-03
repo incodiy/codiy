@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Admin\System\ModulesController as Modules;
+use Canvastack\Origin\Controllers\Admin\System\ModulesController as Modules;
 
 /**
  * Created on Jan 11, 2018
@@ -10,8 +10,8 @@ use Incodiy\Codiy\Controllers\Admin\System\ModulesController as Modules;
  *
  * @filesource	ModulesController.php
  *
- * @author		wisnuwidi@IncoDIY - 2018
+ * @author		wisnuwidi@CanvaStack - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class ModulesController extends Modules {}

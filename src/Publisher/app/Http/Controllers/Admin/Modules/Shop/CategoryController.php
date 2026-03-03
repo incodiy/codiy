@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin\Modules\Shop;
 
-use Incodiy\Codiy\Controllers\Admin\Modules\Shop\CategoryController as Category;
+use Canvastack\Origin\Controllers\Admin\Modules\Shop\CategoryController as Category;
 /**
  * Created on Dec 17, 2022
  * 
@@ -10,8 +10,8 @@ use Incodiy\Codiy\Controllers\Admin\Modules\Shop\CategoryController as Category;
  *
  * @filesource CategoryController.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class CategoryController extends Category {}

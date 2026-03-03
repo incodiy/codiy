@@ -5,7 +5,7 @@ function ucwords(str, force) {
 	});
 }
 
-function diy_random(length = 8) {
+function canvas_random(length = 8) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
@@ -14,7 +14,7 @@ function diy_random(length = 8) {
 	return result;
 }
 
-function diy_array_to_object(array) {
+function canvas_array_to_object(array) {
 	return Object.assign({}, array);
 }
 
@@ -47,7 +47,7 @@ function ajaxSelectionProcess(object, id, target_id, url, data = [], method = 'P
 	if (typeof dataInfo.labels   != 'undefined') var lURL = 'l=' + dataInfo.labels;
 	if (typeof dataInfo.values   != 'undefined') var vURL = 'v=' + dataInfo.values;
 	if (typeof dataInfo.selected != 'undefined') var sURL = 's=' + dataInfo.selected;
-	if (typeof dataInfo.query    != 'undefined') var qURL = diy_random() + '=' + dataInfo.query;
+	if (typeof dataInfo.query    != 'undefined') var qURL = canvas_random() + '=' + dataInfo.query;
 	
 	if (typeof dataInfo.labels != 'undefined' && typeof dataInfo.values != 'undefined' && typeof dataInfo.selected != 'undefined' && typeof dataInfo.query != 'undefined') {
 		var urls = url + '&' + lURL + '&' + vURL + '&' + sURL + '&' + qURL;

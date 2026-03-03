@@ -1,12 +1,12 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
-use Incodiy\Codiy\Library\Components\Table\Craft\Export;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Library\Components\Table\Craft\Datatables;
+use Canvastack\Origin\Library\Components\Table\Craft\Export;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Incodiy\Codiy\Library\Components\Chart\Charts;
+use Canvastack\Origin\Library\Components\Chart\Charts;
 
 /**
  * Created on Sep 23, 2022
@@ -15,9 +15,9 @@ use Incodiy\Codiy\Library\Components\Chart\Charts;
  *
  * @filesource	AjaxController.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 class AjaxController extends Controller {
@@ -62,9 +62,9 @@ class AjaxController extends Controller {
 		if (!empty($_GET)) {
 			if (!empty($_GET['AjaxPosF'])) {
 				return $this->post_filters();
-			} elseif (!empty($_GET['diyHostConn'])) {
+			} elseif (!empty($_GET['canvasHostConn'])) {
 				return $this->getHostConnections();
-			} elseif (!empty($_GET['diyHostProcess'])) {
+			} elseif (!empty($_GET['canvasHostProcess'])) {
 				return $this->getHostProcess();
 			} elseif (!empty($_GET['filterDataTables'])) {
 			    return $this->initFilterDatatables($_GET, $_POST);
@@ -119,9 +119,9 @@ class AjaxController extends Controller {
 	}
 	
 	private function getHostConnections() {
-		$connection_sources = diy_config('sources', 'connections');
+		$connection_sources = canvas_config('sources', 'connections');
 		
-		unset($_GET['diyHostConn']);
+		unset($_GET['canvasHostConn']);
 		unset($_GET['_token']);
 		
 		$info             = [];
@@ -132,7 +132,7 @@ class AjaxController extends Controller {
 		
 		$allTables = [];
 		foreach ($_POST as $value) {
-			$allTables = diy_get_all_tables($connection_sources[$value]['connection_name']);
+			$allTables = canvas_get_all_tables($connection_sources[$value]['connection_name']);
 		}
 		
 		$result = [];
@@ -178,7 +178,7 @@ class AjaxController extends Controller {
 		$queryData     = [];
 		if (!empty($info['query'])) {
 			$sql       = "{$info['query']} WHERE `{$postKEY}` = '{$postValue}' ORDER BY `{$postKEY}` DESC";
-			$queryData = diy_query($sql, 'SELECT', $this->ajaxConnection);
+			$queryData = canvas_query($sql, 'SELECT', $this->ajaxConnection);
 		}
 		
 		$result = [];

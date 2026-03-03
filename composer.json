@@ -1,9 +1,9 @@
 {
-	"name" : "incodiy/codiy",
+	"name" : "canvastack/origin",
 	"type" : "library",
-	"description" : "Laravel Library Code from DIY",
+	"description" : "Laravel Library Code from canvas",
 	"keywords" : [
-		"incodiy",
+		"canvastack",
 		"library"
 	],
 	"license" : "MIT",
@@ -22,7 +22,7 @@
 	],
 	"autoload" : {
 		"psr-4" : {
-			"Incodiy\\Codiy\\" : "src/"
+			"Canvastack\\Origin\\" : "src/"
 		},
 		"files" : [
 			"src/Library/Helpers/App.php",
@@ -37,7 +37,7 @@
 	"extra" : {
 		"laravel" : {
 			"providers" : [
-				"Incodiy\\Codiy\\IncodiyServiceProvider"
+				"Canvastack\\Origin\\CanvastackServiceProvider"
 			]
 		}
 	},

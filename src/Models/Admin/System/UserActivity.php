@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 
 /**
  * Created on Jun 9, 2023
@@ -12,7 +12,7 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 class UserActivity extends Model {
@@ -125,7 +125,7 @@ class UserActivity extends Model {
 			ORDER BY LEFT(monthly_activity.monthly_activity, 7) DESC, monthly_activity.user_id, monthly_activity.group_id
 		";
 		
-		diy_temp_table($this->table, $sql, false);
+		canvas_temp_table($this->table, $sql, false);
 	}
 	
 	public function user_never_login() {
@@ -169,6 +169,6 @@ class UserActivity extends Model {
 			WHERE userinfo.email NOT IN (SELECT DISTINCT user_email FROM `log_activities`)
 		";
 		
-		diy_temp_table('temp_' . __FUNCTION__, $sql, false);
+		canvas_temp_table('temp_' . __FUNCTION__, $sql, false);
 	}
 }

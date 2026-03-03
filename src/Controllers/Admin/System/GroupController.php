@@ -1,12 +1,12 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
 use Illuminate\Http\Request;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\Group;
-use Incodiy\Codiy\Controllers\Admin\System\Includes\Privileges;
-use Incodiy\Codiy\Controllers\Admin\System\Includes\MappingPage;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\Group;
+use Canvastack\Origin\Controllers\Admin\System\Includes\Privileges;
+use Canvastack\Origin\Controllers\Admin\System\Includes\MappingPage;
 
 /**
  * Created on Jan 19, 2018
@@ -15,9 +15,9 @@ use Incodiy\Codiy\Controllers\Admin\System\Includes\MappingPage;
  *
  * @filesource	GroupController.php
  *
- * @author		wisnuwidi@IncoDIY - 2018
+ * @author		wisnuwidi@CanvaStack - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class GroupController extends Controller {
 	use Privileges, MappingPage;
@@ -198,7 +198,7 @@ class GroupController extends Controller {
 		$this->form->text('group_alias', null);
 		$this->form->selectbox('active', active_box(), $this->model_data->active, ['required']);
 		
-		if (1 === $this->session['group_id'] || true === diy_string_contained($this->session['user_group'], 'admin'))	{
+		if (1 === $this->session['group_id'] || true === canvas_string_contained($this->session['user_group'], 'admin'))	{
 			if ('root' !== $this->model_data->group_name) {
 				// SET MODULE PRIVILEGES
 				$this->form->openTab('Module Privileges');
@@ -227,13 +227,13 @@ class GroupController extends Controller {
 	
 	private function set_data_before_insert($request, $model_id = false) {
 		if (false === $model_id) {
-		    $getGroup = diy_query($this->model_table)
+		    $getGroup = canvas_query($this->model_table)
     		    ->where('group_name', $request->group_name)
     		    ->where('group_alias', $request->group_alias)
 				->where('group_info', $request->group_info)
 				->first();
 		} else {
-			$getGroup = diy_query($this->model_table)->where('id', $model_id)->first();
+			$getGroup = canvas_query($this->model_table)->where('id', $model_id)->first();
 		}
 		
 		$this->privileges_before_insert($request, $getGroup);
@@ -261,9 +261,9 @@ class GroupController extends Controller {
 	private function validation_groups($request) {
 		$dataReq = $request->all();
 		if (true === is_multiplatform()) {
-			$objects = diy_query($this->model_table)->where($this->platform_key, $dataReq[$this->platform_key])->where('group_name', $dataReq['group_name'])->get();
+			$objects = canvas_query($this->model_table)->where($this->platform_key, $dataReq[$this->platform_key])->where('group_name', $dataReq['group_name'])->get();
 		} else {
-			$objects = diy_query($this->model_table)->where('group_name', $dataReq['group_name'])->get();
+			$objects = canvas_query($this->model_table)->where('group_name', $dataReq['group_name'])->get();
 		}
 		
 		return count($objects);
@@ -282,6 +282,6 @@ class GroupController extends Controller {
 	 * @return object
 	 */
 	private function get_current_group($id) {
-		return diy_query($this->model_table)->where('id', $id)->first();
+		return canvas_query($this->model_table)->where('id', $id)->first();
 	}
 }

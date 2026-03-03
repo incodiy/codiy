@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @filesource	Modules.php
  *
- * @author		wisnuwidi@IncoDIY - 2018
+ * @author		wisnuwidi@CanvaStack - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 class Modules extends Model {
@@ -65,13 +65,13 @@ class Modules extends Model {
 				->where($privilege_type, '!=', 0);
 			
 			if (!empty(session()->all()['user_group'])) {
-				if (diy_string_contained(session()->all()['user_group'], 'admin')) {
+				if (canvas_string_contained(session()->all()['user_group'], 'admin')) {
 					$condition = '>=';
 				} else {
 					$condition = '>';
 				}
 			} else {
-				if (diy_string_contained(auth()->user()->username, 'admin')) {
+				if (canvas_string_contained(auth()->user()->username, 'admin')) {
 					$condition = '>=';
 				} else {
 					$condition = '>';

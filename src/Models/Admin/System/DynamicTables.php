@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 
 /**
  * Created on 2 Jun 2021
@@ -9,22 +9,22 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource DynamicTables.php
  *
- * @author     wisnuwidi@incodiy.com - 2021
+ * @author     wisnuwidi@canvastack.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class DynamicTables extends Model {
 	protected $connection = 'mysql';
 	public function __construct($sql = null, $connection = 'mysql') {
 		if (!empty($connection)) $this->connection = $connection;
 		if (!empty($sql)) {
-			$data = diy_query($sql);
+			$data = canvas_query($sql);
 			
 			foreach($data as $key => $value) {
 				$this->$key = $value;
 			}
 			
-			$this->table = diy_get_table_name_from_sql($sql);
+			$this->table = canvas_get_table_name_from_sql($sql);
 		}
 	}
 	
@@ -42,7 +42,7 @@ class DynamicTables extends Model {
 	
 	private $get_query;
 	public function setQuery($sql, $type = 'select') {
-		$query = diy_query($sql, $type);
+		$query = canvas_query($sql, $type);
 		$this->get_query = collect($query);
 		
 		return $this;

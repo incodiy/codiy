@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Database\Migrations\Tables;
+namespace Canvastack\Origin\Database\Migrations\Tables;
 
 use Illuminate\Database\Schema\Blueprint;
-use Incodiy\Codiy\Database\Migrations\Config;
+use Canvastack\Origin\Database\Migrations\Config;
 /**
  * Created on Dec 17, 2022
  * 
@@ -11,9 +11,9 @@ use Incodiy\Codiy\Database\Migrations\Config;
  *
  * @filesource ShopTables.php
  *
- * @author    wisnuwidi @Incodiy - 2022
+ * @author    wisnuwidi @CanvaStack - 2022
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
 class ShopTables extends Config {
 	

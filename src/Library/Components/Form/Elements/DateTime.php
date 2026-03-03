@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 /**
  * Created on 19 Mar 2021
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components\Form\Elements;
  *
  * @filesource	DateTime.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait DateTime {
@@ -23,7 +23,7 @@ trait DateTime {
 	 * @param boolean $label
 	 */
 	public function date($name, $value = null, $attributes = [], $label = true) {
-		$attributes = diy_form_change_input_attribute($attributes, 'class', 'date-picker');
+		$attributes = canvas_form_change_input_attribute($attributes, 'class', 'date-picker');
 		$this->setParams(__FUNCTION__, $name, $value, $attributes, $label);
 		$this->inputDraw(__FUNCTION__, $name);
 	}
@@ -37,7 +37,7 @@ trait DateTime {
 	 * @param boolean $label
 	 */
 	public function datetime($name, $value = null, $attributes = [], $label = true) {
-		$attributes = diy_form_change_input_attribute($attributes, 'class', 'datetime-picker');
+		$attributes = canvas_form_change_input_attribute($attributes, 'class', 'datetime-picker');
 		$this->setParams(__FUNCTION__, $name, $value, $attributes, $label);
 		$this->inputDraw(__FUNCTION__, $name);
 	}
@@ -51,7 +51,7 @@ trait DateTime {
 	 * @param boolean $label
 	 */
 	public function daterange($name, $value = null, $attributes = [], $label = true) {
-		$attributes = diy_form_change_input_attribute($attributes, 'class', 'daterange-picker');
+		$attributes = canvas_form_change_input_attribute($attributes, 'class', 'daterange-picker');
 		$this->setParams(__FUNCTION__, $name, $value, $attributes, $label);
 		$this->inputDraw(__FUNCTION__, $name);
 	}
@@ -65,7 +65,7 @@ trait DateTime {
 	 * @param boolean $label
 	 */
 	public function time($name, $value = null, $attributes = [], $label = true) {
-		$attributes = diy_form_change_input_attribute($attributes, 'class', 'bootstrap-timepicker');
+		$attributes = canvas_form_change_input_attribute($attributes, 'class', 'bootstrap-timepicker');
 		$this->setParams(__FUNCTION__, $name, $value, $attributes, $label);
 		$this->inputDraw(__FUNCTION__, $name);
 	}

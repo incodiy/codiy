@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 
 /**
  * Created on 22 May 2021
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
  *
  * @filesource Scripts.php
  *
- * @author    wisnuwidi@incodiy.com - 2021
+ * @author    wisnuwidi@canvastack.com - 2021
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
  
 trait Scripts {
@@ -36,7 +36,7 @@ trait Scripts {
 	protected function datatables($attr_id, $columns, $data_info = [], $server_side = false, $filters = false, $custom_link = false) {
 		$varTableID   = explode('-', $attr_id);
 		$varTableID   = implode('', $varTableID);
-		$current_url  = url(diy_current_route()->uri);
+		$current_url  = url(canvas_current_route()->uri);
 		
 		$buttonConfig = 'exportOptions:{columns:":visible:not(:last-child)"}';
 		$buttonset    = $this->setButtons($attr_id, [
@@ -98,7 +98,7 @@ trait Scripts {
 		
 		$js_conditional = null;
 		if (!empty($data_info['conditions']['columns'])) {
-			$js_conditional = $this->conditionalColumns("cody_{$varTableID}_dt", $data_info['conditions']['columns'], $data_info['columns']);
+			$js_conditional = $this->conditionalColumns("canvas_{$varTableID}_dt", $data_info['conditions']['columns'], $data_info['columns']);
 		}
 		
 		$filter_button = false;
@@ -120,14 +120,14 @@ trait Scripts {
 			$colDefs      = ",columnDefs:[{target:[1],visible:false,searchable:false,className:'control hidden-column'}";
 			$orderColumn  = ",order:[[1,'desc']]{$colDefs}]";
 			$columns      = ",columns:{$columns}{$orderColumn}";
-			$url_path     = url(diy_current_route()->uri);
+			$url_path     = url(canvas_current_route()->uri);
 			$hash         = hash_code_id();
 			$clickAction  = ".on('click','td.clickable', function(){ var getRLP = $(this).parent('tr').attr('rlp'); if(getRLP != false) { var _rlp = parseInt(getRLP.replace('{$hash}','')-8*800/80); window.location='{$url_path}/'+_rlp+'/edit'; } });";
 			$initComplete = ',' . $this->initComplete($attr_id, false);
 			
 			if (false !== $filters) {
 				if (is_array($filters) && empty($filters)) $filters = null;
-				$filter_button = "$('div#{$attr_id}_wrapper>.dt-buttons').append('<span class=\"cody_{$attr_id}_diy-dt-filter-box\"></span>')";
+				$filter_button = "$('div#{$attr_id}_wrapper>.dt-buttons').append('<span class=\"canvas_{$attr_id}_canvas-dt-filter-box\"></span>')";
 				$filter_js     = $this->filter($attr_id, $scriptURI);
 				$exportURI     = route('ajax.export') . "?exportDataTables=true{$diftaURI}";
 				$connection    = null;
@@ -139,12 +139,12 @@ trait Scripts {
 			
 			$jsOrder = null;
 			if (true === $this->strictGetUrls) {
-			//	$jsOrder   = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', cody_{$varTableID}_dt);";
+			//	$jsOrder   = "drawDatatableOnClickColumnOrder('{$attr_id}', '{$scriptURI}{$filters}', canvas_{$varTableID}_dt);";
 			}
 		//	$hiddenColumn = "$('#{$attr_id}').DataTable().columns([1]).visible(false);";
-			$hiddenColumn = '';//"cody_{$varTableID}_dt.column(1).visible(false).columns.adjust().responsive.recalc();";
+			$hiddenColumn = '';//"canvas_{$varTableID}_dt.column(1).visible(false).columns.adjust().responsive.recalc();";
 			$fixedColumn  = "$('.dtfc-fixed-left').last().addClass('last-of-scrool-column-table');";
-			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"diy-wrapper-table\"></div>'); {$filter_js}; {$jsOrder} {$hiddenColumn} {$fixedColumn} });";
+			$documentLoad = "$(document).ready(function() { $('#{$attr_id}').wrap('<div class=\"canvas-wrapper-table\"></div>'); {$filter_js}; {$jsOrder} {$hiddenColumn} {$fixedColumn} });";
 			
 			if (!empty($this->method)) {
 				$this->datatablesMode = $this->method;
@@ -157,15 +157,15 @@ trait Scripts {
 				$idString         = str_replace('-', '', $attr_id);
 				$ajaxLimitGetURLs = null;
 				if (true === $this->strictGetUrls) {
-					$ajaxLimitGetURLs = ",data: function (data) {var diyDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(diyDUDC{$idString}, {$this->strictColumns})}";
+					$ajaxLimitGetURLs = ",data: function (data) {var canvasDUDC{$idString} = data; deleteUnnecessaryDatatableComponents(canvasDUDC{$idString}, {$this->strictColumns})}";
 				}
 				
 				$ajax = "ajax:{ url:'{$scriptURI}{$filters}'{$ajaxLimitGetURLs} }";
 			}
 			
-			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true,{$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
+			$js .= "canvas_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$responsive} {$default_set} 'serverSide':true,{$ajax}{$columns}{$initComplete}{$js_conditional} }){$clickAction}{$filter_button}";
 		} else {
-			$js .= "cody_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$default_set}columns:{$columns} });";
+			$js .= "canvas_{$varTableID}_dt = $('#{$attr_id}').DataTable({ {$default_set}columns:{$columns} });";
 		}
 		$js .= '});' . $documentLoad . '</script>';
 		
@@ -205,7 +205,7 @@ trait Scripts {
 			foreach ($data as $condition) {
 				if (!empty($condition['logic_operator'])) {
 					$conditionValue = $condition['value'];
-					if (diy_string_contained($condition['value'], '|')) {
+					if (canvas_string_contained($condition['value'], '|')) {
 						$conditionValue = explode('|', $condition['value']);
 					}
 					if (in_array($condition['logic_operator'], ['=', '==', '===', '<', '<=', '>', '>='])) {
@@ -239,8 +239,8 @@ trait Scripts {
 						if ('replace' === $condition['rule']) {
 							if ('integer' === $condition['action']) {
 								$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseInt($(cells[\"{$condition['node']['field_name']}\"]).text()));";
-							} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
-								if (diy_string_contained($condition['action'], '|')) {
+							} elseif ('float' === $condition['action'] || canvas_string_contained($condition['action'], 'float')) {
+								if (canvas_string_contained($condition['action'], '|')) {
 									$condAcFloat = explode('|', $condition['action']);
 									$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_name']}\"]).text()).toFixed({$condAcFloat[1]}));";
 								} else {
@@ -263,15 +263,15 @@ trait Scripts {
 						if ('replace' === $condition['rule']) {
 							if ('integer' === $condition['action']) {
 								$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text(parseInt($(cells[\"{$condition['node']['field_target']}\"]).text()));";
-							} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
-								if (diy_string_contained($condition['action'], '|')) {
+							} elseif ('float' === $condition['action'] || canvas_string_contained($condition['action'], 'float')) {
+								if (canvas_string_contained($condition['action'], '|')) {
 									$condAcFloat = explode('|', $condition['action']);
 									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_target']}\"]).text()).toFixed({$condAcFloat[1]}));";
 								} else {
 									$js .= "$(cells[\"{$condition['node']['field_target']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_target']}\"]).text()).toFixed(2));";
 								}
 							} else {
-								if (diy_string_contained($condition['action'], 'url::') || diy_string_contained($condition['action'], 'ajax::')) {
+								if (canvas_string_contained($condition['action'], 'url::') || canvas_string_contained($condition['action'], 'ajax::')) {
 									$node_table      = explode('_', $tableIdentity)[1];
 									$node_buttons    = explode('::', $condition['action']);
 									$action_buttons  = explode('|', $node_buttons[1]);
@@ -332,8 +332,8 @@ trait Scripts {
 					if ('replace' === $condition['rule']) {
 						if ('integer' === $condition['action']) {
 							$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseInt($(cells[\"{$condition['node']['field_name']}\"]).text()));";
-						} elseif ('float' === $condition['action'] || diy_string_contained($condition['action'], 'float')) {
-							if (diy_string_contained($condition['action'], '|')) {
+						} elseif ('float' === $condition['action'] || canvas_string_contained($condition['action'], 'float')) {
+							if (canvas_string_contained($condition['action'], '|')) {
 								$condAcFloat = explode('|', $condition['action']);
 								$js .= "$(cells[\"{$condition['node']['field_name']}\"]).text(parseFloat($(cells[\"{$condition['node']['field_name']}\"]).text()).toFixed({$condAcFloat[1]}));";
 							} else {
@@ -372,7 +372,7 @@ trait Scripts {
 	}
 	
 	protected function filterModalbox(array $data) {
-		$current_url = url(diy_current_route()->uri);
+		$current_url = url(canvas_current_route()->uri);
 		if (!empty($data['searchable'])) {
 			if (!empty($data['searchable']['all::columns'])) {
 				if (false === $data['searchable']['all::columns']) {
@@ -421,10 +421,10 @@ trait Scripts {
 	
 	private function export($id, $url, $type = 'csv', $delimeter = '|') {
 		$connection    = null;
-		if (diy_string_contained($id, '::')) {
+		if (canvas_string_contained($id, '::')) {
 			$stringID   = explode('::', $id);
 			$id         = $stringID[0];
-			$connection = diy_encrypt($stringID[1]);
+			$connection = canvas_encrypt($stringID[1]);
 		}
 		
 		$varTableID	= explode('-', $id);
@@ -447,7 +447,7 @@ trait Scripts {
 		$varTableID	= explode('-', $id);
 		$varTableID	= implode('', $varTableID);
 		
-		return "diyDataTableFilters('{$id}', '{$url}', cody_{$varTableID}_dt);";
+		return "canvasDataTableFilters('{$id}', '{$url}', canvas_{$varTableID}_dt);";
 	}
 	
 	private function initComplete($id, $location = 'footer') {
@@ -500,10 +500,10 @@ trait Scripts {
 			$option = null;
 			$options[$button] = [];
 			
-			if (diy_string_contained($button, '|')) {
+			if (canvas_string_contained($button, '|')) {
 				$splits = explode('|', $button);
 				foreach ($splits as $split) {
-					if (diy_string_contained($split, ':')) {
+					if (canvas_string_contained($split, ':')) {
 						$options[$button][] = $split;
 					} else {
 						$button = $split;

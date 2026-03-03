@@ -3,13 +3,13 @@
  * Created on Dec 10, 2022
  * 
  * Time Created : 7:16:14 PM
- * Filename     : diy.connections.php
+ * Filename     : canvas.connections.php
  *
- * @filesource diy.connections.php
+ * @filesource canvas.connections.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
  
 return [

@@ -8,15 +8,15 @@
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  */
 ?>
 <!DOCTYPE html>
 <html>
 	<head>
-	    <title>IncoDIY</title>
+	    <title>CanvaStack</title>
 	</head>
 	<body>
 	    <h1>{{ $mailData['title'] }}</h1>

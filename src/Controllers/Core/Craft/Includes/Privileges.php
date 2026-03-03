@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Includes;
+namespace Canvastack\Origin\Controllers\Core\Craft\Includes;
 
 use Illuminate\Support\Facades\Route;
-use Incodiy\Codiy\Models\Admin\System\Modules;
+use Canvastack\Origin\Models\Admin\System\Modules;
 
 /**
  * Created on 9 Apr 2021
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\System\Modules;
  *
  * @filesource	Privileges.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 trait Privileges {
 	private $module_class;
@@ -50,7 +50,7 @@ trait Privileges {
 			
 			if (in_array(current_route(), $this->module_class->roles)) {
 				foreach ($this->module_class->roles as $roles) {
-					if (diy_string_contained($roles, $baseRouteInfo)) {
+					if (canvas_string_contained($roles, $baseRouteInfo)) {
 						if (!in_array($this->routelists_info($roles)['last_info'], ['index', 'insert', 'update', 'destroy'])) {
 							$actions[$baseRouteInfo][] = $this->routelists_info($roles)['last_info'];
 						}

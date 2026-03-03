@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 
 use jlawrence\eos\Parser;
 /**
@@ -8,9 +8,9 @@ use jlawrence\eos\Parser;
  *
  * @filesource	Formula.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 class Formula extends Parser {
@@ -23,7 +23,7 @@ class Formula extends Parser {
 		$data = [];
 		$data['formula']    = $data_formula;
 		$data['query_data'] = $data_query->getAttributes();
-		$this->data	        = diy_object($data);
+		$this->data	        = canvas_object($data);
 	}
 	
 	public function calculate() {
@@ -56,7 +56,7 @@ class Formula extends Parser {
 	
 	private function header_sanitizer($headers_formula) {
 		foreach ($headers_formula as $key => $header) {
-			$this->headers[$header] = str_replace(range('0', '9'), range('a', 'j'), "diytacolumn{$key}");
+			$this->headers[$header] = str_replace(range('0', '9'), range('a', 'j'), "canvastacolumn{$key}");
 		}
 	}
 }

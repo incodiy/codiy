@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Includes;
+namespace Canvastack\Origin\Library\Components\Chart\Includes;
 
 /**
  * Created on Oct 19, 2022
@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart\Includes;
  *
  * @filesource	DataConstructions.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait DataConstructions {
@@ -23,7 +23,7 @@ trait DataConstructions {
 					
 					$sourceGroup = [];
 					if (!empty($sourceData['group'])) {
-						if (diy_string_contained($sourceData['group'], ',')) {
+						if (canvas_string_contained($sourceData['group'], ',')) {
 							$sourceGroup = explode(',', str_replace(' ', '', $sourceData['group']));
 						} else {
 							$sourceGroup = [$sourceData['group']];
@@ -31,14 +31,14 @@ trait DataConstructions {
 					}
 					
 					if (!empty($sourceData['order'])) {
-						if (diy_string_contained($sourceData['order'], ',')) {
+						if (canvas_string_contained($sourceData['order'], ',')) {
 							$dataOrders  = explode(',', str_replace(' ', '', $sourceData['order']));
 						} else {
 							$dataOrders  = [$sourceData['order']];
 						}
 						
 						foreach ($dataOrders as $orderData) {
-							if (diy_string_contained($orderData, '::')) {
+							if (canvas_string_contained($orderData, '::')) {
 								$splitOrder = explode('::', $orderData);
 								$sourceOrder[$splitOrder[0]] = "`{$splitOrder[0]}` {$splitOrder[1]}";
 							}
@@ -62,7 +62,7 @@ trait DataConstructions {
 						
 						foreach ($data_format as $format_info) {
 						    if (!empty($format_info)) {
-						        if (empty(diy_string_contained($format_info, 'name:')) && empty(diy_string_contained($format_info, 'data:'))) {
+						        if (empty(canvas_string_contained($format_info, 'name:')) && empty(canvas_string_contained($format_info, 'data:'))) {
 						            $format_info = explode(',', $format_info);
 						        }
 						        
@@ -74,11 +74,11 @@ trait DataConstructions {
 						            foreach ($format_info as $formatDataInfo) {
 						                $formatInfo = "data:{$formatDataInfo}";
 						                
-						                if (diy_string_contained($formatInfo, '::')) {
+						                if (canvas_string_contained($formatInfo, '::')) {
 						                    $mathSlices = explode('::', $formatInfo);
 						                    if (!empty($mathSlices)) {
 						                        foreach ($mathSlices as $as_calc_format) {
-						                            if (diy_string_contained($as_calc_format, ':')) {
+						                            if (canvas_string_contained($as_calc_format, ':')) {
 						                                $slice = explode(':', $as_calc_format);
 						                                $sQueryData['un_group'][$slice[1]] = $slice[1];
 						                            } else {
@@ -95,11 +95,11 @@ trait DataConstructions {
 						            }
 						            
 						        } else {
-						            if (diy_string_contained($format_info, '::')) {
+						            if (canvas_string_contained($format_info, '::')) {
 						                $mathSlices = explode('::', $format_info);
 						                if (!empty($mathSlices)) {
 						                    foreach ($mathSlices as $as_calc_format) {
-						                        if (diy_string_contained($as_calc_format, ':')) {
+						                        if (canvas_string_contained($as_calc_format, ':')) {
 						                            $slice = explode(':', $as_calc_format);
 						                            
 						                            $formatData['param_as'][$slice[1]] = $slice[0];
@@ -146,7 +146,7 @@ trait DataConstructions {
 							
 							if (!empty($sourceOrder)) {
 								foreach ($sourceOrder as $field_order => $order) {
-									if (!diy_string_contained($order, '`')) {
+									if (!canvas_string_contained($order, '`')) {
 										$str_order = "`{$order}`";
 									} else {
 										$str_order = $order;
@@ -168,7 +168,7 @@ trait DataConstructions {
 						    $fieldsetMultiValues['for_values'] = [];
 						    
 						    foreach ($fieldsets as $fieldLabel => $fieldset) {
-						        if (!diy_string_contained($fieldset, ') AS')) {
+						        if (!canvas_string_contained($fieldset, ') AS')) {
 						            $fieldsetMultiValues['for_fields'][str_replace('`', '', $fieldset)] = $fieldset;
 						        } else {
 						            $labelNames = [];
@@ -211,7 +211,7 @@ trait DataConstructions {
 						    $sql = implode(' UNION ALL ', $sqli) . "{$str_order};";
 						}
 						
-						$queryData          = diy_query($sql, 'SELECT');
+						$queryData          = canvas_query($sql, 'SELECT');
 						$sQueryData['data'] = self::manipulate($chartType, $queryData, $formatData['param_as'], $sourceData['category']);
 						
 						$buffers            = [];

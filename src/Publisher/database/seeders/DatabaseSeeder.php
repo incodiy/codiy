@@ -2,7 +2,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Incodiy\Codiy\Database\Seeders\IncodiyTableSeeder;
+use Canvastack\Origin\Database\Seeders\CanvastackTableSeeder;
 
 class DatabaseSeeder extends Seeder {
 	/**
@@ -11,6 +11,6 @@ class DatabaseSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		$this->call(IncodiyTableSeeder::class);
+		$this->call(CanvastackTableSeeder::class);
 	}
 }

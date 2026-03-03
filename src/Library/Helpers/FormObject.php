@@ -7,12 +7,12 @@ use Collective\Html\FormFacade;
  *
  * @filesource	FormObject.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
-if (!function_exists('diy_form_check_str_attr')) {
+if (!function_exists('canvas_form_check_str_attr')) {
 	
 	/**
 	 * Check String Contains In Attribute
@@ -25,7 +25,7 @@ if (!function_exists('diy_form_check_str_attr')) {
 	 * 
 	 * @return boolean
 	 */
-	function diy_form_check_str_attr($attributes, $string) {
+	function canvas_form_check_str_attr($attributes, $string) {
 		if ((isset($attributes['class']) && 
 				true === str_contains($attributes['class'], $string)) || 
 			isset($attributes['id']) && 
@@ -36,7 +36,7 @@ if (!function_exists('diy_form_check_str_attr')) {
 	}
 }
 
-if (!function_exists('diy_form_button')) {
+if (!function_exists('canvas_form_button')) {
 	
 	/**
 	 * Button Builder
@@ -74,7 +74,7 @@ if (!function_exists('diy_form_button')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_button (
+	function canvas_form_button (
 		$name,
 		$label      = false,
 		$action     = [],
@@ -140,7 +140,7 @@ if (!function_exists('diy_form_button')) {
 	}
 }
 
-if (!function_exists('diy_form_change_input_attribute')) {
+if (!function_exists('canvas_form_change_input_attribute')) {
 	
 	/**
 	 * Change/Add Input Class Name Attribute
@@ -151,7 +151,7 @@ if (!function_exists('diy_form_change_input_attribute')) {
 	 * 
 	 * @return array
 	 */
-	function diy_form_change_input_attribute($attribute, $key = false, $value = false) {
+	function canvas_form_change_input_attribute($attribute, $key = false, $value = false) {
 		$new_attribute	= [$key => $value];
 		$attributes		= array_merge_recursive($attribute, $new_attribute);
 		
@@ -172,7 +172,7 @@ if (!function_exists('diy_form_change_input_attribute')) {
 	}
 }
 
-if (!function_exists('diy_form_set_icon_attributes')) {
+if (!function_exists('canvas_form_set_icon_attributes')) {
 	
 	/**
 	 * Set Icon Attribute for Inputbox
@@ -182,7 +182,7 @@ if (!function_exists('diy_form_set_icon_attributes')) {
 	 *
 	 * @return array ['name', 'data']
 	 */
-	function diy_form_set_icon_attributes($string, $attributes = [], $pos = 'left') {
+	function canvas_form_set_icon_attributes($string, $attributes = [], $pos = 'left') {
 		$data         = [];
 		$data['attr'] = [];
 		$data['name'] = $string;
@@ -202,11 +202,11 @@ if (!function_exists('diy_form_set_icon_attributes')) {
 			$data['attr'] = array_merge_recursive($_attr, ['icon_position' => $str_pos]);
 		}
 		
-		return diy_object($data);
+		return canvas_object($data);
 	}
 }
 
-if (!function_exists('diy_form_active_box')) {
+if (!function_exists('canvas_form_active_box')) {
 	
 	/**
 	 * Active Status Combobox Value
@@ -217,7 +217,7 @@ if (!function_exists('diy_form_active_box')) {
 	 * @param boolean $en
 	 * @return string['No', 'Yes']
 	 */
-	function diy_form_active_box($en = true) {
+	function canvas_form_active_box($en = true) {
 		if (true === $en) {
 			return [null => ''] + ['No', 'Yes'];
 		} else {
@@ -226,7 +226,7 @@ if (!function_exists('diy_form_active_box')) {
 	}
 }
 
-if (!function_exists('diy_form_checkList')) {
+if (!function_exists('canvas_form_checkList')) {
 	
 	/**
 	 * Simple Checkbox List Builder
@@ -240,7 +240,7 @@ if (!function_exists('diy_form_checkList')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_checkList($name, $value = false, $label = false, $checked = false, $class = 'success', $id = false, $inputNode = null) {
+	function canvas_form_checkList($name, $value = false, $label = false, $checked = false, $class = 'success', $id = false, $inputNode = null) {
 		$nameAttr	= false;
 		$valueAttr	= false;
 		$idAttr		= false;
@@ -267,12 +267,12 @@ if (!function_exists('diy_form_checkList')) {
 	}
 }
 
-if (!function_exists('diy_form_selectbox')) {
+if (!function_exists('canvas_form_selectbox')) {
 	
-	function diy_form_selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => 'Select']) {
+	function canvas_form_selectbox($name, $values = [], $selected = false, $attributes = [], $label = true, $set_first_value = [null => 'Select']) {
 		$default_attr = ['class' => 'chosen-select-deselect chosen-selectbox form-control'];
 		if (!empty($attributes)) {
-			$attributes = diy_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox form-control');
+			$attributes = canvas_form_change_input_attribute($attributes, 'class', 'chosen-select-deselect chosen-selectbox form-control');
 		} else {
 			$attributes = $default_attr;
 		}
@@ -287,9 +287,9 @@ if (!function_exists('diy_form_selectbox')) {
 	}
 }
 
-if (!function_exists('diy_form_alert_message')) {
+if (!function_exists('canvas_form_alert_message')) {
 	
-	function diy_form_alert_message($message = 'Success', $type = 'success', $title = 'Success', $prefix = 'fa-check', $extra = false) {
+	function canvas_form_alert_message($message = 'Success', $type = 'success', $title = 'Success', $prefix = 'fa-check', $extra = false) {
 		$content_message = null;
 		if (is_array($message) && 'success' !== $type) {
 			$content_message = '<ul class="alert-info-content">';
@@ -331,7 +331,7 @@ if (!function_exists('diy_form_alert_message')) {
 	}
 }
 
-if (!function_exists('diy_form_create_header_tab')) {
+if (!function_exists('canvas_form_create_header_tab')) {
 	
 	/**
 	 * HTML Header Tab Builder
@@ -343,7 +343,7 @@ if (!function_exists('diy_form_create_header_tab')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_create_header_tab($data, $pointer, $active = false, $class = false) {
+	function canvas_form_create_header_tab($data, $pointer, $active = false, $class = false) {
 		$activeClass = false;
 		$classTag    = false;
 		$tabName     = ucwords(str_replace('_', ' ', $data));
@@ -357,7 +357,7 @@ if (!function_exists('diy_form_create_header_tab')) {
 	}
 }
 
-if (!function_exists('diy_form_create_content_tab')) {
+if (!function_exists('canvas_form_create_content_tab')) {
 	
 	/**
 	 * HTML Content Tab Builder
@@ -368,7 +368,7 @@ if (!function_exists('diy_form_create_content_tab')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_create_content_tab($data, $pointer, $active = false) {
+	function canvas_form_create_content_tab($data, $pointer, $active = false) {
 		$activeClass = false;
 		if (false !== $active) $activeClass = " active show";
 		$string = "<div id=\"{$pointer}\" class=\"tab-pane fade{$activeClass}\" role=\"tabpanel\">{$data}</div>";
@@ -378,7 +378,7 @@ if (!function_exists('diy_form_create_content_tab')) {
 }
 
 
-if (!function_exists('diy_form_set_active_value')) {
+if (!function_exists('canvas_form_set_active_value')) {
 	
 	/**
 	 * Set Active Value
@@ -390,7 +390,7 @@ if (!function_exists('diy_form_set_active_value')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_set_active_value($value) {
+	function canvas_form_set_active_value($value) {
 		$val = 'No';
 		if (1 === $value) $val = 'Yes';
 		
@@ -398,7 +398,7 @@ if (!function_exists('diy_form_set_active_value')) {
 	}
 }
 
-if (!function_exists('diy_form_internal_flag_status')) {
+if (!function_exists('canvas_form_internal_flag_status')) {
 	
 	/**
 	 * Set Flag Status Value
@@ -410,12 +410,12 @@ if (!function_exists('diy_form_internal_flag_status')) {
 	 *
 	 * @return string
 	 */
-	function diy_form_internal_flag_status($flag_row) {
+	function canvas_form_internal_flag_status($flag_row) {
 		return internal_flag_status(intval($flag_row));
 	}
 }
 
-if (!function_exists('diy_form_request_status')) {
+if (!function_exists('canvas_form_request_status')) {
 	
 	/**
 	 * Request Status For Combobox Value
@@ -428,7 +428,7 @@ if (!function_exists('diy_form_request_status')) {
 	 *
 	 * @return string['Pending', 'Accept', 'Blocked', 'Banned']
 	 */
-	function diy_form_request_status($en = true, $num = false) {
+	function canvas_form_request_status($en = true, $num = false) {
 		$data = [];
 		if (true === $en) {
 			$data = ['Pending', 'Accept', 'Blocked', 'Ban'];
@@ -444,7 +444,7 @@ if (!function_exists('diy_form_request_status')) {
 	}
 }
 
-if (!function_exists('diy_form_get_client_ip')) {
+if (!function_exists('canvas_form_get_client_ip')) {
 	
 	/**
 	 * Get Client IP
@@ -454,7 +454,7 @@ if (!function_exists('diy_form_get_client_ip')) {
 	 * @return string
 	 * created @Dec 29, 2018
 	 */
-	function diy_form_get_client_ip() {
+	function canvas_form_get_client_ip() {
 		$ipaddress = '';
 		
 		if (isset($_SERVER['HTTP_CLIENT_IP'])) {
@@ -481,7 +481,7 @@ if (!function_exists('diy_form_get_client_ip')) {
 	}
 }
 
-if (!function_exists('diy_selectbox')) {
+if (!function_exists('canvas_selectbox')) {
 	
 	/**
 	 * Set Default Combobox Data
@@ -492,12 +492,12 @@ if (!function_exists('diy_selectbox')) {
 	 * @param string $set_null_array
 	 * @return array
 	 */
-	function diy_selectbox($object, $key_value, $key_label, $set_null_array = true) {
+	function canvas_selectbox($object, $key_value, $key_label, $set_null_array = true) {
 		$options = [0 => ''];
 		if (true === $set_null_array) $options[] = '';
 		
 		$keyLabel = [];
-		if (diy_string_contained($key_label, '|')) {
+		if (canvas_string_contained($key_label, '|')) {
 			$keyLabel = explode('|', $key_label);
 		} else {
 			$keyLabel[] = $key_label;

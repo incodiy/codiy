@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
 use Illuminate\Http\Request;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\Icon;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\Icon;
 
 /**
  * Created on Mar 15, 2018
@@ -13,9 +13,9 @@ use Incodiy\Codiy\Models\Admin\System\Icon;
  *
  * @filesource	IconController.php
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@canvastack.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class IconController extends Controller {
 	public $data;

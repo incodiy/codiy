@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Components;
+namespace Canvastack\Origin\Controllers\Core\Craft\Components;
 
-use Incodiy\Codiy\Library\Components\Template as Theme;
+use Canvastack\Origin\Library\Components\Template as Theme;
 
 /**
  * Created on 26 Mar 2021
@@ -9,9 +9,9 @@ use Incodiy\Codiy\Library\Components\Template as Theme;
  *
  * @filesource	Template.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Template {

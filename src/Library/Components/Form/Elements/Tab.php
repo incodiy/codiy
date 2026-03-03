@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 /**
  * Created on 19 Mar 2021
@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Form\Elements;
  *
  * @filesource Tab.php
  *
- * @author     wisnuwidi@incodiy.com - 2021
+ * @author     wisnuwidi@canvastack.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 trait Tab {
 	
@@ -51,7 +51,7 @@ trait Tab {
 	private $contentTab = null;
 	public function addTabContent($content) {
 		$this->contentTab = $content;
-		$this->draw("<div class=\"diy-add-tab-content\">{$this->contentTab}</div>");
+		$this->draw("<div class=\"canvas-add-tab-content\">{$this->contentTab}</div>");
 	}
 	
 	/**
@@ -81,7 +81,7 @@ trait Tab {
 		$dataAfterTab  = false;
 		
 		// check if isset open tab string pointer
-		if (true === diy_string_contained($object, $this->opentabHTML)) {
+		if (true === canvas_string_contained($object, $this->opentabHTML)) {
 			// find the close tab string
 			$closeTab = explode($this->closedtabHTML, $object);
 			
@@ -94,7 +94,7 @@ trait Tab {
 				$openTab = explode($this->opentabHTML, $newTab);
 				
 				// prevent data with form tag open, contained in the string(s) data
-				if (true === diy_string_contained($openTab[$index], '<form method=')) {
+				if (true === canvas_string_contained($openTab[$index], '<form method=')) {
 					$dataBeforeTab = $openTab[$index];
 					unset($openTab[$index]);
 				}
@@ -117,7 +117,7 @@ trait Tab {
 						$sliceTabs = explode($this->openNewTab, $tab);
 					}
 					
-					if (true === diy_string_contained($tab, $this->openNewTab)) {
+					if (true === canvas_string_contained($tab, $this->openNewTab)) {
 						$activeHeader  = false;
 						$activeContent = false;
 						
@@ -130,14 +130,14 @@ trait Tab {
 						// detect if isset label and class string in label block
 						$label      = trim($sliceTabs[0]);
 						$labelClass = false;
-						if (diy_string_contained($sliceTabs[0], $this->openNewTabClass)) {
+						if (canvas_string_contained($sliceTabs[0], $this->openNewTabClass)) {
 							$sliceLabel = explode($this->openNewTabClass, $label);
 							$label      = trim($sliceLabel[0]);
 							$labelClass = trim($sliceLabel[1]);
 						}
 						
-						$tabHeaders[$list][]  = diy_form_create_header_tab($label, strtolower(diy_clean_strings($label)), $activeHeader, $labelClass);
-						$tabContents[$list][] = diy_form_create_content_tab(trim($sliceTabs[1]), strtolower(diy_clean_strings($label)), $activeContent);
+						$tabHeaders[$list][]  = canvas_form_create_header_tab($label, strtolower(canvas_clean_strings($label)), $activeHeader, $labelClass);
+						$tabContents[$list][] = canvas_form_create_content_tab(trim($sliceTabs[1]), strtolower(canvas_clean_strings($label)), $activeContent);
 					} else {
 						$tabHeaders[$list][]  = $tab . '<hr />';
 					}

@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 
 /**
  * Created on 10 Sep 2022
@@ -9,18 +9,18 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource	MappingPage.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 class MappingPage extends Model {
 	public $table         = 'base_page_privilege';
 	public $role_data     = [];
-	public static $diycon = '--diycon--';
+	public static $canvascon = '--canvascon--';
 	
 	public function current_data($group_id, $data = []) {
-		$findata = diy_query($this->table)->where('group_id', intval($group_id));
+		$findata = canvas_query($this->table)->where('group_id', intval($group_id));
 		
 		if (!empty($data)) {
 			$findata = $findata->where($data);
@@ -36,8 +36,8 @@ class MappingPage extends Model {
 	}
 	
 	public function insert_process($role_data, $group) {
-		$checkTables = diy_query($this->table)->where('group_id', intval($group->id))->get();
-		$checkModels = diy_query('base_module')->get();
+		$checkTables = canvas_query($this->table)->where('group_id', intval($group->id))->get();
+		$checkModels = canvas_query('base_module')->get();
 		$checkData   = [];
 		$qchecks     = [];
 		$tables      = [];
@@ -55,7 +55,7 @@ class MappingPage extends Model {
 		foreach ($role_data as $routeModel => $dataRequests) {
 			foreach ($dataRequests as $dataRequest) {
 				foreach ($dataRequest as $req) {
-					$qchecks[$routeModel][$req['target_table']] = diy_query($this->table)
+					$qchecks[$routeModel][$req['target_table']] = canvas_query($this->table)
 						->where('group_id'    , $group->id)
 						->where('module_id'   , $req['module_id'])
 						->where('target_table', $req['target_table'])
@@ -130,7 +130,7 @@ class MappingPage extends Model {
 							foreach ($moduleData as $fieldName => $fieldValues) {
 								if (intval($group->id) === intval($fieldValues['group_id'])) {
 									
-									diy_query($this->table)->insert([
+									canvas_query($this->table)->insert([
 										'group_id'            => $fieldValues['group_id'],
 										'module_id'           => $fieldValues['module_id'],
 										'target_table'        => $tablename,
@@ -147,7 +147,7 @@ class MappingPage extends Model {
 					foreach ($dataMapping as $modelDataMapping) {
 						foreach ($modelDataMapping as $tablename => $moduleData) {
 							foreach ($moduleData as $fieldName => $fieldValues) {
-								diy_query($this->table)->where(['group_id' => intval($group->id), 'id' => $fieldValues['info']])->update($fieldValues['data']);
+								canvas_query($this->table)->where(['group_id' => intval($group->id), 'id' => $fieldValues['info']])->update($fieldValues['data']);
 							}
 						}
 					}
@@ -157,7 +157,7 @@ class MappingPage extends Model {
 					foreach ($dataMapping as $modelDataMapping) {
 						foreach ($modelDataMapping as $tablename => $moduleData) {
 							foreach ($moduleData as $fieldName => $fieldValues) {
-								diy_query($this->table)->where(['group_id' => intval($group->id), 'id' => $fieldValues['id']])->delete();
+								canvas_query($this->table)->where(['group_id' => intval($group->id), 'id' => $fieldValues['id']])->delete();
 							}
 						}
 					}
@@ -170,24 +170,24 @@ class MappingPage extends Model {
 		$fields = [];
 		if (is_array($data)) {
 			foreach ($data as $tableName) {
-				if (diy_string_contained($tableName, self::$diycon)) {
-					$split      = explode(self::$diycon, $tableName);
+				if (canvas_string_contained($tableName, self::$canvascon)) {
+					$split      = explode(self::$canvascon, $tableName);
 					$tableName  = $split[0];
 					$connection = $split[1];
 				}
 				
-				foreach (diy_get_table_columns($tableName, $connection) as $fieldname) {
+				foreach (canvas_get_table_columns($tableName, $connection) as $fieldname) {
 					$fields[$fieldname] = $fieldname;
 				}
 			}
 		} else {
-			if (diy_string_contained($data, self::$diycon)) {
-				$split      = explode(self::$diycon, $data);
+			if (canvas_string_contained($data, self::$canvascon)) {
+				$split      = explode(self::$canvascon, $data);
 				$tableName  = $split[0];
 				$connection = $split[1];
 			}
 			
-			foreach (diy_get_table_columns($data, $connection) as $fieldname) {
+			foreach (canvas_get_table_columns($data, $connection) as $fieldname) {
 				$fields[$fieldname] = $fieldname;
 			}
 		}
@@ -199,8 +199,8 @@ class MappingPage extends Model {
 		$sql        = [];
 		$fieldset   = [];
 		$connection = null;
-		if (diy_string_contained($tablename, self::$diycon)) {
-			$split      = explode(self::$diycon, $tablename);
+		if (canvas_string_contained($tablename, self::$canvascon)) {
+			$split      = explode(self::$canvascon, $tablename);
 			$tablename  = $split[0];
 			$connection = $split[1];
 		}
@@ -209,7 +209,7 @@ class MappingPage extends Model {
 			foreach ($requests as $request) {
 				
 				$fieldNameValue     = $request;
-				if (diy_string_contained($request, '::')) {
+				if (canvas_string_contained($request, '::')) {
 					$explode         = explode('::', $request);
 					$fieldNameValue  = $explode[1];
 				}
@@ -231,7 +231,7 @@ class MappingPage extends Model {
 		}
 		
 		$data             = [];
-		$data['data']     = diy_query($sql, 'SELECT', $connection);
+		$data['data']     = canvas_query($sql, 'SELECT', $connection);
 		$data['fieldset'] = $fieldset;
 		
 		return $data;		
@@ -303,7 +303,7 @@ class MappingPage extends Model {
 		";
 		
 		$map    = [];
-		$object = diy_query($sql, 'SELECT');
+		$object = canvas_query($sql, 'SELECT');
 		
 		foreach ($object as $row) {
 			$target_field_values = $row->target_field_values;
@@ -313,7 +313,7 @@ class MappingPage extends Model {
 			}
 			
 			$filter_query = $target_field_values;
-			if (diy_string_contained($row->target_field_values, '::')) {
+			if (canvas_string_contained($row->target_field_values, '::')) {
 				$target_field_values = explode('::', $row->target_field_values);
 				$filter_query        = "IN ('" . implode("', '", $target_field_values) . "')";
 			}

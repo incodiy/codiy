@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @filesource	Messages.php
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@canvastack.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 class Messages extends Model {

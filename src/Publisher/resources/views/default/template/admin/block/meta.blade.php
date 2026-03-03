@@ -5,9 +5,9 @@
  *
  * @filesource	meta.blade.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 $meta    = $components->meta->content['html'];

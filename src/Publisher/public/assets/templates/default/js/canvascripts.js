@@ -172,8 +172,8 @@ function mappingPageButtonManipulation(node_btn, id, target_id, second_target, u
 			firstRemove.attr({'style': ''}).fadeIn();
 		}
 		
-		var random_target_id     = target_id     + diy_random();
-		var random_second_target = second_target + diy_random();
+		var random_target_id     = target_id     + canvas_random();
+		var random_second_target = second_target + canvas_random();
 		var node_row             = 'remove-row'  + random_target_id;
 		var nextcloneid          = 'row-box-'    + random_target_id;
 		var clonerowbox          = baserowbox.clone().attr({'id': nextcloneid, 'class': baserowbox.attr('class') + ' ' + node_add});

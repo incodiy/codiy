@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Line;
+namespace Canvastack\Origin\Library\Components\Chart\Canvas\Line;
 
 /**
  * Created on Oct 11, 2022
@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Line;
  *
  * @filesource	Canvas.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 trait Canvas {
 	use Script;

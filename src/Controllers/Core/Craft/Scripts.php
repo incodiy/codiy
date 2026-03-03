@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft;
+namespace Canvastack\Origin\Controllers\Core\Craft;
 
 /**
  * Created on 25 Mar 2021
@@ -7,13 +7,13 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
  *
  * @filesource	Scripts.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 trait Scripts {
 	
-	private $scriptNode = 'diyScriptNode::';
+	private $scriptNode = 'canvasScriptNode::';
 	
 	public function js($scripts, $position = 'bottom', $as_script_code = false) {
 		return $this->template->js($scripts, $position, $as_script_code);
@@ -26,7 +26,7 @@ trait Scripts {
 	private function addScriptsFromElements() {
 		$scripts = [];
 		
-		$current_template = diy_template_config('admin.' . diy_current_template());
+		$current_template = canvas_template_config('admin.' . canvas_current_template());
 		unset($current_template['position']);
 		
 		if (!empty($this->form)) {
@@ -67,7 +67,7 @@ trait Scripts {
 		$scripts = [];
 		
 		if (!empty($object)) {
-			$current_template = diy_template_config('admin.' . diy_current_template());
+			$current_template = canvas_template_config('admin.' . canvas_current_template());
 			unset($current_template['position']);
 			
 			foreach (array_unique($object->element_name) as $_elements) {

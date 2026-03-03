@@ -1,12 +1,12 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\User as User;
-use Incodiy\Codiy\Models\Admin\System\Group;
-use Incodiy\Codiy\Models\Admin\System\Usergroup;
-use Incodiy\Codiy\Models\Admin\System\Language;
-use Incodiy\Codiy\Models\Admin\System\Timezone;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\User as User;
+use Canvastack\Origin\Models\Admin\System\Group;
+use Canvastack\Origin\Models\Admin\System\Usergroup;
+use Canvastack\Origin\Models\Admin\System\Language;
+use Canvastack\Origin\Models\Admin\System\Timezone;
 use Illuminate\Http\Request;
 /**
  * Created on Jul 26, 2017
@@ -38,13 +38,13 @@ class UserController extends Controller {
 				'email'    => 'required|unique:users',
 				'password' => 'required',
 				'group_id' => 'required_if:base_group,0|not_in:0',
-				'photo'    => diy_image_validations(2000)
+				'photo'    => canvas_image_validations(2000)
 			], [
 				'username' => 'required',
 				'fullname' => 'required|min:1',
 				'email'    => 'required',
 				'group_id' => 'required_if:base_group,0|not_in:0',
-				'photo'    => diy_image_validations(2000)
+				'photo'    => canvas_image_validations(2000)
 			]
 		);
 	}
@@ -59,7 +59,7 @@ class UserController extends Controller {
 	public function index() {
 		$this->setPage();
 		
-		if (!$this->is_root && !diy_string_contained($this->session['user_group'], 'admin')) {
+		if (!$this->is_root && !canvas_string_contained($this->session['user_group'], 'admin')) {
 			return self::redirect("{$this->session['id']}/edit");
 		}
 		
@@ -90,7 +90,7 @@ class UserController extends Controller {
 		$this->form->password('password');
 		$this->form->selectbox('active', active_box(), false);
 		
-		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
+		if ($this->is_root || canvas_string_contained($this->session['user_group'], 'admin')) {
 			$this->form->openTab('User Group');
 			if (true === is_multiplatform()) {
 				$this->form->selectbox($this->platform_key, $this->input_platform(), false, [], $this->platform_label);
@@ -98,7 +98,7 @@ class UserController extends Controller {
 			$this->form->selectbox('group_id', $this->input_group(), false, [], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
 			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute());
-			$this->form->tags('alias', null, ['placeholder' => diy_config('user.alias_placeholder')], diy_config('user.alias_label'));
+			$this->form->tags('alias', null, ['placeholder' => canvas_config('user.alias_placeholder')], canvas_config('user.alias_label'));
 		}
 		
 		$this->form->openTab('User Info');
@@ -119,13 +119,13 @@ class UserController extends Controller {
 	}
 	
 	private function sendEmail($to, $subject, $title, $message, $cc = []) {
-		if (!empty(diy_config('email.from.address'))) {
+		if (!empty(canvas_config('email.from.address'))) {
 			$this->email->to($to);
 			$this->email->subject($subject);
 			$this->email->title($title);
 			$this->email->message($message);
 			if (!empty($cc)) {
-				$ccMail = array_merge_recursive($cc, [diy_config('email.cc.address')]);
+				$ccMail = array_merge_recursive($cc, [canvas_config('email.cc.address')]);
 				$this->email->cc($ccMail);
 			}
 			
@@ -164,7 +164,7 @@ class UserController extends Controller {
 	
 	public function store(Request $request) {
 		$this->get_session();
-		if (!empty($request->diyImportProcess)) return $this->storeFromImports($request);
+		if (!empty($request->canvasImportProcess)) return $this->storeFromImports($request);
 		
 		$this->set_data_before_post($request);
 		
@@ -184,11 +184,11 @@ class UserController extends Controller {
 		if (!empty($this->group_id)) {
 			$user_group     = User::getGroupIdentity($this->group_id['group_id']);
 			$group_identity = [];
-			if (diy_string_contained(diy_config('role.group.formatIdentity.view'), '|')) {
-				foreach (explode('|', diy_config('role.group.formatIdentity.view')) as $formatRole) {
+			if (canvas_string_contained(canvas_config('role.group.formatIdentity.view'), '|')) {
+				foreach (explode('|', canvas_config('role.group.formatIdentity.view')) as $formatRole) {
 					$group_identity[] = $user_group->{$formatRole};
 				}
-				$group_identity = implode(diy_config('role.group.formatIdentity.separator'), $group_identity);
+				$group_identity = implode(canvas_config('role.group.formatIdentity.separator'), $group_identity);
 				$roleInfo       = " as <strong>{$group_identity}</strong> role group";
 			}
 		}
@@ -241,7 +241,7 @@ class UserController extends Controller {
 		$this->form->selectbox('language', $this->input_language(), 'id_ID');
 		$this->form->selectbox('timezone', $this->input_timezone(), 218);
 		
-		if ($this->is_root || diy_string_contained($this->session['user_group'], 'admin')) {
+		if ($this->is_root || canvas_string_contained($this->session['user_group'], 'admin')) {
 			if (intval($this->model_data->id) !== intval($this->session['id'])) {
 				$this->form->openTab('User Group');
 			}
@@ -253,8 +253,8 @@ class UserController extends Controller {
 			$this->form->selectbox('group_id', $this->input_group(), $selected_group, ['required'], 'User Group');
 			$this->form->selectbox('first_route', [], false, [], 'First Redirect');
 			$this->form->sync('group_id', 'first_route', 'route_path', 'module_name', User::sqlFirstRoute(), $this->model_data->first_route);
-		//	$this->form->text('alias', $this->model_data->alias, [], diy_config('user.alias_label'));
-			$this->form->tags('alias', $this->model_data->alias, ['placeholder' => diy_config('user.alias_placeholder')], diy_config('user.alias_label'));
+		//	$this->form->text('alias', $this->model_data->alias, [], canvas_config('user.alias_label'));
+			$this->form->tags('alias', $this->model_data->alias, ['placeholder' => canvas_config('user.alias_placeholder')], canvas_config('user.alias_label'));
 		}
 		
 		$this->form->openTab('User Status');
@@ -329,15 +329,15 @@ class UserController extends Controller {
 			$this->user_groups = Group::all();
 		}
 		
-		return diy_selectbox($this->user_groups, 'id', 'group_info|group_alias');
+		return canvas_selectbox($this->user_groups, 'id', 'group_info|group_alias');
 	}
 	
 	private function input_language() {
-		return diy_selectbox(Language::all(), 'abbr', 'language');
+		return canvas_selectbox(Language::all(), 'abbr', 'language');
 	}
 	
 	private function input_timezone() {
-		return diy_selectbox(Timezone::all(), 'id', 'timezone');
+		return canvas_selectbox(Timezone::all(), 'id', 'timezone');
 	}
 	
 	public function set_data_before_post($request, $action_type = 'create', $callbackDataGroup = false) {
@@ -377,14 +377,14 @@ class UserController extends Controller {
 		
 		$user_group = new Usergroup();
 		if (false !== $id) {
-			$userGroup = diy_query_get_id($user_group, ['user_id' => intval($id)]);
+			$userGroup = canvas_query_get_id($user_group, ['user_id' => intval($id)]);
 			if (!is_null($userGroup)) {
-				diy_update($user_group->find($userGroup->id), $request, true);
+				canvas_update($user_group->find($userGroup->id), $request, true);
 			} else {
-				diy_insert($user_group, $request, true);
+				canvas_insert($user_group, $request, true);
 			}
 		} else {
-			diy_insert($user_group, $request, true);
+			canvas_insert($user_group, $request, true);
 		}
 	}
 }

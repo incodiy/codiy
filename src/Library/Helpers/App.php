@@ -5,21 +5,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 
-use Incodiy\Codiy\Models\Admin\System\Modules;
-use Incodiy\Codiy\Models\Admin\System\Preference;
-use Incodiy\Codiy\Library\Components\MetaTags;
-use Incodiy\Codiy\Controllers\Admin\System\GroupController;
-use Incodiy\Codiy\Controllers\Admin\System\AjaxController;
-use Incodiy\Codiy\Models\Admin\System\Log;
+use Canvastack\Origin\Models\Admin\System\Modules;
+use Canvastack\Origin\Models\Admin\System\Preference;
+use Canvastack\Origin\Library\Components\MetaTags;
+use Canvastack\Origin\Controllers\Admin\System\GroupController;
+use Canvastack\Origin\Controllers\Admin\System\AjaxController;
+use Canvastack\Origin\Models\Admin\System\Log;
 
 /**
  * Created on 10 Mar 2021
  * Time Created : 13:28:50
  *
  * @filesource	App.php
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 if (!function_exists('meta')) {
@@ -31,7 +31,7 @@ if (!function_exists('meta')) {
 	}
 }
 
-if (!function_exists('diy_config')) {
+if (!function_exists('canvas_config')) {
 	
 	/**
 	 * Get Config
@@ -43,8 +43,8 @@ if (!function_exists('diy_config')) {
 	 *
 	 * @return string
 	 */
-	function diy_config($string, $fileNameSettings = 'settings') {
-		return Illuminate\Support\Facades\Config::get("diy.{$fileNameSettings}.{$string}");
+	function canvas_config($string, $fileNameSettings = 'settings') {
+		return Illuminate\Support\Facades\Config::get("canvas.{$fileNameSettings}.{$string}");
 	}
 }
 
@@ -59,7 +59,7 @@ if (!function_exists('is_multiplatform')) {
 	 * @return string
 	 */
 	function is_multiplatform() {
-		$platform = diy_config('platform_type');
+		$platform = canvas_config('platform_type');
 		if ('single' === $platform) {
 			return false;
 		} else {
@@ -68,7 +68,7 @@ if (!function_exists('is_multiplatform')) {
 	}
 }
 
-if (!function_exists('diy_sessions')) {
+if (!function_exists('canvas_sessions')) {
 	/**
 	 * Get Sessions
 	 *
@@ -83,7 +83,7 @@ if (!function_exists('diy_sessions')) {
 	 * 
 	 * @return Session
 	 */
-	function diy_sessions($param = 'all', $data = []) {
+	function canvas_sessions($param = 'all', $data = []) {
 		if (!empty($data)) {
 			return Session::{$param}($data);
 		} else {
@@ -92,7 +92,7 @@ if (!function_exists('diy_sessions')) {
 	}
 }
 
-if (!function_exists('diy_redirect')) {
+if (!function_exists('canvas_redirect')) {
 	
 	/**
 	 * Set Re-Direction Path With Some Data Info
@@ -106,8 +106,8 @@ if (!function_exists('diy_redirect')) {
 	 * 
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
-	function diy_redirect($to, $message = null, $status = false) {
-		if (diy_string_contained($to, 'http://') || diy_string_contained($to, 'https://')) {
+	function canvas_redirect($to, $message = null, $status = false) {
+		if (canvas_string_contained($to, 'http://') || canvas_string_contained($to, 'https://')) {
 			$redirect = $to;
 		} else {
 			$redirect = Illuminate\Support\Facades\Redirect::to(url()->current() . '/' . $to);
@@ -138,7 +138,7 @@ if (!function_exists('routelists_info')) {
 	}
 }
 
-if (!function_exists('diy_base_assets')) {
+if (!function_exists('canvas_base_assets')) {
 	
 	/**
 	 * Get Base Assets URL
@@ -148,12 +148,12 @@ if (!function_exists('diy_base_assets')) {
 	 *
 	 * @return string
 	 */
-	function diy_base_assets() {
-		return diy_config('baseURL') . '/' . diy_config('base_template') . '/' . diy_config('template');
+	function canvas_base_assets() {
+		return canvas_config('baseURL') . '/' . canvas_config('base_template') . '/' . canvas_config('template');
 	}
 }
 
-if (!function_exists('diy_object')) {
+if (!function_exists('canvas_object')) {
     
     /**
      * Create Object
@@ -162,12 +162,12 @@ if (!function_exists('diy_object')) {
      *
      * @return object
      */
-    function diy_object($array) {
+    function canvas_object($array) {
         return (object) $array;
     }
 }
 
-if (!function_exists('diy_clean_strings')) {
+if (!function_exists('canvas_clean_strings')) {
 	
 	/**
 	 * Clean Strings
@@ -175,14 +175,14 @@ if (!function_exists('diy_clean_strings')) {
 	 * @param string $strings
 	 * @return string
 	 */
-	function diy_clean_strings($strings, $node = '-') {
+	function canvas_clean_strings($strings, $node = '-') {
 		$strings = trim(preg_replace('/[;\.\/\?\\\:@&=+\$,_\~\*\'"\!\|%<>\{\}\^\[\]`\-]/', ' ', $strings));
 		
 		return strtolower(preg_replace('/\s+/', $node, $strings));
 	}
 }
 
-if (!function_exists('diy_is_collection')) {
+if (!function_exists('canvas_is_collection')) {
 	
 	/**
 	 * Check if object is instance of Illuminate\Support\Collection
@@ -191,7 +191,7 @@ if (!function_exists('diy_is_collection')) {
 	 *
 	 * @return boolean
 	 */
-	function diy_is_collection($object) {
+	function canvas_is_collection($object) {
 		if ($object instanceof Illuminate\Support\Collection) {
 			return true;
 		} else {
@@ -200,7 +200,7 @@ if (!function_exists('diy_is_collection')) {
 	}
 }
 
-if (!function_exists('diy_format')) {
+if (!function_exists('canvas_format')) {
 	
 	/**
 	 * Format Data
@@ -215,7 +215,7 @@ if (!function_exists('diy_format')) {
 	 *
 	 * @return object
 	 */
-	function diy_format($data, int $decimal_endpoint = 0, $separator = '.', $format_type = 'number') {
+	function canvas_format($data, int $decimal_endpoint = 0, $separator = '.', $format_type = 'number') {
 		if (!empty($data)) {
 			if (!empty($decimal_endpoint)) {
 				$format_type = 'decimal';
@@ -236,7 +236,7 @@ if (!function_exists('diy_format')) {
 	}
 }
 
-if (!function_exists('diy_get_model')) {
+if (!function_exists('canvas_get_model')) {
 	
 	/**
 	 * Get Model
@@ -246,7 +246,7 @@ if (!function_exists('diy_get_model')) {
 	 *
 	 * @return object|array
 	 */
-	function diy_get_model($model, $find = false) {
+	function canvas_get_model($model, $find = false) {
 		if (is_string($model)) $model = new $model;
 		if (false !== $find)   $model = $model->find($find);
 		
@@ -254,7 +254,7 @@ if (!function_exists('diy_get_model')) {
 	}
 }
 
-if (!function_exists('diy_query')) {
+if (!function_exists('canvas_query')) {
 	
 	/**
 	 * Query Data Table
@@ -266,7 +266,7 @@ if (!function_exists('diy_query')) {
 	 * 
 	 * @return array|object
 	 */
-	function diy_query($sql, $type = 'TABLE', $connection = null) {
+	function canvas_query($sql, $type = 'TABLE', $connection = null) {
 		if (!empty($connection)) {
 			$query = Illuminate\Support\Facades\DB::connection($connection)->{$type}($sql);
 		} else {
@@ -277,9 +277,9 @@ if (!function_exists('diy_query')) {
 	}
 }
 
-if (!function_exists('diy_schema')) {
+if (!function_exists('canvas_schema')) {
 	
-	function diy_schema($param, $data = null) {
+	function canvas_schema($param, $data = null) {
 		if (!empty($data)) {
 			return Illuminate\Support\Facades\Schema::{$param}($data);
 		} else {
@@ -288,9 +288,9 @@ if (!function_exists('diy_schema')) {
 	}
 }
 
-if (!function_exists('diy_db')) {
+if (!function_exists('canvas_db')) {
 	
-	function diy_db($param, $data = null) {
+	function canvas_db($param, $data = null) {
 		if (!empty($data)) {
 			return Illuminate\Support\Facades\DB::{$param}($data);
 		} else {
@@ -299,9 +299,9 @@ if (!function_exists('diy_db')) {
 	}
 }
 
-if (!function_exists('diy_get_table_name_from_sql')) {
+if (!function_exists('canvas_get_table_name_from_sql')) {
 	
-	function diy_get_table_name_from_sql($sql) {
+	function canvas_get_table_name_from_sql($sql) {
 		$query = explode('from ', $sql);
 		$query = explode(' ', $query[1]);
 		
@@ -309,15 +309,15 @@ if (!function_exists('diy_get_table_name_from_sql')) {
 	}
 }
 
-if (!function_exists('diy_mapping_page')) {
+if (!function_exists('canvas_mapping_page')) {
 	
-	function diy_mapping_page($user_id) {
+	function canvas_mapping_page($user_id) {
 		$groupController = new GroupController();
 		return $groupController->get_data_mapping_page($user_id);
 	}
 }
 
-if (!function_exists('diy_encrypt')) {
+if (!function_exists('canvas_encrypt')) {
 	
 	/**
 	 * Encrypt
@@ -326,12 +326,12 @@ if (!function_exists('diy_encrypt')) {
 	 *
 	 * @return string
 	 */
-	function diy_encrypt($string) {
+	function canvas_encrypt($string) {
 		return Illuminate\Support\Facades\Crypt::encryptString($string);
 	}
 }
 
-if (!function_exists('diy_decrypt')) {
+if (!function_exists('canvas_decrypt')) {
 	
 	/**
 	 * Decrypt
@@ -340,12 +340,12 @@ if (!function_exists('diy_decrypt')) {
 	 *
 	 * @return string
 	 */
-	function diy_decrypt($string) {
+	function canvas_decrypt($string) {
 		return Illuminate\Support\Facades\Crypt::decryptString($string);
 	}
 }
 
-if (!function_exists('diy_user_cryptcode')) {
+if (!function_exists('canvas_user_cryptcode')) {
 	
 	/**
 	 * Encrypt
@@ -354,12 +354,12 @@ if (!function_exists('diy_user_cryptcode')) {
 	 *
 	 * @return string
 	 */
-	function diy_user_cryptcode($user_name, $user_email) {
-		return diy_encrypt($user_name . diy_config('encode_separate') . $user_email);
+	function canvas_user_cryptcode($user_name, $user_email) {
+		return canvas_encrypt($user_name . canvas_config('encode_separate') . $user_email);
 	}
 }
 
-if (!function_exists('diy_clean_strings')) {
+if (!function_exists('canvas_clean_strings')) {
 	
 	/**
 	 * Clean Strings
@@ -369,14 +369,14 @@ if (!function_exists('diy_clean_strings')) {
 	 * 
 	 * @return string
 	 */
-	function diy_clean_strings($strings, $replace_with = '-') {
+	function canvas_clean_strings($strings, $replace_with = '-') {
 		$strings = trim(preg_replace('/[;\.\/\?\\\:@&=+\$,_\~\*\'"\!\|%<>\{\}\^\[\]`\-]/', ' ', $strings));
 		
 		return strtolower(preg_replace('/\s+/', $replace_with, $strings));
 	}
 }
 
-if (!function_exists('diy_string_contained')) {
+if (!function_exists('canvas_string_contained')) {
 	
 	/**
 	 * Find contained character in string(s)
@@ -386,7 +386,7 @@ if (!function_exists('diy_string_contained')) {
 	 *
 	 * @return boolean
 	 */
-	function diy_string_contained($string, $find) {
+	function canvas_string_contained($string, $find) {
 		if (is_array($find)) {
 			foreach ($find as $str) if (strpos($string, $str) !== false) return true;
 		} else {
@@ -397,7 +397,7 @@ if (!function_exists('diy_string_contained')) {
 	}
 }
 
-if (!function_exists('diy_underscore_to_camelcase')) {
+if (!function_exists('canvas_underscore_to_camelcase')) {
     
     /**
      * Convert Character with an Underscore to Camel/Uppercase
@@ -407,7 +407,7 @@ if (!function_exists('diy_underscore_to_camelcase')) {
      * @return string
      * 		This function will convert string to UPPERCASE if string length <= 3
      */
-    function diy_underscore_to_camelcase($str) {
+    function canvas_underscore_to_camelcase($str) {
         $string = false;
         if (true === str_contains($str, '_')) {
             $slices  = explode('_', $str);
@@ -429,7 +429,7 @@ if (!function_exists('diy_underscore_to_camelcase')) {
     }
 }
 
-if (!function_exists('diy_url')) {
+if (!function_exists('canvas_url')) {
     
     /**
      * Get Url
@@ -438,12 +438,12 @@ if (!function_exists('diy_url')) {
      *
      * @return string
      */
-    function diy_url($string) {
+    function canvas_url($string) {
         return url()->{$string}();
     }
 }
 
-if (!function_exists('diy_array_contained_string')) {
+if (!function_exists('canvas_array_contained_string')) {
 	
 	/**
 	 * Check Array Contained With String
@@ -453,13 +453,13 @@ if (!function_exists('diy_array_contained_string')) {
 	 *
 	 * @return boolean
 	 */
-	function diy_array_contained_string($array, $string, $return_data = false) {
+	function canvas_array_contained_string($array, $string, $return_data = false) {
 		$result           = [];
 		$result['status'] = false;
 		$result['data']   = [];
 		
 		foreach($array as $info => $data) {
-			if (diy_string_contained($data, $string)) {
+			if (canvas_string_contained($data, $string)) {
 				$result['status']      = true;
 				$result['data'][$info] = $string;
 			}
@@ -473,7 +473,7 @@ if (!function_exists('diy_array_contained_string')) {
 	}
 }
 
-if (!function_exists('diy_array_to_object_recursive')) {
+if (!function_exists('canvas_array_to_object_recursive')) {
     
     /**
      * Converting multidimensional array to object
@@ -483,10 +483,10 @@ if (!function_exists('diy_array_to_object_recursive')) {
      *
      * @link: https://stackoverflow.com/questions/9169892/how-to-convert-multidimensional-array-to-object-in-php
      */
-    function diy_array_to_object_recursive($array) {
+    function canvas_array_to_object_recursive($array) {
         if (is_array($array) ) {
             foreach($array as $key => $value) {
-                $array[$key] = diy_array_to_object_recursive($value);
+                $array[$key] = canvas_array_to_object_recursive($value);
             }
             
             return (object) $array;
@@ -496,7 +496,7 @@ if (!function_exists('diy_array_to_object_recursive')) {
     }
 }
 
-if (!function_exists('diy_array_insert_new')) {
+if (!function_exists('canvas_array_insert_new')) {
 	
 	/**
 	 * Insert Data In Spesific array pos
@@ -509,7 +509,7 @@ if (!function_exists('diy_array_insert_new')) {
 	 *
 	 * @return number|array
 	 */
-	function diy_array_insert_new($array, $index, $val) {
+	function canvas_array_insert_new($array, $index, $val) {
 		$size = count($array);
 		if (!is_int($index) || $index <0 || $index > $size) {
 			return -1;
@@ -522,9 +522,9 @@ if (!function_exists('diy_array_insert_new')) {
 	}
 }
 
-if (!function_exists('diy_array_insert')) {
+if (!function_exists('canvas_array_insert')) {
 	
-	function diy_array_insert(&$array, $position, $insert) {
+	function canvas_array_insert(&$array, $position, $insert) {
 		if (is_int($position)) {
 			array_splice($array, $position, 0, $insert);
 		} else {
@@ -538,7 +538,7 @@ if (!function_exists('diy_array_insert')) {
 	}
 }
 
-if (!function_exists('diy_exist_url')) {
+if (!function_exists('canvas_exist_url')) {
     
     /**
      * Check if url exist
@@ -547,7 +547,7 @@ if (!function_exists('diy_exist_url')) {
      * 
      * @return boolean
      */
-    function diy_exist_url($url) {
+    function canvas_exist_url($url) {
         $file_headers = @get_headers($url);
         
         if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
@@ -558,7 +558,7 @@ if (!function_exists('diy_exist_url')) {
     }
 }
 
-if (!function_exists('diy_not_empty')) {
+if (!function_exists('canvas_not_empty')) {
     
     /**
      * Checking Not Empty Data
@@ -566,7 +566,7 @@ if (!function_exists('diy_not_empty')) {
      * @param mixed $data
      * @return mixed|boolean
      */
-    function diy_not_empty($data) {
+    function canvas_not_empty($data) {
         if (isset($data) && !empty($data) && '' != $data && NULL != $data) {
             return $data;
         } else {
@@ -575,7 +575,7 @@ if (!function_exists('diy_not_empty')) {
     }
 }
 
-if (!function_exists('diy_is_empty')) {
+if (!function_exists('canvas_is_empty')) {
     
     /**
      * Checking Empty Data
@@ -583,12 +583,12 @@ if (!function_exists('diy_is_empty')) {
      * @param mixed $data
      * @return boolean
      */
-    function diy_is_empty($data) {
-        return !diy_not_empty($data);
+    function canvas_is_empty($data) {
+        return !canvas_not_empty($data);
     }
 }
 
-if (!function_exists('diy_object')) {
+if (!function_exists('canvas_object')) {
 	
 	/**
 	 * Create Object
@@ -597,7 +597,7 @@ if (!function_exists('diy_object')) {
 	 *
 	 * @return object
 	 */
-	function diy_object($array) {
+	function canvas_object($array) {
 		return (object) $array;
 	}
 }
@@ -618,7 +618,7 @@ if (!function_exists('camel_case')) {
 	}
 }
 
-if (!function_exists('diy_random_strings')) {
+if (!function_exists('canvas_random_strings')) {
 	
 	/**
 	 * Random String
@@ -626,7 +626,7 @@ if (!function_exists('diy_random_strings')) {
 	 * @param number $length
 	 * @return string
 	 */
-	function diy_random_strings($length = 8, $symbol = true, $string_set = null, $node = '_') {
+	function canvas_random_strings($length = 8, $symbol = true, $string_set = null, $node = '_') {
 		$random_strings = '';
 		$strSymbol      = null;
 		if (true === $symbol) {
@@ -647,7 +647,7 @@ if (!function_exists('diy_random_strings')) {
 	}
 }
 
-if (!function_exists('diy_unescape_html')) {
+if (!function_exists('canvas_unescape_html')) {
 	
 	/**
 	 * Returning Back Escaped HTML
@@ -659,7 +659,7 @@ if (!function_exists('diy_unescape_html')) {
 	 *
 	 * @return \Illuminate\Support\HtmlString
 	 */
-	function diy_unescape_html($html) {
+	function canvas_unescape_html($html) {
 		return new Illuminate\Support\HtmlString($html);
 	}
 }
@@ -696,7 +696,7 @@ if (!function_exists('current_route')) {
 	}
 }
 
-if (!function_exists('diy_current_route')) {
+if (!function_exists('canvas_current_route')) {
 	/**
 	 * Get Current Route
 	 * created @Dec 11, 2018
@@ -705,13 +705,13 @@ if (!function_exists('diy_current_route')) {
 	 * @param boolean $facadeRoot
 	 * @return object|mixed|string[]|object[]|\Illuminate\Contracts\Foundation\Application
 	 */
-	function diy_current_route($facadeRoot = false) {
+	function canvas_current_route($facadeRoot = false) {
 		if (false === $facadeRoot) return Route::getCurrentRoute();
 		else return Route::getFacadeRoot();
 	}
 }
 
-if (!function_exists('diy_current_baseroute')) {
+if (!function_exists('canvas_current_baseroute')) {
 	/**
 	 * Get Base Route From Current Route
 	 *
@@ -721,14 +721,14 @@ if (!function_exists('diy_current_baseroute')) {
 	 * @param boolean $facadeRoot
 	 * @return mixed
 	 */
-	function diy_current_baseroute() {
-		$lastRoute = diy_last_explode('.', diy_current_route()->getName());
+	function canvas_current_baseroute() {
+		$lastRoute = canvas_last_explode('.', canvas_current_route()->getName());
 		
-		return str_replace(".{$lastRoute}", '', diy_current_route()->getName());
+		return str_replace(".{$lastRoute}", '', canvas_current_route()->getName());
 	}
 }
 
-if (!function_exists('diy_last_explode')) {
+if (!function_exists('canvas_last_explode')) {
 	/**
 	 * Get Last Array
 	 *
@@ -740,12 +740,12 @@ if (!function_exists('diy_last_explode')) {
 	 *
 	 * @return mixed
 	 */
-	function diy_last_explode($delimeter, $array) {
+	function canvas_last_explode($delimeter, $array) {
 		return last(explode($delimeter, $array));
 	}
 }
 
-if (!function_exists('diy_get_current_route_id')) {
+if (!function_exists('canvas_get_current_route_id')) {
 	
 	/**
 	 * Get ID From Current Route
@@ -755,8 +755,8 @@ if (!function_exists('diy_get_current_route_id')) {
 	 *
 	 * @return string
 	 */
-	function diy_get_current_route_id($exclude_last = true) {
-		$currentDataURL = explode('/', diy_current_url());
+	function canvas_get_current_route_id($exclude_last = true) {
+		$currentDataURL = explode('/', canvas_current_url());
 		if (true === $exclude_last) {
 			unset($currentDataURL[array_key_last($currentDataURL)]);
 		}
@@ -765,7 +765,7 @@ if (!function_exists('diy_get_current_route_id')) {
 	}
 }
 
-if (!function_exists('diy_route_request_value')) {
+if (!function_exists('canvas_route_request_value')) {
 	
 	/**
 	 * Get Route Value From Request
@@ -777,13 +777,13 @@ if (!function_exists('diy_route_request_value')) {
 	 * 
 	 * @return string
 	 */
-	function diy_route_request_value($field) {
+	function canvas_route_request_value($field) {
 		$request = new Request();
 		$request->route($field);
 	}
 }
 
-if (!function_exists('diy_current_url')) {
+if (!function_exists('canvas_current_url')) {
 
 	/**
 	 * Get Current URL
@@ -793,18 +793,18 @@ if (!function_exists('diy_current_url')) {
 	 *
 	 * @return string
 	 */
-	function diy_current_url() {
+	function canvas_current_url() {
 		return url()->current();
 	}
 }
 
-if (!function_exists('diy_log_activity')) {
+if (!function_exists('canvas_log_activity')) {
 	
 	/**
 	 * Create Data User Log Activity
 	 */
-	function diy_log_activity($routeInfo = [], $data = []) {
-		$configuration = diy_config('log_activity');
+	function canvas_log_activity($routeInfo = [], $data = []) {
+		$configuration = canvas_config('log_activity');
 		if (!empty($configuration) && in_array($configuration['run_status'], [true, 'unexceptions'])) {
 			
 			$sessions = session()->all();
@@ -812,7 +812,7 @@ if (!function_exists('diy_log_activity')) {
 			
 			if (!empty($sessions['user_group'])) {
 				if (empty($routeInfo)) {
-					$routes       = diy_current_route();
+					$routes       = canvas_current_route();
 				}
 				$requests         = Illuminate\Support\Facades\Request::class;
 				$group_exceptions = ['root'];
@@ -935,7 +935,7 @@ if (!function_exists('minify_code')) {
 	}
 }
 
-if (!function_exists('diy_insert')) {
+if (!function_exists('canvas_insert')) {
 	
 	/**
 	 * Simply Insert POST Data to Database
@@ -946,7 +946,7 @@ if (!function_exists('diy_insert')) {
 	 * 
 	 * @return string last inserted ID
 	 */
-	function diy_insert($model, $data, $get_field = false) {
+	function canvas_insert($model, $data, $get_field = false) {
 		$request = [];
 		if (true === is_object($data)) {
 			$request = $data;
@@ -967,7 +967,7 @@ if (!function_exists('diy_insert')) {
 				$value = null;
 			}
 			
-			if (diy_string_contained($value, 'WIB')) {
+			if (canvas_string_contained($value, 'WIB')) {
 				$value = str_replace(' WIB', ':' . date('s'), $value);
 			}
 			
@@ -997,7 +997,7 @@ if (!function_exists('diy_insert')) {
 	}
 }
 
-if (!function_exists('diy_update')) {
+if (!function_exists('canvas_update')) {
 		
 	/**
 	 * Simply Update POST Data to Database
@@ -1005,7 +1005,7 @@ if (!function_exists('diy_update')) {
 	 * @param object $model
 	 * @param array $data
 	 */
-	function diy_update($model, $data) {
+	function canvas_update($model, $data) {
 		$request = [];
 		if (true === is_object($data)) {
 			$request = $data;
@@ -1026,7 +1026,7 @@ if (!function_exists('diy_update')) {
 				$value = null;
 			}
 			
-			if (diy_string_contained($value, 'WIB')) {
+			if (canvas_string_contained($value, 'WIB')) {
 				$value = str_replace(' WIB', ':' . date('s'), $value);
 			}
 			
@@ -1048,7 +1048,7 @@ if (!function_exists('diy_update')) {
 	}
 }
 
-if (!function_exists('diy_delete')) {
+if (!function_exists('canvas_delete')) {
 	
 	/**
 	 * Simply Delete(Soft) and or Restore deleted row from database
@@ -1060,13 +1060,13 @@ if (!function_exists('diy_delete')) {
 	 * created @Aug 10, 2018
 	 * author: wisnuwidi
 	 */
-	function diy_delete($request, $model_name, $id) {
+	function canvas_delete($request, $model_name, $id) {
 		$model = $model_name->find($id);
 		
 		if (!empty($model->id)) {
 			$model->delete();
 		} else {
-			if (true === diy_is_softdeletes($model_name)) {
+			if (true === canvas_is_softdeletes($model_name)) {
 				$remodel = $model_name::withTrashed()->find($id);
 				$remodel->restore();
 			}
@@ -1074,13 +1074,13 @@ if (!function_exists('diy_delete')) {
 	}
 }
 
-if (!function_exists('diy_query_get_id')) {
-	function diy_query_get_id($model_class, $where = []) {
+if (!function_exists('canvas_query_get_id')) {
+	function canvas_query_get_id($model_class, $where = []) {
 		return $model_class::where($where)->first();
 	}
 }
 
-if (!function_exists('diy_set_filesize')) {
+if (!function_exists('canvas_set_filesize')) {
 	
 	/**
 	 * Set File Size
@@ -1093,7 +1093,7 @@ if (!function_exists('diy_set_filesize')) {
 	 *
 	 * @return number
 	 */
-	function diy_set_filesize($size, $type = 'M') {
+	function canvas_set_filesize($size, $type = 'M') {
 		if ('M' === $type) $megabytes = 1024;
 		$filesize = intval($megabytes*intval($size));
 		ini_set('upload_max_filesize', "{$filesize}{$type}");
@@ -1103,7 +1103,7 @@ if (!function_exists('diy_set_filesize')) {
 	}
 }
 
-if (!function_exists('diy_image_validations')) {
+if (!function_exists('canvas_image_validations')) {
 	
 	/**
 	 * Set Image Validations
@@ -1115,7 +1115,7 @@ if (!function_exists('diy_image_validations')) {
 	 *
 	 * @return string
 	 */
-	function diy_image_validations($max_size = false) {
+	function canvas_image_validations($max_size = false) {
 		$max = false;
 		if (false !== $max_size) $max = "|max:{$max_size}";
 		
@@ -1123,7 +1123,7 @@ if (!function_exists('diy_image_validations')) {
 	}
 }
 
-if (!function_exists('diy_file_validations')) {
+if (!function_exists('canvas_file_validations')) {
 	
 	/**
 	 * Set File Validations
@@ -1136,7 +1136,7 @@ if (!function_exists('diy_file_validations')) {
 	 *
 	 * @return string
 	 */
-	function diy_file_validations($mimes = "txt", $max_size = false) {
+	function canvas_file_validations($mimes = "txt", $max_size = false) {
 		$max = false;
 		if (false !== $max_size) $max = "|max:{$max_size}";
 		
@@ -1144,14 +1144,14 @@ if (!function_exists('diy_file_validations')) {
 	}
 }
 
-if (!function_exists('diy_file_exist')) {
+if (!function_exists('canvas_file_exist')) {
 	
-	function diy_file_exist($filePath) {
+	function canvas_file_exist($filePath) {
 		return File::exists($filePath);
 	}
 }
 
-if (!function_exists('diy_make_dir')) {
+if (!function_exists('canvas_make_dir')) {
 	
 	/**
 	 * Create New Directory
@@ -1164,16 +1164,16 @@ if (!function_exists('diy_make_dir')) {
 	 * @param bool $recursive
 	 * @param bool $force
 	 */
-	function diy_make_dir($filePath, $mode = 0777, $recursive = true, $force = true) {
-		if (false === diy_file_exist($filePath)) {
+	function canvas_make_dir($filePath, $mode = 0777, $recursive = true, $force = true) {
+		if (false === canvas_file_exist($filePath)) {
 			File::makeDirectory($filePath, $mode, $recursive, $force);
 		}
 	}
 }
 
-if (!function_exists('diy_action_buttons')) {
+if (!function_exists('canvas_action_buttons')) {
 	
-	function diy_action_buttons($route_info, $background_color = 'white') {
+	function canvas_action_buttons($route_info, $background_color = 'white') {
 		if (!empty($route_info)) {
 			$box  = '';
 			$box .= "<div class=\"header {$background_color}\">";
@@ -1183,14 +1183,14 @@ if (!function_exists('diy_action_buttons')) {
 				$color = $keys[0];
 				$text  = $keys[1];
 				
-				if (!diy_string_contained($text, 'delete') && !diy_string_contained($text, 'restore')) {
-					$box .= diy_action_button_box($value, $text, $color);
+				if (!canvas_string_contained($text, 'delete') && !canvas_string_contained($text, 'restore')) {
+					$box .= canvas_action_button_box($value, $text, $color);
 				} else {
 					$routeInfo = explode('::', $value);
 					$routeUri  = [$routeInfo[0], (int)$routeInfo[1]];
 					
 					$box .= Collective\Html\FormFacade::open(['route'=> $routeUri, 'method'=>'Delete', 'onsubmit' => 'confirm("Are you sure?")']);
-					$box .= diy_action_button_box('submitButtonTag', $text, $color);
+					$box .= canvas_action_button_box('submitButtonTag', $text, $color);
 					$box .= Collective\Html\FormFacade::close();
 				}
 			}
@@ -1229,9 +1229,9 @@ if (!function_exists('hash_code_id')) {
 	}
 }
 
-if (!function_exists('diy_action_button_box')) {
+if (!function_exists('canvas_action_button_box')) {
 	
-	function diy_action_button_box($url, $button_text, $url_class = false, $panel_class = 'panel-title header-list-panel') {
+	function canvas_action_button_box($url, $button_text, $url_class = false, $panel_class = 'panel-title header-list-panel') {
 		$buttonText = ucwords($button_text);
 		if (empty($url_class)) {
 			$urlClass = 'btn btn-default btn_create btn-slideright button-app action-button pull-right';
@@ -1251,9 +1251,9 @@ if (!function_exists('diy_action_button_box')) {
 	}
 }
 
-if (!function_exists('diy_get_model_controllers_info')) {
+if (!function_exists('canvas_get_model_controllers_info')) {
 	
-	function diy_get_model_controllers_info($buffers = [], $table_replace_map = null, $restriction_path = 'App\Http\Controllers\Admin\\') {
+	function canvas_get_model_controllers_info($buffers = [], $table_replace_map = null, $restriction_path = 'App\Http\Controllers\Admin\\') {
 		$routeLists = Route::getRoutes();
 		$models     = [];
 		
@@ -1453,7 +1453,7 @@ if (!function_exists('get_route_lists')) {
 			$routeresult = $routes;
 		}
 		
-		return diy_array_to_object_recursive($routeresult);
+		return canvas_array_to_object_recursive($routeresult);
 	}
 }
 
@@ -1474,7 +1474,7 @@ if (!function_exists('getPreference')) {
 	}
 }
 
-if (!function_exists('diy_combobox_data')) {
+if (!function_exists('canvas_combobox_data')) {
 	
 	/**
 	 * Set Default Combobox Data
@@ -1485,7 +1485,7 @@ if (!function_exists('diy_combobox_data')) {
 	 * @param string $set_null_array
 	 * @return array
 	 */
-	function diy_combobox_data($object, $key_value, $key_label, $set_null_array = true) {
+	function canvas_combobox_data($object, $key_value, $key_label, $set_null_array = true) {
 		$options = [0 => ''];
 		if (true === $set_null_array) $options[] = '';
 		foreach ($object as $row) {
@@ -1537,9 +1537,9 @@ if (!function_exists('flag_status')) {
 	}
 }
 
-if (!function_exists('diy_get_ajax_urli')) {
+if (!function_exists('canvas_get_ajax_urli')) {
 	
-	function diy_get_ajax_urli($init_post = 'AjaxPosF', $connections = null) {
+	function canvas_get_ajax_urli($init_post = 'AjaxPosF', $connections = null) {
 		$ajaxURL = new AjaxController($connections);
 		$ajaxURL::urli($init_post);
 		
@@ -1573,7 +1573,7 @@ if (!function_exists('internal_flag_status')) {
 	}
 }
 
-if (!function_exists('diy_mappage_button_add')) {
+if (!function_exists('canvas_mappage_button_add')) {
 	
 	/**
 	 * Acction Buttons for Mapping Page Module
@@ -1586,7 +1586,7 @@ if (!function_exists('diy_mappage_button_add')) {
 	 * 
 	 * @return string
 	 */
-	function diy_mappage_button_add($ajax_url, $node_btn, $id, $target_id, $second_target) {
+	function canvas_mappage_button_add($ajax_url, $node_btn, $id, $target_id, $second_target) {
 		$o  = "<div id='{$node_btn}' class='action-buttons-box'>";
 			$o .= "<div class='hidden-sm hidden-xs action-buttons'>";
 				$o .= "<a id='plusn{$node_btn}' class='btn btn-success btn-xs btn_view'><i class='fa fa-plus-circle' aria-hidden='true'></i></a>";
@@ -1602,9 +1602,9 @@ if (!function_exists('diy_mappage_button_add')) {
 	}
 }
 
-if (!function_exists('diy_input')) {
+if (!function_exists('canvas_input')) {
 	
-	function diy_input($type, $id = null, $class = null, $name = null, $value = null) {
+	function canvas_input($type, $id = null, $class = null, $name = null, $value = null) {
 		$id    = " id=\"{$id}\"";
 		$class = " class=\"{$class}\"";
 		$value = " value=\"{$value}\"";
@@ -1614,9 +1614,9 @@ if (!function_exists('diy_input')) {
 	}
 }
 
-if (!function_exists('diy_script')) {
+if (!function_exists('canvas_script')) {
 	
-	function diy_script($script, $ready = true) {
+	function canvas_script($script, $ready = true) {
 		if (true === $ready) {
 			return "<script type='text/javascript'>$(document).ready(function() { {$script} });</script>";
 		} else {
@@ -1625,7 +1625,7 @@ if (!function_exists('diy_script')) {
 	}
 }
 
-if (!function_exists('diy_merge_request')) {
+if (!function_exists('canvas_merge_request')) {
 	
 	/**
 	 * Controlling Request Before Insert Process
@@ -1636,7 +1636,7 @@ if (!function_exists('diy_merge_request')) {
 	 * 
 	 * @author: wisnuwidi
 	 */
-	function diy_merge_request($request, $new_data = []) {
+	function canvas_merge_request($request, $new_data = []) {
 		foreach ($new_data as $field_name => $value) {
 			if (null == $request->{$field_name}) {
 				$request->merge([$field_name => $value]);
@@ -1647,14 +1647,14 @@ if (!function_exists('diy_merge_request')) {
 	}
 }
 
-if (!function_exists('diy_is_softdeletes')) {
+if (!function_exists('canvas_is_softdeletes')) {
 	
-	function diy_is_softdeletes($model) {
+	function canvas_is_softdeletes($model) {
 		return in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($model), true);
 	}
 }
 
-if (!function_exists('diy_attributes_to_string')) {
+if (!function_exists('canvas_attributes_to_string')) {
 	
 	/**
 	 * Attributes To String
@@ -1663,7 +1663,7 @@ if (!function_exists('diy_attributes_to_string')) {
 	 * @param mixed
 	 * @return string
 	 */
-	function diy_attributes_to_string($attributes) {
+	function canvas_attributes_to_string($attributes) {
 		if (empty($attributes))
 			return '';
 			
@@ -1717,7 +1717,7 @@ if (!function_exists('is_empty')) {
 	}
 }
 
-if (!function_exists('diy_get_model_data')) {
+if (!function_exists('canvas_get_model_data')) {
 	
 	/**
 	 * Get All Web Preferences
@@ -1725,7 +1725,7 @@ if (!function_exists('diy_get_model_data')) {
 	 * created @Aug 21, 2018
 	 * author: wisnuwidi
 	 */
-	function diy_get_model_data($model) {
+	function canvas_get_model_data($model) {
 		$data = [];
 		foreach ($model::all() as $row) {
 			$data = $row->getAttributes();
@@ -1735,7 +1735,7 @@ if (!function_exists('diy_get_model_data')) {
 	}
 }
 
-if (!function_exists('diy_memory')) {
+if (!function_exists('canvas_memory')) {
 	
 	/**
 	 * Memory?
@@ -1746,28 +1746,28 @@ if (!function_exists('diy_memory')) {
 	 * @param bool $min
 	 * @param integer $limit
 	 */
-	function diy_memory($min = null, $limit = -1) {
+	function canvas_memory($min = null, $limit = -1) {
 		ini_set('memory_limit', $limit);
 		if (null === $min) {
-			minify_code(diy_config('minify'));
+			minify_code(canvas_config('minify'));
 		} else {
 			minify_code($min);
 		}
 	}
 }
 
-if (!function_exists('diy_date_info')) {
+if (!function_exists('canvas_date_info')) {
 	
-	function diy_date_info($table, $field, $filter = null, $connection = null) {
-		$query = diy_query("SELECT DATE_FORMAT(MAX(`{$field}`), '%d% %M %Y') date_info FROM `{$table}` {$filter}", 'SELECT', $connection);
+	function canvas_date_info($table, $field, $filter = null, $connection = null) {
+		$query = canvas_query("SELECT DATE_FORMAT(MAX(`{$field}`), '%d% %M %Y') date_info FROM `{$table}` {$filter}", 'SELECT', $connection);
 		
 		return $query[0]->date_info;
 	}
 }
 
-if (!function_exists('diy_get_os')) {
+if (!function_exists('canvas_get_os')) {
 	
-	function diy_get_os($user_agent) {
+	function canvas_get_os($user_agent) {
 		$os_platform  = "Unknown OS Platform";
 		$os_array     = [
 			'/windows nt 11/i'      =>  'Windows 11',
@@ -1804,9 +1804,9 @@ if (!function_exists('diy_get_os')) {
 	}
 }
 
-if (!function_exists('diy_get_os')) {
+if (!function_exists('canvas_get_os')) {
 	
-	function diy_get_os($user_agent) {
+	function canvas_get_os($user_agent) {
 		$browser       = "Unknown Browser";
 		$browser_array = [
 			'/msie/i'      => 'Internet Explorer',

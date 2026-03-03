@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Area;
+namespace Canvastack\Origin\Library\Components\Chart\Canvas\Area;
 /**
  * Created on May 17, 2023
  * 
@@ -9,9 +9,9 @@ namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Area;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  */
 trait Canvas {
     use Script;

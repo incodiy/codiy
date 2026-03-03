@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Includes;
+namespace Canvastack\Origin\Controllers\Core\Craft\Includes;
 
 use Illuminate\Support\Facades\Route;
-use Incodiy\Codiy\Models\Admin\System\Modules;
+use Canvastack\Origin\Models\Admin\System\Modules;
 
 /**
  * Created on 9 Apr 2021
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\System\Modules;
  *
  * @filesource	RouteInfo.php
  *
- * @author    wisnuwidi@incodiy.com - 2021
+ * @author    wisnuwidi@canvastack.com - 2021
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
  
 trait RouteInfo {
@@ -51,7 +51,7 @@ trait RouteInfo {
 		$action_route         = (object) $this->currentRoute->getAction();
 		$controller_path      = $action_route->controller;
 		
-		if (!diy_string_contained($controller_path, 'Controllers@')) {
+		if (!canvas_string_contained($controller_path, 'Controllers@')) {
 			$slice_controller  = explode('Controllers', $controller_path);
 			$slice_controller  = explode('Controller', $slice_controller[1]);
 			$this->pageInfo    = str_replace('@', '', $slice_controller[1]);
@@ -169,7 +169,7 @@ trait RouteInfo {
 			return route($routeUri);
 		} else {
 			$routeURI = $routeUri;
-			$routeUri = explode('/', diy_current_url());
+			$routeUri = explode('/', canvas_current_url());
 			unset($routeUri[array_key_last($routeUri)]);
 			
 			return $routeURI . '::' . (int) last($routeUri);

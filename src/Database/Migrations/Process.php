@@ -1,9 +1,9 @@
 <?php
-namespace Incodiy\Codiy\Database\Migrations;
+namespace Canvastack\Origin\Database\Migrations;
 
-use Incodiy\Codiy\Database\Migrations\Tables\BaseTables;
-use Incodiy\Codiy\Database\Migrations\Tables\ShopTables;
-use Incodiy\Codiy\Database\Migrations\Tables\MasjidTables;
+use Canvastack\Origin\Database\Migrations\Tables\BaseTables;
+use Canvastack\Origin\Database\Migrations\Tables\ShopTables;
+use Canvastack\Origin\Database\Migrations\Tables\MasjidTables;
 /**
  * Created on Dec 17, 2022
  * 
@@ -12,9 +12,9 @@ use Incodiy\Codiy\Database\Migrations\Tables\MasjidTables;
  *
  * @filesource Process.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class Process extends Config {
 	public $exclude      = [];

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 /**
  * Created on Dec 31, 2022
  * 
@@ -8,8 +8,8 @@ namespace Incodiy\Codiy\Models\Admin\System;
  *
  * @filesource ImportAccounts.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class ImportAccounts extends User {}

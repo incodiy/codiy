@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System\Includes;
+namespace Canvastack\Origin\Controllers\Admin\System\Includes;
 
-use Incodiy\Codiy\Models\Admin\System\MappingPage as MappingData;
+use Canvastack\Origin\Models\Admin\System\MappingPage as MappingData;
 
 /**
  * Created on Sep 6, 2022
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\System\MappingPage as MappingData;
  *
  * @filesource	MappingPage.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait MappingPage {
@@ -32,7 +32,7 @@ trait MappingPage {
 	
 	public $filter_page_maps = [];
 	public function get_data_mapping_page($user_id) {
-		$currentRoute = diy_current_baseroute();
+		$currentRoute = canvas_current_baseroute();
 		$dataPageMaps = [];
 		
 		if (!empty($this->map()->getUserDataMapping($user_id))) {
@@ -105,25 +105,25 @@ trait MappingPage {
 	}
 	
 	private function mapping() {
-		$title_id                    = 'page_privileges_' . diy_random_strings(50, false) . ' role-priv';
+		$title_id                    = 'page_privileges_' . canvas_random_strings(50, false) . ' role-priv';
 		$headerData                  = [];
-		$headerData['module_id']     = [diy_table_row_attr('Module Name' , ['style' => 'text-align:center', 'rowspan' => 2])];
-		$headerData['target_table']  = [diy_table_row_attr('Table Name'  , ['style' => 'text-align:center', 'rowspan' => 2])];
+		$headerData['module_id']     = [canvas_table_row_attr('Module Name' , ['style' => 'text-align:center', 'rowspan' => 2])];
+		$headerData['target_table']  = [canvas_table_row_attr('Table Name'  , ['style' => 'text-align:center', 'rowspan' => 2])];
 		$headerData['target_roles']  = [
 			[
-				'column' => diy_table_row_attr('Role Query'  , ['style' => 'text-align:center;min-width:420px;', 'colspan' => 2]),
+				'column' => canvas_table_row_attr('Role Query'  , ['style' => 'text-align:center;min-width:420px;', 'colspan' => 2]),
 				'merge'  => [
-					diy_table_row_attr('Field Name'  , ['style' => 'text-align:center']),
-					diy_table_row_attr('Field Value' , ['style' => 'text-align:center'])
+					canvas_table_row_attr('Field Name'  , ['style' => 'text-align:center']),
+					canvas_table_row_attr('Field Value' , ['style' => 'text-align:center'])
 				]
 			]
 		];
-		$headerData['action_button'] = [diy_table_row_attr('Action'  , ['style' => 'text-align:center', 'rowspan' => 2])];
+		$headerData['action_button'] = [canvas_table_row_attr('Action'  , ['style' => 'text-align:center', 'rowspan' => 2])];
 		
 		$header    = array_merge_recursive($headerData['module_id'], $headerData['target_table'], $headerData['target_roles'], $headerData['action_button']);		
 		$row_table = $this->mapping_box();
 		
-		return diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false);
+		return canvas_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false);
 	}
 	
 	private $group_id;
@@ -137,17 +137,17 @@ trait MappingPage {
 		$current_rolemaps = [];
 		if (!empty($this->map()->current_data($this->group_id))) {
 			foreach ($this->map()->current_data($this->group_id) as $current_module => $current_module_data) {
-				$module_data = diy_query("base_module")->where('id', intval($current_module))->first();
+				$module_data = canvas_query("base_module")->where('id', intval($current_module))->first();
 				$current_rolemaps[$module_data->route_path]['model']['page_roles'] = $current_module_data;
 			}
 		}
 		
-		$this->model_class_info = diy_get_model_controllers_info($current_rolemaps);
+		$this->model_class_info = canvas_get_model_controllers_info($current_rolemaps);
 	}
 	
 	private function setID($string, $node = null) {
 		if (empty($node))	$node = $this->nodeID;
-		return diy_random_strings(8, false, $string, '__node__');
+		return canvas_random_strings(8, false, $string, '__node__');
 	}
 	
 	private function mapping_box() {
@@ -160,14 +160,14 @@ trait MappingPage {
 		foreach ($this->menu_privileges as $parent => $childs) {
 			$parent_title	= ucwords(str_replace('_', ' ', $parent));
 			if (!empty($childs->name)) $parent_title = $childs->name;
-			$row_table[]	= [diy_table_row_attr($icon . "{$parent_title}", ['style' => 'font-weight:500;text-indent:5pt;color:black', 'colspan' => 5])];
+			$row_table[]	= [canvas_table_row_attr($icon . "{$parent_title}", ['style' => 'font-weight:500;text-indent:5pt;color:black', 'colspan' => 5])];
 			
 			foreach ($childs as $child_name => $data_module) {
 				if (!isset($data_module->id)) {
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:12pt;color:green', 'colspan' => 5])];
+					$row_table[]	= [canvas_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:12pt;color:green', 'colspan' => 5])];
 					foreach ($data_module as $module_name => $module_data) {
 						if (!empty($this->model_class_info[$module_data->route])) {
 							$roleData = $this->model_class_info[$module_data->route];
@@ -181,7 +181,7 @@ trait MappingPage {
 							$module_title = ucwords(str_replace('_', ' ', $module_name));
 							if (!empty($module_data->name)) $module_title = $module_data->name;
 							 
-							$row_table[] = [diy_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:19pt', 'colspan' => 4])];
+							$row_table[] = [canvas_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:19pt', 'colspan' => 4])];
 							foreach ($module_data as $third_name => $third_data) {
 							if (!empty($this->model_class_info[$third_data->route])) {
 								$roleData = $this->model_class_info[$third_data->route];
@@ -240,7 +240,7 @@ trait MappingPage {
 		$data   = $this->map()::{$func}($table_name, $connection);
 		
 		foreach ((array)json_decode($data) as $label => $value) {
-			$result[$value] = ucwords(str_replace('-', ' ', diy_clean_strings($label)));
+			$result[$value] = ucwords(str_replace('-', ' ', canvas_clean_strings($label)));
 		}
 		
 		return $result;
@@ -252,7 +252,7 @@ trait MappingPage {
 			$connection                     = $roleData['model']['connection'];
 			$identifier                     = $roleData['model']['table_map'];
 			if (!empty($connection)) {
-				$identifier                  = $roleData['model']['table_map'] . $this->map()::$diycon . $connection;
+				$identifier                  = $roleData['model']['table_map'] . $this->map()::$canvascon . $connection;
 			}
 			$routeName                      = strtolower($module_data->route);
 			$routeNameAttribute             = str_replace('.', '-', $module_data->route);
@@ -282,8 +282,8 @@ trait MappingPage {
 					$roleValues['table_map']  = $buffer_table;
 					
 					$bufferTableGetField      = $buffer_table;
-					if (diy_string_contained($buffer_table, $this->map()::$diycon)) {
-						$buffer_table_split    = explode($this->map()::$diycon, $buffer_table);
+					if (canvas_string_contained($buffer_table, $this->map()::$canvascon)) {
+						$buffer_table_split    = explode($this->map()::$canvascon, $buffer_table);
 						$bufferTableGetField   = $buffer_table_split[0];
 						$connection            = $buffer_table_split[1];
 					}
@@ -308,10 +308,10 @@ trait MappingPage {
 			$nodeModel                      = str_replace('.', '-', $routeName);
 			$roleColumns                    = [];
 			$roleColumns['ajax_field_name'] = $this->ajax_urli('field_name', true);
-			$roleColumns['identifier']      = diy_input('hidden', "qmod-{$identifier}", $nodeModel, null, $module_data->id);
+			$roleColumns['identifier']      = canvas_input('hidden', "qmod-{$identifier}", $nodeModel, null, $module_data->id);
 			$tableID                        = $this->setID($identifier);
 			$tableLabel                     = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $roleData['model']['table_map']))));
-			$roleColumns['table_name']      = diy_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID, "class='{$tableID}{$this->nodeID}{$nodeModel}'");
+			$roleColumns['table_name']      = canvas_form_checkList($roleAttributes['table_name'], $roleValues['table_map'], $tableLabel, $roleValues['table_checked'], 'success read-select full-width text-left', $tableID, "class='{$tableID}{$this->nodeID}{$nodeModel}'");
 			
 			$fieldID   = $this->setID($identifier);
 			$valueID   = $this->setID($identifier);
@@ -324,8 +324,8 @@ trait MappingPage {
 				foreach ($buffer_data as $buffer_field => $buffered) {
 					$n++;
 					
-					$rand['f']          = diy_random_strings(8, false, null, null);
-					$rand['v']          = diy_random_strings(8, false, null, null);
+					$rand['f']          = canvas_random_strings(8, false, null, null);
+					$rand['v']          = canvas_random_strings(8, false, null, null);
 					
 					$fieldbuff['field'] = $fieldID . $rand['f'];
 					$fieldbuff['value'] = $valueID . $rand['v'];
@@ -341,10 +341,10 @@ trait MappingPage {
 						$fieldValueAttr  = ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'];
 					}
 					
-					$roleColumns['identifier'] = diy_input('hidden', "qmod-{$identifier}", $nodeModel, "{$this->roleNode}[module][{$module_data->route}]", $module_data->id);
+					$roleColumns['identifier'] = canvas_input('hidden', "qmod-{$identifier}", $nodeModel, "{$this->roleNode}[module][{$module_data->route}]", $module_data->id);
 					
 					$fieldNameValues    = $roleValues['field_name'][$identifier][$buffer_field];
-					$roleColumns['field_name'][$identifier][$buffer_field] = diy_form_selectbox (
+					$roleColumns['field_name'][$identifier][$buffer_field] = canvas_form_selectbox (
 						$this->rolename('field_name', [$routeName, $identifier]), 
 						$fieldNameValues['data'], 
 						$fieldNameValues['selected'], 
@@ -354,7 +354,7 @@ trait MappingPage {
 					);
 					
 					$fieldDataValues    = $roleValues['field_value'][$identifier][$buffer_field];			
-					$roleColumns['field_value'][$identifier][$buffer_field] = diy_form_selectbox (
+					$roleColumns['field_value'][$identifier][$buffer_field] = canvas_form_selectbox (
 						$this->rolename('field_value', [$routeName, $identifier, array_keys($fieldNameValues['selected'])[0]]), 
 						$fieldDataValues['data'],
 						$fieldDataValues['selected'], 
@@ -364,25 +364,25 @@ trait MappingPage {
 					);
 				}
 			} else {
-				$roleColumns['field_name']  = diy_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);				
-				$roleColumns['field_value'] = diy_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
+				$roleColumns['field_name']  = canvas_form_selectbox($roleAttributes['field_name'] , $roleValues['field_name'] , null, ['id' => $fieldID, 'class' => $routeToAttribute . "{$fieldID}field_name"], false, false);				
+				$roleColumns['field_value'] = canvas_form_selectbox($roleAttributes['field_value'], $roleValues['field_value'], null, ['id' => $valueID, 'class' => $routeToAttribute . "{$valueID}field_value", 'multiple'], false, false);
 			}
 			
 			$module_name_label = ucwords(str_replace('_', ' ', str_replace('view_', ' ', str_replace('t_', ' ', $module_name))));
 			$opt               = ['align' => 'center', 'id' => strtolower($module_name) . '-row', 'colspan' => 2, 'style' => 'padding: 0 !important;'];
 			
-			$mergeBox          = diy_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns, $buffers, $fieldbuff);
+			$mergeBox          = canvas_draw_query_map_page_table($routeToAttribute, $fieldID, $valueID, $roleColumns, $buffers, $fieldbuff);
 			
 			$resultBox         = [];
-			$resultBox['head'] = [diy_table_row_attr($icon . $module_name_label . $roleColumns['identifier'], ['style' => 'text-indent:19pt', 'id' => strtolower($module_name) . '-row'])];
+			$resultBox['head'] = [canvas_table_row_attr($icon . $module_name_label . $roleColumns['identifier'], ['style' => 'text-indent:19pt', 'id' => strtolower($module_name) . '-row'])];
 			$resultBox['body'] = [
-				diy_table_row_attr($roleColumns['table_name'] , ['align' => 'left', 'id' => strtolower($module_name) . '-row']),
-				diy_table_row_attr($mergeBox , $opt),
+				canvas_table_row_attr($roleColumns['table_name'] , ['align' => 'left', 'id' => strtolower($module_name) . '-row']),
+				canvas_table_row_attr($mergeBox , $opt),
 			];
 			
 			$nodebtn = "node_btn_{$tableID}{$this->nodeActionButton}{$fieldID}{$this->nodeActionButton}{$valueID}";
 			$resultBox['scripts']['table'] = [
-				diy_table_row_attr (
+				canvas_table_row_attr (
 					$this->buttonAdd($nodebtn, $tableID, $fieldID, $valueID) . 
 					$this->js_rolemap_table($tableID, $fieldID, $valueID, $nodebtn, $nodeModel) .
 					$this->js_rolemap_fieldname($fieldID, $valueID),
@@ -397,7 +397,7 @@ trait MappingPage {
 	}
 	
 	private function ajax_urli($usein, $return_data = false) {
-		$current_url  = url(str_replace('.', '/', diy_current_baseroute()));
+		$current_url  = url(str_replace('.', '/', canvas_current_baseroute()));
 		$urlset       = [
 			'rolemapage' => 'true',
 			'usein'      => $usein,
@@ -418,16 +418,16 @@ trait MappingPage {
 	
 	private function js_rolemap_table($id, $target_id, $second_target, $nodebtn, $nodeModel) {
 		$this->ajax_urli('table_name');
-		return diy_script("mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}', '{$nodeModel}');");
+		return canvas_script("mappingPageTableFieldname('{$id}', '{$target_id}', '{$this->ajaxUrli}', '{$second_target}', '{$nodebtn}', '{$nodeModel}');");
 	}
 	
 	private function js_rolemap_fieldname($id, $target_id) {
 		$this->ajax_urli('field_name');
-		return diy_script("mappingPageFieldnameValues('{$id}', '{$target_id}', '{$this->ajaxUrli}');");
+		return canvas_script("mappingPageFieldnameValues('{$id}', '{$target_id}', '{$this->ajaxUrli}');");
 	}
 	
 	private function buttonAdd($node_btn, $id, $target_id, $second_target) {
 		$this->ajax_urli('field_name');		
-		return diy_mappage_button_add($this->ajaxUrli, $node_btn, $id, $target_id, $second_target);
+		return canvas_mappage_button_add($this->ajaxUrli, $node_btn, $id, $target_id, $second_target);
 	}
 }

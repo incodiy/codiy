@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft;
+namespace Canvastack\Origin\Controllers\Core\Craft;
 
 //use Illuminate\Support\Facades\Session as Sessions;
 
@@ -9,9 +9,9 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
  *
  * @filesource	Session.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 trait Session {
@@ -22,7 +22,7 @@ trait Session {
 	 * Set Session From User Logged In
 	 */
 	public function set_session() {
-		$session_original       = diy_sessions();
+		$session_original       = canvas_sessions();
 		$this->session          = $session_original;
 		$this->data['sessions'] = $this->session;
 		

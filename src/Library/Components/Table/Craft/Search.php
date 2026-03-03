@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 
-use Incodiy\Codiy\Library\Components\Form\Objects as Form;
+use Canvastack\Origin\Library\Components\Form\Objects as Form;
 use Illuminate\Support\Facades\Request;
 /**
  * Created on 24 Apr 2021
@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Request;
  *
  * @filesource Search.php
  *
- * @author     wisnuwidi@incodiy.com - 2021
+ * @author     wisnuwidi@canvastack.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class Search {
 	
@@ -31,7 +31,7 @@ class Search {
 	public function __construct($info, $model = null, $filters = [], $sql = null, $connection = null, $filterQuery = []) {
 		if (!empty($connection)) $this->searchConnection = $connection;
 		
-		if (diy_string_contained($filters['table_name'], 'view_'))  $this->tableFromView = true;
+		if (canvas_string_contained($filters['table_name'], 'view_'))  $this->tableFromView = true;
 		
 		$this->info = $info;
 		if (!empty($model)) $model = new $model();
@@ -49,7 +49,7 @@ class Search {
 		$this->sql          = $sql;
 		
 		if (!empty($filters['filter_groups'])) $this->getFilterData($filters['filter_groups']);
-		if (!empty($filterQuery)) $this->filters['filter_query'] = diy_filter_data_normalizer($filterQuery);
+		if (!empty($filterQuery)) $this->filters['filter_query'] = canvas_filter_data_normalizer($filterQuery);
 	}
 	
 	public function render($info, string $table, array $fields) {
@@ -57,7 +57,7 @@ class Search {
 			$this->search_box($info, $table, $this->getColumnInfo($table, $fields), $this->model);
 			
 			$data         = [];
-			$data['name'] = ucwords(str_replace('-', ' ', diy_clean_strings($table)));
+			$data['name'] = ucwords(str_replace('-', ' ', canvas_clean_strings($table)));
 			$data['html'] = $this->html;
 			
 			return $data;
@@ -65,7 +65,7 @@ class Search {
 	}
 	
 	private function select($sql, $connection = null) {
-		return diy_query($sql, 'SELECT', $connection);
+		return canvas_query($sql, 'SELECT', $connection);
 	}
 	
 	private $data = [];
@@ -257,7 +257,7 @@ class Search {
 						$attributes = ['id' => $field, 'class' => "{$field}_{$classFieldInfo}" . " export_{$classFieldInfo}", 'disabled' => 'disabled'];
 					}
 					
-					$field_label = ucwords(diy_clean_strings($field, ' '));
+					$field_label = ucwords(canvas_clean_strings($field, ' '));
 					if ('selectbox' === $type) {
 						if (null === $values[$field]) {
 							$values[$field][null] = 'No Data ' . $field_label . ' Found';
@@ -332,15 +332,15 @@ class Search {
 			}
 		}
 		
-		$boxTitle   = ucwords(str_replace('-', ' ', diy_clean_strings($tablename)));
+		$boxTitle   = ucwords(str_replace('-', ' ', canvas_clean_strings($tablename)));
 		$boxName    = $info . 'modalBOX';
 		$this->addScriptsTemplate($script_elements, $tablename, $boxName, $filterQuery);
-		$this->html = diy_modal_content_html($boxName, $boxTitle, $this->form->elements);
+		$this->html = canvas_modal_content_html($boxName, $boxTitle, $this->form->elements);
 	}
 	
 	public $add_scripts  = [];
 	private function addScriptsTemplate(array $element_scripts, string $table, $node, $filters = []) {
-		$current_template = diy_template_config('admin.' . diy_current_template());
+		$current_template = canvas_template_config('admin.' . canvas_current_template());
 		unset($current_template['position']);
 		
 		$nodElm           = str_replace('modalBOX', '', $node);
@@ -365,11 +365,11 @@ class Search {
 					foreach ($data as $script_type => $script_paths) {
 						if ('js' === $script_type) {
 							foreach ($script_paths as $script_path) {
-								$this->add_scripts['js'][]  = diy_script_check_string_path(str_replace('last:js', 'js', $script_path));
+								$this->add_scripts['js'][]  = canvas_script_check_string_path(str_replace('last:js', 'js', $script_path));
 							}
 						} else {
 							foreach ($script_paths as $script_path) {
-								$this->add_scripts['css'][] = diy_script_check_string_path(str_replace('last:css', 'css', $script_path));
+								$this->add_scripts['css'][] = canvas_script_check_string_path(str_replace('last:css', 'css', $script_path));
 							}
 						}
 					}
@@ -378,7 +378,7 @@ class Search {
 		}
 	}
 	
-	private $scriptToHTML = 'diyScriptNode::';
+	private $scriptToHTML = 'canvasScriptNode::';
 	private function script_next_data($node, $identity, $fields, $table, $filters = []) {
 		$currKey     = key($fields['current']);
 		$iNode       = $this->cleardash(str_replace('modalBOX', $identity, $node));
@@ -451,7 +451,7 @@ class Search {
 		if (!empty($this->foreign_keys)) $forkey = $this->foreign_keys;
 		$forkeys     = json_encode($forkey);
 		
-		$uri         = diy_get_ajax_urli('filterDataTables', $this->searchConnection);
+		$uri         = canvas_get_ajax_urli('filterDataTables', $this->searchConnection);
 		$token       = csrf_token();
 		$target      = ucwords(str_replace('_', ' ', $next_target));
 		$ajaxSuccess = null;
@@ -459,15 +459,15 @@ class Search {
 		if (!empty($next_target)) {
 			$ajaxConnection = '';
 			if (!empty($this->searchConnection)) {
-				$ajaxConnection = ",'grabCoDIYC':'{$this->searchConnection}'";
+				$ajaxConnection = ",'grabCanvaStackC':'{$this->searchConnection}'";
 			}
 			
-			$diyF = null;
+			$canvasF = null;
 			if (!empty($filters)) {
-				$diyFilters = json_encode($filters);
-				$diyF       = ",'_diyF':{$diyFilters}";
+				$canvasFilters = json_encode($filters);
+				$canvasF       = ",'_canvasF':{$canvasFilters}";
 			}
-			$ajax_data    = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}{$diyF}}";
+			$ajax_data    = "{'{$identity}':_val{$iNode},'_fita':'{$token}::{$table}::{$next_target}::{$prev}#' + _prevS{$iNode} + '::{$nest}','_token':'{$token}','_n':'{$nest}','_forKeys':'{$forkeys}'{$ajaxConnection}{$canvasF}}";
 			
 			$ajaxSuccess  = "var _next{$next_target} = '{$target}';";
 			$ajaxSuccess .= "var _prevS{$iNode} = {$prevscript};";
@@ -577,13 +577,13 @@ class Search {
 		$connection = 'mysql';
 		if (!empty($this->searchConnection)) $connection = $this->searchConnection;
 		
-		return diy_get_table_columns($table, $connection);
+		return canvas_get_table_columns($table, $connection);
 	}
 	
 	private function getColumnType($table, $column) {
 		$connection = 'mysql';
 		if (!empty($this->searchConnection)) $connection = $this->searchConnection;
 		
-		return diy_get_table_column_type($table, $column, $connection);
+		return canvas_get_table_column_type($table, $column, $connection);
 	}
 }

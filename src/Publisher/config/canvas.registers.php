@@ -3,11 +3,11 @@
  * Created on 17 Jun 2021
  * Time Created	: 16:58:53
  *
- * @filesource	diy.registers.php
+ * @filesource	canvas.registers.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 return [

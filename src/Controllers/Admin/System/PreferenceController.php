@@ -1,12 +1,12 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
 use Illuminate\Http\Request;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\System\Preference;
-use Incodiy\Codiy\Models\Admin\System\Language;
-use Incodiy\Codiy\Models\Admin\System\Timezone;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\System\Preference;
+use Canvastack\Origin\Models\Admin\System\Language;
+use Canvastack\Origin\Models\Admin\System\Timezone;
 
 /**
  * Created on Mar 7, 2018
@@ -15,9 +15,9 @@ use Incodiy\Codiy\Models\Admin\System\Timezone;
  *
  * @filesource	PreferenceController.php
  *
- * @author		wisnuwidi@incodiy.com - 2018
+ * @author		wisnuwidi@canvastack.com - 2018
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 class PreferenceController extends Controller {
 	public $data;
@@ -32,8 +32,8 @@ class PreferenceController extends Controller {
 			 */
 			'template'         => 'required',
 			'meta_author'      => 'required',
-			'logo'             => diy_image_validations(800),
-			'login_background' => diy_image_validations(2000)
+			'logo'             => canvas_image_validations(800),
+			'login_background' => canvas_image_validations(2000)
 		]);
 	}
 	
@@ -49,11 +49,11 @@ class PreferenceController extends Controller {
 	}
 	
 	private function input_language() {
-		return diy_selectbox(Language::all(), 'abbr', 'language');
+		return canvas_selectbox(Language::all(), 'abbr', 'language');
 	}
 	
 	private function input_timezone() {
-		return diy_selectbox(Timezone::all(), 'id', 'timezone');
+		return canvas_selectbox(Timezone::all(), 'id', 'timezone');
 	}
 	
 	public function edit($id) {

@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Auth;
+namespace Canvastack\Origin\Controllers\Auth;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Controllers\Admin\System\AuthController;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Admin\System\AuthController;
 
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;

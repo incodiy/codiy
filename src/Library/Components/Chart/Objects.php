@@ -1,13 +1,13 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart;
+namespace Canvastack\Origin\Library\Components\Chart;
 
-use Incodiy\Codiy\Library\Components\Chart\Includes\DataConstructions;
-use Incodiy\Codiy\Library\Components\Chart\Includes\Scripts;
-use Incodiy\Codiy\Library\Components\Chart\Canvas\Column\Canvas as Column;
-use Incodiy\Codiy\Library\Components\Chart\Canvas\Bar\Canvas as Bar;
-use Incodiy\Codiy\Library\Components\Chart\Canvas\Line\Canvas as Line;
-use Incodiy\Codiy\Library\Components\Chart\Canvas\Area\Canvas as Area;
-use Incodiy\Codiy\Library\Components\Chart\Canvas\Combinations\DualAxesLineAndColumn as DualAxes;
+use Canvastack\Origin\Library\Components\Chart\Includes\DataConstructions;
+use Canvastack\Origin\Library\Components\Chart\Includes\Scripts;
+use Canvastack\Origin\Library\Components\Chart\Canvas\Column\Canvas as Column;
+use Canvastack\Origin\Library\Components\Chart\Canvas\Bar\Canvas as Bar;
+use Canvastack\Origin\Library\Components\Chart\Canvas\Line\Canvas as Line;
+use Canvastack\Origin\Library\Components\Chart\Canvas\Area\Canvas as Area;
+use Canvastack\Origin\Library\Components\Chart\Canvas\Combinations\DualAxesLineAndColumn as DualAxes;
 
 /**
  * Created on Oct 10, 2022
@@ -16,9 +16,9 @@ use Incodiy\Codiy\Library\Components\Chart\Canvas\Combinations\DualAxesLineAndCo
  *
  * @filesource	Objects.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 class Objects extends Charts {
@@ -47,8 +47,8 @@ class Objects extends Charts {
 	}
 	
 	private function setPrefix($function_name, $source) {
-		$prefix = 'codiy-charts';
-		$random = $prefix . '-' . $this->chartInfo . '-' . diy_random_strings(50, false);
+		$prefix = 'CanvaStack-charts';
+		$random = $prefix . '-' . $this->chartInfo . '-' . canvas_random_strings(50, false);
 		
 		$this->identities['prefix'][$function_name][$source] = $random;
 	}
@@ -80,7 +80,7 @@ class Objects extends Charts {
 	}
 	
 	private function setTitle($function_name, $identify, $title = null) {
-		if (diy_string_contained($title, 't_view')) {
+		if (canvas_string_contained($title, 't_view')) {
 			$setTitle = ucwords(str_replace('_', ' ', str_replace('t_view_', '', $title)));
 		} else {
 			$setTitle = ucwords(str_replace('_', ' ', $title));

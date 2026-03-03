@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Database\Seeders\Includes\App;
+namespace Canvastack\Origin\Database\Seeders\Includes\App;
 
 use Illuminate\Support\Facades\DB;
 /**
@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
  *
  * @filesource	Groups.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait Groups {

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft;
+namespace Canvastack\Origin\Controllers\Core\Craft;
 /**
  * Created on 2 Apr 2023
  *
@@ -9,7 +9,7 @@ namespace Incodiy\Codiy\Controllers\Core\Craft;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 trait Handler {
@@ -45,9 +45,9 @@ trait Handler {
 	}
 	
 	private function sessionConfig() {
-		$user_group_session_key   = diy_config('user.group_alias_key');
-		$user_group_session_field = diy_config('user.group_alias_field');
-		$user_session_alias       = diy_config('user.alias_session_name');
+		$user_group_session_key   = canvas_config('user.group_alias_key');
+		$user_group_session_field = canvas_config('user.group_alias_field');
+		$user_session_alias       = canvas_config('user.alias_session_name');
 		
 		if (!empty($this->session[$user_group_session_field])) {
 			$this->filterPage([$user_group_session_key => $this->session[$user_group_session_field]], '=');

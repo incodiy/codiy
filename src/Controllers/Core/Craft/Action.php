@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft;
+namespace Canvastack\Origin\Controllers\Core\Craft;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Incodiy\Codiy\Models\Admin\System\DynamicTables;
-use Incodiy\Codiy\Library\Components\Charts\Objects as Chart;
+use Canvastack\Origin\Models\Admin\System\DynamicTables;
+use Canvastack\Origin\Library\Components\Charts\Objects as Chart;
 
 /**
  * Created on 24 Mar 2021
@@ -12,9 +12,9 @@ use Incodiy\Codiy\Library\Components\Charts\Objects as Chart;
  *
  * @filesource Action.php
  *
- * @author    wisnuwidi@incodiy.com - 2021
+ * @author    wisnuwidi@canvastack.com - 2021
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
  
 trait Action {
@@ -164,7 +164,7 @@ trait Action {
 			
 			// check if any input file type submited
 			$data            = $this->checkFileInputSubmited($request);
-			$this->stored_id = diy_insert($model, $data, true);
+			$this->stored_id = canvas_insert($model, $data, true);
 		}
 	}
 	
@@ -191,7 +191,7 @@ trait Action {
 	 */
 	public function setValidations($roles = [], $on_update = []) {
 		$this->validations = $roles;
-		if (!empty($on_update) && diy_array_contained_string(['edit', 'update'], explode('.', current_route()))) {
+		if (!empty($on_update) && canvas_array_contained_string(['edit', 'update'], explode('.', current_route()))) {
 			unset($this->validations);
 			$this->validations = $on_update;
 		}
@@ -245,7 +245,7 @@ trait Action {
 		if (!empty($message)) $compact['message'] = compact('message');
 		if (!empty($status))  $compact['status']  = compact('status');
 		
-		return diy_redirect($to, $compact['message'], $compact['status']);
+		return canvas_redirect($to, $compact['message'], $compact['status']);
 	}
 	
 	private function UPDATE_DATA_PROCESSOR(Request $request, $id, $routeback = true) {
@@ -255,7 +255,7 @@ trait Action {
 		// check if any input file type submited
 		$data = $this->checkFileInputSubmited($request);
 		
-		diy_update($model, $data);
+		canvas_update($model, $data);
 		$this->stored_id = intval($id);
 	}
 	
@@ -271,7 +271,7 @@ trait Action {
 	
 	protected function destroy(Request $request, $id) {
 		$model = $this->getModel($id);
-		diy_delete($request, $model, $id);
+		canvas_delete($request, $model, $id);
 		
 		return $this->routeBackAfterAction(__FUNCTION__);
 	}
@@ -328,7 +328,7 @@ trait Action {
 		
 		$this->model_path       = $class;
 		$this->model_filters    = $filter;
-		$this->softDeletedModel = diy_is_softdeletes($class);
+		$this->softDeletedModel = canvas_is_softdeletes($class);
 		
 		$this->model            = new $this->model_path();
 		$this->model_table      = $this->model->getTable();
@@ -342,8 +342,8 @@ trait Action {
 		}
 		$this->model_original   = $this->model;
 		
-		if (!empty(diy_get_current_route_id())) {
-			$this->model_id     = diy_get_current_route_id();
+		if (!empty(canvas_get_current_route_id())) {
+			$this->model_id     = canvas_get_current_route_id();
 			$this->model_find($this->model_id);
 		//	$this->connection   = $this->model->getConnectionName();
 		}
@@ -395,10 +395,10 @@ trait Action {
 				}
 				
 			} else {
-				return diy_get_model($model, $find);
+				return canvas_get_model($model, $find);
 			}
 		} else {
-			return diy_get_model($model, $find);
+			return canvas_get_model($model, $find);
 		}
 	}
 	

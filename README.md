@@ -16,8 +16,8 @@ This library used for simplifying some code with Laravel framework, hopefully ca
 
 1). INSTALL LARAVEL (Max : Version 10)
 --------------------------------------------------------------------------------
-	composer create-project --prefer-dist laravel/laravel:10.0 incodiy (webappname)
- 	cd incodiy/ [cd webappname/]
+	composer create-project --prefer-dist laravel/laravel:10.0 canvastack (webappname)
+ 	cd canvastack/ [cd webappname/]
 
 
 2). INSTALL LIBRARY WITH JSON FILE SETTING OR VIA COMPOSER CLI:
@@ -25,17 +25,17 @@ This library used for simplifying some code with Laravel framework, hopefully ca
 	WITH JSON FILE:
  	
 	"require": {
-		"incodiy/codiy": "dev-master"
+		"canvastack/canvastack": "dev-master"
 	},
 	"repositories": [{
 		"type" : "vcs",
-		"url"  : "git@github.com:incodiy/codiy.git"
+		"url"  : "git@github.com:canvastack/canvastack.git"
 	}]
 
  	
   	OR VIA COMPOSER
    	
-	Just type this code: composer require incodiy/codiy
+	Just type this code: composer require canvastack/canvastack
 
 3). COMPOSER UPDATE
 --------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ This library used for simplifying some code with Laravel framework, hopefully ca
 
 7). CONFIG FILE
 --------------------------------------------------------------------------------
-	Change baseURL path in config file with your own path [ config/diy.settings.php in line:35 ]
+	Change baseURL path in config file with your own path [ config/canvas.settings.php in line:35 ]
 
 
 8). DEMO ACCESS
@@ -73,7 +73,7 @@ This library used for simplifying some code with Laravel framework, hopefully ca
 	password: @admin
 	
 --------------------------------------------------------------------------------
-Visit the demo site at [demo.incodiy.com](https://demo.incodiy.com/login)
+Visit the demo site at [demo.canvastack.com](https://demo.canvastack.com/login)
 
 
 

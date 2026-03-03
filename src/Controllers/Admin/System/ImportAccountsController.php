@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System;
+namespace Canvastack\Origin\Controllers\Admin\System;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Core\Controller;
 use Illuminate\Http\Request;
-use Incodiy\Codiy\Models\Admin\System\Group;
-use Incodiy\Codiy\Models\Admin\System\ImportAccounts;
+use Canvastack\Origin\Models\Admin\System\Group;
+use Canvastack\Origin\Models\Admin\System\ImportAccounts;
 use Illuminate\Support\Facades\Auth;
 /**
  * Created on Dec 13, 2022
@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Auth;
  *
  * @filesource	ImportAccountsController.php
  *
- * @author      wisnuwidi@incodiy.com - 2022
+ * @author      wisnuwidi@canvastack.com - 2022
  * @copyright   wisnuwidi
- * @email       wisnuwidi@incodiy.com
+ * @email       wisnuwidi@canvastack.com
  * 
  * @uses        'username|email|fullname|role|info|alias'
  *              'pass format prefix_[lower(username)]_suffix'
@@ -191,7 +191,7 @@ class ImportAccountsController extends Controller {
 						$requestGroup['email']    = $dataUsers['email'];
 						$insertUserRequests       = $dataUsers;
 						$requests                 = new Request([
-							'diyImportProcess' => true,
+							'canvasImportProcess' => true,
 							'user'             => $insertUserRequests,
 							'group'            => $requestGroup
 						]);
@@ -227,11 +227,11 @@ class ImportAccountsController extends Controller {
 				$fieldname  = $fileHeader[$i];
 				$fieldvalue = $row;
 				
-				if (diy_string_contained($fieldname, 'username')) $fieldvalue = strtolower($row);
-				if (diy_string_contained($fieldname, 'fullname') || diy_string_contained($fieldname, 'alias') || diy_string_contained($fieldname, 'info') || diy_string_contained($fieldname, 'maps')) $fieldvalue = ucwords($row);
+				if (canvas_string_contained($fieldname, 'username')) $fieldvalue = strtolower($row);
+				if (canvas_string_contained($fieldname, 'fullname') || canvas_string_contained($fieldname, 'alias') || canvas_string_contained($fieldname, 'info') || canvas_string_contained($fieldname, 'maps')) $fieldvalue = ucwords($row);
 				
-				if (diy_string_contained($fieldname, 'role')) $contentFile['roles'][$n]['role']  = $fieldvalue;
-				if (diy_string_contained($fieldname, 'role')) {
+				if (canvas_string_contained($fieldname, 'role')) $contentFile['roles'][$n]['role']  = $fieldvalue;
+				if (canvas_string_contained($fieldname, 'role')) {
 				    $roleFieldValue = explode('-', $fieldvalue);
 				    foreach ($roleFieldValue as $nr => $roleDataFieldValue) {
 				        if (0 === $nr && strlen($roleDataFieldValue) <= 4) {
@@ -244,15 +244,15 @@ class ImportAccountsController extends Controller {
 				    
 				    $contentFile['roles'][$n]['role']  = $roleDataValue;
 				}
-				if (diy_string_contained($fieldname, 'info'))  $contentFile['roles'][$n]['info']  = $fieldvalue;
-				if (diy_string_contained($fieldname, 'alias')) $contentFile['roles'][$n]['alias'] = $fieldvalue;
+				if (canvas_string_contained($fieldname, 'info'))  $contentFile['roles'][$n]['info']  = $fieldvalue;
+				if (canvas_string_contained($fieldname, 'alias')) $contentFile['roles'][$n]['alias'] = $fieldvalue;
 				
-				if (!diy_string_contained($fieldname, 'info') && !diy_string_contained($fieldname, 'alias')) {
-				    if (diy_string_contained($fieldname, 'email')) {
+				if (!canvas_string_contained($fieldname, 'info') && !canvas_string_contained($fieldname, 'alias')) {
+				    if (canvas_string_contained($fieldname, 'email')) {
 				        $userLists[$n][$fieldname] = strtolower(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
-				    } elseif (diy_string_contained($fieldname, 'username')) {
+				    } elseif (canvas_string_contained($fieldname, 'username')) {
 				        $userLists[$n][$fieldname] = strtolower(str_replace('_', ' ', str_replace('-', ' ', $fieldvalue)));
-				    } elseif (diy_string_contained($fieldname, 'role')) {
+				    } elseif (canvas_string_contained($fieldname, 'role')) {
 				        $roleFieldValue = explode('-', $fieldvalue);
 				        foreach ($roleFieldValue as $nr => $roleDataFieldValue) {
 				            if (0 === $nr && strlen($roleDataFieldValue) <= 4) {

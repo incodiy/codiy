@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -105,7 +105,7 @@ class User extends Authenticatable {
 	}
 	
 	public static function getGroupIdentity($id) {
-		$group = diy_query("SELECT group_name, group_alias, group_info FROM base_group WHERE active = 1 AND id = {$id}", 'SELECT');
+		$group = canvas_query("SELECT group_name, group_alias, group_info FROM base_group WHERE active = 1 AND id = {$id}", 'SELECT');
 
 		return $group[0];
 	}

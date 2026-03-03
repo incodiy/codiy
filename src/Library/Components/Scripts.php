@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components;
+namespace Canvastack\Origin\Library\Components;
 
 /**
  * Created on 12 Mar 2021
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components;
  *
  * @filesource Scripts.php
  *
- * @author     wisnuwidi@incodiy.com - 2021
+ * @author     wisnuwidi@canvastack.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
  
 class Scripts {
@@ -20,9 +20,9 @@ class Scripts {
 	public $scripts = [];
 	
 	public function __construct() {
-		$this->baseURL    = diy_config('baseURL');
-		$this->currentURL = diy_url('current');
-		$this->assetPath  = diy_script_asset_path();
+		$this->baseURL    = canvas_config('baseURL');
+		$this->currentURL = canvas_url('current');
+		$this->assetPath  = canvas_script_asset_path();
 	}
 	
 	/**
@@ -83,7 +83,7 @@ class Scripts {
 		$scriptsHTML = [ ];
 		
 		if (true === $as_script_code) {
-			return diy_array_to_object_recursive([
+			return canvas_array_to_object_recursive([
 				'url'  => false,
 				'html' => '<script type="text/javascript">' . $string . '</script>'
 			]);
@@ -91,16 +91,16 @@ class Scripts {
 		
 		if ((str_contains($string, $containedType) || str_contains($string, $containedTag)) || (str_contains($string, $containedSrc))) {
 			// Get script in HTML
-			$scriptsText = diy_script_html_element_value($string, 'script', 'src', false);
-			$scriptsHTML = str_replace('</script>', '', diy_script_html_element_value($string, 'script', 'src')) . '</script>';
+			$scriptsText = canvas_script_html_element_value($string, 'script', 'src', false);
+			$scriptsHTML = str_replace('</script>', '', canvas_script_html_element_value($string, 'script', 'src')) . '</script>';
 		} else {
 			// Get script in text
-			$scriptsText = diy_script_check_string_path($string);
-			$scriptsHTML = '<script type="text/javascript" src="' . diy_script_check_string_path($string) . '"></script>';
+			$scriptsText = canvas_script_check_string_path($string);
+			$scriptsHTML = '<script type="text/javascript" src="' . canvas_script_check_string_path($string) . '"></script>';
 		}
 		
 		if (!empty($scriptsText)) {
-			return diy_array_to_object_recursive([
+			return canvas_array_to_object_recursive([
 				'url' => $scriptsText,
 				'html' => $scriptsHTML
 			]);
@@ -115,7 +115,7 @@ class Scripts {
 		$scriptsHTML   = [];
 		
 		if (true === $as_script_code) {
-			return diy_array_to_object_recursive([
+			return canvas_array_to_object_recursive([
 				'url'  => false,
 				'html' => '<style>' . $string . '</style>'
 			]);
@@ -123,15 +123,15 @@ class Scripts {
 		
 		if ((str_contains($string, $containedType) || str_contains($string, $containedTag)) || (str_contains($string, $containedSrc))) {
 			// Get script in HTML
-			$scriptsText = diy_script_html_element_value($string, 'link', 'href', false);
-			$scriptsHTML = diy_script_html_element_value($string, 'link', 'href');
+			$scriptsText = canvas_script_html_element_value($string, 'link', 'href', false);
+			$scriptsHTML = canvas_script_html_element_value($string, 'link', 'href');
 		} else {
 			// Get script in text
 			$scriptsText = $string;
-			$scriptsHTML = '<link rel="stylesheet" href="' . diy_script_check_string_path($string) . '" />';
+			$scriptsHTML = '<link rel="stylesheet" href="' . canvas_script_check_string_path($string) . '" />';
 		}
 		
-		return diy_array_to_object_recursive([
+		return canvas_array_to_object_recursive([
 			'url'  => $scriptsText,
 			'html' => $scriptsHTML
 		]);

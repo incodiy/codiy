@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Library\Components;
+namespace Canvastack\Origin\Library\Components;
 
-use Incodiy\Codiy\Models\Admin\System\Preference;
+use Canvastack\Origin\Models\Admin\System\Preference;
 
 /**
  * Meta Tags Class
@@ -9,8 +9,8 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  * Created on Jun 4, 2016
  * Time Created : 8:10:51 PM
  *
- * @author      : wisnuwidi @IncoDIY - 2016
- * @link        : wisnuwidi@incodiy.com
+ * @author      : wisnuwidi @CanvaStack - 2016
+ * @link        : wisnuwidi@canvastack.com
  * @copyright   : Wisnu Widiantoko
  */
 class MetaTags {
@@ -72,7 +72,7 @@ class MetaTags {
 	}
 	
 	private function config($name) {
-		return diy_config("{$name}");
+		return canvas_config("{$name}");
 	}
 	
 	/**

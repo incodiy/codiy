@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\DB;
  *
  * @filesource	Table.php
  *
- * @author    wisnuwidi@incodiy.com - 2021
+ * @author    wisnuwidi@canvastack.com - 2021
  * @copyright wisnuwidi
- * @email     wisnuwidi@incodiy.com
+ * @email     wisnuwidi@canvastack.com
  */
  
-if (!function_exists('diy_filter_data_normalizer')) {
+if (!function_exists('canvas_filter_data_normalizer')) {
 	
 	/**
 	 * Normalizing Data Filters
@@ -21,7 +21,7 @@ if (!function_exists('diy_filter_data_normalizer')) {
 	 * 
 	 * @return array
 	 */
-	function diy_filter_data_normalizer($filters = []) {
+	function canvas_filter_data_normalizer($filters = []) {
 		$filterData = [];
 		
 		foreach ($filters as $filter_data) {
@@ -52,7 +52,7 @@ if (!function_exists('diy_filter_data_normalizer')) {
 	}
 }
 
-if (!function_exists('diy_get_model_table')) {
+if (!function_exists('canvas_get_model_table')) {
 	
 	/**
 	 * Get Table Name From Data Model
@@ -62,14 +62,14 @@ if (!function_exists('diy_get_model_table')) {
 	 *
 	 * @return object|array
 	 */
-	function diy_get_model_table($model, $find = false) {
-		$model = diy_get_model($model, $find);
+	function canvas_get_model_table($model, $find = false) {
+		$model = canvas_get_model($model, $find);
 		
 		return $model->getTable();
 	}
 }
 
-if (!function_exists('diy_get_all_tables')) {
+if (!function_exists('canvas_get_all_tables')) {
 	
 	/**
 	 * Get All Table Lists From Host Connection
@@ -78,14 +78,14 @@ if (!function_exists('diy_get_all_tables')) {
 	 *
 	 * @return object|array
 	 */
-	function diy_get_all_tables($connection = null) {
+	function canvas_get_all_tables($connection = null) {
 		return collect(DB::connection($connection)->select('show tables'))->map(function ($val) {
 			foreach ($val as $tbl) return $tbl;
 		});
 	}
 }
 
-if (!function_exists('diy_set_connection_separator')) {
+if (!function_exists('canvas_set_connection_separator')) {
 	
 	/**
 	 * Set Separator Connection
@@ -94,12 +94,12 @@ if (!function_exists('diy_set_connection_separator')) {
 	 *
 	 * @return array
 	 */
-	function diy_set_connection_separator($separator = '--diycon--') {
+	function canvas_set_connection_separator($separator = '--canvascon--') {
 		return $separator;
 	}
 }
 
-if (!function_exists('diy_check_table_columns')) {
+if (!function_exists('canvas_check_table_columns')) {
 	
 	/**
 	 * Check if Table Column(s) Exist
@@ -108,13 +108,13 @@ if (!function_exists('diy_check_table_columns')) {
 	 *
 	 * @return array
 	 */
-	function diy_check_table_columns($table_name, $field_name, $db_connection = 'mysql') {
+	function canvas_check_table_columns($table_name, $field_name, $db_connection = 'mysql') {
 		$connection = DB::connection($db_connection);
 		return $connection->getSchemaBuilder()->hasColumn($table_name, $field_name);
 	}
 }
 
-if (!function_exists('diy_get_table_columns')) {
+if (!function_exists('canvas_get_table_columns')) {
 	
 	/**
 	 * Get Table Column(s)
@@ -123,13 +123,13 @@ if (!function_exists('diy_get_table_columns')) {
 	 *
 	 * @return array
 	 */
-	function diy_get_table_columns($table_name, $db_connection = 'mysql') {
+	function canvas_get_table_columns($table_name, $db_connection = 'mysql') {
 		$connection = DB::connection($db_connection);
 		return $connection->getSchemaBuilder()->getColumnListing($table_name);
 	}
 }
 
-if (!function_exists('diy_get_table_column_type')) {
+if (!function_exists('canvas_get_table_column_type')) {
 	
 	/**
 	 * Get Table Column(s)
@@ -139,13 +139,13 @@ if (!function_exists('diy_get_table_column_type')) {
 	 *
 	 * @return string
 	 */
-    function diy_get_table_column_type($table_name, $field_name, $db_connection = 'mysql') {
+    function canvas_get_table_column_type($table_name, $field_name, $db_connection = 'mysql') {
         $connection = DB::connection($db_connection);
         return $connection->getSchemaBuilder()->getColumnType($table_name, $field_name);
 	}
 }
 
-if (!function_exists('diy_temp_table')) {
+if (!function_exists('canvas_temp_table')) {
 	
 	/**
 	 * Create Temporary Table
@@ -155,7 +155,7 @@ if (!function_exists('diy_temp_table')) {
 	 * @param boolean $strict
 	 * @param string $conn
 	 */
-	function diy_temp_table($table_name, $sql, $strict = true, $conn = 'mysql') {
+	function canvas_temp_table($table_name, $sql, $strict = true, $conn = 'mysql') {
 		$strictConfig = config("database.connections.{$conn}.strict");
 		$table_name   = str_replace('temp_', '', $table_name);
 		
@@ -170,7 +170,7 @@ if (!function_exists('diy_temp_table')) {
 		}
 	//	dump(microtime(true));
 		
-		diy_query($sql, 'SELECT');
+		canvas_query($sql, 'SELECT');
 		Illuminate\Support\Facades\DB::unprepared("CREATE TABLE temp_{$table_name} {$sql}");
 		
 		if (false === $strict) {
@@ -181,7 +181,7 @@ if (!function_exists('diy_temp_table')) {
 	}
 }
 
-if (!function_exists('diy_model_processing_table')) {
+if (!function_exists('canvas_model_processing_table')) {
 	
 	/**
 	 * Call Model Process Data Table
@@ -190,14 +190,14 @@ if (!function_exists('diy_model_processing_table')) {
 	 *
 	 * @return object
 	 */
-	function diy_model_processing_table($data, $name) {
+	function canvas_model_processing_table($data, $name) {
 		if (!empty($data[$name])) {
 			$model = $data[$name]['model'];
 			
 			if (false === $data[$name]['strict']) {
-				diy_db('purge', $data[$name]['connection']);
+				canvas_db('purge', $data[$name]['connection']);
 				config()->set("database.connections.{$data[$name]['connection']}.strict", $data[$name]['strict']);
-				diy_db('reconnect');
+				canvas_db('reconnect');
 			}
 			
 			$model->{$data[$name]['function']}();
@@ -205,9 +205,9 @@ if (!function_exists('diy_model_processing_table')) {
 	}
 }
 
-if (!function_exists('diy_set_formula_columns')) {
+if (!function_exists('canvas_set_formula_columns')) {
 	
-	function diy_set_formula_columns($columns, $data) {
+	function canvas_set_formula_columns($columns, $data) {
 		arsort($data);
 		
 		$key_columns = array_flip($columns);
@@ -243,25 +243,25 @@ if (!function_exists('diy_set_formula_columns')) {
 		foreach ($f_node as $key => $fdata) {
 			if ('first' === $fdata['node_location']) {
 				if (true === $c_lists) {
-					diy_array_insert($columns, intval($fdata['field_key'])+1, $key);
+					canvas_array_insert($columns, intval($fdata['field_key'])+1, $key);
 				} else {
-					diy_array_insert($columns, intval($fdata['field_key']), $key);
+					canvas_array_insert($columns, intval($fdata['field_key']), $key);
 				}
 			} elseif ('last' === $fdata['node_location']) {
 				if (true === $fdata['node_after']) {
 					if (true === $c_action) {
-						diy_array_insert($columns, intval($fdata['field_key']), $key);
+						canvas_array_insert($columns, intval($fdata['field_key']), $key);
 					} else {
 						array_push($columns, $key);
 					}
 				} else {
-					diy_array_insert($columns, intval($fdata['field_key']), $key);
+					canvas_array_insert($columns, intval($fdata['field_key']), $key);
 				}
 			} else {
 				if (true === $fdata['node_after']) {
-					diy_array_insert($columns, intval($fdata['field_key'])+1, $key);
+					canvas_array_insert($columns, intval($fdata['field_key'])+1, $key);
 				} else {
-					diy_array_insert($columns, intval($fdata['field_key']), $key);
+					canvas_array_insert($columns, intval($fdata['field_key']), $key);
 				}
 			}
 		}
@@ -270,9 +270,9 @@ if (!function_exists('diy_set_formula_columns')) {
 	}
 }
 
-if (!function_exists('diy_modal_content_html')) {
+if (!function_exists('canvas_modal_content_html')) {
 	
-	function diy_modal_content_html($name, $title, $elements) {
+	function canvas_modal_content_html($name, $title, $elements) {
 		$buttonID = str_replace('_cdyFILTERmodalBOX', '_submitFilterButton', $name);
 		
 		$html  = '<div class="modal-body">';
@@ -281,7 +281,7 @@ if (!function_exists('diy_modal_content_html')) {
 			$html .= '</div>';
 		$html .= '</div>';
 		$html .= '<div class="modal-footer">';
-			$html .= '<div class="diy-action-box">';
+			$html .= '<div class="canvas-action-box">';
 				$html .= '<button type="reset" id="' . $name . '-cancel" class="btn btn-danger btn-slideright pull-right" data-dismiss="modal">Cancel</button>';
 				$html .= '<button id="' . $buttonID . '" class="btn btn-primary btn-slideright pull-right" type="submit">';
 					$html .= '<i class="fa fa-filter"></i> &nbsp; Filter Data ' . $title;
@@ -294,9 +294,9 @@ if (!function_exists('diy_modal_content_html')) {
 	}
 }
 
-if (!function_exists('diy_clear_json')) {
+if (!function_exists('canvas_clear_json')) {
 	
-	function diy_clear_json($data) {
+	function canvas_clear_json($data) {
 		$json = str_replace('"data"', "data", $data);
 		$json = str_replace('"name"', "name", $json);
 		$json = str_replace('"', "'", $json);
@@ -305,7 +305,7 @@ if (!function_exists('diy_clear_json')) {
 	}
 }
 
-if (!function_exists('diy_table_action_button')) {
+if (!function_exists('canvas_table_action_button')) {
 	
 	/**
 	 * Set Action Button URL Used For create_action_buttons() Function
@@ -325,7 +325,7 @@ if (!function_exists('diy_table_action_button')) {
 	 *
 	 * @return string
 	 */
-	function diy_table_action_button($row_data, $field_target = 'id', $current_url, $action, $removed_button = null) {
+	function canvas_table_action_button($row_data, $field_target = 'id', $current_url, $action, $removed_button = null) {
 		$privileges              = session()->all()['privileges']['role'];
 		$path                    = [];
 		$addActions              = [];
@@ -339,7 +339,7 @@ if (!function_exists('diy_table_action_button')) {
 		$actions = [];
 		if (in_array(current_route(), $privileges)) {
 			foreach ($privileges as $roles) {
-				if (diy_string_contained($roles, routelists_info()['base_info'])) {
+				if (canvas_string_contained($roles, routelists_info()['base_info'])) {
 					if (!in_array(routelists_info($roles)['last_info'], ['index', 'insert', 'update', 'destroy'])) {
 						$actions[routelists_info()['base_info']][] = routelists_info($roles)['last_info'];
 					}
@@ -401,21 +401,21 @@ if (!function_exists('diy_table_action_button')) {
 		// Add Action Button if the $action parameter above set with array
 		if (is_array($action)) {
 			foreach ($action as $action_data) {
-				if (diy_string_contained($action_data, '|')) {
-					$action_info                      = diy_add_action_button_by_string($action_data);
+				if (canvas_string_contained($action_data, '|')) {
+					$action_info                      = canvas_add_action_button_by_string($action_data);
 					$addActions[key($action_info)]    = $action_info[key($action_info)];
 					$enabledAction[key($action_info)] = true;
 				} else {
-					$addActions[$action_data]         = diy_add_action_button_by_string("{$action_data}|default|link");
+					$addActions[$action_data]         = canvas_add_action_button_by_string("{$action_data}|default|link");
 					$enabledAction[$action_data]      = true;
 				}
 			}
 		} else {			
 			if (is_string($action)) {
-				if (diy_string_contained($action, '|')) {
-					$addActions = diy_add_action_button_by_string($action);
+				if (canvas_string_contained($action, '|')) {
+					$addActions = canvas_add_action_button_by_string($action);
 				} else {
-					$addActions = diy_add_action_button_by_string("{$action}|default|link");
+					$addActions = canvas_add_action_button_by_string("{$action}|default|link");
 				}
 			}
 		}
@@ -456,9 +456,9 @@ if (!function_exists('diy_table_action_button')) {
 	}
 }
 
-if (!function_exists('diy_add_action_button_by_string')) {
+if (!function_exists('canvas_add_action_button_by_string')) {
 	
-	function diy_add_action_button_by_string($action, $is_array = false) {
+	function canvas_add_action_button_by_string($action, $is_array = false) {
 		$addActions = [];
 		if (is_bool($action)) {
 			if (true === $action) {
@@ -472,7 +472,7 @@ if (!function_exists('diy_add_action_button_by_string')) {
 				$addActions['delete']['icon']  = 'times';
 			}
 		} else {
-			if (diy_string_contained($action, '|')) {
+			if (canvas_string_contained($action, '|')) {
 				$str_action = explode('|', $action);
 				$str_name	= reset($str_action);
 			} else {
@@ -529,7 +529,7 @@ if (!function_exists('create_action_buttons')) {
 			$deletePath            = explode('/', $delete);
 			$deleteFlag            = end($deletePath);
 			$delete_id             = intval($deletePath[count($deletePath)-2]);
-			$deleteURL             = str_replace('@index', '@destroy', diy_current_route()->getActionName());
+			$deleteURL             = str_replace('@index', '@destroy', canvas_current_route()->getActionName());
 			$buttonDeleteAttribute = 'class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" data-original-title="Delete"';
 			$iconDeleteAttribute   = 'fa fa-times';
 			
@@ -599,7 +599,7 @@ if (!function_exists('create_action_buttons')) {
 	}
 }
 
-if (!function_exists('diy_table_row_attr')) {
+if (!function_exists('canvas_table_row_attr')) {
 	/**
 	 * Set Default Row Attributes for Table
 	 *
@@ -609,7 +609,7 @@ if (!function_exists('diy_table_row_attr')) {
 	 *
 	 * @return string
 	 */
-	function diy_table_row_attr($str_value, $attributes) {
+	function canvas_table_row_attr($str_value, $attributes) {
 		$attr = $attributes;
 		if (is_array($attributes)) {
 			$attribute = [];
@@ -623,7 +623,7 @@ if (!function_exists('diy_table_row_attr')) {
 	}
 }
 
-if (!function_exists('diy_generate_table')) {
+if (!function_exists('canvas_generate_table')) {
 	
 	/**
 	 * Table Builder
@@ -641,9 +641,9 @@ if (!function_exists('diy_generate_table')) {
 	 *
 	 * @return string
 	 */
-	function diy_generate_table($title = false, $title_id = false, $header = array(), $body = array(), $attributes = array(), $numbering = false, $containers = true, $server_side = false, $server_side_custom_url = false) {
+	function canvas_generate_table($title = false, $title_id = false, $header = array(), $body = array(), $attributes = array(), $numbering = false, $containers = true, $server_side = false, $server_side_custom_url = false) {
 		// set attributes
-		$datatableClass = 'IncoDIY-table table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
+		$datatableClass = 'CanvaStack-table table animated fadeIn table-striped table-default table-bordered table-hover dataTable repeater display responsive nowrap';
 		if (false !== $attributes && is_array($attributes)) {
 			if (empty($attributes)) {
 				$_attributes = array (
@@ -668,7 +668,7 @@ if (!function_exists('diy_generate_table')) {
 			);
 		}
 		
-		$attributes = ' ' . rtrim(diy_attributes_to_string($_attributes));
+		$attributes = ' ' . rtrim(canvas_attributes_to_string($_attributes));
 		
 		// set header table
 		$hNumber   = false;
@@ -837,7 +837,7 @@ if (!function_exists('diy_generate_table')) {
 		}
 		if ('no' === strtolower($idHeader) || 'id' === strtolower($idHeader) || 'nik' === strtolower($idHeader)) $hNumber = $hIndex;
 		
-		if (true === diy_string_contained($hList, '<input type="checkbox"')) $hCheck = $hIndex;
+		if (true === canvas_string_contained($hList, '<input type="checkbox"')) $hCheck = $hIndex;
 		if (is_empty($hList)) $hEmpty = $hIndex;
 		
 		$hList = trim(ucwords(str_replace('_', ' ', $hList)));
@@ -885,9 +885,9 @@ if (!function_exists('diy_generate_table')) {
 	}
 }
 
-if (!function_exists('diy_draw_query_map_page_table')) {
+if (!function_exists('canvas_draw_query_map_page_table')) {
 	
-	function diy_draw_query_map_page_table($name, $field_id, $value_id, $data, $buffers, $fieldbuff) {		
+	function canvas_draw_query_map_page_table($name, $field_id, $value_id, $data, $buffers, $fieldbuff) {		
 		$fieldID   = $field_id;
 		$trClass   = null;
 		

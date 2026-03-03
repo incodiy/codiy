@@ -1,10 +1,10 @@
 <?php
 
-namespace Incodiy\Codiy\Controllers\Auth;
+namespace Canvastack\Origin\Controllers\Auth;
 
-use Incodiy\Codiy\Models\Admin\System\User;
+use Canvastack\Origin\Models\Admin\System\User;
 #use Controllers\Controller;
-use Incodiy\Codiy\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Core\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -61,7 +61,7 @@ class RegisterController extends Controller {
 	 * Create a new user instance after a valid registration.
 	 *
 	 * @param array $data
-	 * @return \Incodiy\Codiy\Models\Admin\System\User
+	 * @return \Canvastack\Origin\Models\Admin\System\User
 	 */
 	public function create() {
 		$data = [];

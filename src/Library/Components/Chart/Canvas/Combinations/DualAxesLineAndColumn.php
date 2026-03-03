@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Combinations;
+namespace Canvastack\Origin\Library\Components\Chart\Canvas\Combinations;
 
 /**
  * Created on Oct 24, 2022
@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart\Canvas\Combinations;
  *
  * @filesource	DualAxesLineAndColumn.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait DualAxesLineAndColumn {

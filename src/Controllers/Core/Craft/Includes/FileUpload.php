@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Includes;
+namespace Canvastack\Origin\Controllers\Core\Craft\Includes;
 
 /**
  * Created on 27 Mar 2021
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Controllers\Core\Craft\Includes;
  *
  * @filesource	FileUpload.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait FileUpload {
@@ -37,7 +37,7 @@ trait FileUpload {
 	 * @return array
 	 */
 	private function setImageValidation($filename, $size = 1) {
-		$this->fileAttributes[$filename]['file_validation'] = diy_image_validations(diy_set_filesize($size));
+		$this->fileAttributes[$filename]['file_validation'] = canvas_image_validations(canvas_set_filesize($size));
 	}
 	
 	/**
@@ -49,7 +49,7 @@ trait FileUpload {
 	 * @param number $size
 	 */
 	private function setFileValidation($filename, $type, $validation = false, $size = 1) {
-		if (!empty($size)) $max = '|max:' . diy_set_filesize($size);
+		if (!empty($size)) $max = '|max:' . canvas_set_filesize($size);
 		if (!empty($validation)) $this->fileAttributes[$filename]['file_validation'] = "{$type}|mimes:{$validation}{$max}";
 	}
 	

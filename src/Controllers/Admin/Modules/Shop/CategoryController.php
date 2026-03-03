@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\Modules\Shop;
+namespace Canvastack\Origin\Controllers\Admin\Modules\Shop;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
-use Incodiy\Codiy\Models\Admin\Modules\Shop\Category;
+use Canvastack\Origin\Controllers\Core\Controller;
+use Canvastack\Origin\Models\Admin\Modules\Shop\Category;
 
 /**
  * Created on Dec 17, 2022
@@ -12,9 +12,9 @@ use Incodiy\Codiy\Models\Admin\Modules\Shop\Category;
  *
  * @filesource CategoryController.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class CategoryController extends Controller {
 	private $fields = [

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Chart;
+namespace Canvastack\Origin\Library\Components\Chart;
 
 /**
  * Created on Oct 10, 2022
@@ -8,9 +8,9 @@ namespace Incodiy\Codiy\Library\Components\Chart;
  *
  * @filesource	Charts.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class Charts {
 	

@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft;
+namespace Canvastack\Origin\Controllers\Core\Craft;
 
-use Incodiy\Codiy\Library\Components\Table\Craft\Datatables;
-use Incodiy\Codiy\Models\Admin\System\Preference;
+use Canvastack\Origin\Library\Components\Table\Craft\Datatables;
+use Canvastack\Origin\Models\Admin\System\Preference;
 
 /**
  * Created on 25 Mar 2021
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\System\Preference;
  *
  * @filesource	View.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait View {
@@ -45,7 +45,7 @@ trait View {
 	public function render($data = false) {
 		if (empty($this->pageView)) $this->configView();
 		
-		$this->data['appName'] = diy_config('app_name');
+		$this->data['appName'] = canvas_config('app_name');
 		$this->data['logo']    = $this->logo_path();
 		
 		$formElements = [];
@@ -59,7 +59,7 @@ trait View {
 			$tableElements = $this->table->render($this->data['components']->table->elements);
 		}
 		
-		// CoDIY Development Chart
+		// CanvaStack Development Chart
 		$chartElements = [];
 		if (!empty($this->data['components']->chart->elements)) {
 			$chartElements = $this->chart->render($this->data['components']->chart->elements);
@@ -132,7 +132,7 @@ trait View {
 					$merge_data    = array_merge($this->data['content_page'], $data_contents);
 				} else {
 					// if $data variable is an array
-					if (diy_is_empty($data)) {
+					if (canvas_is_empty($data)) {
 						// if array    = []
 						$merge_data    = $this->data['content_page'];
 					} else {
@@ -183,7 +183,7 @@ trait View {
 		if (!empty($dataTable)) {
 			$Datatables = [];
 			$Datatables['datatables'] = $dataTable;
-			$datatables = diy_array_to_object_recursive($Datatables);
+			$datatables = canvas_array_to_object_recursive($Datatables);
 			
 			$filters    = [];
 			if (!empty($method['filters'])) {
@@ -216,18 +216,18 @@ trait View {
 			$back   = null;
 			
 			foreach ($this->removeButtons as $action) {
-				if (diy_string_contained($action, 'add'))    $add    = $action;
-				if (diy_string_contained($action, 'view'))   $view   = $action;
-				if (diy_string_contained($action, 'delete')) $delete = $action;
-				if (diy_string_contained($action, 'back'))   $back   = $action;
+				if (canvas_string_contained($action, 'add'))    $add    = $action;
+				if (canvas_string_contained($action, 'view'))   $view   = $action;
+				if (canvas_string_contained($action, 'delete')) $delete = $action;
+				if (canvas_string_contained($action, 'back'))   $back   = $action;
 			}
 			
 			if (!empty($this->data['route_info'])) {
     			foreach (array_keys($this->data['route_info']->action_page) as $key) {
-    				if (!empty($add)    && diy_string_contained($key, $add))    unset($this->data['route_info']->action_page[$key]);
-    				if (!empty($view)   && diy_string_contained($key, $view))   unset($this->data['route_info']->action_page[$key]);
-    				if (!empty($delete) && diy_string_contained($key, $delete)) unset($this->data['route_info']->action_page[$key]);
-    				if (!empty($back)   && diy_string_contained($key, $back))   unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($add)    && canvas_string_contained($key, $add))    unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($view)   && canvas_string_contained($key, $view))   unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($delete) && canvas_string_contained($key, $delete)) unset($this->data['route_info']->action_page[$key]);
+    				if (!empty($back)   && canvas_string_contained($key, $back))   unset($this->data['route_info']->action_page[$key]);
     			}
 			}
 		}
@@ -273,7 +273,7 @@ trait View {
 		if (!empty($this->session['user_group'])) $this->is_root = str_contains($this->session['user_group'], 'root');
 		$this->routeInfo();
 		
-		if (!empty($this->session['id'])) $this->filter_page = diy_mapping_page(intval($this->session['id']));
+		if (!empty($this->session['id'])) $this->filter_page = canvas_mapping_page(intval($this->session['id']));
 		if (!empty($this->model_class))   $this->model($this->model_class);
 		if (is_empty($page)) {
 			$currentPage = last(explode('.', current_route()));
@@ -286,7 +286,7 @@ trait View {
 			$currentModule = $page;
 		}
 		
-		$page_name  = diy_underscore_to_camelcase($currentModule);
+		$page_name  = canvas_underscore_to_camelcase($currentModule);
 		$page_title = strtolower($currentModule);
 		
 		$this->meta->title($page_name);
@@ -296,16 +296,16 @@ trait View {
 		);
 		$this->configView($path);
 		$this->filterPage();
-		diy_log_activity();
+		canvas_log_activity();
 	}
 	
 	private function uriAdmin($uri = 'index') {
-		$this->viewAdmin = diy_config('template') . '.pages.admin';
+		$this->viewAdmin = canvas_config('template') . '.pages.admin';
 		$this->pageView  = $this->viewAdmin . '.' . $uri;
 	}
 	
 	private function uriFront($uri = 'index') {
-		$this->viewFront = diy_config('template') . '.pages.front';
+		$this->viewFront = canvas_config('template') . '.pages.front';
 		$this->pageView  = $this->viewFront . '.' . $uri;
 	}
 	
@@ -356,7 +356,7 @@ trait View {
 	 * author: wisnuwidi
 	 */
 	private function getPreferences() {
-		$this->preference = diy_get_model_data(Preference::class);
+		$this->preference = canvas_get_model_data(Preference::class);
 	}
 	
 	public function logo_path($thumb = false) {

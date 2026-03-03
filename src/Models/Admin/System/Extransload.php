@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Models\Admin\System;
+namespace Canvastack\Origin\Models\Admin\System;
 
-use Incodiy\Codiy\Models\Core\Model;
+use Canvastack\Origin\Models\Core\Model;
 
 /**
  * Created on Dec 10, 2022
@@ -11,9 +11,9 @@ use Incodiy\Codiy\Models\Core\Model;
  *
  * @filesource Extransload.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      incodiy@gmail.com
+ * @email      canvastack@gmail.com
  */
  
 class Extransload extends Model {	

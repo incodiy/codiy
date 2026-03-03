@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 /**
  * Created on Dec 28, 2022
  * 
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components\Table\Craft;
  *
  * @filesource	Elements.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait Elements {
@@ -37,10 +37,10 @@ trait Elements {
 			$option = null;
 			$options[$button] = [];
 			
-			if (diy_string_contained($button, '|')) {
+			if (canvas_string_contained($button, '|')) {
 				$splits = explode('|', $button);
 				foreach ($splits as $split) {
-					if (diy_string_contained($split, ':')) {
+					if (canvas_string_contained($split, ':')) {
 						$options[$button][] = $split;
 					} else {
 						$button = $split;

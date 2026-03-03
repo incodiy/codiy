@@ -6,10 +6,10 @@
  *
  * @filesource	settings.php
  *
- * @author		wisnuwidi @Incodiy - 2017
- * @copyright	wisnuwidi, incodiy
- * @email		wisnuwidi@incodiy.com,
- *              wisnuwidi@incodiy.com
+ * @author		wisnuwidi @CanvaStack - 2017
+ * @copyright	wisnuwidi, canvastack
+ * @email		wisnuwidi@canvastack.com,
+ *              wisnuwidi@canvastack.com
  */
 
 $multiPlatform		     = false;
@@ -38,8 +38,8 @@ return [
 	'template'            => 'default',
 	'base_template'       => 'assets/templates',
 	'base_resources'      => 'assets/resources',
-	'app_name'            => 'IncoDIY',
-	'app_desc'            => 'CoDIY Application Website from DIY',
+	'app_name'            => 'CanvaStack',
+	'app_desc'            => 'CanvaStack Application Website from canvas',
 	'version'             => 'cbxpsscdeis-v3.0.0',
 	'lang'                => 'en',
 	'charset'             => 'UTF-8',
@@ -59,18 +59,18 @@ return [
 	'platform_route'      => $platform['route'], // if single = false
 	
 	// COPYRIGHT INFO
-	'copyrights'          => 'CoDIY & All Muslim in the world',
+	'copyrights'          => 'CanvaStack & All Muslim in the world',
 	'location'            => 'Jakarta',
 	'location_abbr'       => 'ID',
 	'created_at'          => '2017 - ' . date('Y'),
-	'email'               => 'wisnuwidi@incodiy.com',
-	'website'             => 'incodiy.com',
+	'email'               => 'wisnuwidi@canvastack.com',
+	'website'             => 'canvastack.com',
 
 	// Meta Tags
 	'meta_author'         => 'Wisnu Widiantoko',
-	'meta_title'          => 'CoDIY',
-	'meta_keywords'       => 'CoDIY',
-	'meta_description'    => 'CoDIY Application Website',
+	'meta_title'          => 'CanvaStack',
+	'meta_keywords'       => 'CanvaStack',
+	'meta_description'    => 'CanvaStack Application Website',
 	'meta_viewport'       => 'width=device-width, initial-scale=1.0, maximum-scale=1.0',
 	'meta_http_equiv'     => [
 		'type'            => 'X-UA-Compatible',
@@ -95,16 +95,16 @@ return [
 	
 	'email' => [
 		'from' => [
-			'address' => env('MAIL_FROM_ADDRESS', 'wisnuwidi@incodiy.com'),
-			'name'    => env('MAIL_FROM_NAME', 'IncoDIY')
+			'address' => env('MAIL_FROM_ADDRESS', 'wisnuwidi@canvastack.com'),
+			'name'    => env('MAIL_FROM_NAME', 'CanvaStack')
 		],
 		'cc' => [
-			'address' => 'dev@incodiy.com',
-			'name'    => 'IncoDIY Developer'
+			'address' => 'dev@canvastack.com',
+			'name'    => 'CanvaStack Developer'
 		],
 		'feet' => [
 			'text'      => 'Best Regards',
-			'signature' => 'IncoDIY'
+			'signature' => 'CanvaStack'
 		]
 	],
 		

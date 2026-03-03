@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Library\Components;
+namespace Canvastack\Origin\Library\Components;
 
-use Incodiy\Codiy\Models\Admin\System\Modules;
+use Canvastack\Origin\Models\Admin\System\Modules;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Auth;
  *
  * @filesource	Template.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 class Template extends Scripts {
@@ -28,7 +28,7 @@ class Template extends Scripts {
         parent::__construct();
         
         
-        $this->currentTemplate = diy_config('template');
+        $this->currentTemplate = canvas_config('template');
         
         $this->templateScripts('js');
         $this->templateScripts('css');
@@ -41,10 +41,10 @@ class Template extends Scripts {
     private function templateScripts($type) {
         $type                                   = strtolower($type);
         $scriptConfig                           = [];
-        $scriptConfig[$type]['top']             = diy_config("admin.default.position.top.{$type}", 'templates');
-        $scriptConfig[$type]['bottom']          = diy_config("admin.default.position.bottom.{$type}", 'templates');
-        $scriptConfig[$type]['bottom']['first'] = diy_config("admin.default.position.bottom.first.{$type}", 'templates');
-        $scriptConfig[$type]['bottom']['last']  = diy_config("admin.default.position.bottom.last.{$type}", 'templates');
+        $scriptConfig[$type]['top']             = canvas_config("admin.default.position.top.{$type}", 'templates');
+        $scriptConfig[$type]['bottom']          = canvas_config("admin.default.position.bottom.{$type}", 'templates');
+        $scriptConfig[$type]['bottom']['first'] = canvas_config("admin.default.position.bottom.first.{$type}", 'templates');
+        $scriptConfig[$type]['bottom']['last']  = canvas_config("admin.default.position.bottom.last.{$type}", 'templates');
         
         foreach ($scriptConfig as $scriptPositions) {
         	foreach ($scriptPositions as $position => $scriptPath) {
@@ -72,23 +72,23 @@ class Template extends Scripts {
      * @param string $icon_links
      */
     public function set_breadcrumb($title, $links = [], $icon_title = false, $icon_links = false) {
-        $this->breadcrumbs = diy_breadcrumb($title, $links, $icon_title, $icon_links);
+        $this->breadcrumbs = canvas_breadcrumb($title, $links, $icon_title, $icon_links);
     }
     
     public function set_menu_sidebar_open($class = false) {
-    	$this->menu_sidebar[] = diy_sidebar_menu_open($class);
+    	$this->menu_sidebar[] = canvas_sidebar_menu_open($class);
     }
     
     public function set_sidebar_category($title, $icon = [], $icon_position = false) {
-    	$this->menu_sidebar[] = diy_sidebar_category($title, $icon, $icon_position);
+    	$this->menu_sidebar[] = canvas_sidebar_category($title, $icon, $icon_position);
     }
     
     public function set_menu_sidebar($label, $links, $icon = [], $selected = false) {
-    	$this->menu_sidebar[] = diy_sidebar_menu($label, $links, $icon, $selected);
+    	$this->menu_sidebar[] = canvas_sidebar_menu($label, $links, $icon, $selected);
     }
     
     public function set_menu_sidebar_close() {
-    	$this->menu_sidebar[] = diy_sidebar_menu_close();
+    	$this->menu_sidebar[] = canvas_sidebar_menu_close();
     }
     
     /**
@@ -264,7 +264,7 @@ class Template extends Scripts {
     }
     
     public function set_sidebar_content($media_title, $media_heading = false, $media_sub_heading = false) {
-    	$this->sidebar_content = diy_sidebar_content($media_title, $media_heading, $media_sub_heading);
+    	$this->sidebar_content = canvas_sidebar_content($media_title, $media_heading, $media_sub_heading);
     }
     
     public function render_sidebar_content() {
@@ -273,13 +273,13 @@ class Template extends Scripts {
     	
     	if (null !== Auth::user()) {
     		$user = Auth::user();
-    		$user_group = diy_query($table_user_group)
+    		$user_group = canvas_query($table_user_group)
 	    		->leftJoin($table_group, "{$table_user_group}.group_id", '=', "{$table_group}.id")
 	    		->where('user_id', $user->id)
 	    		->value("{$table_group}.group_info");
     		$group_name = $user_group;
     		
-    		$this->set_sidebar_content(diy_set_avatar($user->username, false, $user->photo_thumb), "Hi, <span>{$user->name}</span>", $group_name);
+    		$this->set_sidebar_content(canvas_set_avatar($user->username, false, $user->photo_thumb), "Hi, <span>{$user->name}</span>", $group_name);
     	}
     }
 }

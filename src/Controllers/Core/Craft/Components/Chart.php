@@ -1,7 +1,7 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Core\Craft\Components;
+namespace Canvastack\Origin\Controllers\Core\Craft\Components;
 
-use Incodiy\Codiy\Library\Components\Charts\Objects;
+use Canvastack\Origin\Library\Components\Charts\Objects;
 
 /**
  * Created on Oct 10, 2022
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Library\Components\Charts\Objects;
  *
  * @filesource	Chart.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 trait Chart {

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
+namespace Canvastack\Origin\Library\Components\Charts\Canvas;
 /**
  * Created on May 25, 2023
  * 
@@ -9,7 +9,7 @@ namespace Incodiy\Codiy\Library\Components\Charts\Canvas;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 class Charts extends Builder {

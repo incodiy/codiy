@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Messages\Email;
+namespace Canvastack\Origin\Library\Components\Messages\Email;
 
 use Illuminate\Mail\Mailable;
 use Illuminate\Bus\Queueable;
@@ -14,15 +14,15 @@ use Illuminate\Queue\SerializesModels;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  */
 class Email extends Mailable {
 	use Queueable, SerializesModels;
 	
 	public $mailData;
-	public $subject = 'IncoDIY Information';
+	public $subject = 'CanvaStack Information';
 	
 	public function __construct($mailData) {
 		if (!empty($mailData['subject'])) {
@@ -34,7 +34,7 @@ class Email extends Mailable {
 	}
 	
 	public function build() {
-		$this->subject($this->subject)->view(diy_config('template') . '.emails.default');
+		$this->subject($this->subject)->view(canvas_config('template') . '.emails.default');
 		
 		return $this;
 	}

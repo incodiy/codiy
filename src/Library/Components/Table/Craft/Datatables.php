@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft;
+namespace Canvastack\Origin\Library\Components\Table\Craft;
 
-use Incodiy\Codiy\Models\Admin\System\DynamicTables;
-use Incodiy\Codiy\Controllers\Core\Craft\Includes\Privileges;
+use Canvastack\Origin\Models\Admin\System\DynamicTables;
+use Canvastack\Origin\Controllers\Core\Craft\Includes\Privileges;
 use Yajra\DataTables\DataTables as DataTable;
 
 /**
@@ -11,9 +11,9 @@ use Yajra\DataTables\DataTables as DataTable;
  *
  * @filesource Datatables.php
  *
- * @author     wisnuwidi@incodiy.com - 2021
+ * @author     wisnuwidi@canvastack.com - 2021
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 class Datatables {
 	use Privileges;
@@ -82,7 +82,7 @@ class Datatables {
 		
 		// Check if any $this->table->runModel() called
 		if (!empty($data->datatables->modelProcessing[$table_name])) {
-			diy_model_processing_table($data->datatables->modelProcessing, $table_name);
+			canvas_model_processing_table($data->datatables->modelProcessing, $table_name);
 		}
 		
 		$privileges         = $this->set_module_privileges();
@@ -120,7 +120,7 @@ class Datatables {
 					if (!empty(strpos(json_encode($privileges['role']), routelists_info()['base_info']))) {
 						foreach ($privileges['role'] as $roles) {
 							
-							if (diy_string_contained($roles, routelists_info()['base_info'])) {
+							if (canvas_string_contained($roles, routelists_info()['base_info'])) {
 								
 								$routename = routelists_info($roles)['last_info'];
 								if (in_array($routename, ['index', 'show', 'view'])) {
@@ -165,7 +165,7 @@ class Datatables {
 			foreach ($column_data[$table_name]['foreign_keys'] as $fkey1 => $fkey2) {
 				$ftables    = explode('.', $fkey1);
 				$model_data = $model_data->leftJoin($ftables[0], $fkey1, '=', $fkey2);
-				$fieldsets[$ftables[0]] = diy_get_table_columns($ftables[0]);
+				$fieldsets[$ftables[0]] = canvas_get_table_columns($ftables[0]);
 			}
 			
 			foreach ($fieldsets as $fstname => $fieldRows) {
@@ -326,16 +326,16 @@ class Datatables {
 				}
 			}
 			
-			if (!empty($rowModel->flag_status))    $datatables->editColumn('flag_status',    function($model) {return diy_unescape_html(diy_form_internal_flag_status($model->flag_status));});
-			if (!empty($rowModel->active))         $datatables->editColumn('active',         function($model) {return diy_form_set_active_value($model->active);});
-			if (!empty($rowModel->update_status))  $datatables->editColumn('update_status',  function($model) {return diy_form_set_active_value($model->update_status);});
-			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return diy_form_request_status(true, $model->request_status);});
-			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return diy_form_get_client_ip(); else return $model->ip_address;});
+			if (!empty($rowModel->flag_status))    $datatables->editColumn('flag_status',    function($model) {return canvas_unescape_html(canvas_form_internal_flag_status($model->flag_status));});
+			if (!empty($rowModel->active))         $datatables->editColumn('active',         function($model) {return canvas_form_set_active_value($model->active);});
+			if (!empty($rowModel->update_status))  $datatables->editColumn('update_status',  function($model) {return canvas_form_set_active_value($model->update_status);});
+			if (!empty($rowModel->request_status)) $datatables->editColumn('request_status', function($model) {return canvas_form_request_status(true, $model->request_status);});
+			if (!empty($rowModel->ip_address))     $datatables->editColumn('ip_address',     function($model) {if ('::1' == $model->ip_address) return canvas_form_get_client_ip(); else return $model->ip_address;});
 		}
 		
 		if (!empty($data->datatables->formula[$table_name])) {
 			$data_formula = $data->datatables->formula[$table_name];
-			$data->datatables->columns[$table_name]['lists'] = diy_set_formula_columns($data->datatables->columns[$table_name]['lists'], $data_formula);
+			$data->datatables->columns[$table_name]['lists'] = canvas_set_formula_columns($data->datatables->columns[$table_name]['lists'], $data_formula);
 			
 		//	$formula_fields = [];
 			foreach ($data_formula as $formula) {/* 
@@ -368,7 +368,7 @@ class Datatables {
 					if ($field === $format['field_name']) {
 						$dataValue = $data->getAttributes();
 						if (!empty($dataValue[$field])) {
-							return diy_format($dataValue[$field], $format['decimal_endpoint'], $format['separator'], $format['format_type']);
+							return canvas_format($dataValue[$field], $format['decimal_endpoint'], $format['separator'], $format['format_type']);
 						}
 					}
 				});
@@ -381,7 +381,7 @@ class Datatables {
 		$row_attributes['rlp']   = null;
 		if (!empty($column_data[$table_name]['clickable'])) {
 			if (count($column_data[$table_name]['clickable']) >= 1) {
-				$rlp = function($model) { return diy_unescape_html(encode_id(intval($model->id))); };
+				$rlp = function($model) { return canvas_unescape_html(encode_id(intval($model->id))); };
 			}
 			$row_attributes['class'] = 'row-list-url';
 			$row_attributes['rlp']   = $rlp;
@@ -390,7 +390,7 @@ class Datatables {
 		
 		$action_data                   = [];
 		$action_data['model']          = $model;
-		$action_data['current_url']    = diy_current_url();
+		$action_data['current_url']    = canvas_current_url();
 		$action_data['action']['data'] = $action_list;
 		if ($privileges['role_group'] > 1) {
 			if (!empty($removed_privileges)) {
@@ -427,7 +427,7 @@ class Datatables {
 	}
 	
 	private function setRowActionURLs($model, $data, $field_target = 'id') {
-		return diy_table_action_button($model, $field_target, $data['current_url'], $data['action']['data'], $data['action']['removed']);
+		return canvas_table_action_button($model, $field_target, $data['current_url'], $data['action']['data'], $data['action']['removed']);
 	}
 		
 	private function imageViewColumn($model, $datatables) {
@@ -445,7 +445,7 @@ class Datatables {
 			$imgSrc = 'imgsrc::';
 			if (isset($model->{$field})) {
 				$datatables->editColumn($field, function($model) use ($field, $imgSrc) {
-					$label    = ucwords(str_replace('-', ' ', diy_clean_strings($field)));
+					$label    = ucwords(str_replace('-', ' ', canvas_clean_strings($field)));
 					$thumb    = false;
 					$imgCheck = $this->checkValidImage($model->{$field});
 					
@@ -465,9 +465,9 @@ class Datatables {
 						
 						if (true === $imgCheck) {
 							$alt = $imgSrc.$label;
-							return diy_unescape_html("<center><img class=\"cdy-img-thumb\" src=\"{$filePath}\" alt=\"{$alt}\" /></center>");
+							return canvas_unescape_html("<center><img class=\"cdy-img-thumb\" src=\"{$filePath}\" alt=\"{$alt}\" /></center>");
 						} else {
-							return diy_unescape_html($imgCheck);
+							return canvas_unescape_html($imgCheck);
 						}
 					} else {
 						$filePath = explode('/', $filePath);
@@ -489,15 +489,15 @@ class Datatables {
 		
 		if (!empty($get['filterDataTables'])) {
 			
-			if (!empty($post['grabCoDIYC'])) {
-				$connection = $post['grabCoDIYC'];
-				unset($post['grabCoDIYC']);
+			if (!empty($post['grabCanvaStackC'])) {
+				$connection = $post['grabCanvaStackC'];
+				unset($post['grabCanvaStackC']);
 			}
 			
 			$filters = [];
-			if (!empty($post['_diyF'])) {
-				$filters = $post['_diyF'];
-				unset($post['_diyF']);
+			if (!empty($post['_canvasF'])) {
+				$filters = $post['_canvasF'];
+				unset($post['_canvasF']);
 			}
 			
 			$fdata  = explode('::', $post['_fita']);
@@ -591,7 +591,7 @@ class Datatables {
 				$sql = "SELECT DISTINCT `{$target}` FROM `{$table}` WHERE {$wheres}{$wherePrevious}";
 			}
 			
-			return diy_query($sql, 'SELECT', $connection);
+			return canvas_query($sql, 'SELECT', $connection);
 		}
 	}
 }

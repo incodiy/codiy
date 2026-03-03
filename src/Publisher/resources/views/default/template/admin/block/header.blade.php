@@ -5,13 +5,13 @@
  *
  * @filesource	header.blade.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
-$baseUrl      = diy_config('baseURL');
-$baseTemplate = diy_config('base_template');
-$template     = diy_config('template');
+$baseUrl      = canvas_config('baseURL');
+$baseTemplate = canvas_config('base_template');
+$template     = canvas_config('template');
 $assetURL     = "{$baseUrl}/{$baseTemplate}/{$template}";
 ?>
 			
@@ -26,7 +26,7 @@ $assetURL     = "{$baseUrl}/{$baseTemplate}/{$template}";
 									<span></span>
 									<span></span>
 								</div>
-								<div class="search-box IncoDIY-search-box pull-left">
+								<div class="search-box CanvaStack-search-box pull-left">
 									<div class="search-inputbox">
 										<form action="#">
 											<input id="search-input" type="text" name="search" placeholder="Search..." required />

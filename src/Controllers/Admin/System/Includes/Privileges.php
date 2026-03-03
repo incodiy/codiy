@@ -1,8 +1,8 @@
 <?php
-namespace Incodiy\Codiy\Controllers\Admin\System\Includes;
+namespace Canvastack\Origin\Controllers\Admin\System\Includes;
 
-use Incodiy\Codiy\Models\Admin\System\Modules;
-use Incodiy\Codiy\Models\Admin\System\Privilege;
+use Canvastack\Origin\Models\Admin\System\Modules;
+use Canvastack\Origin\Models\Admin\System\Privilege;
 
 /**
  * Created on Jan 19, 2018
@@ -10,9 +10,9 @@ use Incodiy\Codiy\Models\Admin\System\Privilege;
  *
  * @filesource	Privileges.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 
 trait Privileges {
@@ -26,7 +26,7 @@ trait Privileges {
 	private $table_privilege	 = 'base_group_privilege';
 		
 	private function check_data($group_id, $module_id) {
-		$data = diy_query($this->table_privilege)
+		$data = canvas_query($this->table_privilege)
 			->where('group_id', $group_id)
 			->where('module_id', $module_id)
 			->first();
@@ -35,7 +35,7 @@ trait Privileges {
 	}
 	
 	private function check_group($group_id) {
-		$data = diy_query($this->table_privilege)
+		$data = canvas_query($this->table_privilege)
 			->where('group_id', $group_id)
 			->first();
 		
@@ -43,7 +43,7 @@ trait Privileges {
 	}
 	
 	private function get_group_privileges($group_id) {
-		$this->group_privileges = diy_query($this->table_privilege)->where('group_id', $group_id)->get();
+		$this->group_privileges = canvas_query($this->table_privilege)->where('group_id', $group_id)->get();
 	}
 	
 	private function privileges_before_insert($request, $group) {
@@ -96,11 +96,11 @@ trait Privileges {
 		
 		if (isset($data['setnull'])) {
 			$nullGroup = intval($data['setnull']['group_id']);
-			diy_query($this->table_privilege)->where('group_id', $nullGroup)->update([$IDP => $nullset, $ADP => $nullset]);
+			canvas_query($this->table_privilege)->where('group_id', $nullGroup)->update([$IDP => $nullset, $ADP => $nullset]);
 		} else {
 			
 			foreach ($data as $moduleId => $roles) $groups = $roles['group_id'];
-			diy_query($this->table_privilege)->where('group_id', $groups)->update([$IDP => $nullset, $ADP => $nullset]);
+			canvas_query($this->table_privilege)->where('group_id', $groups)->update([$IDP => $nullset, $ADP => $nullset]);
 			
 			$request = [];
 			foreach ($data as $moduleId => $roles) {
@@ -120,11 +120,11 @@ trait Privileges {
 					
 					if (is_empty($check_role)) {
 						// Kalo data ada yang baru
-						diy_insert(new Privilege, $request, true);
+						canvas_insert(new Privilege, $request, true);
 					} else {
 						// Kalo data sudah ada di database table
 						if (intval($check_role->module_id) === intval($request['module_id'])) {
-							diy_update(Privilege::find($check_role->id), $request, true);
+							canvas_update(Privilege::find($check_role->id), $request, true);
 						}
 					}
 				}
@@ -178,7 +178,7 @@ trait Privileges {
 			}
 		}
 		
-		$this->menu_privileges = diy_array_to_object_recursive($mainMenu);
+		$this->menu_privileges = canvas_array_to_object_recursive($mainMenu);
 	}
 	
 	/**
@@ -192,7 +192,7 @@ trait Privileges {
 	 * @return string
 	 */
 	private function _center($string) {
-		return diy_table_row_attr($string, ['align' => 'center', 'valign' => 'middle']);
+		return canvas_table_row_attr($string, ['align' => 'center', 'valign' => 'middle']);
 	}
 	
 	public $module_privileges = [];
@@ -265,58 +265,58 @@ trait Privileges {
 		if (true === $this->viewIndexPrivilege) {
 			$IDP                    = $this->index_privilege;
 			$checkedIndex           = [];
-			$checkedIndex['read']   = diy_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
-			$checkedIndex['write']  = diy_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
-			$checkedIndex['modify'] = diy_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
-			$checkedIndex['delete'] = diy_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, false, 'danger delete-destroy');
+			$checkedIndex['read']   = canvas_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
+			$checkedIndex['write']  = canvas_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
+			$checkedIndex['modify'] = canvas_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
+			$checkedIndex['delete'] = canvas_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, false, 'danger delete-destroy');
 			
 			if (isset($this->module_privileges[$IDP][$module_data->id])) {
 				if (isset($this->module_privileges[$IDP][$module_data->id]['8']) && $this->module_privileges[$IDP][$module_data->id]['8'] >= 1)
-					$checkedIndex['read']   = diy_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
+					$checkedIndex['read']   = canvas_form_checkList("modules[{$IDP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
 				if (isset($this->module_privileges[$IDP][$module_data->id]['4']) && $this->module_privileges[$IDP][$module_data->id]['4'] >= 1)
-					$checkedIndex['write']  = diy_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
+					$checkedIndex['write']  = canvas_form_checkList("modules[{$IDP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
 				if (isset($this->module_privileges[$IDP][$module_data->id]['2']) && $this->module_privileges[$IDP][$module_data->id]['2'] >= 1)
-					$checkedIndex['modify'] = diy_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
+					$checkedIndex['modify'] = canvas_form_checkList("modules[{$IDP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
 				if (isset($this->module_privileges[$IDP][$module_data->id]['1']) && $this->module_privileges[$IDP][$module_data->id]['1'] >= 1)
-					$checkedIndex['delete'] = diy_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
+					$checkedIndex['delete'] = canvas_form_checkList("modules[{$IDP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
 			}
 		}
 		
 		// Backend Privileges
 		$ADP                    = $this->admin_privilege;
 		$checkedAdmin           = [];
-		$checkedAdmin['read']	= diy_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
-		$checkedAdmin['write']	= diy_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
-		$checkedAdmin['modify']	= diy_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
-		$checkedAdmin['delete']	= diy_form_checkList("modules[{$ADP}][{$routeName}][1]", $module_data->id, false, false, 'danger delete-destroy');
+		$checkedAdmin['read']	= canvas_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, false, 'success read-select');
+		$checkedAdmin['write']	= canvas_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, false, 'lilac write-insert');
+		$checkedAdmin['modify']	= canvas_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, false, 'warning modify-update');
+		$checkedAdmin['delete']	= canvas_form_checkList("modules[{$ADP}][{$routeName}][1]", $module_data->id, false, false, 'danger delete-destroy');
 		
 		if (isset($this->module_privileges[$ADP][$module_data->id])) {
 			// Backend Privileges
 			if (isset($this->module_privileges[$ADP][$module_data->id]['8']) && $this->module_privileges[$ADP][$module_data->id]['8'] >= 1)
-				$checkedAdmin['read']   = diy_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
+				$checkedAdmin['read']   = canvas_form_checkList("modules[{$ADP}][{$routeName}][8]", $module_data->id, false, true, 'success read-select');
 			if (isset($this->module_privileges[$ADP][$module_data->id]['4']) && $this->module_privileges[$ADP][$module_data->id]['4'] >= 1)
-				$checkedAdmin['write']  = diy_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
+				$checkedAdmin['write']  = canvas_form_checkList("modules[{$ADP}][{$routeName}][4]", $module_data->id, false, true, 'lilac write-insert');
 			if (isset($this->module_privileges[$ADP][$module_data->id]['2']) && $this->module_privileges[$ADP][$module_data->id]['2'] >= 1)
-				$checkedAdmin['modify'] = diy_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
+				$checkedAdmin['modify'] = canvas_form_checkList("modules[{$ADP}][{$routeName}][2]", $module_data->id, false, true, 'warning modify-update');
 			if (isset($this->module_privileges[$ADP][$module_data->id]['1']) && $this->module_privileges[$ADP][$module_data->id]['1'] >= 1)
-				$checkedAdmin['delete'] = diy_form_checkList("modules[{$ADP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
+				$checkedAdmin['delete'] = canvas_form_checkList("modules[{$ADP}][{$routeName}][1]", $module_data->id, false, true, 'danger delete-destroy');
 		}
 		
 		$opt                = ['align' => 'center', 'id' => strtolower($module_name) . '-row'];
 		$resultBox          = [];
-		$resultBox['head']  = [diy_table_row_attr($icon . $module_name, ['style' => $indent, 'id' => strtolower($module_name) . '-row'])];
+		$resultBox['head']  = [canvas_table_row_attr($icon . $module_name, ['style' => $indent, 'id' => strtolower($module_name) . '-row'])];
 		$resultBox['admin'] = [
-			diy_table_row_attr($checkedAdmin['read'],   $opt),
-			diy_table_row_attr($checkedAdmin['write'],  $opt),
-			diy_table_row_attr($checkedAdmin['modify'], $opt),
-			diy_table_row_attr($checkedAdmin['delete'], $opt)
+			canvas_table_row_attr($checkedAdmin['read'],   $opt),
+			canvas_table_row_attr($checkedAdmin['write'],  $opt),
+			canvas_table_row_attr($checkedAdmin['modify'], $opt),
+			canvas_table_row_attr($checkedAdmin['delete'], $opt)
 		];
 		if (true === $this->viewIndexPrivilege) {
 			$resultBox['index'] = [
-				diy_table_row_attr($checkedIndex['read'],   $opt),
-				diy_table_row_attr($checkedIndex['write'],  $opt),
-				diy_table_row_attr($checkedIndex['modify'], $opt),
-				diy_table_row_attr($checkedIndex['delete'], $opt)
+				canvas_table_row_attr($checkedIndex['read'],   $opt),
+				canvas_table_row_attr($checkedIndex['write'],  $opt),
+				canvas_table_row_attr($checkedIndex['modify'], $opt),
+				canvas_table_row_attr($checkedIndex['delete'], $opt)
 			];
 		} else {
 			$resultBox['index'] = [];
@@ -346,7 +346,7 @@ trait Privileges {
 			$this->_center('Delete'),
 		];
 		
-		$rowData['head']  = [diy_table_row_attr('', ['style' => 'font-weight:500;text-indent:5pt'])];
+		$rowData['head']  = [canvas_table_row_attr('', ['style' => 'font-weight:500;text-indent:5pt'])];
 		$rowData['admin'] = $dataCenter;
 		$rowData['index'] = [];
 		if (true === $this->viewIndexPrivilege) $rowData['index'] = $dataCenter;
@@ -355,14 +355,14 @@ trait Privileges {
 		foreach ($this->menu_privileges as $parent => $childs) {
 			$parent_title	= ucwords(str_replace('_', ' ', $parent));
 			if (!empty($childs->name)) $parent_title = $childs->name;
-			$row_table[]	= [diy_table_row_attr($icon . $parent_title, ['style' => 'font-weight:500;text-indent:5pt;color:black', 'colspan' => 9])];
+			$row_table[]	= [canvas_table_row_attr($icon . $parent_title, ['style' => 'font-weight:500;text-indent:5pt;color:black', 'colspan' => 9])];
 			
 			foreach ($childs as $child_name => $data_module) {
 				if (isset($data_module->id) === false) {
 					$child_title	= ucwords(str_replace('_', ' ', $child_name));
 					if (!empty($data_module->name)) $child_title = $data_module->name;
 					
-					$row_table[]	= [diy_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:12pt;color:green', 'colspan' => 9])];
+					$row_table[]	= [canvas_table_row_attr($icon . $child_title, ['style' => 'font-weight:500;text-indent:12pt;color:green', 'colspan' => 9])];
 					foreach ($data_module as $module_name => $module_data) {
 						
 						if (!empty($module_data->id)) {
@@ -375,7 +375,7 @@ trait Privileges {
 							$module_title = ucwords(str_replace('_', ' ', $module_name));
 							if (!empty($module_data->name)) $module_title = $module_data->name;
 							
-							$row_table[] = [diy_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:19pt', 'colspan' => 9])];
+							$row_table[] = [canvas_table_row_attr($icon . $module_title, ['style' => 'font-weight:500;text-indent:19pt', 'colspan' => 9])];
 							foreach ($module_data as $third_name => $third_data) {
 								$third_title = ucwords(str_replace('_', ' ', $third_name));
 								if (!empty($third_data->name)) $third_title = $third_data->name;
@@ -395,14 +395,14 @@ trait Privileges {
 		}
 		
 		$headerData          = [];
-		$headerData['head']  = [diy_table_row_attr('Module Name', ['rowspan' => 2, 'style' => 'text-align:center'])];
+		$headerData['head']  = [canvas_table_row_attr('Module Name', ['rowspan' => 2, 'style' => 'text-align:center'])];
 		
 		$headerData['index'] = [];
-		if (true === $this->viewIndexPrivilege) $headerData['index'] = [diy_table_row_attr('Frontend Privilege', ['colspan' => 4, 'style' => 'text-align:center'])];
-		$headerData['admin'] = [diy_table_row_attr('Backend Privilege', ['colspan' => 4, 'style' => 'text-align:center'])];
+		if (true === $this->viewIndexPrivilege) $headerData['index'] = [canvas_table_row_attr('Frontend Privilege', ['colspan' => 4, 'style' => 'text-align:center'])];
+		$headerData['admin'] = [canvas_table_row_attr('Backend Privilege', ['colspan' => 4, 'style' => 'text-align:center'])];
 		$header              = array_merge_recursive($headerData['head'], $headerData['admin'], $headerData['index']);
-		$title_id            = 'group_privileges_' . diy_random_strings(50, false);
+		$title_id            = 'group_privileges_' . canvas_random_strings(50, false);
 		
-		return diy_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false);
+		return canvas_generate_table('Set Role Module Page', $title_id, $header, $row_table, false, false, false);
 	}
 }

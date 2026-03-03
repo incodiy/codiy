@@ -1,10 +1,10 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Charts;
+namespace Canvastack\Origin\Library\Components\Charts;
 
-use Incodiy\Codiy\Library\Components\Charts\Canvas\Builder;
-use Incodiy\Codiy\Library\Components\Form\Elements\Tab;
-use Incodiy\Codiy\Library\Components\Charts\Canvas\DataModel;
-use Incodiy\Codiy\Library\Components\Charts\Canvas\Charts;
+use Canvastack\Origin\Library\Components\Charts\Canvas\Builder;
+use Canvastack\Origin\Library\Components\Form\Elements\Tab;
+use Canvastack\Origin\Library\Components\Charts\Canvas\DataModel;
+use Canvastack\Origin\Library\Components\Charts\Canvas\Charts;
 
 /**
  * Created on May 23, 2023
@@ -15,7 +15,7 @@ use Incodiy\Codiy\Library\Components\Charts\Canvas\Charts;
  *
  * @author      wisnuwidi@gmail.com - 2023
  * @copyright   wisnuwidi@gmail.com,
- *              incodiy@gmail.com
+ *              canvastack@gmail.com
  * @email       wisnuwidi@gmail.com
  */
 class Objects extends Charts {
@@ -59,7 +59,7 @@ class Objects extends Charts {
 		$tabObj = "";
 		if (true === is_array($object)) $tabObj = implode('', $object);
 		
-		if (true === diy_string_contained($tabObj, $this->opentabHTML)) {
+		if (true === canvas_string_contained($tabObj, $this->opentabHTML)) {
 			return $this->renderTab($object);
 		} else {
 			return $object;
@@ -69,7 +69,7 @@ class Objects extends Charts {
 	public    $identities = [];
 	protected $sourceIdentity;
 	protected function setParams($type, $source, $fieldsets = [], $format, $category = null, $group = null, $order = null, $options = []) {
-		$this->sourceIdentity = diy_clean_strings("CoDIY_{$this->chartLibrary}_" . $source . '_' . diy_random_strings(50, false));
+		$this->sourceIdentity = canvas_clean_strings("canvas_{$this->chartLibrary}_" . $source . '_' . canvas_random_strings(50, false));
 		
 		$this->identities[$this->sourceIdentity]['connection'] = $this->connection;
 		$this->identities[$this->sourceIdentity]['code']       = $this->sourceIdentity;
@@ -111,20 +111,20 @@ class Objects extends Charts {
 	}
 	
 	protected $post = [];
-	protected $chartPostData = 'diyChartData';
+	protected $chartPostData = 'canvasChartData';
 	public function process($post) {
-		if (!empty($_GET['diyChartDataFilter'])) {
+		if (!empty($_GET['canvasChartDataFilter'])) {
 			$postFilter          = [];
-			$chartIdentityFilter = 'postFromTable' . $_GET['diyChartDataFilter'];
-			$chartIdentityCode   = $_GET['diyChartData'];
+			$chartIdentityFilter = 'postFromTable' . $_GET['canvasChartDataFilter'];
+			$chartIdentityCode   = $_GET['canvasChartData'];
 			$postFilter          = $post[$chartIdentityFilter][0][$chartIdentityCode];
 			unset($post);
 			
 			$post                       = [];
-			$post[$this->chartPostData] = diy_encrypt(json_encode($postFilter));
+			$post[$this->chartPostData] = canvas_encrypt(json_encode($postFilter));
 		}
 		
-		$this->construct(json_decode(diy_decrypt($post[$this->chartPostData])));
+		$this->construct(json_decode(canvas_decrypt($post[$this->chartPostData])));
 		
 		echo json_encode(['category' => $this->category, 'series' => $this->series]);
 		exit;

@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Database\Migrations;
+namespace Canvastack\Origin\Database\Migrations;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -11,9 +11,9 @@ use Illuminate\Database\Migrations\Migration;
  *
  * @filesource Config.php
  *
- * @author     wisnuwidi @Incodiy - 2022
+ * @author     wisnuwidi @CanvaStack - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
  
 class Config extends Migration {
@@ -28,8 +28,8 @@ class Config extends Migration {
 	public function __construct() {
 		$this->is_multiplatform  = is_multiplatform();
 		if (true === $this->is_multiplatform) {
-			$this->platform_table = diy_config('settings.platform_table');
-			$this->platform_key   = diy_config('settings.platform_key');
+			$this->platform_table = canvas_config('settings.platform_table');
+			$this->platform_key   = canvas_config('settings.platform_key');
 		}
 	}
 	

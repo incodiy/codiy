@@ -1,5 +1,5 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Form\Elements;
+namespace Canvastack\Origin\Library\Components\Form\Elements;
 
 /**
  * Created on 19 Mar 2021
@@ -7,9 +7,9 @@ namespace Incodiy\Codiy\Library\Components\Form\Elements;
  *
  * @filesource	Text.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
  
 trait Text {
@@ -38,7 +38,7 @@ trait Text {
 	 */
 	public function textarea($name, $value = null, $attributes = [], $label = true) {
 		
-		if (diy_form_check_str_attr($attributes, 'ckeditor')) $this->element_plugins[$name] = 'ckeditor';
+		if (canvas_form_check_str_attr($attributes, 'ckeditor')) $this->element_plugins[$name] = 'ckeditor';
 		if (true === str_contains($name, '|')) {
 			$_name = explode('|', $name);
 			$_attr = [];
@@ -109,9 +109,9 @@ trait Text {
 	 * @author: wisnuwidi
 	 */
 	public function tags($name, $value = null, $attributes = [], $label = true) {
-		$placeholder = ucwords(str_replace('-', ' ', diy_clean_strings($name)));
-		$attributes  = diy_form_change_input_attribute($attributes, 'data-role', 'tagsinput');
-		$attributes  = diy_form_change_input_attribute($attributes, 'placeholder', "Type {$placeholder}");
+		$placeholder = ucwords(str_replace('-', ' ', canvas_clean_strings($name)));
+		$attributes  = canvas_form_change_input_attribute($attributes, 'data-role', 'tagsinput');
+		$attributes  = canvas_form_change_input_attribute($attributes, 'placeholder', "Type {$placeholder}");
 		
 		$this->setParams('tagsinput', $name, $value, $attributes, $label);
 		$this->inputDraw('tagsinput', $name);

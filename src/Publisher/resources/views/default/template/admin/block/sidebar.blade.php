@@ -5,9 +5,9 @@
  *
  * @filesource	sidebar.blade.php
  *
- * @author		wisnuwidi@incodiy.com - 2021
+ * @author		wisnuwidi@canvastack.com - 2021
  * @copyright	wisnuwidi
- * @email		wisnuwidi@incodiy.com
+ * @email		wisnuwidi@canvastack.com
  */
 $fileExists = file_exists(public_path().$logo);
 ?>

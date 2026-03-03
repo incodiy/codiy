@@ -1,8 +1,8 @@
 <?php
 
-namespace Incodiy\Codiy\Controllers\Auth;
+namespace Canvastack\Origin\Controllers\Auth;
 
-use Incodiy\Codiy\Controllers\Core\Controller;
+use Canvastack\Origin\Controllers\Core\Controller;
 // use Controllers\Controller;
 //use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 

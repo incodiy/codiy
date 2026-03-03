@@ -1,6 +1,6 @@
 <?php
-namespace Incodiy\Codiy\Library\Components\Table\Craft\Method;
-use Incodiy\Codiy\Library\Components\Table\Craft\Elements;
+namespace Canvastack\Origin\Library\Components\Table\Craft\Method;
+use Canvastack\Origin\Library\Components\Table\Craft\Elements;
 
 /**
  * Created on Dec 28, 2022
@@ -9,9 +9,9 @@ use Incodiy\Codiy\Library\Components\Table\Craft\Elements;
  *
  * @filesource	Post.php
  *
- * @author     wisnuwidi@incodiy.com - 2022
+ * @author     wisnuwidi@canvastack.com - 2022
  * @copyright  wisnuwidi
- * @email      wisnuwidi@incodiy.com
+ * @email      wisnuwidi@canvastack.com
  */
 
 class Post {
@@ -79,13 +79,13 @@ class Post {
 		
 		$varTableID     = explode('-', $this->id);
 		$varTableID     = implode('', $varTableID);
-		$current_url    = url(diy_current_route()->uri);
+		$current_url    = url(canvas_current_route()->uri);
 		$configurations = json_encode($this->config);
 		
 		$script  = '<script type="text/javascript">';
 		$script .= "
 jQuery(function($) {
-	var cody_{$varTableID}_dt = $('#{$this->id}').DataTable(
+	var canvas_{$varTableID}_dt = $('#{$this->id}').DataTable(
 		{$configurations}
 	);
 });
